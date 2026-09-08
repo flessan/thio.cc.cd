@@ -1,14 +1,14 @@
 {
-  "name": "patak-cat",
+  "name": "thio-cc-cd",
   "version": "1.0.0",
-  "description": "patak.cat web",
+  "description": "Flessan (M. Thio Saputra) — personal site at thio.cc.cd",
   "main": "index.js",
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview"
   },
-  "author": "Matias Capeletto",
+  "author": "M. Thio Saputra",
   "license": "MIT",
   "dependencies": {
     "vitepress": "1.5.0",

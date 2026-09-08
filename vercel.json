@@ -4,87 +4,43 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "dm.patak.cat"
-        }
-      ],
-      "destination": "https://signal.me/#eu/USbSrA1yvaCxaj0uffUwdzNJUBkg77yhxj7NqNPUFfMtS2qOiflDFLMll2PfzKYf"
+      "has": [{ "type": "host", "value": "gh.thio.cc.cd" }],
+      "destination": "https://github.com/flessan"
     },
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "chat.patak.cat"
-        }
-      ],
-      "destination": "https://build.npmx.dev"
+      "has": [{ "type": "host", "value": "github.thio.cc.cd" }],
+      "destination": "https://github.com/flessan"
     },
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "social.patak.cat"
-        },
-        {
-          "type": "host",
-          "value": "bluesky.patak.cat"
-        },
-        {
-          "type": "host",
-          "value": "bsky.patak.cat"
-        },
-        {
-          "type": "host",
-          "value": "atproto.patak.cat"
-        },
-        {
-          "type": "host",
-          "value": "at.patak.cat"
-        }
-      ],
-      "destination": "https://bsky.app/profile/patak.cat"
+      "has": [{ "type": "host", "value": "git.thio.cc.cd" }],
+      "destination": "https://github.com/flessan"
     },
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "github.patak.cat"
-        },
-        {
-          "type": "host",
-          "value": "gh.patak.cat"
-        },
-        {
-          "type": "host",
-          "value": "git.patak.cat"
-        }
-      ],
-      "destination": "https://github.com/patak-cat"
+      "has": [{ "type": "host", "value": "gdips.thio.cc.cd" }],
+      "destination": "https://gdips.pages.dev"
     },
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "sponsor.patak.cat"
-        }
-      ],
-      "destination": "https://github.com/sponsors/patak-cat"
+      "has": [{ "type": "host", "value": "ig.thio.cc.cd" }],
+      "destination": "https://www.instagram.com/flethio"
     },
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "npm.patak.cat"
-        }
-      ],
-      "destination": "https://npmx.dev/~patak"
+      "has": [{ "type": "host", "value": "threads.thio.cc.cd" }],
+      "destination": "https://www.threads.com/flethio"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "yt.thio.cc.cd" }],
+      "destination": "https://youtube.com/@flethio"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "sponsor.thio.cc.cd" }],
+      "destination": "https://github.com/sponsors/flessan"
     }
   ]
 }

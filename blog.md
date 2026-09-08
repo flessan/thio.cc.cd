@@ -1,76 +1,88 @@
-## Blog
+---
+layout: page
+title: Blog
+description: Writing by Flessan (M. Thio Saputra) — build notes, project stories, and experiments from the gudang.
+head:
+  - - meta
+    - property: og:type
+      content: website
+  - - meta
+    - property: og:title
+      content: Blog — Flessan (M. Thio Saputra)
+  - - meta
+    - property: og:image
+      content: https://thio.cc.cd/images/flessan-banner.png
+  - - meta
+    - property: og:url
+      content: https://thio.cc.cd/blog
+  - - meta
+    - property: og:description
+      content: Build notes, project stories, and experiments — from the gudang.
+  - - meta
+    - name: twitter:card
+      content: summary_large_image
+---
 
-Here are some of my latest writings about Vite, Vue and the Web.
+<header class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-hero-eyebrow">04 / Writing</p>
+    <h1 class="page-hero-title">From the gudang.</h1>
+    <p class="page-hero-desc">
+      Build notes, project stories, and experiments. <em>Gudang</em> is
+      Indonesian for "warehouse" — where the stock (and the octopus) live.
+      Longer write-ups also land on
+      <a href="https://fless.hashnode.dev" target="_blank" rel="noopener">fless.hashnode.dev</a>.
+    </p>
+  </div>
+</header>
 
+<div class="page-wide">
 
-<BlogPost image="/images/npmx-converging-communities.jpg">
+<BlogPost image="/images/covers/hello-internet.png">
 
-**[npmx: converging communities](./npmx/converging-communities.md)**
-<br>The story of the many people and communities that converged to build npmx together
-<br> [_traducció catalana_](./npmx/comunitats-convergents.md)
-
-</BlogPost>
-
-
-<BlogPost image="/images/update.jpg">
-
-**[Update](./blog/update.md)**
-<br>Onto the next stage
-
-</BlogPost>
-
-
-<BlogPost image="/images/open-source-at-stackblitz.png">
-
-**[Open Source at StackBlitz](./blog/open-source-at-stackblitz.md)**
-<br>A retrospective about my first two years working full-time on Open Source at StackBlitz
-
-</BlogPost>
-
-
-<BlogPost image="/images/vite-ecosystem-cover.jpg">
-
-**[The Vite Ecosystem](./vite/ecosystem.md)**
-<br>An exploration of the projects, teams and individuals collaborating to push the DX of our frontend tooling forward
-
-</BlogPost>
-
-
-<BlogPost image="/images/vite-build-cover.jpg">
-
-**[vite build](./vite/build.md)**
-<br>Understanding Vite build, a walk through the Vite code base
-
-</BlogPost>
-
-
-<BlogPost image="/images/vite-2.jpg" >
-
-**[Vite 2](./web/vite-2.md)**
-<br>A VitePress powered post about Vite 2 and the importance of the instant feedback loop that it enables
+**[hello, internet](./blog/hello-internet.md)**
+<br>A new home at thio.cc.cd — who I am, and what this site will hold
+<br><span class="mono blog-date">2026-09-08</span>
 
 </BlogPost>
 
+<BlogPost image="/images/covers/slate-de.png">
 
-<BlogPost image="/images/ignorable-watch.jpg" >
-
-**[Ignorable Watch](./vue/ignorable-watch.md)**
-<br>VueUse's ignorableWatch, useRefHistory and watch flush modes
-
-</BlogPost>
-
-
-<BlogPost image="/images/history-and-persistence-cover.jpg" >
-
-**[History and Persistence](./vue/history-and-persistence.md)**
-<br>useRefHistory and useLocalStorage as building blocks to create new composables
+**[the command line is your d3sktop](./blog/slate-de.md)**
+<br>Building slate-de — a CLI-based, pane-oriented Wayland desktop environment in Rust
+<br><span class="mono blog-date">2026-09-04</span>
 
 </BlogPost>
 
+<BlogPost image="/images/covers/teksreceh.png">
 
-<BlogPost image="/images/mark-raw-optimization.jpg" >
-
-**[Mark Raw Optimization](./vue/mark-raw-optimization.md)**
-<br>Using markRaw to optimize VueUse's useRefHistory composable
+**[teksreceh: a museum of +62 typing](./blog/teksreceh.md)**
+<br>Alay, UwU, Rimsvek, Binary — preserving how the Indonesian internet types
+<br><span class="mono blog-date">2026-09-01</span>
 
 </BlogPost>
+
+<BlogPost image="/images/covers/gdips-campfire.png">
+
+**[GDIPS: a digital campfire](./blog/gdips-reborn.md)**
+<br>How a free-server list grew into a community-driven Geometry Dash private server
+<br><span class="mono blog-date">2026-08-28</span>
+
+</BlogPost>
+
+<BlogPost image="/images/covers/internet-of-thio.png">
+
+**[The internet of Thio](./blog/internet-of-thio.md)**
+<br>Why I build many small rooms instead of one big website
+<br><span class="mono blog-date">2026-08-24</span>
+
+</BlogPost>
+
+</div>
+
+<style scoped>
+.blog-date {
+  font-size: 0.75rem;
+  color: var(--vp-c-text-3);
+}
+</style>

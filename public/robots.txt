@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thio.cc.cd/sitemap.xml

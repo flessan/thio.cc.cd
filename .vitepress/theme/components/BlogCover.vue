@@ -5,22 +5,16 @@ defineProps({
 </script>
 
 <template>
-  <img :src="src" />
+  <img :src="src" alt="" />
 </template>
 
 <style scoped>
 img {
   width: 100%;
-  max-height: 20rem;
+  max-height: 22rem;
   object-fit: cover;
-  margin-bottom: 4rem;
-  border-radius: 0.5rem;
-}
-
-@media (min-width: 1460px) {
-  img {
-    margin-top: -7rem;
-    border-radius: 0 0 0.5rem 0.5rem;
-  }
+  margin-bottom: 2.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--vp-c-border);
 }
 </style>
