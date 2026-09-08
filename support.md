@@ -22,6 +22,10 @@ head:
 
 Everything I build is free and open — tools, servers, experiments, and documentation. If any of it helped you, here are the ways to keep the fire burning.
 
+## Quick contact
+
+Email [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Copy email"></CopyButton> or join the [GDIPS Discord](https://discord.gg/6HEyQBcM6E)<CopyButton text="https://discord.gg/6HEyQBcM6E" label="Copy invite"></CopyButton>.
+
 ## Sponsor
 
 **[GitHub Sponsors](https://github.com/sponsors/flessan)**

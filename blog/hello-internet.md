@@ -28,6 +28,8 @@ head:
 
 # hello, internet
 
+<PostMeta date="2026-09-08"></PostMeta>
+
 Halo! This is the first post from a new home on the web: **[thio.cc.cd](https://thio.cc.cd)** — the personal site of **M. Thio Saputra**, known online as **Flessan**.
 
 If you've followed my work before, you've probably met me through [@flessan on GitHub](https://github.com/flessan), through [GDIPS](../gdips.md) — the Geometry Dash Indonesia Private Server I founded — or through one of my other little sites like [flessan.pages.dev](https://flessan.pages.dev) or [tune.thio.cc.cd](https://tune.thio.cc.cd). This site gathers all of it under one roof.
@@ -56,3 +58,5 @@ Old work is part of the work. The previous sites stay online, nothing gets burie
 The fastest way to reach me is [tio@cc.cc](mailto:tio@cc.cc). You can also find me on [GitHub](https://github.com/flessan), [Instagram](https://www.instagram.com/flethio) or [Threads](https://www.threads.com/flethio), or join the [GDIPS Discord](https://discord.gg/6HEyQBcM6E) campfire.
 
 Thanks for stopping by. Let's build something amazing together.
+
+<PostNav></PostNav>

@@ -28,6 +28,29 @@ pnpm run dev
   the beginning (no custom design framework)
 - Cloudflare Pages serving: static assets, pretty URLs, `_redirects`, `_headers`
 
+## What works out of the box
+
+- **Full-text search** across every page — click the search field or press
+  `Ctrl K` / `⌘K` (or `/`) anywhere. The index is built at compile time, so
+  search works on plain static hosting.
+- **Live project explorer** on `/projects` — real data from the public GitHub
+  API (description, language, stars, license, last update), with filter,
+  language, and sort controls; cached in your browser for 10 minutes and
+  gracefully falling back to the curated list when the API is unreachable.
+- **Live activity feed** on the home page and `/now` — recent public GitHub
+  events, fetched live and cached for 5 minutes.
+- **RSS feed** at `/feed.xml`, generated at build time and linked from the
+  navbar.
+- **"Suggest changes on GitHub"** link on every page.
+- **Reading time, dates, and older/newer navigation** on every blog post.
+- **One-click copy buttons** for the contact email, the Discord invite, and
+  the feed URL.
+- **A useful 404 page** — trigger a search, go home, or jump to the main
+  sections.
+- **Canonical URLs** and JSON-LD person metadata for correct SEO.
+- No server, no tracking, no external services beyond the public GitHub API.
+  Zero additional npm dependencies.
+
 ## Requirements
 
 - Node.js **22** (pinned in `.nvmrc`; Cloudflare Pages picks this up automatically)
@@ -78,10 +101,10 @@ add `thio.cc.cd` as a CNAME to `<project>.pages.dev`.
 blog/                blog posts
 index.md             home
 about.md             about me
-projects.md          the project list
+projects.md          project list + live GitHub explorer
 gdips.md             GDIPS spotlight
 blog.md              blog index
-now.md               /now page
+now.md               /now page + live activity feed
 timeline.md          the road so far
 ecosystem.md         the other places I keep online
 support.md           sponsor & support

@@ -20,7 +20,13 @@ head:
 
 # Projects
 
-Everything below is public on [github.com/flessan](https://github.com/flessan) — 47 repositories and counting. The community flagship, GDIPS, has its own [page](./gdips.md).
+Everything on this page is public on [github.com/flessan](https://github.com/flessan) — 47 repositories and counting. The community flagship, GDIPS, has its own [page](./gdips.md).
+
+## Browse live
+
+<RepoExplorer></RepoExplorer>
+
+The list below is my curated reference — it works even when the GitHub API doesn't.
 
 ## Featured
 

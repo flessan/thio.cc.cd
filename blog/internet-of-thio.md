@@ -28,6 +28,8 @@ head:
 
 # Many small sites
 
+<PostMeta date="2026-08-24"></PostMeta>
+
 People ask why my corner of the web looks like a small town instead of a single website. There's [flessan.pages.dev](https://flessan.pages.dev), [flessan.github.io](https://flessan.github.io), [gdips.pages.dev](https://gdips.pages.dev), [tune.thio.cc.cd](https://tune.thio.cc.cd), [text.thio.qzz.io](https://text.thio.qzz.io), and now this site at [thio.cc.cd](https://thio.cc.cd). This post is why.
 
 ## Sites, not pages
@@ -53,3 +55,5 @@ If you want to wander, the full list is on the [ecosystem page](../ecosystem.md)
 - 📦 [flessan.github.io](https://flessan.github.io) — the project index
 
 Every site has a door. Every door is open.
+
+<PostNav></PostNav>

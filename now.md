@@ -22,6 +22,8 @@ head:
 
 A living snapshot of what I'm up to. Last review: September 2026.
 
+<GithubActivity :limit="6"></GithubActivity>
+
 ## Building
 
 - **GDIPS 2.0** — complete server rewrite with enhanced features

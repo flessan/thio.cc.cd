@@ -28,6 +28,8 @@ head:
 
 # teksreceh: a museum of +62 typing
 
+<PostMeta date="2026-09-01"></PostMeta>
+
 The Indonesian internet has its own typing culture. Before autocorrect and uniform keyboards flattened everything, there was a whole art to writing *alay* — stretched vowels, mixed caps, numbers standing in for letters. It was chaotic, creative, and very much ours.
 
 [**teksreceh**](https://github.com/flessan/teksreceh) — "Generator Teks Paling Ngaco Se-Indonesia", the most absurd text generator in all of Indonesia — is my attempt to keep that culture playable.
@@ -59,3 +61,5 @@ teksreceh is React 19 + Vite + Tailwind, deployed on Cloudflare Pages, and it fo
 The repo is GPL-3.0 and open to contributions — if you remember a transform that's missing, open an issue.
 
 Try it: [text.thio.qzz.io](https://text.thio.qzz.io)
+
+<PostNav></PostNav>

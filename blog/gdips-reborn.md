@@ -28,6 +28,8 @@ head:
 
 # GDIPS: a digital campfire
 
+<PostMeta date="2026-08-28"></PostMeta>
+
 > "We're building a digital campfire, not a perfect one, but warm enough for those who want to gather around."
 
 This is the story of [GDIPS](../gdips.md) — the **Geometry Dash Indonesia Private Server** — and how it grew from a list into a community.
@@ -66,3 +68,5 @@ If you play Geometry Dash, or you're just GDPS-curious:
 - The campfire: [Discord](https://discord.gg/6HEyQBcM6E) — share levels, report bugs, or just hang out
 
 Every star on the repo fuels the fire. See you around it.
+
+<PostNav></PostNav>

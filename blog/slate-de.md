@@ -28,6 +28,8 @@ head:
 
 # the command line is your d3sktop
 
+<PostMeta date="2026-09-04"></PostMeta>
+
 > "The command line is no longer an application; it is your d3sktop."
 
 That's the one-line pitch of [slate-de](https://github.com/flessan/slate-de), my desktop environment experiment — written in **Rust**, on **Wayland**.
@@ -51,3 +53,5 @@ It also fits a theme in my work: taking the terminal seriously as a place to liv
 - Topics on the repo: `cli`, `desktop-environment`, `wayland`, `wayland-compositor`
 
 If you're poking at Wayland or Rust and want to compare notes, the repo is public and my [Telegram](https://t.me/flethio) is open. And if terminals aren't your thing — don't worry, the [campfire](./gdips-reborn.md) is elsewhere.
+
+<PostNav></PostNav>
