@@ -1,0 +1,33 @@
+# Cloudflare Pages redirects — https://developers.cloudflare.com/pages/configuration/redirects/
+# Shortlinks for the links people actually paste. None of these collide
+# with real pages on the site.
+
+# code
+/gh                https://github.com/flessan 302
+/github            https://github.com/flessan 302
+/repo              https://github.com/flessan?tab=repositories 302
+
+# support the work
+/sponsor           https://github.com/sponsors/flessan 302
+/patreon           https://patreon.com/flessan 302
+/saweria           https://saweria.co/thiosaputra 302
+/sociabuzz         https://sociabuzz.com/flessan 302
+
+# community & projects
+/discord           https://discord.gg/6HEyQBcM6E 302
+/gdps              https://gdips.pages.dev 302
+/tune              https://tune.thio.cc.cd 302
+
+# social
+/ig                https://www.instagram.com/flethio 302
+/threads           https://www.threads.com/flethio 302
+/yt                https://youtube.com/@flethio 302
+/tiktok            https://tiktok.com/@thio2009_ 302
+/tg                https://t.me/flethio 302
+/wa                https://whatsapp.com/channel/0029VbAoWYi7T8bQVepYkn1a 302
+
+# rooms of the network
+/wiki              https://id.wikipedia.org/wiki/Pengguna:Flessan 302
+/hashnode          https://fless.hashnode.dev 302
+/qzz               https://thio.qzz.io 302
+/archive           https://archive.thio.qzz.io 302

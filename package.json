@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "description": "Flessan (M. Thio Saputra) — personal site at thio.cc.cd",
   "main": "index.js",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "preview": "vitepress preview"
+    "preview": "vitepress preview",
+    "preview:pages": "npx wrangler pages dev .vitepress/dist",
+    "deploy": "pnpm run build && npx wrangler pages deploy .vitepress/dist --project-name=thio-cc-cd"
   },
   "author": "M. Thio Saputra",
   "license": "MIT",
