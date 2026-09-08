@@ -37,6 +37,12 @@ pnpm run dev
   API (description, language, stars, license, last update), with filter,
   language, and sort controls; cached in your browser for 10 minutes and
   gracefully falling back to the curated list when the API is unreachable.
+- **News from Telegram** — a `/news` page plus a latest-post card on the home
+  page and `/now`, reading the [@chfless](https://t.me/chfless) channel live
+  through [chfless-api.pages.dev](https://chfless-api.pages.dev)
+  (`latest.json` / `posts.json`, Flessan's own telegram_to_api bridge). Text
+  is linkified safely, photo/video posts get a badge, and the feed degrades
+  to a channel link if the API is unreachable.
 - **Live activity feed** on the home page and `/now` — recent public GitHub
   events, fetched live and cached for 5 minutes.
 - **RSS feed** at `/feed.xml`, generated at build time and linked from the
@@ -99,12 +105,13 @@ add `thio.cc.cd` as a CNAME to `<project>.pages.dev`.
 ```
 .vitepress/          site config + theme (components, styles)
 blog/                blog posts
-index.md             home
+news.md              news page (live Telegram channel feed)
+index.md             home (with the latest Telegram post)
 about.md             about me
 projects.md          project list + live GitHub explorer
 gdips.md             GDIPS spotlight
 blog.md              blog index
-now.md               /now page + live activity feed
+now.md               /now page + channel feed + live activity
 timeline.md          the road so far
 ecosystem.md         the other places I keep online
 support.md           sponsor & support

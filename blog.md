@@ -2,7 +2,7 @@
 
 Here are some of my latest writings about the web, automation, and the projects I build.
 
-Subscribe with [RSS](./feed.xml)<CopyButton text="https://thio.cc.cd/feed.xml" label="Copy feed URL"></CopyButton>.
+Subscribe with [RSS](./feed.xml)<CopyButton text="https://thio.cc.cd/feed.xml" label="Copy feed URL"></CopyButton> — quick updates also land on my [Telegram channel](https://t.me/chfless)<CopyButton text="https://t.me/chfless" label="Copy channel link"></CopyButton>, see the [News page](./news.md).
 
 <BlogPost image="/images/covers/hello-internet.png">
 

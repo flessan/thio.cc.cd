@@ -11,6 +11,8 @@ import PostMeta from './components/PostMeta.vue'
 import PostNav from './components/PostNav.vue'
 import RepoExplorer from './components/RepoExplorer.vue'
 import GithubActivity from './components/GithubActivity.vue'
+import TelegramFeed from './components/TelegramFeed.vue'
+import LatestUpdate from './components/LatestUpdate.vue'
 import NotFound from './components/NotFound.vue'
 
 function openSearch() {
@@ -42,6 +44,8 @@ export default {
     app.component('PostNav', PostNav)
     app.component('RepoExplorer', RepoExplorer)
     app.component('GithubActivity', GithubActivity)
+    app.component('TelegramFeed', TelegramFeed)
+    app.component('LatestUpdate', LatestUpdate)
 
     // Ctrl K / Cmd K (or "/" outside inputs) opens search, anywhere on the site
     if (typeof window !== 'undefined' && !hotkeyBound) {

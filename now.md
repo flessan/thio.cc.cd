@@ -22,6 +22,8 @@ head:
 
 A living snapshot of what I'm up to. Last review: September 2026.
 
+<TelegramFeed :limit="3" title="Latest from my channel"></TelegramFeed>
+
 <GithubActivity :limit="6"></GithubActivity>
 
 ## Building

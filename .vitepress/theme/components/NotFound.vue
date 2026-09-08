@@ -29,6 +29,7 @@ function openSearch() {
     </div>
     <p class="nf-links">
       Popular pages:
+      <a href="/news">News</a> ·
       <a href="/blog">Blog</a> ·
       <a href="/projects">Projects</a> ·
       <a href="/gdips">GDIPS</a> ·

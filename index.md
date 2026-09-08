@@ -20,6 +20,8 @@ Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Cop
 
 *Tip: press **Ctrl K** (or **/**) anywhere on this site to search everything.*
 
+<LatestUpdate></LatestUpdate>
+
 ## Latest Posts
 
 <BlogPost image="/images/covers/hello-internet.png">

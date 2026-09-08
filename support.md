@@ -24,7 +24,7 @@ Everything I build is free and open — tools, servers, experiments, and documen
 
 ## Quick contact
 
-Email [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Copy email"></CopyButton> or join the [GDIPS Discord](https://discord.gg/6HEyQBcM6E)<CopyButton text="https://discord.gg/6HEyQBcM6E" label="Copy invite"></CopyButton>.
+Email [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Copy email"></CopyButton> or join the [GDIPS Discord](https://discord.gg/6HEyQBcM6E)<CopyButton text="https://discord.gg/6HEyQBcM6E" label="Copy invite"></CopyButton>. For news and releases, follow my [Telegram channel](https://t.me/chfless)<CopyButton text="https://t.me/chfless" label="Copy channel link"></CopyButton>.
 
 ## Sponsor
 
