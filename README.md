@@ -40,9 +40,13 @@ pnpm run dev
 - **News from Telegram** — a `/news` page plus a latest-post card on the home
   page and `/now`, reading the [@chfless](https://t.me/chfless) channel live
   through [chfless-api.pages.dev](https://chfless-api.pages.dev)
-  (`latest.json` / `posts.json`, Flessan's own telegram_to_api bridge). Text
-  is linkified safely, photo/video posts get a badge, and the feed degrades
-  to a channel link if the API is unreachable.
+  (`latest.json` / `posts.json`, Flessan's own telegram_to_api bridge).
+  Photo/video posts are rendered as **official Telegram post embeds**
+  (`telegram-widget.js`, iframe of `t.me/chfless/<id>?embed=1`) so the images
+  actually appear — no bot token needed; the embed follows the site's
+  light/dark toggle. Text posts render natively with safely linkified URLs,
+  and everything degrades to text + channel links if Telegram or the API is
+  unreachable.
 - **Live activity feed** on the home page and `/now` — recent public GitHub
   events, fetched live and cached for 5 minutes.
 - **RSS feed** at `/feed.xml`, generated at build time and linked from the

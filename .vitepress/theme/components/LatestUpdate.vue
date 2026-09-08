@@ -3,12 +3,13 @@ import { ref, onMounted } from 'vue'
 import {
   fetchChannel,
   clearChannelCache,
-  linkify,
   relTime,
   absTime,
   channelUrl,
   type TgPost
 } from '../telegram'
+import TelegramEmbed from './TelegramEmbed.vue'
+import TelegramPostText from './TelegramPostText.vue'
 
 const post = ref<TgPost | null>(null)
 const updated = ref('')
@@ -35,33 +36,47 @@ onMounted(load)
 <template>
   <div v-if="post" class="lu">
     <h2 class="lu-title">News</h2>
-    <div class="lu-card">
+
+    <!-- photo/video post: the official Telegram embed, image included -->
+    <template v-if="post.media">
+      <TelegramEmbed :post-id="post.id">
+        <template #fallback>
+          <div class="lu-card">
+            <p class="lu-meta">
+              <span class="lu-when" :title="absTime(post.published_at)">
+                {{ relTime(post.published_at) }}
+              </span>
+              <span class="lu-badge">📷 {{ post.media.type }}</span>
+            </p>
+            <TelegramPostText :post="post"></TelegramPostText>
+          </div>
+        </template>
+      </TelegramEmbed>
+    </template>
+
+    <!-- text post: light native card -->
+    <div v-else class="lu-card">
       <p class="lu-meta">
         <span class="lu-when" :title="absTime(post.published_at)">
           {{ relTime(post.published_at) }}
         </span>
-        <span v-if="post.media" class="lu-badge">📷 {{ post.media.type }}</span>
       </p>
-      <p v-if="post.text && post.text.trim()" class="lu-text">
-        <template v-for="(seg, i) in linkify(post.text)" :key="i">
-          <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener">{{ seg.text }}</a>
-          <template v-else>{{ seg.text }}</template>
-        </template>
-      </p>
-      <p class="lu-links">
-        <a :href="post.url" target="_blank" rel="noopener">Open on Telegram ↗</a>
-        <span class="lu-sep">·</span>
-        <a href="/news">All updates</a>
-        <span class="lu-sep">·</span>
-        <a :href="channelUrl" target="_blank" rel="noopener">Subscribe</a>
-        <span class="lu-sep">·</span>
-        <button class="lu-refresh" type="button" title="Fetch the newest post again" @click="refresh">Refresh</button>
-      </p>
-      <p class="lu-note">
-        Fresh from my Telegram channel @chfless, fetched live
-        <template v-if="updated"> (cached {{ updated }})</template>.
-      </p>
+      <TelegramPostText :post="post"></TelegramPostText>
     </div>
+
+    <p class="lu-links">
+      <a :href="post.url" target="_blank" rel="noopener">Open on Telegram ↗</a>
+      <span class="lu-sep">·</span>
+      <a href="/news">All updates</a>
+      <span class="lu-sep">·</span>
+      <a :href="channelUrl" target="_blank" rel="noopener">Subscribe</a>
+      <span class="lu-sep">·</span>
+      <button class="lu-refresh" type="button" title="Fetch the newest post again" @click="refresh">Refresh</button>
+    </p>
+    <p class="lu-note">
+      Fresh from my Telegram channel @chfless, fetched live
+      <template v-if="updated"> (cached {{ updated }})</template>.
+    </p>
   </div>
 </template>
 
@@ -103,17 +118,8 @@ onMounted(load)
   line-height: 1.6;
 }
 
-.lu-text {
-  margin: 0 0 0.55rem;
-  color: var(--vp-c-text-2);
-  font-size: 0.96rem;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 .lu-links {
-  margin: 0;
+  margin: 0.8rem 0 0;
   font-size: 0.85rem;
 }
 
@@ -144,7 +150,7 @@ onMounted(load)
 }
 
 .lu-note {
-  margin: 0.7rem 0 0;
+  margin: 0.5rem 0 0;
   color: var(--vp-c-text-3);
   font-size: 0.78rem;
 }

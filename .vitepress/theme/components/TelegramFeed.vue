@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import {
   fetchChannel,
   clearChannelCache,
   sortPosts,
-  linkify,
   relTime,
   absTime,
   channelUrl,
   type TgPost
 } from '../telegram'
+import TelegramEmbed from './TelegramEmbed.vue'
+import TelegramPostText from './TelegramPostText.vue'
 
 const props = withDefaults(
   defineProps<{ limit?: number; title?: string }>(),
@@ -39,15 +40,8 @@ function refresh() {
   load()
 }
 
-const hasText = computed(() =>
-  (posts.value ?? []).some((p) => p.text && p.text.trim())
-)
-
 function mediaLabel(p: TgPost): string {
-  if (!p.media) return ''
-  if (p.media.type === 'photo') return 'photo'
-  if (p.media.type === 'video') return 'video'
-  return p.media.type
+  return p.media ? p.media.type : ''
 }
 
 onMounted(load)
@@ -61,6 +55,7 @@ onMounted(load)
         Short updates land on my Telegram channel
         <a :href="channelUrl" target="_blank" rel="noopener">@{{ 'chfless' }}</a> first.
         <template v-if="updated">Fetched live (cached {{ updated }}).</template>
+        Photo posts are embedded straight from Telegram.
       </p>
       <ul class="tg-list">
         <li v-for="p in posts" :key="p.id" class="tg-item">
@@ -70,13 +65,12 @@ onMounted(load)
             </span>
             <span v-if="mediaLabel(p)" class="tg-badge">📷 {{ mediaLabel(p) }}</span>
           </p>
-          <p v-if="p.text && p.text.trim()" class="tg-text">
-            <template v-for="(seg, i) in linkify(p.text)" :key="i">
-              <a v-if="seg.href" :href="seg.href" target="_blank" rel="noopener">{{ seg.text }}</a>
-              <template v-else>{{ seg.text }}</template>
+          <TelegramEmbed v-if="p.media" :post-id="p.id">
+            <template #fallback>
+              <TelegramPostText :post="p"></TelegramPostText>
             </template>
-          </p>
-          <p v-else class="tg-nocaption">No caption — open the {{ mediaLabel(p) || 'post' }} on Telegram.</p>
+          </TelegramEmbed>
+          <TelegramPostText v-else :post="p"></TelegramPostText>
           <a class="tg-open" :href="p.url" target="_blank" rel="noopener">Open on Telegram ↗</a>
         </li>
       </ul>
@@ -137,7 +131,7 @@ onMounted(load)
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.35rem;
 }
 
 .tg-when {
@@ -154,25 +148,9 @@ onMounted(load)
   line-height: 1.6;
 }
 
-.tg-text {
-  margin: 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.94rem;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.tg-nocaption {
-  margin: 0;
-  color: var(--vp-c-text-3);
-  font-size: 0.88rem;
-  font-style: italic;
-}
-
 .tg-open {
   display: inline-block;
-  margin-top: 0.35rem;
+  margin-top: 0.5rem;
   font-size: 0.82rem;
   color: var(--vp-c-brand-1);
   font-weight: 500;
