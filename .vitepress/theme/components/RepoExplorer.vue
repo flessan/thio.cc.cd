@@ -261,6 +261,7 @@ onMounted(load)
   font-weight: 600;
   font-size: 0.98rem;
   color: var(--vp-c-brand-1);
+  overflow-wrap: anywhere;
 }
 
 .re-home {
@@ -286,6 +287,7 @@ onMounted(load)
   margin: 0.25rem 0 0;
   color: var(--vp-c-text-2);
   font-size: 0.9rem;
+  overflow-wrap: anywhere;
 }
 
 .re-meta {

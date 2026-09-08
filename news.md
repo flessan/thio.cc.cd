@@ -1,21 +1,6 @@
 ---
 title: News
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: News — Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/flessan-banner.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/news
-  - - meta
-    - property: og:description
-      content: Short updates from Flessan — live from the @chfless Telegram channel.
+description: Short updates from Flessan — live from the @chfless Telegram channel.
 ---
 
 # News

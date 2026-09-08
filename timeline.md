@@ -1,21 +1,6 @@
 ---
 title: Timeline
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: Timeline — Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/flessan-banner.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/timeline
-  - - meta
-    - property: og:description
-      content: The timeline so far — every entry verified against public records.
+description: The timeline so far — every entry verified against public records.
 ---
 
 # Timeline

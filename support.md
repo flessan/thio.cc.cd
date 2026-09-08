@@ -1,21 +1,6 @@
 ---
 title: Support
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: Support — Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/flessan-banner.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/support
-  - - meta
-    - property: og:description
-      content: Support my open-source work and the GDIPS community.
+description: Support my open-source work and the GDIPS community.
 ---
 
 # Support
@@ -40,7 +25,7 @@ Email [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Copy emai
 **[Sociabuzz](https://sociabuzz.com/flessan)**
 <br>Memberships and support
 
-![QRIS](/images/qris.png)
+<img src="/images/qris.png" alt="QRIS code for supporting Flessan" width="256" height="256" loading="lazy" decoding="async">
 
 ## Free ways that mean everything
 

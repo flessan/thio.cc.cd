@@ -5,7 +5,13 @@ defineProps({
 </script>
 
 <template>
-  <img :src="src" />
+  <img
+    :src="src"
+    width="1200"
+    height="630"
+    decoding="async"
+    fetchpriority="high"
+  />
 </template>
 
 <style scoped>

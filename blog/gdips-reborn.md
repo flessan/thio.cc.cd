@@ -1,27 +1,10 @@
 ---
-title: "GDIPS: a digital campfire"
+title: "\"GDIPS: a digital campfire\""
 author:
   name: M. Thio Saputra
-date: 2026-08-28
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: "GDIPS: a digital campfire"
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/covers/gdips-campfire.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/blog/gdips-reborn
-  - - meta
-    - property: og:description
-      content: How a free-server list grew into a community-driven Geometry Dash private server
-  - - meta
-    - name: twitter:card
-      content: summary_large_image
+date: "2026-08-28"
+description: How a free-server list grew into a community-driven Geometry Dash private server
+image: /images/covers/gdips-campfire.png
 ---
 
 <BlogCover src="/images/covers/gdips-campfire.png" />

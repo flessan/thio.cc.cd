@@ -55,6 +55,12 @@ pnpm run dev
   browser-side fallback (microlink.io) when the Function can't reach a URL —
   and a plain link if even that fails. The `<LinkPreview>` component is
   registered globally, so it can be dropped into any page.
+- **Photos everywhere, at a fraction of the weight** — every cover, banner,
+  and artwork ships as WebP (visible images went from 5.6 MB to ~213 KB,
+  96% smaller), with `width`/`height` set so the layout never jumps while
+  images load. Blog covers used to be hidden entirely on phones and
+  tablets — now they stack neatly above the text. Click any content image
+  to view it full-size in a lightbox (Esc or click to close).
 - **Live activity feed** on the home page and `/now` — recent public GitHub
   events, fetched live and cached for 5 minutes.
 - **RSS feed** at `/feed.xml`, generated at build time and linked from the
@@ -65,7 +71,15 @@ pnpm run dev
   the feed URL.
 - **A useful 404 page** — trigger a search, go home, or jump to the main
   sections.
-- **Canonical URLs** and JSON-LD person metadata for correct SEO.
+- **SEO done properly, generated from one place** — every page gets a
+  canonical URL, full Open Graph tags (`og:title`/`url`/`description`/
+  `image` + dimensions, `og:site_name`, `og:locale`), `summary_large_image`
+  Twitter cards, `article:published_time`/`modified_time` on blog posts, a
+  sitemap with `lastmod` for all pages, `robots.txt`, and JSON-LD
+  structured data: `WebSite` + `Person` on the home page, `BlogPosting`
+  for every post, `WebPage` + `BreadcrumbList` elsewhere. Pages just set
+  `title` / `description` / `image` in their frontmatter — the config does
+  the rest, with no duplicated tags.
 - No tracking, no external services beyond the public GitHub API, the
   Telegram channel API, and a metadata fallback. One tiny Cloudflare Pages
   Function (`/api/og`) does the rest. Zero additional npm dependencies.

@@ -2,26 +2,9 @@
 title: the command line is your d3sktop
 author:
   name: M. Thio Saputra
-date: 2026-09-04
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: the command line is your d3sktop
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/covers/slate-de.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/blog/slate-de
-  - - meta
-    - property: og:description
-      content: Building slate-de — a CLI-based, pane-oriented Wayland desktop environment in Rust
-  - - meta
-    - name: twitter:card
-      content: summary_large_image
+date: "2026-09-04"
+description: Building slate-de — a CLI-based, pane-oriented Wayland desktop environment in Rust
+image: /images/covers/slate-de.png
 ---
 
 <BlogCover src="/images/covers/slate-de.png" />

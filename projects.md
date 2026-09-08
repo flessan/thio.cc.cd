@@ -1,21 +1,6 @@
 ---
 title: Projects
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: Projects — Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/flessan-banner.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/projects
-  - - meta
-    - property: og:description
-      content: Web software, Linux configuration, automation, tools, experiments, and public repositories.
+description: Web software, Linux configuration, automation, tools, experiments, and public repositories.
 ---
 
 # Projects
@@ -30,14 +15,15 @@ The list below is my curated reference — it works even when the GitHub API doe
 
 ## Featured
 
-**[GDIPS](https://github.com/flessan/GDIPS)**
-<br>Open-Source Community Driven Geometry Dash Indonesia Private Server
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px;margin:1.25rem 0 1rem;">
 
-**[slate-de](https://github.com/flessan/slate-de)**
-<br>The command line is no longer an application; it is your d3sktop — a CLI-based, pane-oriented Wayland desktop environment in Rust
+<LinkPreview url="https://github.com/flessan/GDIPS" description="Open-Source Community Driven Geometry Dash Indonesia Private Server"></LinkPreview>
 
-**[resontune](https://github.com/flessan/resontune)**
-<br>Community-driven music, without the paywall
+<LinkPreview url="https://github.com/flessan/slate-de" description="The command line is no longer an application; it is your d3sktop — a CLI-based, pane-oriented Wayland desktop environment in Rust"></LinkPreview>
+
+<LinkPreview url="https://github.com/flessan/resontune" description="Community-driven music, without the paywall"></LinkPreview>
+
+</div>
 
 ## Geometry Dash
 

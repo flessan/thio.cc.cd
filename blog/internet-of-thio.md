@@ -2,26 +2,9 @@
 title: Many small sites
 author:
   name: M. Thio Saputra
-date: 2026-08-24
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: Many small sites
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/covers/internet-of-thio.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/blog/internet-of-thio
-  - - meta
-    - property: og:description
-      content: Why I keep lots of little websites instead of one big one
-  - - meta
-    - name: twitter:card
-      content: summary_large_image
+date: "2026-08-24"
+description: Why I keep lots of little websites instead of one big one
+image: /images/covers/internet-of-thio.png
 ---
 
 <BlogCover src="/images/covers/internet-of-thio.png" />

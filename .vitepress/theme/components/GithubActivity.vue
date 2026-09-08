@@ -171,6 +171,7 @@ onMounted(load)
 .gh-activity-text {
   color: var(--vp-c-text-2);
   font-size: 0.92rem;
+  overflow-wrap: anywhere;
 }
 
 .gh-activity-when {

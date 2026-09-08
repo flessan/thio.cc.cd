@@ -1,21 +1,6 @@
 ---
 title: About
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: About — Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/flessan-banner.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/about
-  - - meta
-    - property: og:description
-      content: M. Thio Saputra — known online as Flessan. Self-taught web developer & automation engineer from Banjarmasin, Indonesia.
+description: M. Thio Saputra — known online as Flessan. Self-taught web developer & automation engineer from Banjarmasin, Indonesia.
 ---
 
 # About
@@ -29,6 +14,11 @@ I'm a self-taught developer with a deep love for **Geometry Dash** and community
 I build and deploy fast, scalable static and dynamic web applications. I'm proficient in Bash and modern frontend tools to automate workflows and transform static setups into interactive, full-stack experiences.
 
 By day I'm a student in the RPL (Software Engineering) program at SMKN 4 Banjarmasin. By night — honestly, usually between 11 PM and 3 AM — I build web apps, Linux tooling, and small experiments, and I document all of it in public on [GitHub](https://github.com/flessan).
+
+<figure style="margin:1.75rem 0;">
+  <img src="/images/flessan-full.webp" alt="Character art by Flessan" width="320" height="480" loading="lazy" decoding="async" style="max-width:320px;width:100%;border-radius:0.5rem;">
+  <figcaption style="color:var(--vp-c-text-3);font-size:0.85rem;margin-top:0.4rem;">Character art by Flessan — click the image to view it full-size.</figcaption>
+</figure>
 
 ## What I believe
 

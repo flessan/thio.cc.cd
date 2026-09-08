@@ -1,27 +1,10 @@
 ---
-title: "teksreceh: a museum of +62 typing"
+title: "\"teksreceh: a museum of +62 typing\""
 author:
   name: M. Thio Saputra
-date: 2026-09-01
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: "teksreceh: a museum of +62 typing"
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/covers/teksreceh.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/blog/teksreceh
-  - - meta
-    - property: og:description
-      content: Alay, UwU, Rimsvek, Binary — preserving how the Indonesian internet types
-  - - meta
-    - name: twitter:card
-      content: summary_large_image
+date: "2026-09-01"
+description: Alay, UwU, Rimsvek, Binary — preserving how the Indonesian internet types
+image: /images/covers/teksreceh.png
 ---
 
 <BlogCover src="/images/covers/teksreceh.png" />

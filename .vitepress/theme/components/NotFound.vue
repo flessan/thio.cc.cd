@@ -15,6 +15,15 @@ function openSearch() {
 
 <template>
   <div class="nf">
+    <img
+      class="nf-art"
+      src="/images/tako.jpg"
+      alt="Artwork by Flessan"
+      width="272"
+      height="77"
+      loading="lazy"
+      decoding="async"
+    />
     <p class="nf-code">404</p>
     <h1 class="nf-title">Page not found</h1>
     <p class="nf-text">
@@ -53,6 +62,14 @@ function openSearch() {
   color: var(--vp-c-brand-1);
   margin: 0;
   line-height: 1;
+}
+
+.nf-art {
+  max-width: 272px;
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .nf-title {

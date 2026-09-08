@@ -1,28 +1,13 @@
 ---
 title: Ecosystem
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: Ecosystem — Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/flessan-banner.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/ecosystem
-  - - meta
-    - property: og:description
-      content: The other places I keep online — every link verified against my public profiles.
+description: The other places I keep online — every link verified against my public profiles.
 ---
 
 # Ecosystem
 
 I keep lots of little places online instead of one big website. These are the ones linked from my public profiles and repositories — each card embeds the site itself, with its live title, description, and preview image fetched straight from the target:
 
-<div class="eco-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin:1.25rem 0 1rem;">
+<div class="eco-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px;margin:1.25rem 0 1rem;">
 
 <LinkPreview url="https://flessan.pages.dev" description="My first little site — programs, photos, and projects"></LinkPreview>
 

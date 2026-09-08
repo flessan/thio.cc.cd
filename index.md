@@ -1,12 +1,9 @@
 ---
 title: Home
-head:
-  - - script
-    - type: application/ld+json
-    - '{"@context":"https://schema.org","@type":"Person","name":"M. Thio Saputra","alternateName":["Flessan","Flethio"],"url":"https://thio.cc.cd","email":"mailto:tio@cc.cc","address":{"@type":"PostalAddress","addressLocality":"Banjarmasin","addressCountry":"ID"},"sameAs":["https://github.com/flessan","https://www.instagram.com/flethio","https://www.threads.com/flethio","https://youtube.com/@flethio","https://www.linkedin.com/in/flessan","https://id.wikipedia.org/wiki/Pengguna:Flessan"],"knowsAbout":["Web development","Automation","Linux","Open source"]}'
+description: Flessan (M. Thio Saputra) — self-taught web developer & automation engineer from Banjarmasin, Indonesia. Projects, writing, and communities.
 ---
 
-<BlogCover src="/images/flessan-banner.png" />
+<BlogCover src="/images/flessan-banner.webp" />
 
 ## Welcome!
 
@@ -24,7 +21,7 @@ Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Cop
 
 ## Latest Posts
 
-<BlogPost image="/images/covers/hello-internet.png">
+<BlogPost image="/images/covers/hello-internet.webp">
 
 **[hello, internet](./blog/hello-internet.md)**
 <br>A new home at thio.cc.cd — who I am, and what this site will hold
@@ -32,7 +29,7 @@ Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Cop
 
 </BlogPost>
 
-<BlogPost image="/images/covers/slate-de.png">
+<BlogPost image="/images/covers/slate-de.webp">
 
 **[the command line is your d3sktop](./blog/slate-de.md)**
 <br>Building slate-de — a CLI-based, pane-oriented Wayland desktop environment in Rust
@@ -40,7 +37,7 @@ Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Cop
 
 </BlogPost>
 
-<BlogPost image="/images/covers/gdips-campfire.png">
+<BlogPost image="/images/covers/gdips-campfire.webp">
 
 **[GDIPS: a digital campfire](./blog/gdips-reborn.md)**
 <br>How a free-server list grew into a community-driven Geometry Dash private server

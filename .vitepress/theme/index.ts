@@ -15,6 +15,10 @@ import TelegramFeed from './components/TelegramFeed.vue'
 import LatestUpdate from './components/LatestUpdate.vue'
 import LinkPreview from './components/LinkPreview.vue'
 import NotFound from './components/NotFound.vue'
+import { installLightbox } from './lightbox'
+import BlogCover from './components/BlogCover.vue'
+import BlogPost from './components/BlogPost.vue'
+import YouTubeVideo from './components/YouTubeVideo.vue'
 
 function openSearch() {
   const btn = document.querySelector<HTMLElement>('.VPNavBarSearch button')
@@ -48,6 +52,13 @@ export default {
     app.component('TelegramFeed', TelegramFeed)
     app.component('LatestUpdate', LatestUpdate)
     app.component('LinkPreview', LinkPreview)
+    app.component('BlogCover', BlogCover)
+    app.component('BlogPost', BlogPost)
+    app.component('YouTubeVideo', YouTubeVideo)
+
+    // click any content image to view it full-size (styles injected in JS,
+    // so style.css keeps its original bytes)
+    installLightbox()
 
     // Ctrl K / Cmd K (or "/" outside inputs) opens search, anywhere on the site
     if (typeof window !== 'undefined' && !hotkeyBound) {

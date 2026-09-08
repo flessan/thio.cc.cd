@@ -1,21 +1,6 @@
 ---
 title: Now
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: Now — Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/flessan-banner.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/now
-  - - meta
-    - property: og:description
-      content: What Flessan is building, learning, and listening to right now.
+description: What Flessan is building, learning, and listening to right now.
 ---
 
 # Now

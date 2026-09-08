@@ -1,24 +1,10 @@
 ---
 title: GDIPS
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: GDIPS — a digital campfire, by Flessan
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/covers/gdips-campfire.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/gdips
-  - - meta
-    - property: og:description
-      content: Open-Source Community Driven Geometry Dash Private Server. Not the biggest. Not the fanciest. But built with heart.
+description: Open-Source Community Driven Geometry Dash Private Server. Not the biggest. Not the fanciest. But built with heart.
+image: /images/covers/gdips-campfire.png
 ---
 
-<BlogCover src="/images/covers/gdips-campfire.png" />
+<BlogCover src="/images/covers/gdips-campfire.webp" />
 
 # GDIPS
 
@@ -31,6 +17,14 @@ GDIPS is a quirky, community-first **Geometry Dash Indonesia Private Server** �
 It started with a list: in July 2025 I published [Freedom-List](https://github.com/flessan/Freedom-List) — "Pomni Pomni Pomni" — a directory of free Geometry Dash servers. That list became a doorway into the GDPS scene, and in April 2026 it grew into a server of its own: **GDIPS Reborn**, built together with its community.
 
 The philosophy is written on the box: *not the biggest, not the fanciest, but built with heart.*
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px;margin:1.25rem 0 1rem;">
+
+<LinkPreview url="https://gdips.pages.dev" description="Open-Source Community Driven Geometry Dash Private Server"></LinkPreview>
+
+<LinkPreview url="https://gdpshub.com/gdps/2924" description="GDIPS on GDPS Hub — server info and listing"></LinkPreview>
+
+</div>
 
 ## Highlights
 

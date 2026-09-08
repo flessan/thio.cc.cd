@@ -2,26 +2,9 @@
 title: hello, internet
 author:
   name: M. Thio Saputra
-date: 2026-09-08
-head:
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - property: og:title
-      content: hello, internet
-  - - meta
-    - property: og:image
-      content: https://thio.cc.cd/images/covers/hello-internet.png
-  - - meta
-    - property: og:url
-      content: https://thio.cc.cd/blog/hello-internet
-  - - meta
-    - property: og:description
-      content: A new home at thio.cc.cd — who I am, and what this site will hold
-  - - meta
-    - name: twitter:card
-      content: summary_large_image
+date: "2026-09-08"
+description: A new home at thio.cc.cd — who I am, and what this site will hold
+image: /images/covers/hello-internet.png
 ---
 
 <BlogCover src="/images/covers/hello-internet.png" />
