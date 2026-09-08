@@ -1,14 +1,12 @@
 ---
-layout: page
 title: Ecosystem
-description: The internet of Thio — every room of Flessan's network, from the main house at thio.qzz.io to the GDIPS campfire.
 head:
   - - meta
     - property: og:type
       content: website
   - - meta
     - property: og:title
-      content: Ecosystem — the internet of Thio
+      content: Ecosystem — Flessan
   - - meta
     - property: og:image
       content: https://thio.cc.cd/images/flessan-banner.png
@@ -17,60 +15,56 @@ head:
       content: https://thio.cc.cd/ecosystem
   - - meta
     - property: og:description
-      content: Every room of the network — home, projects, lab, games, music, tools, archive, and the GDIPS campfire.
-  - - meta
-    - name: twitter:card
-      content: summary_large_image
+      content: The other places I keep online — every link verified against my public profiles.
 ---
 
-<header class="page-hero">
-  <div class="page-hero-inner">
-    <p class="page-hero-eyebrow">07 / The network</p>
-    <h1 class="page-hero-title">The internet of Thio.</h1>
-    <p class="page-hero-desc">
-      One town, many rooms. Each link below is a real place in the network —
-      built to solve a problem, learn a system, or just keep something warm.
-      <a href="./blog/internet-of-thio">Read the story →</a>
-    </p>
-  </div>
-</header>
+# Ecosystem
 
-<div class="page-wide">
+I keep lots of little places online instead of one big website. These are the ones linked from my public profiles and repositories:
 
-<div class="eco-grid">
-  <LinkCard v-for="room in rooms" :key="room.title" :item="room" />
-</div>
+**[flessan.pages.dev](https://flessan.pages.dev)**
+<br>My first little site — programs, photos, and projects
 
-<p class="eco-note">
-  Why so many rooms? Because old work is part of the work — rooms get
-  rebuilt, never quietly deleted. The
-  <a href="https://archive.thio.qzz.io" target="_blank" rel="noopener">archive</a>
-  keeps the earlier versions visible, without pretending they were finished.
-</p>
+**[flessan.github.io](https://flessan.github.io)**
+<br>"index of /" — a project index fed live from the GitHub API
 
-</div>
+**[gdips.pages.dev](https://gdips.pages.dev)**
+<br>GDIPS — the Geometry Dash Indonesia Private Server
 
-<script setup>
-import { ecosystem } from './.vitepress/theme/data'
-const rooms = ecosystem
-</script>
+**[tune.thio.cc.cd](https://tune.thio.cc.cd)**
+<br>resontune — community-driven music, without the paywall
 
-<style scoped>
-.eco-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 0.9rem;
-}
+**[text.thio.qzz.io](https://text.thio.qzz.io)**
+<br>teksreceh — Generator Teks Paling Ngaco Se-Indonesia
 
-.eco-note {
-  margin-top: 2rem;
-  color: var(--vp-c-text-2);
-  line-height: 1.7;
-  max-width: 46rem;
-}
+**[slate.dotfiles.qzz.io](https://slate.dotfiles.qzz.io)**
+<br>slate-de — the command line is your d3sktop
 
-.eco-note a {
-  color: var(--vp-c-brand-1);
-  font-weight: 600;
-}
-</style>
+**[dotfiles.qzz.io](https://dotfiles.qzz.io)**
+<br>Linux dotfiles, organized
+
+**[anon.thio.qzz.io](https://anon.thio.qzz.io)**
+<br>Anonimbuz — anonymous, text-first social platform
+
+**[adbpure.pages.dev](https://adbpure.pages.dev)**
+<br>AdbPureFlow — Android APK lifecycle automation
+
+**[tmy.pages.dev](https://tmy.pages.dev)**
+<br>TMY — transcript mode for YouTube
+
+**[tyibon.pages.dev](https://tyibon.pages.dev)**
+<br>Tyibon — platform pembuat twibbon online
+
+**[flessan.github.io/RECQR](https://flessan.github.io/RECQR/)**
+<br>RECQR — realtime QR scanner
+
+**[fless.hashnode.dev](https://fless.hashnode.dev)**
+<br>My longer writing
+
+**[tio.cc.cc](https://tio.cc.cc)**
+<br>My cc.cc profile page
+
+**[thio.qzz.io](https://thio.qzz.io)**
+<br>My personal site — note: it contains a lot of errors, so don't trust it as a source. This site is the accurate one.
+
+Old work is part of the work: earlier sites stay online, and nothing gets quietly deleted.

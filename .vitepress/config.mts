@@ -1,24 +1,18 @@
 import { defineConfig } from 'vitepress'
 
-const siteUrl = 'https://thio.cc.cd'
-const ogTitle = 'Flessan — M. Thio Saputra'
-const ogDescription =
-  'Developer, student, musician, and maker of small things that become larger systems. GDIPS founder, building from Banjarmasin, Indonesia.'
-const ogImage = `${siteUrl}/images/flessan-banner.png`
+const ogDescription = `Flessan's projects, writing, and communities`
+const ogImage = 'https://thio.cc.cd/images/flessan-banner.png'
+const ogTitle = `Flessan's home`
+const ogUrl = 'https://thio.cc.cd'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'Flessan',
-  titleTemplate: ':title — M. Thio Saputra',
-  description: ogDescription,
-  appearance: 'dark',
-  lastUpdated: true,
+  title: 'flessan',
+  description: "flessan's home",
 
-  // README.md is repo documentation, not site content
-  srcExclude: ['README.md'],
-
+  // Cloudflare Pages: build output is .vitepress/dist (see package.json / README)
   cleanUrls: true,
-
+  srcExclude: ['README.md'],
   sitemap: {
     hostname: 'https://thio.cc.cd'
   },
@@ -30,43 +24,19 @@ export default defineConfig({
     }
   },
 
-  head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/images/flessan-icon-64.png' }],
-    ['link', { rel: 'apple-touch-icon', href: '/images/flessan-icon-180.png' }],
-    ['meta', { name: 'theme-color', content: '#c8102e' }],
-    ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: ogTitle }],
-    ['meta', { property: 'og:image', content: ogImage }],
-    ['meta', { property: 'og:url', content: siteUrl }],
-    ['meta', { property: 'og:description', content: ogDescription }],
-    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
-    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
-    [
-      'link',
-      {
-        rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap'
-      }
-    ]
-  ],
-
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: '/images/flessan-icon-64.png',
-
     nav: [
-      { text: 'About', link: '/about' },
-      { text: 'Projects', link: '/projects' },
-      { text: 'GDIPS', link: '/gdips' },
       { text: 'Blog', link: '/blog' },
       {
-        text: 'More',
-        items: [
+        text: 'More', items: [
+          { text: 'About', link: '/about' },
+          { text: 'Projects', link: '/projects' },
+          { text: 'GDIPS', link: '/gdips' },
           { text: 'Now', link: '/now' },
           { text: 'Timeline', link: '/timeline' },
           { text: 'Ecosystem', link: '/ecosystem' },
-          { text: 'Support', link: '/support' }
+          { text: 'Support', link: '/support' },
         ]
       }
     ],
@@ -78,27 +48,20 @@ export default defineConfig({
       { icon: 'discord', link: 'https://discord.gg/6HEyQBcM6E' },
       { icon: 'instagram', link: 'https://www.instagram.com/flethio' },
       { icon: 'youtube', link: 'https://youtube.com/@flethio' },
-      { icon: 'linkedin', link: 'https://www.linkedin.com/in/flessan' }
     ],
 
     footer: {
-      message: 'Dibangun dengan VitePress · site code under MIT',
-      copyright: 'Copyright © 2025–2026 M. Thio Saputra (Flessan) · Banjarmasin, Indonesia'
+      message: `Released under the MIT License`,
+      copyright: 'Copyright © 2025-present M. Thio Saputra',
     },
-
-    docFooter: {
-      prev: 'Sebelumnya',
-      next: 'Selanjutnya'
-    },
-
-    outlineTitle: 'Di halaman ini',
-    returnToTopLabel: 'Kembali ke atas',
-    darkModeSwitchLabel: 'Tema',
-    lightModeSwitchTitle: 'Ganti ke tema terang',
-    darkModeSwitchTitle: 'Ganti ke tema gelap',
-
-    lastUpdated: {
-      text: 'Terakhir diperbarui'
-    }
-  }
+  },
+  head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/images/flessan-icon.png' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: ogTitle }],
+    ['meta', { property: 'og:image', content: ogImage }],
+    ['meta', { property: 'og:url', content: ogUrl }],
+    ['meta', { property: 'og:description', content: ogDescription }],
+    ['meta', { name: 'theme-color', content: '#7eaf90' }],
+  ],
 })

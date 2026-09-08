@@ -1,5 +1,5 @@
 ---
-title: The internet of Thio
+title: Many small sites
 author:
   name: M. Thio Saputra
 date: 2026-08-24
@@ -9,7 +9,7 @@ head:
       content: website
   - - meta
     - property: og:title
-      content: The internet of Thio
+      content: Many small sites
   - - meta
     - property: og:image
       content: https://thio.cc.cd/images/covers/internet-of-thio.png
@@ -18,7 +18,7 @@ head:
       content: https://thio.cc.cd/blog/internet-of-thio
   - - meta
     - property: og:description
-      content: Why I build many small rooms instead of one big website
+      content: Why I keep lots of little websites instead of one big one
   - - meta
     - name: twitter:card
       content: summary_large_image
@@ -26,75 +26,30 @@ head:
 
 <BlogCover src="/images/covers/internet-of-thio.png" />
 
-# The internet of Thio
+# Many small sites
 
-<p class="post-meta mono">by M. Thio Saputra · 2026-08-24 · Banjarmasin, WITA</p>
+People ask why my corner of the web looks like a small town instead of a single website. There's [flessan.pages.dev](https://flessan.pages.dev), [flessan.github.io](https://flessan.github.io), [gdips.pages.dev](https://gdips.pages.dev), [tune.thio.cc.cd](https://tune.thio.cc.cd), [text.thio.qzz.io](https://text.thio.qzz.io), and now this site at [thio.cc.cd](https://thio.cc.cd). This post is why.
 
-People ask why my corner of the web looks like a small town instead of a
-single website. There's the main house at
-[thio.qzz.io](https://thio.qzz.io), a [projects rack](https://projects.thio.qzz.io),
-a [lab](https://lab.thio.qzz.io), a [games room](https://games.thio.qzz.io),
-a [music room](https://music.thio.qzz.io), a [tools drawer](https://tools.thio.qzz.io),
-an [archive](https://archive.thio.qzz.io), and now this site at
-[thio.cc.cd](https://thio.cc.cd). I call it **the internet of Thio** — and
-this post is why it exists.
+## Sites, not pages
 
-## Rooms, not pages
+A big website wants to be everything at once: portfolio, blog, shop, profile. It grows heavy, and every change risks breaking something else. A pile of small sites behaves differently:
 
-A big website wants to be everything at once: portfolio, blog, shop, profile.
-It grows heavy, and every change risks breaking something else. A network of
-small rooms behaves differently:
+- **Each site has one job.** GDIPS is a Geometry Dash server. teksreceh is a text toy. resontune is music. None of them pretend to be anything else.
+- **Each site can be rebuilt** without evicting the others. When I learned React, then Rust, then Go, I started new sites instead of migrating a monolith.
+- **Old sites stay standing.** flessan.pages.dev, my first little site, is still online. Old work is part of the work.
 
-- **Each room has one job.** The music room makes music. The tools drawer
-  holds small utilities that keep your input local. The archive just
-  remembers.
-- **Each room can be rebuilt** without evicting the others. When I learned
-  Eleventy, then React, then Rust, I rebuilt rooms instead of migrating a
-  monolith.
-- **Old rooms stay standing.** [flessan.pages.dev](https://flessan.pages.dev),
-  my first site, is still online. Old work is part of the work — screenshots,
-  school assignments, abandoned interfaces and all, kept visible without
-  pretending they were finished.
+## Learning by building
 
-## The internet begins beside a river
+The deeper reason is simple: building real things is how I learn. Reading about Wayland teaches me a little. Building [slate-de](https://github.com/flessan/slate-de) teaches me a lot. Every site in the pile started as a question — *can a QR scanner be fully local? what does a GDPS need? can a text generator be a museum?* — and became an answer you can visit.
 
-I live in **Banjarmasin**, South Kalimantan — the city of a thousand rivers.
-The internet here isn't abstract; it starts in a real place, on real
-riverbanks, on phones and school computers. That's the whole vibe I want the
-network to have: local, grounded, warm. A place, not a product.
+## A map of the pile
 
-## Learning by making things real
+If you want to wander, the full list is on the [ecosystem page](../ecosystem.md). A quick tour:
 
-The deeper reason is my motto: **I learn by making things real.** Reading
-about Wayland teaches me a little. Building
-[slate-de](https://github.com/flessan/slate-de) teaches me a lot. Every room
-in the network started as a question — *can I build a browser instrument?
-can a QR scanner be fully local? what does a GDPS need?* — and became an
-answer you can visit.
+- 🎮 [gdips.pages.dev](https://gdips.pages.dev) — GDIPS, the campfire
+- 🎵 [tune.thio.cc.cd](https://tune.thio.cc.cd) — resontune, music without the paywall
+- 🗿 [text.thio.qzz.io](https://text.thio.qzz.io) — teksreceh, the text museum
+- 🖥️ [slate.dotfiles.qzz.io](https://slate.dotfiles.qzz.io) — slate-de, the d3sktop
+- 📦 [flessan.github.io](https://flessan.github.io) — the project index
 
-That's also why the [archive](https://archive.thio.qzz.io) matters. The
-earlier answers aren't embarrassing drafts; they're the proof of the journey.
-
-## A map of the town
-
-If you want to wander, the full map is on the
-[ecosystem page](/ecosystem) of this site. A quick tour:
-
-- 🏠 [thio.qzz.io](https://thio.qzz.io) — the main house
-- 🧰 [projects](https://projects.thio.qzz.io) — all 44 project objects
-- 🧪 [lab](https://lab.thio.qzz.io) — canvas, wallpapers, visual systems
-- 🎮 [games](https://games.thio.qzz.io) — browser games, guarded by TAKO
-- 🎵 [music](https://music.thio.qzz.io) — real sources, no invented tracks
-- 🔧 [tools](https://tools.thio.qzz.io) — utilities that keep input local
-- 🗄️ [archive](https://archive.thio.qzz.io) — old work, kept honest
-- 🎶 [tune.thio.cc.cd](https://tune.thio.cc.cd) — resontune, music without the paywall
-
-Every room has a door. Every door is open.
-
-<style scoped>
-.post-meta {
-  margin: -1.2rem 0 2.4rem;
-  font-size: 0.78rem;
-  color: var(--vp-c-text-3);
-}
-</style>
+Every site has a door. Every door is open.
