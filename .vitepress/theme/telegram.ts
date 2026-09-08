@@ -145,3 +145,19 @@ export function linkify(text: string): Segment[] {
   if (last < text.length) out.push({ text: text.slice(last) })
   return out
 }
+
+/**
+ * Unique http(s) URLs mentioned in a text, trailing punctuation stripped,
+ * in order of appearance. Used to render link preview cards.
+ */
+export function extractUrls(text: string): string[] {
+  const urls: string[] = []
+  const re = /https?:\/\/[^\s<>"')]+/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(text))) {
+    let url = m[0]
+    while (url.length && '.,;:!?'.includes(url[url.length - 1])) url = url.slice(0, -1)
+    if (url && !urls.includes(url)) urls.push(url)
+  }
+  return urls
+}

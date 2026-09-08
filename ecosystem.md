@@ -20,51 +20,40 @@ head:
 
 # Ecosystem
 
-I keep lots of little places online instead of one big website. These are the ones linked from my public profiles and repositories:
+I keep lots of little places online instead of one big website. These are the ones linked from my public profiles and repositories — each card embeds the site itself, with its live title, description, and preview image fetched straight from the target:
 
-**[flessan.pages.dev](https://flessan.pages.dev)**
-<br>My first little site — programs, photos, and projects
+<div class="eco-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin:1.25rem 0 1rem;">
 
-**[flessan.github.io](https://flessan.github.io)**
-<br>"index of /" — a project index fed live from the GitHub API
+<LinkPreview url="https://flessan.pages.dev" description="My first little site — programs, photos, and projects"></LinkPreview>
 
-**[gdips.pages.dev](https://gdips.pages.dev)**
-<br>GDIPS — the Geometry Dash Indonesia Private Server
+<LinkPreview url="https://flessan.github.io" description="&quot;index of /&quot; — a project index fed live from the GitHub API"></LinkPreview>
 
-**[tune.thio.cc.cd](https://tune.thio.cc.cd)**
-<br>resontune — community-driven music, without the paywall
+<LinkPreview url="https://gdips.pages.dev" description="GDIPS — the Geometry Dash Indonesia Private Server"></LinkPreview>
 
-**[text.thio.qzz.io](https://text.thio.qzz.io)**
-<br>teksreceh — Generator Teks Paling Ngaco Se-Indonesia
+<LinkPreview url="https://tune.thio.cc.cd" description="resontune — community-driven music, without the paywall"></LinkPreview>
 
-**[slate.dotfiles.qzz.io](https://slate.dotfiles.qzz.io)**
-<br>slate-de — the command line is your d3sktop
+<LinkPreview url="https://text.thio.qzz.io" description="teksreceh — Generator Teks Paling Ngaco Se-Indonesia"></LinkPreview>
 
-**[dotfiles.qzz.io](https://dotfiles.qzz.io)**
-<br>Linux dotfiles, organized
+<LinkPreview url="https://slate.dotfiles.qzz.io" description="slate-de — the command line is your d3sktop"></LinkPreview>
 
-**[anon.thio.qzz.io](https://anon.thio.qzz.io)**
-<br>Anonimbuz — anonymous, text-first social platform
+<LinkPreview url="https://dotfiles.qzz.io" description="Linux dotfiles, organized"></LinkPreview>
 
-**[adbpure.pages.dev](https://adbpure.pages.dev)**
-<br>AdbPureFlow — Android APK lifecycle automation
+<LinkPreview url="https://anon.thio.qzz.io" description="Anonimbuz — anonymous, text-first social platform"></LinkPreview>
 
-**[tmy.pages.dev](https://tmy.pages.dev)**
-<br>TMY — transcript mode for YouTube
+<LinkPreview url="https://adbpure.pages.dev" description="AdbPureFlow — Android APK lifecycle automation"></LinkPreview>
 
-**[tyibon.pages.dev](https://tyibon.pages.dev)**
-<br>Tyibon — platform pembuat twibbon online
+<LinkPreview url="https://tmy.pages.dev" description="TMY — transcript mode for YouTube"></LinkPreview>
 
-**[flessan.github.io/RECQR](https://flessan.github.io/RECQR/)**
-<br>RECQR — realtime QR scanner
+<LinkPreview url="https://tyibon.pages.dev" description="Tyibon — platform pembuat twibbon online"></LinkPreview>
 
-**[fless.hashnode.dev](https://fless.hashnode.dev)**
-<br>My longer writing
+<LinkPreview url="https://flessan.github.io/RECQR/" description="RECQR — realtime QR scanner"></LinkPreview>
 
-**[tio.cc.cc](https://tio.cc.cc)**
-<br>My cc.cc profile page
+<LinkPreview url="https://fless.hashnode.dev" description="My longer writing"></LinkPreview>
 
-**[thio.qzz.io](https://thio.qzz.io)**
-<br>My personal site — note: it contains a lot of errors, so don't trust it as a source. This site is the accurate one.
+<LinkPreview url="https://tio.cc.cc" description="My cc.cc profile page"></LinkPreview>
+
+<LinkPreview url="https://thio.qzz.io" description="My personal site — note: it contains a lot of errors, so don't trust it as a source. This site is the accurate one."></LinkPreview>
+
+</div>
 
 Old work is part of the work: earlier sites stay online, and nothing gets quietly deleted.

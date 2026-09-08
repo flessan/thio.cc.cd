@@ -13,6 +13,7 @@ import RepoExplorer from './components/RepoExplorer.vue'
 import GithubActivity from './components/GithubActivity.vue'
 import TelegramFeed from './components/TelegramFeed.vue'
 import LatestUpdate from './components/LatestUpdate.vue'
+import LinkPreview from './components/LinkPreview.vue'
 import NotFound from './components/NotFound.vue'
 
 function openSearch() {
@@ -46,6 +47,7 @@ export default {
     app.component('GithubActivity', GithubActivity)
     app.component('TelegramFeed', TelegramFeed)
     app.component('LatestUpdate', LatestUpdate)
+    app.component('LinkPreview', LinkPreview)
 
     // Ctrl K / Cmd K (or "/" outside inputs) opens search, anywhere on the site
     if (typeof window !== 'undefined' && !hotkeyBound) {
