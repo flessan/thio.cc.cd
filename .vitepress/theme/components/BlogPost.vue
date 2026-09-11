@@ -6,10 +6,10 @@ defineProps({
 
 <template>
   <div class="container">
-    <img :src="image" />
+    <img :src="image" loading="lazy" decoding="async" alt="" />
     <div>
       <slot />
-    </div>    
+    </div>
   </div>
 </template>
 
@@ -33,10 +33,29 @@ img {
   border-radius: 0.5rem 0 0 0.5rem;
 }
 
-@media (max-width: 1260px) {
-  img {
-    display: none;
+/* phones and tablets: keep the cover photo, stacked above the text
+   (it used to be hidden entirely below 1260px) */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: stretch;
   }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 12rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+  .container div {
+    padding: 0.9rem 1rem 1rem;
+  }
+}
+
+@media (max-width: 1260px) {
   .container {
     margin-bottom: 0;
     margin-top: 0;
