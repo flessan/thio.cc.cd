@@ -225,30 +225,48 @@ export default defineConfig({
 
   // Generate /feed.xml (RSS 2.0) into the build output - works on any static host
   buildEnd({ outDir }) {
+    const feedUrl = `${siteUrl}/feed.xml`
+    const feedTitle = "Flessan's blog"
+    const latestDate = posts.length
+      ? new Date(`${posts[0].date}T00:00:00Z`).toUTCString()
+      : new Date(0).toUTCString()
+
     const items = posts
-      .map(
-        (p) => `    <item>
+      .map((p) => {
+        const postUrl = `${siteUrl}/blog/${p.slug}`
+        const pubDate = new Date(`${p.date}T00:00:00Z`).toUTCString()
+
+        return `    <item>
       <title>${escapeXml(p.title)}</title>
-      <link>${siteUrl}/blog/${p.slug}</link>
-      <guid isPermaLink="true">${siteUrl}/blog/${p.slug}</guid>
+      <link>${postUrl}</link>
+      <guid isPermaLink="true">${postUrl}</guid>
       <description>${escapeXml(p.desc)}</description>
-      <pubDate>${new Date(p.date).toUTCString()}</pubDate>
+      <pubDate>${pubDate}</pubDate>
+      <author>tio@cc.cc (M. Thio Saputra)</author>
+      <category>Blog</category>
     </item>`
-      )
-      .join('\n')
+      })
+      .join('\\n')
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${escapeXml("Flessan's blog")}</title>
+    <title>${escapeXml(feedTitle)}</title>
     <link>${siteUrl}</link>
     <description>${escapeXml(ogDescription)}</description>
     <language>en</language>
+    <lastBuildDate>${latestDate}</lastBuildDate>
+    <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
+    <image>
+      <url>${siteUrl}/images/flessan-icon-180.png</url>
+      <title>${escapeXml(feedTitle)}</title>
+      <link>${siteUrl}</link>
+    </image>
 ${items}
   </channel>
 </rss>
 `
-    fs.writeFileSync(`${outDir}/feed.xml`, xml)
+    fs.writeFileSync(`${outDir}/feed.xml`, xml, 'utf8')
   },
 
   head: [
