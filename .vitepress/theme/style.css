@@ -647,3 +647,118 @@ html.motion-enabled .vp-doc .blog-cover.motion-reveal.is-visible {
     transform: none !important;
   }
 }
+
+
+/* Animated dark/light mode: a circular reveal grows from the actual toggle. */
+:root {
+  --theme-toggle-x: 88vw;
+  --theme-toggle-y: 32px;
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html,
+body,
+#app,
+.VPNavBar,
+.VPContent,
+.VPDoc,
+.vp-doc,
+.VPFooter,
+.VPSidebar {
+  transition:
+    background-color 540ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 420ms ease,
+    border-color 420ms ease;
+}
+
+::view-transition-group(root) {
+  animation-duration: 760ms;
+}
+
+::view-transition-old(root) {
+  animation: flessan-theme-old 760ms ease both;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: flessan-theme-reveal 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
+  mix-blend-mode: normal;
+}
+
+@keyframes flessan-theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
+  }
+  to {
+    clip-path: circle(150vmax at var(--theme-toggle-x) var(--theme-toggle-y));
+  }
+}
+
+@keyframes flessan-theme-old {
+  from { opacity: 1; }
+  to { opacity: 0.96; }
+}
+
+.VPSwitchAppearance {
+  transform-origin: center;
+  transition:
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 260ms ease,
+    border-color 260ms ease;
+}
+
+.VPSwitchAppearance:hover {
+  transform: rotate(-7deg) scale(1.06);
+}
+
+.VPSwitchAppearance:active {
+  transform: rotate(7deg) scale(0.94);
+}
+
+.VPSwitchAppearance svg {
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.VPSwitchAppearance:hover svg {
+  transform: rotate(28deg);
+}
+
+html.theme-switching .VPNavBar,
+html.theme-switching .VPContent,
+html.theme-switching .VPDoc,
+html.theme-switching .VPFooter {
+  transition-duration: 760ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+
+  html,
+  body,
+  #app,
+  .VPNavBar,
+  .VPContent,
+  .VPDoc,
+  .vp-doc,
+  .VPFooter,
+  .VPSidebar,
+  .VPSwitchAppearance,
+  .VPSwitchAppearance svg {
+    transition: none !important;
+  }
+
+  .VPSwitchAppearance:hover,
+  .VPSwitchAppearance:active,
+  .VPSwitchAppearance:hover svg {
+    transform: none !important;
+  }
+}
