@@ -153,6 +153,7 @@ export default {
     // click any content image to view it full-size (styles injected in JS,
     // so style.css keeps its original bytes)
     installLightbox()
+    installMotion()
 
     // Ctrl K / Cmd K (or "/" outside inputs) opens search, anywhere on the site
     if (typeof window !== 'undefined' && !hotkeyBound) {
