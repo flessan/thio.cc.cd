@@ -34,6 +34,100 @@ function openSearch() {
 }
 
 let hotkeyBound = false
+let motionInstalled = false
+
+/**
+ * Add subtle entrance animations to article content as it enters the viewport.
+ * Uses one observer for the whole site, and fails open when motion APIs are
+ * unavailable or the visitor prefers reduced motion.
+ */
+function installMotion() {
+  if (typeof window === 'undefined' || motionInstalled) return
+  motionInstalled = true
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  if (prefersReducedMotion.matches || !('IntersectionObserver' in window)) return
+
+  const selector = [
+    '.vp-doc > div > h1',
+    '.vp-doc > div > h2',
+    '.vp-doc > div > h3',
+    '.vp-doc > div > p',
+    '.vp-doc > div > ul',
+    '.vp-doc > div > ol',
+    '.vp-doc > div > blockquote',
+    '.vp-doc > div > pre',
+    '.vp-doc > div > div[class*="language-"]',
+    '.vp-doc .container',
+    '.vp-doc .blog-cover',
+    '.vp-doc .VPButton',
+    '.vp-doc .link-preview',
+    '.vp-doc .repo-explorer',
+    '.vp-doc .telegram-feed'
+  ].join(',')
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue
+      const element = entry.target as HTMLElement
+      element.classList.add('is-visible')
+      observer.unobserve(element)
+    }
+  }, {
+    threshold: 0.08,
+    rootMargin: '0px 0px -6% 0px'
+  })
+
+  const scan = () => {
+    if (prefersReducedMotion.matches) {
+      document.documentElement.classList.remove('motion-enabled')
+      document.querySelectorAll('.motion-reveal').forEach((node) => {
+        node.classList.add('is-visible')
+        observer.unobserve(node)
+      })
+      return
+    }
+
+    const elements = Array.from(document.querySelectorAll<HTMLElement>(selector))
+      .filter((element) => !element.classList.contains('motion-reveal'))
+
+    elements.forEach((element, index) => {
+      element.classList.add('motion-reveal')
+      element.style.setProperty('--motion-index', String(index % 6))
+      observer.observe(element)
+    })
+
+    document.documentElement.classList.add('motion-enabled')
+  }
+
+  // One observer handles initial page content and VitePress client-side navigation.
+  const mutationObserver = new MutationObserver(() => {
+    window.requestAnimationFrame(scan)
+  })
+
+  const start = () => {
+    scan()
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true })
+  } else {
+    start()
+  }
+
+  prefersReducedMotion.addEventListener('change', (event) => {
+    if (event.matches) {
+      document.documentElement.classList.remove('motion-enabled')
+      document.querySelectorAll('.motion-reveal').forEach((node) => {
+        node.classList.add('is-visible')
+        observer.unobserve(node)
+      })
+    } else {
+      scan()
+    }
+  })
+}
 
 export default {
   extends: DefaultTheme,
