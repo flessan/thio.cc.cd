@@ -1,64 +1,125 @@
-<script setup>
-defineProps({
-  image: String
-})
+<script setup lang="ts">
+defineProps<{
+  image?: string
+  category?: string
+}>()
 </script>
 
 <template>
-  <div class="container">
-    <img :src="image" loading="lazy" decoding="async" alt="" />
-    <div>
+  <article class="container" :class="{ 'has-image': image }">
+    <img v-if="image" :src="image" loading="lazy" decoding="async" alt="" />
+    <div v-else class="category-cover" aria-hidden="true">
+      <span>{{ category || 'BUILD NOTES' }}</span>
+    </div>
+    <div class="post-content">
       <slot />
     </div>
-  </div>
+  </article>
 </template>
 
 <style scoped>
 .container {
   display: flex;
-  gap: 2rem;
-  margin-top: 3rem;
-  margin-bottom: 3rem;
+  gap: 1.5rem;
+  margin: 1.25rem 0;
   background-color: var(--vp-c-bg-alt);
-  border-radius: 0.5rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.85rem;
   align-items: center;
-  div {
-    padding-right: 1rem;
-  }
-}
-img {
-  width: 30%;
-  height: 10rem;
-  object-fit: cover;
-  border-radius: 0.5rem 0 0 0.5rem;
+  overflow: hidden;
+  transition: border-color 180ms ease, transform 180ms ease, background-color 180ms ease;
 }
 
-/* phones and tablets: keep the cover photo, stacked above the text
-   (it used to be hidden entirely below 1260px) */
+.container:hover {
+  border-color: var(--vp-c-brand-1);
+  transform: translateY(-2px);
+}
+
+img,
+.category-cover {
+  flex: 0 0 30%;
+  width: 30%;
+  min-height: 10rem;
+  height: 10rem;
+  object-fit: cover;
+}
+
+img {
+  display: block;
+}
+
+.category-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 1.25rem;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.post-content {
+  min-width: 0;
+  flex: 1;
+  padding: 1.2rem 1.35rem 1.2rem 0;
+}
+
+.post-content :deep(p) {
+  margin: 0.35rem 0;
+  line-height: 1.65;
+}
+
+.post-content :deep(p:first-child) {
+  margin-top: 0;
+}
+
+.post-content :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.post-content :deep(a) {
+  text-underline-offset: 0.18em;
+}
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
-    gap: 0;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
     align-items: stretch;
+    gap: 0;
+    margin: 1rem 0;
   }
-  img {
-    display: block;
+
+  img,
+  .category-cover {
+    flex: none;
     width: 100%;
     height: auto;
+    min-height: 5.5rem;
     max-height: 12rem;
-    border-radius: 0.5rem 0.5rem 0 0;
   }
-  .container div {
-    padding: 0.9rem 1rem 1rem;
+
+  .category-cover {
+    padding: 1.1rem;
+  }
+
+  .post-content {
+    padding: 1rem 1.1rem 1.1rem;
   }
 }
 
-@media (max-width: 1260px) {
+@media (prefers-reduced-motion: reduce) {
   .container {
-    margin-bottom: 0;
-    margin-top: 0;
+    transition: none;
+  }
+
+  .container:hover {
+    transform: none;
   }
 }
 </style>
