@@ -121,8 +121,9 @@ export default defineConfig({
       : `${siteUrl}/${rel.replace(/\.md$/, '').replace(/index\.md$/, '')}`
 
     const fmImage = pageData.frontmatter.image as string | undefined
+    const isAbsoluteImage = fmImage?.startsWith('https://') || fmImage?.startsWith('http://')
     const image = fmImage
-      ? (/^https?:\\/\\//i.test(fmImage) ? fmImage : `${siteUrl}${fmImage}`)
+      ? (isAbsoluteImage ? fmImage : `${siteUrl}${fmImage}`)
       : ogImage
     const dims = image.includes('/covers/') ? coverDims : bannerDims
 
