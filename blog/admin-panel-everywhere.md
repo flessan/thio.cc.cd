@@ -2,9 +2,11 @@
 title: "Admin Panel Everywhere: from endpoints to a workspace"
 author:
   name: M. Thio Saputra
-date: "2026-10-18"
-description: Designing a self-hostable admin workspace for APIs, CRUD operations, OpenAPI, and structured data.
+date: "2026-10-18"description: Designing a self-hostable admin workspace for APIs, CRUD operations, OpenAPI, and structured data.
+image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&h=840&q=85"
 ---
+
+<BlogCover src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&h=840&q=85" alt="Analytics charts and dashboards on computer screens" credit="Image via Unsplash" license-url="https://unsplash.com/license" />
 
 # Admin Panel Everywhere: from endpoints to a workspace
 
