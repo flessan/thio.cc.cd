@@ -21,32 +21,43 @@ Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Cop
 
 ## Latest Posts
 
-<BlogPost image="/images/covers/hello-internet.webp">
+<BlogPost category="Language design">
+
+**[Kontekstual: code in the language we speak](./blog/kontekstual-language.md)**
+<br>Designing a beginner-friendly programming language that reads naturally in Indonesian
+<br>October 18, 2026
+
+</BlogPost>
+
+<BlogPost category="Storage & APIs">
+
+**[Telegraph Cloud: files, APIs, and a Telegram-backed backend](./blog/telegraph-cloud.md)**
+<br>A reusable storage and document API for the rest of the project ecosystem
+<br>October 18, 2026
+
+</BlogPost>
+
+<BlogPost category="Developer tools">
+
+**[Admin Panel Everywhere: from endpoints to a workspace](./blog/admin-panel-everywhere.md)**
+<br>A self-hostable place to inspect APIs and edit structured data
+<br>October 18, 2026
+
+</BlogPost>
+
+<BlogPost category="Windows tooling">
+
+**[ANTO-LTG: a toolkit for the Windows repair bench](./blog/anto-ltg-toolkit.md)**
+<br>A clearer workflow for drivers, software setup, and Windows maintenance
+<br>October 18, 2026
+
+</BlogPost>
 
 **[hello, internet](./blog/hello-internet.md)**
 <br>A new home at thio.cc.cd - who I am, and what this site will hold
 <br>September 8, 2026
 
-</BlogPost>
-
-<BlogPost image="/images/covers/slate-de.webp">
-
-**[the command line is your d3sktop](./blog/slate-de.md)**
-<br>Building slate-de - a CLI-based, pane-oriented Wayland desktop environment in Rust
-<br>September 4, 2026
-
-</BlogPost>
-
-<BlogPost image="/images/covers/gdips-campfire.webp">
-
-**[GDIPS: a digital campfire](./blog/gdips-reborn.md)**
-<br>How a free-server list grew into a community-driven Geometry Dash private server
-<br>August 28, 2026
-
-</BlogPost>
-
 Checkout all posts at the [Blog](./blog.md) - or subscribe with [RSS](./feed.xml).
-
 <GithubActivity :limit="3"></GithubActivity>
 
 ## Other resources
