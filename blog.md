@@ -9,7 +9,7 @@ Here are some of my latest writings about the web, automation, and the projects 
 
 Subscribe with [RSS](./feed.xml)<CopyButton text="https://thio.cc.cd/feed.xml" label="Copy feed URL"></CopyButton> - quick updates also land on my [Telegram channel](https://t.me/chfless)<CopyButton text="https://t.me/chfless" label="Copy channel link"></CopyButton>, see the [News page](./news.md).
 
-<BlogPost category="Language design">
+<BlogPost image="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&h=840&q=85" category="Language design">
 
 **[Kontekstual: code in the language we speak](./blog/kontekstual-language.md)**
 <br>Designing a beginner-friendly programming language that reads naturally in Indonesian
@@ -17,7 +17,7 @@ Subscribe with [RSS](./feed.xml)<CopyButton text="https://thio.cc.cd/feed.xml" l
 
 </BlogPost>
 
-<BlogPost category="Storage & APIs">
+<BlogPost image="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=840&q=85" category="Storage & APIs">
 
 **[Telegraph Cloud: files, APIs, and a Telegram-backed backend](./blog/telegraph-cloud.md)**
 <br>A reusable storage and document API for the rest of the project ecosystem
@@ -25,7 +25,7 @@ Subscribe with [RSS](./feed.xml)<CopyButton text="https://thio.cc.cd/feed.xml" l
 
 </BlogPost>
 
-<BlogPost category="Developer tools">
+<BlogPost image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&h=840&q=85" category="Developer tools">
 
 **[Admin Panel Everywhere: from endpoints to a workspace](./blog/admin-panel-everywhere.md)**
 <br>A self-hostable place to inspect APIs and edit structured data
@@ -33,7 +33,7 @@ Subscribe with [RSS](./feed.xml)<CopyButton text="https://thio.cc.cd/feed.xml" l
 
 </BlogPost>
 
-<BlogPost category="Windows tooling">
+<BlogPost image="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1600&h=840&q=85" category="Windows tooling">
 
 **[ANTO-LTG: a toolkit for the Windows repair bench](./blog/anto-ltg-toolkit.md)**
 <br>A clearer workflow for drivers, software setup, and Windows maintenance
