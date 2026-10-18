@@ -265,76 +265,174 @@ html {
 }
 
 
-/* Inset glass navigation: readable at the top of the page and while scrolling. */
+/* A deliberate floating header with reserved space for the page beneath it. */
 :root {
-  --flessan-nav-glass: rgba(250, 252, 250, 0.94);
-  --flessan-nav-border: rgba(45, 75, 55, 0.12);
+  --flessan-nav-glass: rgba(249, 251, 249, 0.97);
+  --flessan-nav-border: rgba(45, 75, 55, 0.13);
+  --flessan-nav-shadow: 0 10px 34px rgba(20, 35, 25, 0.10);
 }
 
 .dark {
-  --flessan-nav-glass: rgba(23, 25, 24, 0.94);
-  --flessan-nav-border: rgba(255, 255, 255, 0.10);
+  --flessan-nav-glass: rgba(24, 26, 25, 0.97);
+  --flessan-nav-border: rgba(255, 255, 255, 0.11);
+  --flessan-nav-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
 }
 
-.VPNavBar,
-.VPNavBar.top {
-  background: var(--flessan-nav-glass) !important;
-  border-bottom: 1px solid var(--flessan-nav-border);
-  -webkit-backdrop-filter: blur(18px) saturate(145%);
-  backdrop-filter: blur(18px) saturate(145%);
-  box-shadow: 0 8px 28px rgba(20, 35, 25, 0.07);
-  transition: background-color 180ms ease, box-shadow 180ms ease;
+/* Desktop: a centered glass bar, with the brand anchored left and navigation right. */
+@media (min-width: 960px) {
+  .VPNavBar,
+  .VPNavBar.top {
+    position: fixed !important;
+    top: 14px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
+    width: min(1380px, calc(100vw - 48px)) !important;
+    max-width: none !important;
+    height: 64px;
+    box-sizing: border-box;
+    overflow: visible;
+    border: 1px solid var(--flessan-nav-border);
+    border-radius: 18px;
+    background: var(--flessan-nav-glass) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    backdrop-filter: blur(22px) saturate(150%);
+    box-shadow: var(--flessan-nav-shadow);
+    transition: background-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .VPNavBar .container {
+    width: 100%;
+    max-width: none !important;
+    height: 100%;
+    margin: 0;
+    padding-inline: clamp(18px, 2.2vw, 30px);
+    box-sizing: border-box;
+  }
+
+  .VPNavBarTitle {
+    flex: 0 0 auto;
+  }
+
+  .VPNavBarTitle .title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: var(--vp-c-text-1) !important;
+    font-size: 1rem;
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    text-decoration: none;
+  }
+
+  .VPNavBarTitle .title::before {
+    content: '';
+    display: block;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    transform: none;
+    border: 2px solid var(--vp-c-bg);
+    border-radius: 50%;
+    background: url('/images/flessan-avatar.png') center / cover no-repeat;
+    box-shadow: 0 0 0 1px var(--flessan-nav-border);
+  }
+
+  .VPNavBar .content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .VPNavBar .content-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .VPNavBarSearch {
+    flex: 0 0 auto;
+    margin-left: 1.2rem;
+  }
+
+  .VPNavBarSearch .DocSearch-Button,
+  .VPNavBarSearch button {
+    min-height: 38px;
+    border: 1px solid var(--flessan-nav-border);
+    border-radius: 11px;
+    background: var(--vp-c-bg-soft);
+  }
+
+  .VPNavBarMenu {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: auto;
+  }
+
+  .VPNavBarMenuLink,
+  .VPNavBarMenuGroup .button {
+    min-height: 38px;
+    padding-inline: 12px;
+    border-radius: 11px;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+
+  .VPNavBarMenuLink:hover,
+  .VPNavBarMenuGroup .button:hover {
+    background: var(--vp-c-bg-soft);
+  }
+
+  .VPNavBar .social-links {
+    gap: 11px;
+    margin-left: 8px;
+  }
+
+  .VPNavBar .divider {
+    opacity: 0.45;
+  }
 }
 
-.VPNavBar .container {
-  padding-inline: clamp(1rem, 3vw, 2.5rem);
-}
+/* Phones and tablets keep the familiar full-width header, never an off-screen pill. */
+@media (max-width: 959px) {
+  .VPNavBar,
+  .VPNavBar.top {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: var(--vp-nav-height);
+    transform: none;
+    border: 0;
+    border-bottom: 1px solid var(--flessan-nav-border);
+    border-radius: 0;
+    background: var(--flessan-nav-glass) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
+    box-shadow: 0 5px 20px rgba(15, 25, 18, 0.09);
+  }
 
-.VPNavBarMenu {
-  gap: 0.25rem;
+  .VPNavBar .container {
+    width: 100%;
+    max-width: none !important;
+    padding-inline: 16px;
+    box-sizing: border-box;
+  }
 }
 
 .VPNavBarMenuLink,
 .VPNavBarMenuGroup .button {
-  padding-inline: 0.85rem;
   border-radius: 10px;
 }
 
-.VPNavBarSearch .DocSearch-Button,
-.VPNavBarSearch button {
-  border-radius: 10px;
-}
-
-@media (min-width: 960px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    top: 12px;
-    left: max(16px, calc((100vw - 1360px) / 2));
-    right: max(16px, calc((100vw - 1360px) / 2));
-    width: auto;
-    overflow: visible;
-    border: 1px solid var(--flessan-nav-border);
-    border-radius: 16px;
-  }
-
-  .VPNavBar .container {
-    padding-inline: clamp(1.25rem, 2.4vw, 2.25rem);
-  }
-}
-
-@media (max-width: 959px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    border-left: 0;
-    border-right: 0;
-    border-top: 0;
-    border-radius: 0;
-    box-shadow: 0 4px 18px rgba(20, 35, 25, 0.06);
-  }
+.VPNavBar :where(button, a, input):focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
