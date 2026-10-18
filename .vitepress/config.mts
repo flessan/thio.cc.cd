@@ -122,7 +122,7 @@ export default defineConfig({
 
     const fmImage = pageData.frontmatter.image as string | undefined
     const image = fmImage
-      ? `${siteUrl}${fmImage}`
+      ? (/^https?:\\/\\//i.test(fmImage) ? fmImage : `${siteUrl}${fmImage}`)
       : ogImage
     const dims = image.includes('/covers/') ? coverDims : bannerDims
 
