@@ -2,9 +2,11 @@
 title: "Telegraph Cloud: files, APIs, and a Telegram-backed backend"
 author:
   name: M. Thio Saputra
-date: "2026-10-18"
-description: Building a Cloudflare-native storage service that turns Telegram-backed files into a practical API for other projects.
+date: "2026-10-18"description: Building a Cloudflare-native storage service that turns Telegram-backed files into a practical API for other projects.
+image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=840&q=85"
 ---
+
+<BlogCover src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=840&q=85" alt="Rows of servers representing cloud infrastructure" credit="Image via Unsplash" license-url="https://unsplash.com/license" />
 
 # Telegraph Cloud: files, APIs, and a Telegram-backed backend
 
