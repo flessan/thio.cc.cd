@@ -27,12 +27,17 @@ defineProps<{
   border-radius: 0.85rem;
   align-items: center;
   overflow: hidden;
-  transition: border-color 180ms ease, transform 180ms ease, background-color 180ms ease;
+  transition:
+    border-color 280ms ease,
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 280ms ease,
+    box-shadow 520ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .container:hover {
   border-color: var(--vp-c-brand-1);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(20, 35, 25, 0.10);
 }
 
 img,
@@ -46,6 +51,11 @@ img,
 
 img {
   display: block;
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.container:hover img {
+  transform: scale(1.045);
 }
 
 .category-cover {
