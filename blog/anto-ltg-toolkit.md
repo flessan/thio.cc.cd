@@ -2,7 +2,8 @@
 title: "ANTO-LTG: a toolkit for the Windows repair bench"
 author:
   name: M. Thio Saputra
-date: "2026-10-18"description: Planning a practical Windows technician toolkit for drivers, software setup, and repeatable repair workflows.
+date: "2026-10-18"
+description: Planning a practical Windows technician toolkit for drivers, software setup, and repeatable repair workflows.
 image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1600&h=840&q=85"
 ---
 
