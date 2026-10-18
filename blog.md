@@ -9,6 +9,38 @@ Here are some of my latest writings about the web, automation, and the projects 
 
 Subscribe with [RSS](./feed.xml)<CopyButton text="https://thio.cc.cd/feed.xml" label="Copy feed URL"></CopyButton> - quick updates also land on my [Telegram channel](https://t.me/chfless)<CopyButton text="https://t.me/chfless" label="Copy channel link"></CopyButton>, see the [News page](./news.md).
 
+<BlogPost category="Language design">
+
+**[Kontekstual: code in the language we speak](./blog/kontekstual-language.md)**
+<br>Designing a beginner-friendly programming language that reads naturally in Indonesian
+<br>October 18, 2026
+
+</BlogPost>
+
+<BlogPost category="Storage & APIs">
+
+**[Telegraph Cloud: files, APIs, and a Telegram-backed backend](./blog/telegraph-cloud.md)**
+<br>A reusable storage and document API for the rest of the project ecosystem
+<br>October 18, 2026
+
+</BlogPost>
+
+<BlogPost category="Developer tools">
+
+**[Admin Panel Everywhere: from endpoints to a workspace](./blog/admin-panel-everywhere.md)**
+<br>A self-hostable place to inspect APIs and edit structured data
+<br>October 18, 2026
+
+</BlogPost>
+
+<BlogPost category="Windows tooling">
+
+**[ANTO-LTG: a toolkit for the Windows repair bench](./blog/anto-ltg-toolkit.md)**
+<br>A clearer workflow for drivers, software setup, and Windows maintenance
+<br>October 18, 2026
+
+</BlogPost>
+
 <BlogPost image="/images/covers/hello-internet.webp">
 
 **[hello, internet](./blog/hello-internet.md)**
