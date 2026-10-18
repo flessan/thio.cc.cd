@@ -6,6 +6,7 @@ defineProps({
 
 <template>
   <img
+    class="blog-cover"
     :src="src"
     width="1200"
     height="630"
@@ -15,18 +16,20 @@ defineProps({
 </template>
 
 <style scoped>
-img {
+.blog-cover {
+  display: block;
   width: 100%;
   max-height: 20rem;
   object-fit: cover;
-  margin-bottom: 4rem;
-  border-radius: 0.5rem;
+  margin: 1.25rem 0 3.25rem;
+  border-radius: 0.85rem;
 }
 
-@media (min-width: 1460px) {
-  img {
-    margin-top: -7rem;
-    border-radius: 0 0 0.5rem 0.5rem;
+@media (max-width: 768px) {
+  .blog-cover {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 0.7rem;
   }
 }
 </style>
