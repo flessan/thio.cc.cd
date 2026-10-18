@@ -291,7 +291,7 @@ ${items}
     },
 
     nav: [
-      { text: 'News', link: '/news' },
+      { text: 'Support', link: '/support' },
       { text: 'Blog', link: '/blog' },
       { text: 'Projects', link: '/projects' },
       { text: 'Now', link: '/now' },
@@ -301,7 +301,6 @@ ${items}
           { text: 'GDIPS', link: '/gdips' },
           { text: 'Timeline', link: '/timeline' },
           { text: 'Ecosystem', link: '/ecosystem' },
-          { text: 'Support', link: '/support' },
         ]
       }
     ],
