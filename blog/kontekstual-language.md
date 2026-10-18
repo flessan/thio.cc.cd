@@ -2,7 +2,8 @@
 title: "Kontekstual: code in the language we speak"
 author:
   name: M. Thio Saputra
-date: "2026-10-18"description: Designing Kontekstual, a beginner-friendly programming language that reads naturally in Indonesian.
+date: "2026-10-18"
+description: Designing Kontekstual, a beginner-friendly programming language that reads naturally in Indonesian.
 image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&h=840&q=85"
 ---
 
