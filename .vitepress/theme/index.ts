@@ -34,6 +34,69 @@ function openSearch() {
 }
 
 let hotkeyBound = false
+let themeTransitionInstalled = false
+let replayingThemeToggle = false
+
+/**
+ * Intercept the VitePress appearance switch and replay its normal click inside
+ * the View Transitions API. Browsers without support use the CSS colour fades.
+ */
+function installThemeTransition() {
+  if (typeof window === 'undefined' || themeTransitionInstalled) return
+  themeTransitionInstalled = true
+
+  type TransitionDocument = Document & {
+    startViewTransition?: (callback: () => void) => { finished: Promise<void> }
+  }
+
+  const transitionDocument = document as TransitionDocument
+  const cleanUp = () => {
+    document.documentElement.classList.remove('theme-switching')
+    document.documentElement.style.removeProperty('--theme-toggle-x')
+    document.documentElement.style.removeProperty('--theme-toggle-y')
+  }
+
+  document.addEventListener('click', (event: MouseEvent) => {
+    if (replayingThemeToggle || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (typeof transitionDocument.startViewTransition !== 'function') return
+
+    const target = event.target
+    if (!(target instanceof Element)) return
+    const toggle = target.closest<HTMLElement>('.VPSwitchAppearance')
+    if (!toggle) return
+
+    // Keep the toggle's native VitePress handler as the single source of truth.
+    event.preventDefault()
+    event.stopImmediatePropagation()
+
+    const x = event.clientX || Math.round(window.innerWidth * 0.88)
+    const y = event.clientY || 32
+    document.documentElement.style.setProperty('--theme-toggle-x', `${x}px`)
+    document.documentElement.style.setProperty('--theme-toggle-y', `${y}px`)
+    document.documentElement.classList.add('theme-switching')
+
+    try {
+      const transition = transitionDocument.startViewTransition(() => {
+        replayingThemeToggle = true
+        try {
+          toggle.click()
+        } finally {
+          replayingThemeToggle = false
+        }
+      })
+      void transition.finished.then(cleanUp, cleanUp)
+    } catch {
+      // If the transition API fails unexpectedly, do not block theme switching.
+      cleanUp()
+      replayingThemeToggle = true
+      try {
+        toggle.click()
+      } finally {
+        replayingThemeToggle = false
+      }
+    }
+  }, true)
+}
 let motionInstalled = false
 
 /**
@@ -154,6 +217,7 @@ export default {
     // so style.css keeps its original bytes)
     installLightbox()
     installMotion()
+    installThemeTransition()
 
     // Ctrl K / Cmd K (or "/" outside inputs) opens search, anywhere on the site
     if (typeof window !== 'undefined' && !hotkeyBound) {
