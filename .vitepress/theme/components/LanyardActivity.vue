@@ -17,6 +17,8 @@ type GuildMember = { id: string; username: string; status?: string; avatar_url?:
 type GuildWidget = { id: string; name: string; instant_invite?: string; channels?: GuildChannel[]; members?: GuildMember[]; presence_count?: number }
 
 const endpoint = 'https://api.lanyard.rest/v1/users/776722084030054421'
+const profileImage = 'https://c.tenor.com/ysQdVrOy6ZkAAAAd/tenor.gif'
+const communityImage = 'https://cdn.jsdelivr.net/gh/flessan/flessan/website/gudang/me.png'
 const guildEndpoint = 'https://discord.com/api/guilds/1435463197418192906/widget.json'
 const fallbackInvite = 'https://discord.com/invite/nZAMJ7BD'
 const presence = ref<Presence | null>(null)
@@ -43,9 +45,12 @@ const guildUnavailable = ref(false)
 const loading = ref(true)
 const unavailable = ref(false)
 const now = ref(Date.now())
+const copiedInvite = ref(false)
+const copyFailed = ref(false)
 let refreshTimer: ReturnType<typeof setInterval> | undefined
 let guildRefreshTimer: ReturnType<typeof setInterval> | undefined
 let clockTimer: ReturnType<typeof setInterval> | undefined
+let copyResetTimer: ReturnType<typeof setTimeout> | undefined
 let activeRequest: AbortController | undefined
 let guildRequest: AbortController | undefined
 
@@ -53,11 +58,6 @@ const user = computed(() => presence.value?.discord_user)
 const status = computed(() => presence.value?.discord_status || 'offline')
 const statusLabels: Record<string, string> = { online: 'Online', idle: 'Away', dnd: 'Do not disturb', offline: 'Offline' }
 const statusLabel = computed(() => statusLabels[status.value] || 'Offline')
-const avatarUrl = computed(() => {
-  if (!user.value?.avatar) return ''
-  const extension = user.value.avatar.startsWith('a_') ? 'gif' : 'png'
-  return `https://cdn.discordapp.com/avatars/${user.value.id}/${user.value.avatar}.${extension}?size=128`
-})
 const activities = computed(() => presence.value?.activities || [])
 const customStatus = computed(() => activities.value.find(a => a.type === 4))
 const currentActivity = computed(() => activities.value.find(a => a.type !== 4 && a.name !== 'Spotify'))
@@ -87,6 +87,22 @@ const platformLabel = computed(() => {
   return 'Discord presence'
 })
 const inviteUrl = computed(() => guild.value?.instant_invite || fallbackInvite)
+const copyButtonLabel = computed(() => copiedInvite.value ? 'Tautan undangan tersalin' : copyFailed.value ? 'Gagal menyalin tautan undangan' : 'Salin tautan undangan')
+async function copyInviteUrl() {
+  copiedInvite.value = false
+  copyFailed.value = false
+  try {
+    await navigator.clipboard.writeText(inviteUrl.value)
+    copiedInvite.value = true
+  } catch {
+    copyFailed.value = true
+  }
+  if (copyResetTimer) clearTimeout(copyResetTimer)
+  copyResetTimer = setTimeout(() => {
+    copiedInvite.value = false
+    copyFailed.value = false
+  }, 2200)
+}
 const sortedChannels = computed(() => [...(guild.value?.channels || [])].sort((a, b) => (a.position ?? 0) - (b.position ?? 0)))
 const activeMembers = computed(() => (guild.value?.members || []).filter(member => member.status && member.status !== 'offline').slice(0, 6))
 const activeMemberCount = computed(() => guild.value?.presence_count ?? activeMembers.value.length)
@@ -150,6 +166,7 @@ onUnmounted(() => {
   if (refreshTimer) clearInterval(refreshTimer)
   if (guildRefreshTimer) clearInterval(guildRefreshTimer)
   if (clockTimer) clearInterval(clockTimer)
+  if (copyResetTimer) clearTimeout(copyResetTimer)
 })
 </script>
 
@@ -157,11 +174,17 @@ onUnmounted(() => {
   <section class="my-activity" aria-labelledby="my-activity-title">
     <header class="activity-heading">
       <h2 id="my-activity-title">My Activity</h2>
-      <a class="join-server" :href="inviteUrl" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5c2.7-.9 5.3-.9 8 0l1.1 2.1c1.5 1.1 2.1 3.2 2.4 5.8-1.7 1.4-3.1 2.2-4.6 2.6l-1-1.3c-1.2.3-2.4.3-3.7 0l-1 1.3c-1.5-.4-2.9-1.2-4.6-2.6.3-2.6.9-4.7 2.4-5.8L8 5.5Z"/><path d="M9 11.5h.01M15 11.5h.01"/></svg>
-        <span>Join server</span>
-        <span class="join-arrow" aria-hidden="true">↗</span>
-      </a>
+      <div class="activity-actions">
+        <a class="join-server" :href="inviteUrl" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5c2.7-.9 5.3-.9 8 0l1.1 2.1c1.5 1.1 2.1 3.2 2.4 5.8-1.7 1.4-3.1 2.2-4.6 2.6l-1-1.3c-1.2.3-2.4.3-3.7 0l-1 1.3c-1.5-.4-2.9-1.2-4.6-2.6.3-2.6.9-4.7 2.4-5.8L8 5.5Z"/><path d="M9 11.5h.01M15 11.5h.01"/></svg>
+          <span>Join server</span>
+          <span class="join-arrow" aria-hidden="true">↗</span>
+        </a>
+        <button class="copy-server" type="button" :class="{ 'is-copied': copiedInvite, 'is-error': copyFailed }" :aria-label="copyButtonLabel" :title="copyButtonLabel" @click="copyInviteUrl">
+          <svg v-if="copiedInvite" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg>
+          <svg v-else viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V5.8A1.8 1.8 0 0 0 14.2 4H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>
+        </button>
+      </div>
     </header>
     <div v-if="loading && !presence" class="activity-loading" aria-live="polite">
       <span class="loading-dot"></span> Checking what I'm up to…
@@ -170,8 +193,7 @@ onUnmounted(() => {
       <article class="presence-card">
         <div class="identity-row">
           <div class="avatar-wrap">
-            <img v-if="avatarUrl" :src="avatarUrl" class="avatar" :alt="`${user?.display_name || user?.username || 'Discord'} avatar`" width="76" height="76" loading="lazy" />
-            <span v-else class="avatar-fallback">{{ (user?.display_name || 'F').slice(0, 1) }}</span>
+            <img :src="profileImage" class="avatar" alt="Profile GIF" width="76" height="76" loading="lazy" />
             <span class="presence-orb" :data-status="status"></span>
           </div>
           <div class="identity-copy">
@@ -226,7 +248,7 @@ onUnmounted(() => {
       <article class="guild-card" aria-label="Discord server widget">
         <div class="guild-topline">
           <div class="guild-brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M7.2 6.6A16 16 0 0 1 10 5.7l.5 1a14 14 0 0 1 3 0l.5-1a16 16 0 0 1 2.8.9c1.8 2.7 2.6 5.5 2.5 8.3a11 11 0 0 1-3.5 1.8l-.8-1.3c.5-.2.9-.4 1.3-.7-2.7 1.2-5.5 1.2-8.2 0 .4.3.8.5 1.3.7l-.8 1.3a11 11 0 0 1-3.5-1.8c-.1-2.8.7-5.6 2.5-8.3Z"/><circle cx="9.2" cy="11.4" r="1"/><circle cx="14.8" cy="11.4" r="1"/></svg>
+            <img :src="communityImage" alt="" width="46" height="46" loading="lazy" />
           </div>
           <div class="guild-heading-copy">
             <span class="detail-label">COMMUNITY SERVER</span>
@@ -279,7 +301,13 @@ onUnmounted(() => {
 .activity-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
 .activity-heading h2 { margin: 0 !important; padding: 0 !important; border: 0 !important; font-size: clamp(1.4rem,3vw,1.8rem); letter-spacing: -.04em; }
 .join-server { display: inline-flex; align-items: center; gap: .5rem; flex: 0 0 auto; padding: .7rem .9rem; border: 1px solid var(--vp-c-brand-1); border-radius: .75rem; background: var(--vp-c-brand-3); color: #fff !important; font-size: .82rem; font-weight: 700; text-decoration: none !important; box-shadow: 0 5px 14px rgba(40,100,65,.12); transition: transform 220ms ease, box-shadow 260ms ease, background-color 220ms ease; }
+.activity-actions { display: inline-flex; align-items: center; gap: .45rem; flex: 0 0 auto; }
 .join-server svg { width: 19px; height: 19px; flex: 0 0 auto; fill: currentColor; }
+.copy-server { display: grid; place-items: center; flex: 0 0 auto; width: 42px; height: 42px; padding: 0; border: 1px solid var(--vp-c-divider); border-radius: .75rem; background: var(--vp-c-bg); color: var(--vp-c-text-2); cursor: pointer; transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease, transform 200ms ease; }
+.copy-server svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.copy-server:hover { transform: translateY(-1px); border-color: var(--vp-c-brand-1); background: var(--vp-c-bg-soft); color: var(--vp-c-text-1); }
+.copy-server.is-copied { border-color: #23a55a; color: #23a55a; }
+.copy-server.is-error { border-color: #f23f43; color: #f23f43; }
 .join-server svg path:first-child { fill: currentColor; }
 .join-server svg path:last-child { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .join-arrow { transition: transform 220ms ease; }
@@ -345,7 +373,7 @@ onUnmounted(() => {
 .guild-card:hover { border-color: color-mix(in srgb, var(--vp-c-brand-1) 44%, var(--vp-c-divider)); box-shadow: 0 10px 26px rgba(20,35,25,.055); transform: translateY(-2px); }
 .guild-topline { display: flex; align-items: center; gap: .85rem; min-width: 0; }
 .guild-brand-mark { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; border-radius: 14px; background: #5865f2; color: #fff; }
-.guild-brand-mark svg { width: 27px; height: 27px; fill: currentColor; }
+.guild-brand-mark img { display: block; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
 .guild-heading-copy { min-width: 0; flex: 1; }
 .guild-heading-copy h3 { margin: .18rem 0 .22rem; color: var(--vp-c-text-1); font-size: 1.03rem; font-weight: 750; letter-spacing: -.025em; line-height: 1.35; }
 .guild-heading-copy p { display: flex; align-items: center; gap: .4rem; margin: 0; color: var(--vp-c-text-2); font-size: .78rem; }
@@ -378,8 +406,11 @@ onUnmounted(() => {
   .my-activity { margin: 2rem 0 2.4rem; padding: 1rem; border-radius: .9rem; }
   .activity-grid { grid-template-columns: minmax(0,1fr); }
   .activity-heading { align-items: center; }
+  .activity-actions { gap: .35rem; }
   .join-server { padding: .6rem .7rem; font-size: .76rem; }
   .join-server svg { width: 17px; height: 17px; }
+  .copy-server { width: 38px; height: 38px; border-radius: .65rem; }
+  .copy-server svg { width: 18px; height: 18px; }
   .presence-card, .spotify-card { padding: 1rem; }
   .album-art { flex-basis: 84px; width: 84px; height: 84px; }
   .track-copy h3 { font-size: .95rem; }
