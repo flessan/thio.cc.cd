@@ -49,10 +49,10 @@
   --vp-c-default-3: var(--vp-c-gray-3);
   --vp-c-default-soft: var(--vp-c-gray-soft);
 
-  --vp-c-brand-1: #7eaf90;
-  --vp-c-brand-2: #4ea86f;
-  --vp-c-brand-3: var(--vp-c-indigo-3);
-  --vp-c-brand-soft: var(--vp-c-indigo-soft);
+  --vp-c-brand-1: #2f6845;
+  --vp-c-brand-2: #3f8056;
+  --vp-c-brand-3: #397b53;
+  --vp-c-brand-soft: rgba(126, 175, 144, 0.16);
 
   --vp-c-tip-1: var(--vp-c-brand-1);
   --vp-c-tip-2: var(--vp-c-brand-2);
@@ -88,6 +88,10 @@
 
 .dark {
   --vp-c-bg: #121212;
+  --vp-c-brand-1: #a4d5b1;
+  --vp-c-brand-2: #8cc79c;
+  --vp-c-brand-3: #397b53;
+  --vp-c-brand-soft: rgba(126, 175, 144, 0.16);
 }
 
 /**
@@ -95,26 +99,21 @@
  * -------------------------------------------------------------------------- */
 
 :root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg,
-      #bd34fe 30%,
-      #41d1ff);
-
-  --vp-home-hero-image-background-image: linear-gradient(-45deg,
-      #bd34fe 50%,
-      #47caff 50%);
-  --vp-home-hero-image-filter: blur(44px);
+  --vp-home-hero-name-color: #2f6845;
+  --vp-home-hero-name-background: none;
+  --vp-home-hero-image-background-image: none;
+  --vp-home-hero-image-filter: none;
 }
 
 @media (min-width: 640px) {
   :root {
-    --vp-home-hero-image-filter: blur(56px);
+    --vp-home-hero-image-filter: none;
   }
 }
 
 @media (min-width: 960px) {
   :root {
-    --vp-home-hero-image-filter: blur(68px);
+    --vp-home-hero-image-filter: none;
   }
 }
 
@@ -163,28 +162,23 @@
 
 @media (min-width: 1260px) {
   .VPNavBarTitle .title {
+    display: flex;
+    align-items: center;
+    min-width: 44px;
     color: transparent;
   }
 
   .VPNavBarTitle .title:before {
-    transform: translate(0, 35px);
-    background: url(/images/flessan-avatar.png) no-repeat;
+    transform: none;
+    background: url(/images/flessan-avatar.png) no-repeat center;
     background-size: cover;
     content: '';
     display: block;
-    height: 80px;
-    width: 80px;
+    flex: 0 0 44px;
+    height: 44px;
+    width: 44px;
+    margin-right: 0.5rem;
     border-radius: 50%;
-  }
-}
-
-@media (min-width: 1460px) {
-  .VPNavBar {
-    background: transparent !important;
-  }
-
-  .VPContent .content-container {
-    margin-top: -4rem;
   }
 }
 
@@ -196,4 +190,584 @@
 
 html {
   overflow-y: scroll;
+}
+
+/* Small, consistent interaction polish without changing the site's identity. */
+:root {
+  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+}
+
+.VPNavBar {
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.VPNavBarMenuLink,
+.VPNavBarMenuGroup .button {
+  border-radius: 8px;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.VPNavBarMenuLink:hover,
+.VPNavBarMenuGroup .button:hover {
+  background: var(--vp-c-bg-soft);
+}
+
+.VPNavBarSearch .DocSearch-Button,
+.VPNavBarSearch button {
+  border-radius: 10px;
+}
+
+.vp-doc h1 {
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.vp-doc h2 {
+  margin-top: 2.6rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--vp-c-divider);
+  letter-spacing: -0.02em;
+}
+
+.vp-doc a {
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.vp-doc :where(button, a, input, select, textarea):focus-visible,
+.VPNavBar :where(button, a, input):focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+
+.vp-doc img,
+.vp-doc video {
+  border-radius: 12px;
+}
+
+.vp-doc div[class*='language-'] {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* A deliberate floating header with reserved space for the page beneath it. */
+:root {
+  --flessan-nav-glass: rgba(249, 251, 249, 0.97);
+  --flessan-nav-border: rgba(45, 75, 55, 0.13);
+  --flessan-nav-shadow: 0 10px 34px rgba(20, 35, 25, 0.10);
+}
+
+.dark {
+  --flessan-nav-glass: rgba(24, 26, 25, 0.97);
+  --flessan-nav-border: rgba(255, 255, 255, 0.11);
+  --flessan-nav-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+/* Desktop: a centered glass bar, with the brand anchored left and navigation right. */
+@media (min-width: 960px) {
+  .VPNavBar,
+  .VPNavBar.top {
+    position: fixed !important;
+    top: 14px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
+    width: min(1380px, calc(100vw - 48px)) !important;
+    max-width: none !important;
+    height: 64px;
+    box-sizing: border-box;
+    overflow: visible;
+    border: 1px solid var(--flessan-nav-border);
+    border-radius: 18px;
+    background: var(--flessan-nav-glass) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    backdrop-filter: blur(22px) saturate(150%);
+    box-shadow: var(--flessan-nav-shadow);
+    transition: background-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .VPNavBar .container {
+    width: 100%;
+    max-width: none !important;
+    height: 100%;
+    margin: 0;
+    padding-inline: clamp(18px, 2.2vw, 30px);
+    box-sizing: border-box;
+  }
+
+  .VPNavBarTitle {
+    flex: 0 0 auto;
+  }
+
+  .VPNavBarTitle .title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: var(--vp-c-text-1) !important;
+    font-size: 1rem;
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    text-decoration: none;
+  }
+
+  .VPNavBarTitle .title::before {
+    content: '';
+    display: block;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    transform: none;
+    border: 2px solid var(--vp-c-bg);
+    border-radius: 50%;
+    background: url('/images/flessan-avatar.png') center / cover no-repeat;
+    box-shadow: 0 0 0 1px var(--flessan-nav-border);
+  }
+
+  .VPNavBar .content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .VPNavBar .content-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .VPNavBarSearch {
+    flex: 0 0 auto;
+    margin-left: 1.2rem;
+  }
+
+  .VPNavBarSearch .DocSearch-Button,
+  .VPNavBarSearch button {
+    min-height: 38px;
+    border: 1px solid var(--flessan-nav-border);
+    border-radius: 11px;
+    background: var(--vp-c-bg-soft);
+  }
+
+  .VPNavBarMenu {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: auto;
+  }
+
+  .VPNavBarMenuLink,
+  .VPNavBarMenuGroup .button {
+    min-height: 38px;
+    padding-inline: 12px;
+    border-radius: 11px;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+
+  .VPNavBarMenuLink:hover,
+  .VPNavBarMenuGroup .button:hover {
+    background: var(--vp-c-bg-soft);
+  }
+
+  .VPNavBar .social-links {
+    gap: 11px;
+    margin-left: 8px;
+  }
+
+  .VPNavBar .divider {
+    opacity: 0.45;
+  }
+}
+
+/* Phones and tablets keep the familiar full-width header, never an off-screen pill. */
+@media (max-width: 959px) {
+  .VPNavBar,
+  .VPNavBar.top {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: var(--vp-nav-height);
+    transform: none;
+    border: 0;
+    border-bottom: 1px solid var(--flessan-nav-border);
+    border-radius: 0;
+    background: var(--flessan-nav-glass) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
+    box-shadow: 0 5px 20px rgba(15, 25, 18, 0.09);
+  }
+
+  .VPNavBar .container {
+    width: 100%;
+    max-width: none !important;
+    padding-inline: 16px;
+    box-sizing: border-box;
+  }
+}
+
+.VPNavBarMenuLink,
+.VPNavBarMenuGroup .button {
+  border-radius: 10px;
+}
+
+.VPNavBar :where(button, a, input):focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .VPNavBar,
+  .VPNavBarMenuLink,
+  .VPNavBarMenuGroup .button {
+    transition: none;
+  }
+}
+
+
+/* Motion system — smooth, purposeful, and based on real scroll position. */
+:root {
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@keyframes flessan-nav-arrive {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes flessan-mobile-nav-arrive {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes flessan-cover-arrive {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 12% 0 round 18px);
+    transform: translateY(18px) scale(1.012);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round 18px);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flessan-focus-line {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (min-width: 960px) {
+  .VPNavBar,
+  .VPNavBar.top {
+    animation: flessan-nav-arrive 720ms var(--motion-ease-out) both;
+  }
+}
+
+@media (max-width: 959px) {
+  .VPNavBar,
+  .VPNavBar.top {
+    animation: flessan-mobile-nav-arrive 480ms var(--motion-ease-out) both;
+  }
+}
+
+html.motion-enabled .motion-reveal {
+  opacity: 0;
+  transform: translateY(22px) scale(0.99);
+  filter: blur(4px);
+  transition:
+    opacity 720ms var(--motion-ease-out),
+    transform 720ms var(--motion-ease-out),
+    filter 720ms var(--motion-ease-out);
+  transition-delay: min(calc(var(--motion-index, 0) * 48ms), 240ms);
+  will-change: opacity, transform, filter;
+}
+
+html.motion-enabled .motion-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  will-change: auto;
+}
+
+html.motion-enabled .vp-doc .blog-cover.motion-reveal {
+  transform: translateY(24px) scale(1.025);
+  clip-path: inset(0 0 10% 0 round 18px);
+  transition:
+    opacity 900ms var(--motion-ease-out),
+    transform 1100ms var(--motion-ease-out),
+    clip-path 1000ms var(--motion-ease-out);
+}
+
+html.motion-enabled .vp-doc .blog-cover.motion-reveal.is-visible {
+  transform: translateY(0) scale(1);
+  clip-path: inset(0 0 0 0 round 18px);
+}
+
+/* Text links get a directional underline rather than a generic colour flash. */
+.vp-doc a:not(.header-anchor) {
+  text-decoration-color: color-mix(in srgb, var(--vp-c-brand-1) 42%, transparent);
+  transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+.vp-doc a:not(.header-anchor):hover {
+  text-decoration-color: var(--vp-c-brand-1);
+}
+
+/* Polished interactive surfaces. */
+.VPNavBarMenuLink,
+.VPNavBarMenuGroup .button,
+.VPNavBarSearch button,
+.VPSocialLink,
+.VPButton,
+.vp-doc .container,
+.vp-doc .link-preview {
+  transition:
+    color 220ms ease,
+    background-color 220ms ease,
+    border-color 260ms ease,
+    box-shadow 320ms var(--motion-ease-out),
+    transform 420ms var(--motion-ease-out);
+}
+
+.VPNavBarMenuLink:hover,
+.VPNavBarMenuGroup .button:hover {
+  transform: translateY(-1px);
+}
+
+.VPSocialLink:hover {
+  transform: translateY(-3px) scale(1.06);
+}
+
+.VPNavBarSearch button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(30, 55, 38, 0.10);
+}
+
+.vp-doc .container:hover,
+.vp-doc .link-preview:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(20, 35, 25, 0.10);
+}
+
+.vp-doc .container img,
+.vp-doc .blog-cover {
+  transition: transform 900ms var(--motion-ease-out), filter 700ms ease;
+}
+
+.vp-doc .container:hover img {
+  transform: scale(1.045);
+}
+
+.vp-doc div[class*='language-'] {
+  transition: border-color 240ms ease, box-shadow 320ms var(--motion-ease-out);
+}
+
+.vp-doc div[class*='language-']:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 8px 24px rgba(20, 35, 25, 0.06);
+}
+
+/* Reveal active navigation with a small animated marker. */
+.VPNavBarMenuLink {
+  position: relative;
+}
+
+.VPNavBarMenuLink::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--vp-c-brand-1);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 360ms var(--motion-ease-out);
+}
+
+.VPNavBarMenuLink.active::after {
+  transform: scaleX(1);
+}
+
+.VPNavBarMenuLink:hover::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html.motion-enabled .motion-reveal,
+  html.motion-enabled .motion-reveal.is-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+  }
+
+  .vp-doc .container:hover,
+  .vp-doc .link-preview:hover,
+  .VPSocialLink:hover,
+  .VPNavBarMenuLink:hover,
+  .VPNavBarMenuGroup .button:hover {
+    transform: none !important;
+  }
+}
+
+
+/* Slow, cinematic dark/light transition: a soft reveal grows from the toggle. */
+:root {
+  --theme-toggle-x: 88vw;
+  --theme-toggle-y: 32px;
+  --theme-transition-duration: 2800ms;
+  --theme-transition-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html,
+body,
+#app,
+.VPNavBar,
+.VPContent,
+.VPDoc,
+.vp-doc,
+.VPFooter,
+.VPSidebar {
+  transition:
+    background-color 2200ms var(--theme-transition-ease),
+    color 1900ms var(--theme-transition-ease),
+    border-color 2000ms var(--theme-transition-ease),
+    box-shadow 2000ms var(--theme-transition-ease);
+}
+
+::view-transition-group(root) {
+  animation-duration: var(--theme-transition-duration);
+  animation-timing-function: var(--theme-transition-ease);
+}
+
+::view-transition-old(root) {
+  animation: flessan-theme-old var(--theme-transition-duration) var(--theme-transition-ease) both;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: flessan-theme-reveal var(--theme-transition-duration) var(--theme-transition-ease) both;
+  clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
+  mix-blend-mode: normal;
+}
+
+@keyframes flessan-theme-reveal {
+  0% {
+    clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
+  }
+  45% {
+    clip-path: circle(48vmax at var(--theme-toggle-x) var(--theme-toggle-y));
+  }
+  100% {
+    clip-path: circle(150vmax at var(--theme-toggle-x) var(--theme-toggle-y));
+  }
+}
+
+@keyframes flessan-theme-old {
+  0% { opacity: 1; }
+  55% { opacity: 0.985; }
+  100% { opacity: 0.96; }
+}
+
+.VPSwitchAppearance {
+  transform-origin: center;
+  transition:
+    transform 1000ms var(--theme-transition-ease),
+    background-color 1600ms var(--theme-transition-ease),
+    border-color 1600ms var(--theme-transition-ease),
+    box-shadow 1600ms var(--theme-transition-ease);
+}
+
+.VPSwitchAppearance:hover {
+  transform: rotate(-7deg) scale(1.06);
+}
+
+.VPSwitchAppearance:active {
+  transform: rotate(7deg) scale(0.94);
+}
+
+.VPSwitchAppearance svg {
+  transition: transform 1300ms var(--theme-transition-ease);
+}
+
+.VPSwitchAppearance:hover svg {
+  transform: rotate(28deg);
+}
+
+html.theme-switching .VPNavBar,
+html.theme-switching .VPContent,
+html.theme-switching .VPDoc,
+html.theme-switching .VPFooter {
+  transition-duration: var(--theme-transition-duration);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+
+  html,
+  body,
+  #app,
+  .VPNavBar,
+  .VPContent,
+  .VPDoc,
+  .vp-doc,
+  .VPFooter,
+  .VPSidebar,
+  .VPSwitchAppearance,
+  .VPSwitchAppearance svg {
+    transition: none !important;
+  }
+
+  .VPSwitchAppearance:hover,
+  .VPSwitchAppearance:active,
+  .VPSwitchAppearance:hover svg {
+    transform: none !important;
+  }
 }

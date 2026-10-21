@@ -4,6 +4,10 @@ import { useRoute } from 'vitepress'
 
 // Blog posts, newest first. Keep in sync with .vitepress/config.mts (feed).
 const posts = [
+  { slug: '/blog/kontekstual-language', title: 'Kontekstual: code in the language we speak' },
+  { slug: '/blog/telegraph-cloud', title: 'Telegraph Cloud: files, APIs, and a Telegram-backed backend' },
+  { slug: '/blog/admin-panel-everywhere', title: 'Admin Panel Everywhere: from endpoints to a workspace' },
+  { slug: '/blog/anto-ltg-toolkit', title: 'ANTO-LTG: a toolkit for the Windows repair bench' },
   { slug: '/blog/hello-internet', title: 'hello, internet' },
   { slug: '/blog/slate-de', title: 'the command line is your d3sktop' },
   { slug: '/blog/teksreceh', title: 'teksreceh: a museum of +62 typing' },
