@@ -19,6 +19,7 @@ import { installLightbox } from './lightbox'
 import BlogCover from './components/BlogCover.vue'
 import BlogPost from './components/BlogPost.vue'
 import YouTubeVideo from './components/YouTubeVideo.vue'
+import LanyardActivity from './components/LanyardActivity.vue'
 
 function openSearch() {
   const btn = document.querySelector<HTMLElement>('.VPNavBarSearch button')
@@ -126,7 +127,8 @@ function installMotion() {
     '.vp-doc .VPButton',
     '.vp-doc .link-preview',
     '.vp-doc .repo-explorer',
-    '.vp-doc .telegram-feed'
+    '.vp-doc .telegram-feed',
+    '.vp-doc .my-activity'
   ].join(',')
 
   const observer = new IntersectionObserver((entries) => {
@@ -212,6 +214,7 @@ export default {
     app.component('BlogCover', BlogCover)
     app.component('BlogPost', BlogPost)
     app.component('YouTubeVideo', YouTubeVideo)
+    app.component('LanyardActivity', LanyardActivity)
 
     // click any content image to view it full-size (styles injected in JS,
     // so style.css keeps its original bytes)
