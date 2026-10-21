@@ -92,10 +92,28 @@ async function copyInviteUrl() {
   copiedInvite.value = false
   copyFailed.value = false
   try {
-    await navigator.clipboard.writeText(inviteUrl.value)
-    copiedInvite.value = true
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(inviteUrl.value)
+      copiedInvite.value = true
+    } else {
+      throw new Error('Clipboard API unavailable')
+    }
   } catch {
-    copyFailed.value = true
+    try {
+      const field = document.createElement('textarea')
+      field.value = inviteUrl.value
+      field.setAttribute('readonly', '')
+      field.style.position = 'fixed'
+      field.style.opacity = '0'
+      document.body.appendChild(field)
+      field.select()
+      const success = document.execCommand('copy')
+      field.remove()
+      if (!success) throw new Error('Copy command failed')
+      copiedInvite.value = true
+    } catch {
+      copyFailed.value = true
+    }
   }
   if (copyResetTimer) clearTimeout(copyResetTimer)
   copyResetTimer = setTimeout(() => {
