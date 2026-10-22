@@ -159,14 +159,152 @@ const copyButtonLabel = computed(() => copiedInvite.value ? 'Tautan undangan ter
 
 // Social links template: replace URLs or add entries here when you are ready.
 const socialLinks = [
-  { id: 'github', label: 'GitHub', icon: 'fa-brands fa-github', url: 'https://github.com/flessan' },
-  { id: 'discord', label: 'Discord', icon: 'fa-brands fa-discord', url: 'https://discord.com/users/776722084030054421' },
-  { id: 'instagram', label: 'Instagram', icon: 'fa-brands fa-instagram', url: 'https://instagram.com/YOUR_USERNAME' },
-  { id: 'youtube', label: 'YouTube', icon: 'fa-brands fa-youtube', url: 'https://youtube.com/@YOUR_CHANNEL' },
-  { id: 'tiktok', label: 'TikTok', icon: 'fa-brands fa-tiktok', url: 'https://tiktok.com/@YOUR_USERNAME' },
-  { id: 'x', label: 'X', icon: 'fa-brands fa-x-twitter', url: 'https://x.com/YOUR_USERNAME' },
-  { id: 'telegram', label: 'Telegram', icon: 'fa-brands fa-telegram', url: 'https://t.me/YOUR_USERNAME' }
+  // Replace these URLs with your actual profiles, or add/remove entries as needed.
+  { id: 'github', label: 'GitHub', image: 'https://cdn-icons-png.flaticon.com/512/25/25231.png', url: 'https://github.com/flessan' },
+  { id: 'discord', label: 'Discord', image: 'https://cdn-icons-png.flaticon.com/512/5968/5968756.png', url: 'https://discord.com/users/776722084030054421' },
+  { id: 'instagram', label: 'Instagram', image: 'https://cdn-icons-png.flaticon.com/512/174/174855.png', url: 'https://instagram.com/YOUR_USERNAME' },
+  { id: 'youtube', label: 'YouTube', image: 'https://cdn-icons-png.flaticon.com/512/1384/1384060.png', url: 'https://youtube.com/@YOUR_CHANNEL' },
+  { id: 'tiktok', label: 'TikTok', image: 'https://cdn-icons-png.flaticon.com/512/3046/3046121.png', url: 'https://tiktok.com/@YOUR_USERNAME' },
+  { id: 'x', label: 'X', image: 'https://cdn-icons-png.flaticon.com/512/5969/5969020.png', url: 'https://x.com/YOUR_USERNAME' },
+  { id: 'telegram', label: 'Telegram', image: 'https://cdn-icons-png.flaticon.com/512/2111/2111646.png', url: 'https://t.me/YOUR_USERNAME' }
 ] as const
+
+type ActivityMenu = 'spotify' | 'watching' | null
+const activeActivityMenu = ref<ActivityMenu>(null)
+const activityMenuNotice = ref('')
+let activityMenuNoticeTimer: ReturnType<typeof setTimeout> | undefined
+
+function toggleActivityMenu(menu: Exclude<ActivityMenu, null>) {
+  activeActivityMenu.value = activeActivityMenu.value === menu ? null : menu
+  activityMenuNotice.value = ''
+}
+function closeActivityMenu() {
+  activeActivityMenu.value = null
+}
+function handleActivityOutside(event: MouseEvent) {
+  if (!(event.target instanceof Element)) return
+  if (!event.target.closest('.activity-menu-wrap')) closeActivityMenu()
+}
+async function writeClipboard(text: string) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text)
+      return true
+    }
+  } catch {
+    // Continue with the compatibility fallback below.
+  }
+  try {
+    const field = document.createElement('textarea')
+    field.value = text
+    field.setAttribute('readonly', '')
+    field.style.position = 'fixed'
+    field.style.opacity = '0'
+    document.body.appendChild(field)
+    field.select()
+    const success = document.execCommand('copy')
+    field.remove()
+    return success
+  } catch {
+    return false
+  }
+}
+async function copyActivityDetails(kind: Exclude<ActivityMenu, null>) {
+  const value = kind === 'spotify'
+    ? [spotify.value?.song, spotify.value?.artist, spotify.value?.album ? `Album: ${spotify.value.album}` : '', spotifyUrl.value].filter(Boolean).join(' — ')
+    : [currentActivity.value?.name, currentActivity.value?.state || currentActivity.value?.details, currentActivity.value?.buttons?.includes('My Blog') ? 'https://thio.cc.cd/blog/' : ''].filter(Boolean).join(' — ')
+  const copied = await writeClipboard(value)
+  closeActivityMenu()
+  activityMenuNotice.value = copied ? 'Details copied to clipboard' : 'Could not copy details'
+  if (activityMenuNoticeTimer) clearTimeout(activityMenuNoticeTimer)
+  activityMenuNoticeTimer = setTimeout(() => { activityMenuNotice.value = '' }, 2400)
+}
+
+function revealPixelImage(image: HTMLImageElement) {
+  if (!image.naturalWidth || !image.naturalHeight || typeof window === 'undefined') return
+  const source = image.currentSrc || image.src
+  if (!source || image.dataset.pixelSource === source) return
+  image.dataset.pixelSource = source
+
+  const parent = image.parentElement
+  if (!parent) return
+  const rect = image.getBoundingClientRect()
+  const parentRect = parent.getBoundingClientRect()
+  if (rect.width < 2 || rect.height < 2) return
+
+  const parentStyle = window.getComputedStyle(parent)
+  if (parentStyle.position === 'static') {
+    parent.dataset.pixelRestorePosition = parent.style.position
+    parent.style.position = 'relative'
+  }
+
+  const pixelWidth = Math.max(8, Math.round(rect.width / 5))
+  const pixelHeight = Math.max(8, Math.round(pixelWidth * rect.height / rect.width))
+  const canvas = document.createElement('canvas')
+  canvas.width = pixelWidth
+  canvas.height = pixelHeight
+  canvas.className = 'nes-pixel-overlay'
+  canvas.setAttribute('aria-hidden', 'true')
+  canvas.style.left = `${rect.left - parentRect.left + parent.scrollLeft - parent.clientLeft}px`
+  canvas.style.top = `${rect.top - parentRect.top + parent.scrollTop - parent.clientTop}px`
+  canvas.style.width = `${rect.width}px`
+  canvas.style.height = `${rect.height}px`
+  canvas.style.borderRadius = window.getComputedStyle(image).borderRadius
+
+  const context = canvas.getContext('2d')
+  if (!context) return
+  context.imageSmoothingEnabled = false
+
+  const sourceWidth = image.naturalWidth
+  const sourceHeight = image.naturalHeight
+  const targetRatio = rect.width / rect.height
+  const sourceRatio = sourceWidth / sourceHeight
+  let cropX = 0
+  let cropY = 0
+  let cropWidth = sourceWidth
+  let cropHeight = sourceHeight
+  if (sourceRatio > targetRatio) {
+    cropWidth = sourceHeight * targetRatio
+    cropX = (sourceWidth - cropWidth) / 2
+  } else {
+    cropHeight = sourceWidth / targetRatio
+    cropY = (sourceHeight - cropHeight) / 2
+  }
+  try {
+    context.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, pixelWidth, pixelHeight)
+  } catch {
+    return
+  }
+
+  parent.appendChild(canvas)
+  requestAnimationFrame(() => canvas.classList.add('is-dissolving'))
+  const cleanup = () => {
+    canvas.remove()
+    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
+      parent.style.position = parent.dataset.pixelRestorePosition
+      delete parent.dataset.pixelRestorePosition
+    }
+  }
+  canvas.addEventListener('animationend', cleanup, { once: true })
+  window.setTimeout(cleanup, 1100)
+}
+function onPixelImageLoad(event: Event) {
+  if (event.currentTarget instanceof HTMLImageElement) revealPixelImage(event.currentTarget)
+}
+const vPixelReveal = {
+  mounted(image: HTMLImageElement) {
+    image.addEventListener('load', onPixelImageLoad)
+    if (image.complete && image.naturalWidth) requestAnimationFrame(() => revealPixelImage(image))
+  },
+  updated(image: HTMLImageElement) {
+    if (image.complete && image.naturalWidth && image.dataset.pixelSource !== (image.currentSrc || image.src)) {
+      requestAnimationFrame(() => revealPixelImage(image))
+    }
+  },
+  unmounted(image: HTMLImageElement) {
+    image.removeEventListener('load', onPixelImageLoad)
+  }
+}
 
 function ensureFontAwesome() {
   if (typeof document === 'undefined' || document.getElementById('thio-font-awesome-css')) return
@@ -274,11 +412,12 @@ onUnmounted(() => {
   if (guildRefreshTimer) clearInterval(guildRefreshTimer)
   if (clockTimer) clearInterval(clockTimer)
   if (copyResetTimer) clearTimeout(copyResetTimer)
+  if (activityMenuNoticeTimer) clearTimeout(activityMenuNoticeTimer)
 })
 </script>
 
 <template>
-  <section class="my-activity" aria-labelledby="my-activity-title">
+  <section class="my-activity" aria-labelledby="my-activity-title" @click="handleActivityOutside" @keydown.esc="closeActivityMenu">
     <header class="activity-heading">
       <div class="heading-copy">
         <h2 id="my-activity-title">My Activity</h2>
@@ -306,7 +445,7 @@ onUnmounted(() => {
         <div class="profile-content">
           <div class="profile-avatar-line">
             <a class="avatar-wrap" :href="profileImage" target="_blank" rel="noopener noreferrer" aria-label="Open profile GIF">
-              <img :src="profileImage" class="avatar" alt="Profile GIF" width="112" height="112" loading="lazy" />
+              <img :src="profileImage" class="avatar" alt="Profile GIF" width="112" height="112" loading="lazy" v-pixel-reveal />
               <span class="presence-orb" :data-status="status" :aria-label="statusLabel"></span>
             </a>
             <div class="profile-custom-status" :title="customStatus?.state || ''">
@@ -393,11 +532,18 @@ onUnmounted(() => {
             <i class="fa-brands fa-spotify activity-heading-brand" aria-hidden="true"></i>
             <span>Listening to Spotify</span>
             <i class="fa-brands fa-spotify spotify-tiny-mark" aria-hidden="true"></i>
-            <span class="activity-more" aria-hidden="true"><i class="fa-solid fa-ellipsis"></i></span>
+            <div class="activity-menu-wrap">
+              <button class="activity-more-button" type="button" aria-haspopup="menu" :aria-expanded="activeActivityMenu === 'spotify'" aria-label="Spotify activity options" title="More Spotify actions" @click.stop="toggleActivityMenu('spotify')"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></button>
+              <div v-if="activeActivityMenu === 'spotify'" class="activity-menu" role="menu" @click.stop>
+                <a class="activity-menu-item" :href="spotifyUrl" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu"><i class="fa-brands fa-spotify" aria-hidden="true"></i><span>Open in Spotify</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i></a>
+                <button class="activity-menu-item" type="button" role="menuitem" @click="copyActivityDetails('spotify')"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copy track details</span></button>
+                <button class="activity-menu-item" type="button" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Close menu</span></button>
+              </div>
+            </div>
           </div>
           <template v-if="spotify">
             <a class="activity-card-content" :href="spotifyUrl" target="_blank" rel="noopener noreferrer" :aria-label="'Open ' + spotify.song + ' in Spotify'">
-              <img v-if="spotify.album_art_url" :src="spotify.album_art_url" class="activity-artwork spotify-artwork" :alt="(spotify.album || 'Album') + ' artwork'" width="126" height="126" loading="lazy" />
+              <img v-if="spotify.album_art_url" :src="spotify.album_art_url" class="activity-artwork spotify-artwork" :alt="(spotify.album || 'Album') + ' artwork'" width="126" height="126" loading="lazy" v-pixel-reveal />
               <div v-else class="activity-artwork artwork-fallback"><i class="fa-solid fa-music" aria-hidden="true"></i></div>
               <div class="activity-track-info">
                 <h4>{{ spotify.song || 'Unknown track' }}</h4>
@@ -423,11 +569,18 @@ onUnmounted(() => {
         <article v-if="currentActivity" class="activity-card watching-activity">
           <div class="activity-card-heading">
             <i class="fa-solid fa-eye activity-heading-brand" aria-hidden="true"></i><span>Watching</span>
-            <span class="activity-more" aria-hidden="true"><i class="fa-solid fa-ellipsis"></i></span>
+            <div class="activity-menu-wrap">
+              <button class="activity-more-button" type="button" aria-haspopup="menu" :aria-expanded="activeActivityMenu === 'watching'" aria-label="Watching activity options" title="More activity actions" @click.stop="toggleActivityMenu('watching')"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></button>
+              <div v-if="activeActivityMenu === 'watching'" class="activity-menu" role="menu" @click.stop>
+                <a v-if="currentActivity?.buttons?.includes('My Blog')" class="activity-menu-item" href="https://thio.cc.cd/blog/" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Open My Blog</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i></a>
+                <button class="activity-menu-item" type="button" role="menuitem" @click="copyActivityDetails('watching')"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copy activity details</span></button>
+                <button class="activity-menu-item" type="button" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Close menu</span></button>
+              </div>
+            </div>
           </div>
           <div class="activity-card-content">
             <a class="watching-image-link" :href="currentActivity.buttons?.includes('My Blog') ? 'https://thio.cc.cd/blog/' : profileImage" target="_blank" rel="noopener noreferrer" aria-label="Open activity details">
-              <img :src="profileImage" class="activity-artwork watching-artwork" alt="Rich Presence activity artwork" width="126" height="126" loading="lazy" />
+              <img :src="profileImage" class="activity-artwork watching-artwork" alt="Rich Presence activity artwork" width="126" height="126" loading="lazy" v-pixel-reveal />
             </a>
             <div class="activity-track-info watching-track-info">
               <h4>{{ currentActivity.name || 'Rich Presence' }}</h4>
@@ -449,8 +602,9 @@ onUnmounted(() => {
             rel="noopener noreferrer"
             :aria-label="social.label"
             :title="social.label"
-          ><i :class="social.icon" aria-hidden="true"></i></a>
+          ><img class="social-logo" :src="social.image" :alt="social.label" loading="lazy" v-pixel-reveal /></a>
         </nav>
+        <p v-if="activityMenuNotice" class="activity-menu-notice" role="status"><i :class="activityMenuNotice.startsWith('Details copied') ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-info'" aria-hidden="true"></i> {{ activityMenuNotice }}</p>
         <p v-if="unavailable && presence" class="activity-footnote"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Live refresh is unavailable; showing the last known snapshot.</p>
       </section>
     </div>
@@ -458,7 +612,7 @@ onUnmounted(() => {
     <article class="guild-card reveal-card" aria-label="Discord server widget">
         <div class="guild-topline">
           <a class="guild-brand-mark" :href="inviteUrl" target="_blank" rel="noopener noreferrer" aria-label="Join community server">
-            <img :src="communityImage" alt="" width="48" height="48" loading="lazy" />
+            <img :src="communityImage" alt="" width="48" height="48" loading="lazy" v-pixel-reveal />
           </a>
           <div class="guild-heading-copy">
             <span class="detail-label">COMMUNITY SERVER</span>
@@ -483,7 +637,7 @@ onUnmounted(() => {
             <div v-if="activeMembers.length" class="member-list">
               <a v-for="member in activeMembers" :key="member.id" class="guild-member" :class="{ 'member-is-link': member.id.length > 10 }" :href="member.id.length > 10 ? 'https://discord.com/users/' + member.id : undefined" :aria-label="member.id.length > 10 ? 'Open Discord profile for ' + member.username : undefined" :target="member.id.length > 10 ? '_blank' : undefined" :rel="member.id.length > 10 ? 'noopener noreferrer' : undefined">
                 <span class="member-avatar-wrap">
-                  <img v-if="member.avatar_url" :src="member.avatar_url" alt="" width="32" height="32" loading="lazy" />
+                  <img v-if="member.avatar_url" :src="member.avatar_url" alt="" width="32" height="32" loading="lazy" v-pixel-reveal />
                   <span v-else class="member-avatar-fallback">{{ (member.username || '?').slice(0, 1).toUpperCase() }}</span>
                   <span class="member-status-dot" :data-status="member.status || 'online'"></span>
                 </span>
@@ -523,12 +677,13 @@ onUnmounted(() => {
   --discord-white: #ffffff;
   position: relative;
   left: 50%;
-  width: min(calc(100vw - 48px), 1440px);
-  max-width: none;
+  width: min(calc(100vw - 40px), 1440px);
+  max-width: calc(100vw - 40px);
+  box-sizing: border-box;
   margin: 2.5rem 0 3rem;
-  padding: clamp(1rem, 2.2vw, 1.5rem);
+  padding: clamp(.85rem, 2vw, 1.4rem);
   transform: translateX(-50%);
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--discord-border);
   border-radius: 1.1rem;
   background: var(--discord-bg);
@@ -570,7 +725,7 @@ onUnmounted(() => {
 .copy-server:hover { transform: translateY(-1px); border-color: var(--discord-blue); background: var(--discord-card-hover); }
 .copy-server.is-copied { border-color: #23a55a; color: #23a55a; }
 .copy-server.is-error { border-color: #f23f43; color: #f23f43; }
-.activity-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: stretch; gap: 1rem; aspect-ratio: 16 / 9; min-height: 650px; }
+.activity-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: stretch; gap: clamp(.75rem, 1.4vw, 1.15rem); min-height: 0; }
 .reveal-card { min-width: 0; overflow: hidden; border: 1px solid var(--discord-border); border-radius: .9rem; background: var(--discord-panel); animation: card-enter 540ms cubic-bezier(.16,1,.3,1) both; }
 .profile-card { display: flex; flex-direction: column; }
 .profile-banner { position: relative; min-height: 168px; overflow: hidden; background: #e8f8ff; }
@@ -637,13 +792,38 @@ onUnmounted(() => {
 .activity-refresh { display: inline-flex; align-items: center; gap: .35rem; color: #23a55a; font-size: .6rem; font-weight: 750; text-transform: uppercase; letter-spacing: .08em; }
 .activity-refresh > i { font-size: .4rem; animation: status-pulse 1.8s ease-out infinite; }
 .activity-refresh.is-stale { color: var(--discord-muted); }
-.activity-card { overflow: hidden; margin-top: .65rem; padding: .85rem .9rem .8rem; border: 1px solid transparent; border-radius: .8rem; background: var(--discord-card); transition: border-color 230ms ease, transform 250ms ease, background-color 230ms ease; }
+.activity-card { position: relative; z-index: 0; overflow: visible; margin-top: .65rem; padding: .85rem .9rem .8rem; border: 1px solid transparent; border-radius: .8rem; background: var(--discord-card); transition: border-color 230ms ease, transform 250ms ease, background-color 230ms ease; }
+.activity-card:has(.activity-menu) { z-index: 5; }
+.activity-menu-wrap { position: relative; flex: 0 0 auto; margin-left: auto; }
+.activity-more-button { display: grid; place-items: center; width: 30px; height: 28px; padding: 0; border: 1px solid transparent; border-radius: .48rem; background: transparent; color: var(--discord-muted); cursor: pointer; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease; }
+.activity-more-button:hover, .activity-more-button[aria-expanded="true"] { border-color: var(--discord-border); background: var(--discord-card-hover); color: var(--discord-text); }
+.activity-more-button i { font-size: .95rem; }
+.activity-menu { position: absolute; z-index: 30; top: calc(100% + .3rem); right: 0; display: grid; width: min(230px, calc(100vw - 80px)); gap: .18rem; padding: .38rem; border: 1px solid var(--discord-border); border-radius: .72rem; background: var(--discord-panel); box-shadow: 0 12px 32px rgba(0,0,0,.26); animation: menu-pop .16s cubic-bezier(.2,.8,.2,1) both; }
+.activity-menu-item { display: flex; align-items: center; gap: .6rem; width: 100%; min-height: 36px; padding: .5rem .6rem; border: 0; border-radius: .45rem; background: transparent; color: var(--discord-text-soft) !important; font: inherit; font-size: .72rem; text-align: left; text-decoration: none !important; cursor: pointer; }
+.activity-menu-item > i:first-child { width: 16px; color: var(--discord-muted); text-align: center; }
+.activity-menu-item > span { flex: 1; }
+.activity-menu-item .menu-external { margin-left: auto; font-size: .64rem; }
+.activity-menu-item:hover { background: var(--discord-card-hover); color: var(--discord-text) !important; }
+.activity-menu-item:hover > i:first-child { color: var(--discord-blue); }
+.activity-menu-notice { display: flex; align-items: center; gap: .4rem; margin: .65rem 0 0; color: var(--discord-muted); font-size: .7rem; animation: card-enter 180ms ease both; }
+.activity-menu-notice .fa-circle-check { color: #23a55a; }
+
+.social-logo { display: block; width: 22px; height: 22px; object-fit: contain; image-rendering: auto; }
+.social-link { background: #ffffff; border-color: rgba(0,0,0,.07); }
+:global(html:not(.dark)) .social-link { background: #ffffff; border-color: var(--discord-border); }
+.social-link:hover { background: #ffffff; }
+.nes-pixel-overlay { position: absolute; z-index: 3; display: block; max-width: none; pointer-events: none; object-fit: fill; image-rendering: pixelated; opacity: 1; transform-origin: center; }
+.nes-pixel-overlay.is-dissolving { animation: nes-pixel-dissolve 760ms steps(8, end) forwards; }
+@keyframes nes-pixel-dissolve { 0% { opacity: 1; filter: contrast(1.2) saturate(1.08); transform: scale(1.02); } 54% { opacity: .92; filter: contrast(1.08); transform: scale(1.01); } 100% { opacity: 0; filter: none; transform: scale(1); } }
 .activity-card:hover { transform: translateY(-1px); border-color: var(--discord-border-strong); background: var(--discord-card-hover); }
 .activity-card-heading { display: flex; align-items: center; gap: .45rem; min-width: 0; margin-bottom: .65rem; color: var(--discord-text); font-size: .73rem; font-weight: 600; }
 .activity-heading-brand { color: var(--discord-text-soft); font-size: .95rem; }
 .spotify-tiny-mark { color: #1db954; font-size: .78rem; }
 .activity-more { margin-left: auto; color: var(--discord-label); font-size: .9rem; }
 .activity-card-content { display: flex; align-items: center; gap: .8rem; min-width: 0; color: inherit; text-decoration: none !important; }
+.activity-track-info { overflow-wrap: anywhere; }
+.activity-card-content > .activity-track-info { flex: 1 1 auto; }
+.activity-artwork { flex-shrink: 0; }
 .activity-artwork { display: block; width: clamp(80px, 8.2vw, 126px); height: clamp(80px, 8.2vw, 126px); flex: 0 0 clamp(80px, 8.2vw, 126px); overflow: hidden; border-radius: .55rem; object-fit: cover; background: var(--discord-bg); }
 .spotify-artwork, .watching-artwork { transition: transform 400ms cubic-bezier(.16,1,.3,1); }
 .activity-card:hover .spotify-artwork, .watching-activity:hover .watching-artwork { transform: scale(1.025); }
@@ -711,6 +891,7 @@ onUnmounted(() => {
 .copy-inline-action { margin-left: auto; }
 
 @keyframes card-enter { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes menu-pop { from { opacity: 0; transform: translateY(-4px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes bubble-appear { from { opacity: 0; transform: translateX(-6px) scale(.97); } to { opacity: 1; transform: translateX(0) scale(1); } }
 @keyframes status-pulse { 0% { opacity: .65; transform: scale(.75); } 100% { opacity: 0; transform: scale(1.8); } }
 
@@ -722,7 +903,7 @@ onUnmounted(() => {
   .activity-artwork { width: 112px; height: 112px; flex-basis: 112px; }
 }
 @media (max-width: 560px) {
-  .my-activity { width: calc(100vw - 24px); margin: 2rem 0 2.4rem; padding: .65rem; border-radius: .95rem; }
+  .my-activity { width: calc(100vw - 24px); max-width: calc(100vw - 24px); margin: 2rem 0 2.4rem; padding: .65rem; border-radius: .95rem; }
   .activity-heading { align-items: flex-start; flex-direction: column; gap: .8rem; }
   .activity-actions { width: 100%; }
   .join-server { min-height: 39px; flex: 1; padding: .55rem .7rem; font-size: .76rem; }
@@ -746,7 +927,7 @@ onUnmounted(() => {
   .social-link { width: 32px; height: 32px; }
   .activity-card { padding: .7rem; }
   .activity-card-content { gap: .55rem; }
-  .activity-artwork { width: 80px; height: 80px; flex-basis: 80px; border-radius: .5rem; }
+  .activity-artwork { width: clamp(68px, 23vw, 88px); height: clamp(68px, 23vw, 88px); flex-basis: clamp(68px, 23vw, 88px); border-radius: .5rem; }
   .activity-track-info h4 { font-size: .77rem; }
   .activity-track-info p { font-size: .68rem; }
   .activity-progress-line { gap: .3rem; font-size: .59rem; }
