@@ -160,7 +160,8 @@ function activityElapsedFor(activity?: Activity | null) {
   const hours = Math.floor(elapsed / 3600)
   const minutes = Math.floor((elapsed % 3600) / 60)
   const seconds = elapsed % 60
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}${hours > 0 ? ':' : ':'}${String(seconds).padStart(2, '0')}`
+  if (hours > 0) return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 const activityElapsed = computed(() => activityElapsedFor(currentActivity.value) || '00:00')
 function activityTypeLabel(activity: Activity) {
@@ -181,10 +182,12 @@ function activityTitle(activity: Activity) {
   if (activity.type === 0 && activity.details) {
     return activity.details.replace(/^Playing\s+/i, '').trim()
   }
+  if (activity.type === 3 && activity.state) return activity.state
   return activity.details || activity.name || 'Discord activity'
 }
 function activitySubtitle(activity: Activity) {
-  if (activity.type === 0) return activity.state || activity.assets?.large_text || 'Playing on desktop'
+  if (activity.type === 0) return activity.state || 'Playing on desktop'
+  if (activity.type === 3) return activity.name || 'Discord Rich Presence'
   return activity.state || activity.assets?.large_text || ''
 }
 function activityFallbackImage(activity: Activity) {
@@ -768,7 +771,7 @@ onUnmounted(() => {
               />
             </div>
             <div class="activity-track-info rich-presence-info">
-              <span class="rich-app-label">{{ activity.name || 'Rich Presence' }}</span>
+              <span v-if="activity.type !== 3" class="rich-app-label">{{ activity.name || 'Rich Presence' }}</span>
               <h4>{{ activityTitle(activity) }}</h4>
               <p v-if="activitySubtitle(activity)">{{ activitySubtitle(activity) }}</p>
               <span v-if="activityElapsedFor(activity)" class="activity-duration"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ activityElapsedFor(activity) }}</span>
@@ -876,7 +879,7 @@ onUnmounted(() => {
   width: min(calc(100vw - 40px), 1440px);
   max-width: min(calc(100vw - 40px), 1440px);
   box-sizing: border-box;
-  margin: 2.5rem 0 3rem calc(50% - 50vw + 20px);
+  margin: 2.5rem 0 3rem calc(50% - 50vw + max(20px, (100vw - 1440px) / 2));
   padding: clamp(.85rem, 2vw, 1.4rem);
   transform: none;
   overflow: visible;
@@ -1024,7 +1027,7 @@ onUnmounted(() => {
 .rich-app-label { display: block; margin-bottom: .16rem; color: var(--discord-muted); font-size: .62rem; font-weight: 700; letter-spacing: .025em; }
 .rich-artwork-wrap { position: relative; flex: 0 0 auto; width: clamp(74px, 8vw, 120px); height: clamp(74px, 8vw, 120px); }
 .rich-artwork-fallback { position: absolute; inset: 0; display: grid; place-items: center; border-radius: .55rem; background: var(--discord-border); color: var(--discord-muted); font-size: 1.55rem; }
-.rich-artwork { position: relative; width: 100%; height: 100%; flex: initial; }
+.rich-artwork.activity-artwork { position: relative; display: block; width: 100%; height: 100%; flex: initial; object-fit: cover; }
 .rich-artwork-badge { position: absolute; right: -.2rem; bottom: -.2rem; width: 28px; height: 28px; border: 3px solid var(--discord-card); border-radius: .48rem; object-fit: cover; background: var(--discord-panel); }
 .rich-activity-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; margin-top: .75rem; padding-top: .65rem; border-top: 1px solid var(--discord-border); }
 .rich-action-button { display: inline-flex; align-items: center; gap: .4rem; min-height: 30px; padding: .42rem .58rem; border: 1px solid var(--discord-border); border-radius: .48rem; background: var(--discord-panel); color: var(--discord-text-soft) !important; font-size: .66rem; font-weight: 650; text-decoration: none !important; transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease; }
