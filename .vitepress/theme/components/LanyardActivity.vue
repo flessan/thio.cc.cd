@@ -695,7 +695,7 @@ onUnmounted(() => {
 .member-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem .85rem; }
 .guild-member { display: flex; align-items: center; gap: .5rem; min-width: 0; color: inherit; text-decoration: none !important; }
 .guild-member.member-is-link { cursor: pointer; }
-.guild-member.member-is-link:hover .member-name { color: white; text-decoration: underline; }
+.guild-member.member-is-link:hover .member-name { color: var(--discord-text); text-decoration: underline; }
 .member-avatar-wrap { position: relative; display: block; flex: 0 0 32px; width: 32px; height: 32px; }
 .member-avatar-wrap img, .member-avatar-fallback { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .member-avatar-fallback { background: var(--discord-card); color: var(--discord-text-soft); font-size: .72rem; font-weight: 800; }
