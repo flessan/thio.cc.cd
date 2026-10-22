@@ -643,7 +643,7 @@ onUnmounted(() => {
 .recent-activity > p { margin: .35rem 0 .7rem; color: #b5bac1; font-size: .71rem; line-height: 1.45; }
 .recent-activity > p a { color: #00a8fc !important; text-decoration: none !important; }
 .recent-placeholder { display: flex; align-items: center; gap: .7rem; padding: .65rem .75rem; border: 1px solid #3f4147; border-radius: .7rem; background: #2b2d31; }
-.recent-game-icon { display: grid; place-items: center; width: 51px; height: 51px; flex: 0 0 51px; transform: rotate(-7deg); background: linear-gradient(145deg, #e7edf6, #8fa6bc); color: #232428; }
+.recent-game-icon { display: grid; place-items: center; width: 51px; height: 51px; flex: 0 0 51px; transform: rotate(-7deg); background: #c5d8e8; color: #232428; }
 .recent-game-icon svg { width: 28px; height: 28px; fill: currentColor; }
 .recent-placeholder h4 { margin: 0; color: #f2f3f5; font-size: .77rem; }
 .recent-placeholder p { margin: .15rem 0 0; color: #b5bac1; font-size: .67rem; line-height: 1.4; }
