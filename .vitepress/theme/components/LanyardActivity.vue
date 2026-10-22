@@ -181,7 +181,7 @@ const profileKv = computed(() => Object.entries(presence.value?.kv || {})
   )
   .slice(0, 4))
 function kvLabel(key: string) {
-  return key.replace(/_/g, ' ').replace(/\\b[a-z]/g, letter => letter.toUpperCase())
+  return key.replace(/_/g, ' ').replace(/\b[a-z]/g, letter => letter.toUpperCase())
 }
 function kvHref(value: string) {
   try {
