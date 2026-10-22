@@ -11,6 +11,7 @@ type Activity = {
   application_id?: string
   created_at?: number
   flags?: number
+  sync_id?: string
   timestamps?: { start?: number; end?: number }
   assets?: { large_image?: string; large_text?: string; small_image?: string; small_text?: string }
   emoji?: { id?: string | null; name?: string; animated?: boolean }
@@ -289,7 +290,7 @@ onUnmounted(() => {
             <div class="identity-copy">
               <div class="identity-name-line">
                 <h3>{{ user?.display_name || user?.global_name || user?.username || 'Flessann' }}</h3>
-                <svg v-if="user?.primary_guild?.tag" class="identity-verified" viewBox="0 0 24 24" :aria-label="'Primary guild: ' + user.primary_guild.tag" role="img"><path d="m12 2 2.4 2.1 3.2-.1.9 3.1 2.6 1.8-1.1 3 1.1 3-2.6 1.8-.9 3.1-3.2-.1L12 22l-2.4-2.1-3.2.1-.9-3.1-2.6-1.8 1.1-3-1.1-3 2.6-1.8.9-3.1 3.2.1L12 2Z"/><path d="m8.5 12.2 2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg v-if="user?.primary_guild?.tag" class="identity-verified" viewBox="0 0 24 24" :aria-label="'Primary guild: ' + (user?.primary_guild?.tag || '')" role="img"><path d="m12 2 2.4 2.1 3.2-.1.9 3.1 2.6 1.8-1.1 3 1.1 3-2.6 1.8-.9 3.1-3.2-.1L12 22l-2.4-2.1-3.2.1-.9-3.1-2.6-1.8 1.1-3-1.1-3 2.6-1.8.9-3.1 3.2.1L12 2Z"/><path d="m8.5 12.2 2.2 2.2 4.8-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
               <p class="username">@{{ user?.username || 'thiosaputra' }}</p>
               <div class="identity-badges">
