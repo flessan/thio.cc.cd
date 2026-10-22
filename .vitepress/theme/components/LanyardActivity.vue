@@ -166,6 +166,7 @@ const layoutPreset = ref<LayoutPreset>('balanced')
 const collapsedPanels = ref<PanelId[]>([])
 const draggingPanel = ref<PanelId | null>(null)
 const dragOverPanel = ref<PanelId | null>(null)
+const selectedPanel = ref<PanelId | null>(null)
 const wishlistItems = ref<Array<{ id: string; title: string; subtitle: string; url: string; image?: string }>>([])
 
 const layoutPresets: Array<{ id: LayoutPreset; label: string; icon: string }> = [
@@ -213,6 +214,26 @@ function dropPanel(target: PanelId, event: DragEvent) {
 function endPanelDrag() {
   draggingPanel.value = null
   dragOverPanel.value = null
+}
+function selectPanelForSnap(id: PanelId) {
+  if (typeof window === 'undefined' || !window.matchMedia('(max-width: 900px)').matches) return
+  if (!selectedPanel.value) {
+    selectedPanel.value = id
+    return
+  }
+  if (selectedPanel.value === id) {
+    selectedPanel.value = null
+    return
+  }
+  const reordered = [...panelOrder.value]
+  const from = reordered.indexOf(selectedPanel.value)
+  const to = reordered.indexOf(id)
+  if (from >= 0 && to >= 0) {
+    ;[reordered[from], reordered[to]] = [reordered[to], reordered[from]]
+    panelOrder.value = reordered
+    layoutPreset.value = 'custom'
+  }
+  selectedPanel.value = null
 }
 function setProfileTab(tab: ProfileTab) {
   profileTab.value = tab
@@ -371,20 +392,20 @@ onUnmounted(() => {
           class="layout-preset"
           :class="{ 'is-active': layoutPreset === preset.id }"
           :aria-pressed="layoutPreset === preset.id"
-          @click="setLayoutPreset(preset.id as Exclude<LayoutPreset, 'custom'>)"
+          @click="setLayoutPreset(preset.id as Exclude<LayoutPreset, 'custom'>); selectedPanel = null"
         >
           <i class="fa-solid" :class="preset.icon" aria-hidden="true"></i>
           <span>{{ preset.label }}</span>
         </button>
         <span v-if="layoutPreset === 'custom'" class="custom-layout-note"><i class="fa-solid fa-check" aria-hidden="true"></i> Custom snapped layout</span>
       </div>
-      <span class="drag-hint"><i class="fa-solid fa-arrow-pointer" aria-hidden="true"></i> Drag the grip to rearrange</span>
+      <span class="drag-hint"><i class="fa-solid fa-arrow-pointer" aria-hidden="true"></i>{{ selectedPanel ? 'Tap another panel grip to swap' : 'Drag to snap · tap two grips on mobile' }}</span>
     </div>
 
     <div class="activity-layout" :class="'layout-' + layoutPreset">
       <article
         class="profile-card panel-window activity-reveal"
-        :class="{ 'is-dragging': draggingPanel === 'profile', 'is-drop-target': dragOverPanel === 'profile', 'is-collapsed': isCollapsed('profile') }"
+        :class="{ 'is-dragging': draggingPanel === 'profile', 'is-drop-target': dragOverPanel === 'profile', 'is-selected-for-snap': selectedPanel === 'profile', 'is-collapsed': isCollapsed('profile') }"
         :style="{ order: panelOrder.indexOf('profile') }"
         @dragover="overPanel('profile', $event)"
         @drop="dropPanel('profile', $event)"
@@ -392,7 +413,7 @@ onUnmounted(() => {
         <header class="window-bar">
           <span class="window-title"><i class="fa-solid fa-id-card" aria-hidden="true"></i> PROFILE</span>
           <div class="window-controls">
-            <button class="drag-handle" type="button" draggable="true" aria-label="Drag profile panel to reorder" title="Drag to move · snaps into place" @dragstart="startPanelDrag('profile', $event)" @dragend="endPanelDrag">
+            <button class="drag-handle" type="button" draggable="true" aria-label="Drag profile panel to reorder" title="Drag to move · snaps into place" @dragstart="startPanelDrag('profile', $event)" @dragend="endPanelDrag" @click="selectPanelForSnap('profile')">
               <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
             </button>
             <button class="window-control" type="button" :aria-label="isCollapsed('profile') ? 'Expand profile panel' : 'Collapse profile panel'" :title="isCollapsed('profile') ? 'Expand panel' : 'Minimize panel'" @click="toggleCollapsed('profile')">
@@ -485,7 +506,7 @@ onUnmounted(() => {
 
       <section
         class="activity-pane panel-window activity-reveal"
-        :class="{ 'is-dragging': draggingPanel === 'activity', 'is-drop-target': dragOverPanel === 'activity', 'is-collapsed': isCollapsed('activity') }"
+        :class="{ 'is-dragging': draggingPanel === 'activity', 'is-drop-target': dragOverPanel === 'activity', 'is-selected-for-snap': selectedPanel === 'activity', 'is-collapsed': isCollapsed('activity') }"
         :style="{ order: panelOrder.indexOf('activity'), '--reveal-delay': '90ms' }"
         aria-label="Discord activity"
         @dragover="overPanel('activity', $event)"
@@ -494,7 +515,7 @@ onUnmounted(() => {
         <header class="window-bar">
           <span class="window-title"><i class="fa-solid fa-wave-square" aria-hidden="true"></i> ACTIVITY WINDOW</span>
           <div class="window-controls">
-            <button class="drag-handle" type="button" draggable="true" aria-label="Drag activity panel to reorder" title="Drag to move · snaps into place" @dragstart="startPanelDrag('activity', $event)" @dragend="endPanelDrag">
+            <button class="drag-handle" type="button" draggable="true" aria-label="Drag activity panel to reorder" title="Drag to move · snaps into place" @dragstart="startPanelDrag('activity', $event)" @dragend="endPanelDrag" @click="selectPanelForSnap('activity')">
               <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
             </button>
             <button class="window-control" type="button" :aria-label="isCollapsed('activity') ? 'Expand activity panel' : 'Collapse activity panel'" :title="isCollapsed('activity') ? 'Expand panel' : 'Minimize panel'" @click="toggleCollapsed('activity')">
@@ -520,7 +541,7 @@ onUnmounted(() => {
               <div class="activity-card-heading">
                 <i class="fa-brands fa-spotify activity-heading-brand" aria-hidden="true"></i>
                 <span>Listening to Spotify</span><span class="spotify-tiny-mark" aria-hidden="true"><i class="fa-brands fa-spotify"></i></span>
-                <span class="activity-more" aria-hidden="true">···</span>
+                <i class="fa-solid fa-ellipsis activity-more" aria-hidden="true"></i>
               </div>
               <template v-if="spotify">
                 <a class="activity-card-content" :href="spotifyUrl" target="_blank" rel="noopener noreferrer" :aria-label="'Open ' + spotify.song + ' in Spotify'">
@@ -610,7 +631,7 @@ onUnmounted(() => {
 
       <article
         class="guild-card panel-window activity-reveal"
-        :class="{ 'is-dragging': draggingPanel === 'community', 'is-drop-target': dragOverPanel === 'community', 'is-collapsed': isCollapsed('community') }"
+        :class="{ 'is-dragging': draggingPanel === 'community', 'is-drop-target': dragOverPanel === 'community', 'is-selected-for-snap': selectedPanel === 'community', 'is-collapsed': isCollapsed('community') }"
         :style="{ order: panelOrder.indexOf('community'), '--reveal-delay': '180ms' }"
         aria-label="Discord server widget"
         @dragover="overPanel('community', $event)"
@@ -619,7 +640,7 @@ onUnmounted(() => {
         <header class="window-bar">
           <span class="window-title"><i class="fa-brands fa-discord" aria-hidden="true"></i> COMMUNITY SERVER</span>
           <div class="window-controls">
-            <button class="drag-handle" type="button" draggable="true" aria-label="Drag community panel to reorder" title="Drag to move · snaps into place" @dragstart="startPanelDrag('community', $event)" @dragend="endPanelDrag">
+            <button class="drag-handle" type="button" draggable="true" aria-label="Drag community panel to reorder" title="Drag to move · snaps into place" @dragstart="startPanelDrag('community', $event)" @dragend="endPanelDrag" @click="selectPanelForSnap('community')">
               <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
             </button>
             <button class="window-control" type="button" :aria-label="isCollapsed('community') ? 'Expand community panel' : 'Collapse community panel'" :title="isCollapsed('community') ? 'Expand panel' : 'Minimize panel'" @click="toggleCollapsed('community')">
@@ -728,6 +749,7 @@ onUnmounted(() => {
 .panel-window:hover { border-color: #50525a; }
 .panel-window.is-dragging { opacity: .42; transform: scale(.985); }
 .panel-window.is-drop-target { border-color: #8490ff; box-shadow: 0 0 0 2px rgba(88,101,242,.22), 0 12px 30px rgba(0,0,0,.18); }
+.panel-window.is-selected-for-snap { border-color: #8490ff; border-style: dashed; box-shadow: 0 0 0 2px rgba(88,101,242,.15); }
 .panel-window.is-collapsed { align-self: start; }
 .window-bar { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 36px; padding: .35rem .6rem .35rem .78rem; border-bottom: 1px solid var(--discord-border); background: #202125; }
 .window-title { display: flex; align-items: center; gap: .42rem; color: var(--discord-muted); font-size: .57rem; font-weight: 850; letter-spacing: .12em; }
@@ -815,7 +837,7 @@ onUnmounted(() => {
 .activity-card-heading { display: flex; align-items: center; gap: .45rem; min-width: 0; margin-bottom: .65rem; color: var(--discord-text); font-size: .73rem; font-weight: 600; }
 .activity-heading-brand { color: #dbdee1; font-size: .95rem; }
 .spotify-tiny-mark { display: grid; place-items: center; width: 13px; height: 13px; margin-left: -.2rem; border-radius: 50%; background: #1db954; color: #12341e; font-size: .48rem; }
-.activity-more { margin-left: auto; color: #b5bac1; font-size: 1.3rem; font-weight: 800; letter-spacing: .06em; line-height: .7; }
+.activity-more { margin-left: auto; color: #b5bac1; font-size: .95rem; }
 .activity-card-content { display: flex; align-items: center; gap: .8rem; min-width: 0; color: inherit; text-decoration: none !important; }
 .activity-artwork { display: block; width: clamp(76px, 8.4vw, 126px); height: clamp(76px, 8.4vw, 126px); flex: 0 0 clamp(76px, 8.4vw, 126px); overflow: hidden; border-radius: .55rem; object-fit: cover; background: var(--discord-bg); }
 .spotify-artwork, .watching-artwork { transition: transform 400ms cubic-bezier(.16,1,.3,1); }
