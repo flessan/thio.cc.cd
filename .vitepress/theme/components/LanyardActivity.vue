@@ -9,6 +9,7 @@ type Activity = {
   details?: string
   buttons?: string[]
   application_id?: string
+  platform?: string
   created_at?: number
   flags?: number
   sync_id?: string
@@ -46,39 +47,65 @@ const presence = ref<Presence | null>({
     primary_guild: { tag: '㏌tel', identity_enabled: true }
   },
   activities: [
-    { id: 'custom', name: 'Custom Status', state: 'please do disturb', type: 4, emoji: { name: '✅' }, created_at: 1792653069632 },
+    {
+      id: 'custom',
+      name: 'Custom Status',
+      state: 'please do disturb',
+      type: 4,
+      emoji: { name: '✅' },
+      created_at: 1792672946309
+    },
     {
       id: 'spotify:1',
       name: 'Spotify',
       type: 2,
-      details: 'Together',
-      state: 'S3RL; Fatshaudi; Luca Rain',
+      details: 'Murder Murder',
+      state: 'And One',
       flags: 48,
-      sync_id: '4WTdbZ7pN4n9JkDuFhxFXU',
-      assets: { large_image: 'spotify:ab67616d0000b2736fde4f0cda187a1b212f58a8', large_text: 'Together' },
-      timestamps: { start: 1792653004212, end: 1792653197712 }
+      sync_id: '1frg9NCLCUImqmbA18Pxtx',
+      assets: { large_image: 'spotify:ab67616d0000b273cb184ac2977824f989ebad9c', large_text: 'I.S.T.' },
+      timestamps: { start: 1792672894620, end: 1792673089953 },
+      created_at: 1792672894795
     },
     {
-      id: '222a7dd77fa745b4',
+      application_id: '1279031829940273203',
+      assets: {
+        large_image: 'mp:external/sxPfNGAfic6cxTeigGVSjj_c1g-pbeq_a3OjRlVv8Yc/https/tr.rbxcdn.com/180DAY-7fe70f786eea50c96ec21cdf480fe750/512/512/Image/Png/noFilter',
+        large_text: '[UPD 🎃] DONT SPLASH ',
+        small_image: '1279135753515044884',
+        small_text: 'Roblox'
+      },
+      buttons: ['Join server', 'See game page'],
+      created_at: 1792672946309,
+      details: 'Playing [UPD 🎃] DONT SPLASH ',
+      id: '4c28046396bc2cc8',
+      name: 'Roblox',
+      platform: 'desktop',
+      state: 'by slo7th',
+      timestamps: { start: 1792672884000 },
+      type: 0
+    },
+    {
       application_id: '1540699723852152872',
-      name: 'in Love with',
-      type: 3,
-      state: 'Miyuki Takara',
       buttons: ['My Blog'],
-      timestamps: { start: 1792598400759 },
-      flags: 1
+      created_at: 1792663079866,
+      id: 'b5219b0dae885920',
+      name: 'in Love with',
+      state: 'Miyuki Takara',
+      timestamps: { start: 1792598400525 },
+      type: 3
     }
   ],
   active_on_discord_desktop: true,
   active_on_discord_mobile: false,
   active_on_discord_web: false,
   spotify: {
-    album: 'Together',
-    album_art_url: 'https://i.scdn.co/image/ab67616d0000b2736fde4f0cda187a1b212f58a8',
-    artist: 'S3RL; Fatshaudi; Luca Rain',
-    song: 'Together',
-    timestamps: { start: 1792653004212, end: 1792653197712 },
-    track_id: '4WTdbZ7pN4n9JkDuFhxFXU'
+    album: 'I.S.T.',
+    album_art_url: 'https://i.scdn.co/image/ab67616d0000b273cb184ac2977824f989ebad9c',
+    artist: 'And One',
+    song: 'Murder Murder',
+    timestamps: { start: 1792672894620, end: 1792673089953 },
+    track_id: '1frg9NCLCUImqmbA18Pxtx'
   }
 })
 const guild = ref<GuildWidget | null>({
@@ -112,6 +139,10 @@ let clockTimer: ReturnType<typeof setInterval> | undefined
 let copyResetTimer: ReturnType<typeof setTimeout> | undefined
 let activeRequest: AbortController | undefined
 let guildRequest: AbortController | undefined
+let lanyardSocket: WebSocket | undefined
+let lanyardHeartbeatTimer: ReturnType<typeof setInterval> | undefined
+let lanyardReconnectTimer: ReturnType<typeof setTimeout> | undefined
+let keepLanyardSocketOpen = false
 
 const user = computed(() => presence.value?.discord_user)
 const status = computed(() => presence.value?.discord_status || 'offline')
@@ -119,17 +150,78 @@ const statusLabels: Record<string, string> = { online: 'Online', idle: 'Away', d
 const statusLabel = computed(() => statusLabels[status.value] || 'Offline')
 const activities = computed(() => presence.value?.activities || [])
 const customStatus = computed(() => activities.value.find(a => a.type === 4))
-const currentActivity = computed(() => activities.value.find(a => a.type !== 4 && a.name !== 'Spotify'))
+const richActivities = computed(() => activities.value.filter(a => a.type !== 4 && a.name !== 'Spotify'))
+const currentActivity = computed(() => richActivities.value[0] || null)
 const spotify = computed(() => presence.value?.spotify || null)
-const activityElapsed = computed(() => {
-  const started = currentActivity.value?.timestamps?.start
-  if (!started || now.value < started) return '00:00:00'
+function activityElapsedFor(activity?: Activity | null) {
+  const started = activity?.timestamps?.start
+  if (!started || now.value < started) return ''
   const elapsed = Math.floor((now.value - started) / 1000)
   const hours = Math.floor(elapsed / 3600)
   const minutes = Math.floor((elapsed % 3600) / 60)
   const seconds = elapsed % 60
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-})
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}${hours > 0 ? ':' : ':'}${String(seconds).padStart(2, '0')}`
+}
+const activityElapsed = computed(() => activityElapsedFor(currentActivity.value) || '00:00')
+function activityTypeLabel(activity: Activity) {
+  if (activity.type === 0) return 'Playing'
+  if (activity.type === 1) return 'Streaming'
+  if (activity.type === 3) return 'Watching'
+  if (activity.type === 5) return 'Competing'
+  return activity.name || 'Activity'
+}
+function activityIconClass(activity: Activity) {
+  if (activity.type === 0) return 'fa-solid fa-gamepad'
+  if (activity.type === 1) return 'fa-solid fa-tower-broadcast'
+  if (activity.type === 3) return 'fa-solid fa-eye'
+  if (activity.type === 5) return 'fa-solid fa-trophy'
+  return 'fa-solid fa-display'
+}
+function activityTitle(activity: Activity) {
+  if (activity.type === 0 && activity.details) {
+    return activity.details.replace(/^Playing\s+/i, '').trim()
+  }
+  return activity.details || activity.name || 'Discord activity'
+}
+function activitySubtitle(activity: Activity) {
+  if (activity.type === 0) return activity.state || activity.assets?.large_text || 'Playing on desktop'
+  return activity.state || activity.assets?.large_text || ''
+}
+function activityFallbackImage(activity: Activity) {
+  return activity.type === 3 ? profileImage : ''
+}
+function activityAssetUrl(activity?: Activity | null, assetKey: 'large_image' | 'small_image' = 'large_image') {
+  const raw = activity?.assets?.[assetKey]
+  if (!raw) return ''
+  if (raw.startsWith('mp:external/')) {
+    return `https://media.discordapp.net/external/${raw.slice('mp:external/'.length)}?width=360&height=360&quality=85`
+  }
+  if (/^https?:\/\//i.test(raw)) return raw
+  if (raw.startsWith('spotify:')) return ''
+  if (/^\d+$/.test(raw) && activity?.application_id) {
+    return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${raw}.png?size=96`
+  }
+  return ''
+}
+function activityGamePageUrl(activity: Activity) {
+  if (activity.type !== 0 || !activity.details) return ''
+  const title = activity.details.replace(/^Playing\s+/i, '').trim()
+  return `https://www.roblox.com/discover/?Keyword=${encodeURIComponent(title)}`
+}
+function activityButtonUrl(activity: Activity, button: string) {
+  if (button === 'My Blog') return 'https://thio.cc.cd/blog/'
+  if (/see game page/i.test(button)) return activityGamePageUrl(activity)
+  return ''
+}
+function activityMenuKey(activity: Activity) {
+  return activity.id || activity.name || 'activity'
+}
+function activityHasButtonUrl(activity: Activity, button: string) {
+  return Boolean(activityButtonUrl(activity, button))
+}
+function onActivityImageError(event: Event) {
+  if (event.currentTarget instanceof HTMLImageElement) event.currentTarget.style.display = 'none'
+}
 const spotifyUrl = computed(() => spotify.value?.track_id
   ? `https://open.spotify.com/track/${encodeURIComponent(spotify.value.track_id)}`
   : 'https://open.spotify.com/')
@@ -169,7 +261,7 @@ const socialLinks = [
   { id: 'telegram', label: 'Telegram', image: 'https://cdn-icons-png.flaticon.com/512/2111/2111646.png', url: 'https://t.me/YOUR_USERNAME' }
 ] as const
 
-type ActivityMenu = 'spotify' | 'watching' | null
+type ActivityMenu = string | null
 const activeActivityMenu = ref<ActivityMenu>(null)
 const activityMenuNotice = ref('')
 let activityMenuNoticeTimer: ReturnType<typeof setTimeout> | undefined
@@ -209,10 +301,11 @@ async function writeClipboard(text: string) {
     return false
   }
 }
-async function copyActivityDetails(kind: Exclude<ActivityMenu, null>) {
+async function copyActivityDetails(kind: string) {
+  const activity = richActivities.value.find(item => activityMenuKey(item) === kind) || currentActivity.value
   const value = kind === 'spotify'
     ? [spotify.value?.song, spotify.value?.artist, spotify.value?.album ? `Album: ${spotify.value.album}` : '', spotifyUrl.value].filter(Boolean).join(' — ')
-    : [currentActivity.value?.name, currentActivity.value?.state || currentActivity.value?.details, currentActivity.value?.buttons?.includes('My Blog') ? 'https://thio.cc.cd/blog/' : ''].filter(Boolean).join(' — ')
+    : [activity?.name, activity?.details, activity?.state, activity?.assets?.large_text, activity?.buttons?.join(', ')].filter(Boolean).join(' — ')
   const copied = await writeClipboard(value)
   closeActivityMenu()
   activityMenuNotice.value = copied ? 'Details copied to clipboard' : 'Could not copy details'
@@ -375,6 +468,70 @@ async function fetchPresence() {
     if (!controller.signal.aborted) loading.value = false
   }
 }
+function clearLanyardHeartbeat() {
+  if (lanyardHeartbeatTimer) clearInterval(lanyardHeartbeatTimer)
+  lanyardHeartbeatTimer = undefined
+}
+function scheduleLanyardReconnect() {
+  if (!keepLanyardSocketOpen || lanyardReconnectTimer) return
+  lanyardReconnectTimer = setTimeout(() => {
+    lanyardReconnectTimer = undefined
+    connectLanyardSocket()
+  }, 5000)
+}
+function connectLanyardSocket() {
+  if (!keepLanyardSocketOpen || typeof WebSocket === 'undefined') return
+  if (lanyardSocket && (lanyardSocket.readyState === WebSocket.OPEN || lanyardSocket.readyState === WebSocket.CONNECTING)) return
+  try {
+    const socket = new WebSocket('wss://api.lanyard.rest/socket')
+    lanyardSocket = socket
+    socket.addEventListener('message', (event) => {
+      let message: { op?: number; t?: string; d?: unknown }
+      try {
+        message = JSON.parse(String(event.data))
+      } catch {
+        return
+      }
+
+      // Lanyard Opcode 1 is Hello; subscribe to this user, then heartbeat at its requested interval.
+      if (message.op === 1) {
+        const hello = message.d as { heartbeat_interval?: number } | undefined
+        if (socket.readyState !== WebSocket.OPEN) return
+        socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: '776722084030054421' } }))
+        clearLanyardHeartbeat()
+        const heartbeatInterval = Math.max(5000, hello?.heartbeat_interval || 30000)
+        lanyardHeartbeatTimer = setInterval(() => {
+          if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ op: 3 }))
+        }, heartbeatInterval)
+        return
+      }
+
+      if (message.op !== 0 || (message.t !== 'INIT_STATE' && message.t !== 'PRESENCE_UPDATE')) return
+      const payload = message.d
+      if (!payload || typeof payload !== 'object') return
+      const record = payload as Record<string, unknown>
+      const update = ('discord_user' in record
+        ? payload
+        : record['776722084030054421']) as Presence | undefined
+      if (update?.discord_user) {
+        presence.value = update
+        unavailable.value = false
+        loading.value = false
+        now.value = Date.now()
+      }
+    })
+    socket.addEventListener('close', () => {
+      if (lanyardSocket === socket) lanyardSocket = undefined
+      clearLanyardHeartbeat()
+      scheduleLanyardReconnect()
+    })
+    socket.addEventListener('error', () => {
+      try { socket.close() } catch { /* reconnect is handled by the close event */ }
+    })
+  } catch {
+    scheduleLanyardReconnect()
+  }
+}
 async function fetchGuildWidget() {
   guildRequest?.abort()
   const controller = new AbortController()
@@ -401,13 +558,20 @@ onMounted(() => {
   ensureFontAwesome()
   void fetchPresence()
   void fetchGuildWidget()
-  refreshTimer = setInterval(() => void fetchPresence(), 30_000)
+  keepLanyardSocketOpen = true
+  connectLanyardSocket()
+  refreshTimer = setInterval(() => void fetchPresence(), 60_000)
   guildRefreshTimer = setInterval(() => void fetchGuildWidget(), 60_000)
   clockTimer = setInterval(() => { now.value = Date.now() }, 1_000)
 })
 onUnmounted(() => {
+  keepLanyardSocketOpen = false
   activeRequest?.abort()
   guildRequest?.abort()
+  if (lanyardReconnectTimer) clearTimeout(lanyardReconnectTimer)
+  clearLanyardHeartbeat()
+  lanyardSocket?.close()
+  lanyardSocket = undefined
   if (refreshTimer) clearInterval(refreshTimer)
   if (guildRefreshTimer) clearInterval(guildRefreshTimer)
   if (clockTimer) clearInterval(clockTimer)
@@ -566,28 +730,60 @@ onUnmounted(() => {
           </div>
         </article>
 
-        <article v-if="currentActivity" class="activity-card watching-activity">
+        <article v-for="activity in richActivities" :key="activityMenuKey(activity)" class="activity-card rich-presence-card">
           <div class="activity-card-heading">
-            <i class="fa-solid fa-eye activity-heading-brand" aria-hidden="true"></i><span>Watching</span>
+            <i :class="activityIconClass(activity) + ' activity-heading-brand'" aria-hidden="true"></i>
+            <span>{{ activityTypeLabel(activity) }}</span>
+            <span class="activity-app-name">{{ activity.name }}</span>
             <div class="activity-menu-wrap">
-              <button class="activity-more-button" type="button" aria-haspopup="menu" :aria-expanded="activeActivityMenu === 'watching'" aria-label="Watching activity options" title="More activity actions" @click.stop="toggleActivityMenu('watching')"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></button>
-              <div v-if="activeActivityMenu === 'watching'" class="activity-menu" role="menu" @click.stop>
-                <a v-if="currentActivity?.buttons?.includes('My Blog')" class="activity-menu-item" href="https://thio.cc.cd/blog/" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Open My Blog</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i></a>
-                <button class="activity-menu-item" type="button" role="menuitem" @click="copyActivityDetails('watching')"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copy activity details</span></button>
+              <button class="activity-more-button" type="button" aria-haspopup="menu" :aria-expanded="activeActivityMenu === activityMenuKey(activity)" :aria-label="'Options for ' + (activity.name || 'activity')" :title="'More ' + (activity.name || 'activity') + ' actions'" @click.stop="toggleActivityMenu(activityMenuKey(activity))"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></button>
+              <div v-if="activeActivityMenu === activityMenuKey(activity)" class="activity-menu" role="menu" @click.stop>
+                <a v-if="activityButtonUrl(activity, 'See game page')" class="activity-menu-item" :href="activityButtonUrl(activity, 'See game page')" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-gamepad" aria-hidden="true"></i><span>Find game on Roblox</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i></a>
+                <a v-if="activityButtonUrl(activity, 'My Blog')" class="activity-menu-item" :href="activityButtonUrl(activity, 'My Blog')" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Open My Blog</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i></a>
+                <button class="activity-menu-item" type="button" role="menuitem" @click="copyActivityDetails(activityMenuKey(activity))"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copy activity details</span></button>
                 <button class="activity-menu-item" type="button" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Close menu</span></button>
               </div>
             </div>
           </div>
-          <div class="activity-card-content">
-            <a class="watching-image-link" :href="currentActivity.buttons?.includes('My Blog') ? 'https://thio.cc.cd/blog/' : profileImage" target="_blank" rel="noopener noreferrer" aria-label="Open activity details">
-              <img :src="profileImage" class="activity-artwork watching-artwork" alt="Rich Presence activity artwork" width="126" height="126" loading="lazy" v-pixel-reveal />
-            </a>
-            <div class="activity-track-info watching-track-info">
-              <h4>{{ currentActivity.name || 'Rich Presence' }}</h4>
-              <p>{{ currentActivity.state || currentActivity.details || 'Active on Discord' }}</p>
-              <a v-if="currentActivity.buttons?.includes('My Blog')" class="watching-link" href="https://thio.cc.cd/blog/" target="_blank" rel="noopener noreferrer">My Blog <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-              <span class="activity-duration"><i class="fa-solid fa-display" aria-hidden="true"></i>{{ activityElapsed }}</span>
+          <div class="activity-card-content rich-presence-content">
+            <div class="rich-artwork-wrap">
+              <span class="rich-artwork-fallback"><i :class="activityIconClass(activity)" aria-hidden="true"></i></span>
+              <img
+                v-if="activityAssetUrl(activity) || activityFallbackImage(activity)"
+                :src="activityAssetUrl(activity) || activityFallbackImage(activity)"
+                class="activity-artwork rich-artwork"
+                :alt="activity.assets?.large_text || activity.name || 'Activity artwork'"
+                loading="lazy"
+                v-pixel-reveal
+                @error="onActivityImageError"
+              />
+              <img
+                v-if="activityAssetUrl(activity, 'small_image')"
+                :src="activityAssetUrl(activity, 'small_image')"
+                class="rich-artwork-badge"
+                :alt="activity.assets?.small_text || ''"
+                loading="lazy"
+                v-pixel-reveal
+                @error="onActivityImageError"
+              />
             </div>
+            <div class="activity-track-info rich-presence-info">
+              <span class="rich-app-label">{{ activity.name || 'Rich Presence' }}</span>
+              <h4>{{ activityTitle(activity) }}</h4>
+              <p v-if="activitySubtitle(activity)">{{ activitySubtitle(activity) }}</p>
+              <span v-if="activityElapsedFor(activity)" class="activity-duration"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ activityElapsedFor(activity) }}</span>
+              <a v-if="activityButtonUrl(activity, 'My Blog')" class="watching-link" :href="activityButtonUrl(activity, 'My Blog')" target="_blank" rel="noopener noreferrer">My Blog <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+            </div>
+          </div>
+          <div v-if="activity.buttons?.length" class="rich-activity-actions">
+            <template v-for="button in activity.buttons" :key="button">
+              <a v-if="activityButtonUrl(activity, button)" class="rich-action-button" :href="activityButtonUrl(activity, button)" target="_blank" rel="noopener noreferrer">
+                <i :class="button === 'My Blog' ? 'fa-solid fa-book-open' : 'fa-solid fa-arrow-up-right-from-square'" aria-hidden="true"></i>{{ button }}
+              </a>
+              <button v-else type="button" class="rich-action-button is-unavailable" disabled :title="'Lanyard provides the button label, but not its direct action URL.'">
+                <i class="fa-solid fa-link-slash" aria-hidden="true"></i>{{ button }}
+              </button>
+            </template>
           </div>
         </article>
 
@@ -676,13 +872,13 @@ onUnmounted(() => {
   --discord-bubble-border: #1a1b1e;
   --discord-white: #ffffff;
   position: relative;
-  left: 50%;
+  left: auto;
   width: min(calc(100vw - 40px), 1440px);
-  max-width: calc(100vw - 40px);
+  max-width: min(calc(100vw - 40px), 1440px);
   box-sizing: border-box;
-  margin: 2.5rem 0 3rem;
+  margin: 2.5rem 0 3rem calc(50% - 50vw + 20px);
   padding: clamp(.85rem, 2vw, 1.4rem);
-  transform: translateX(-50%);
+  transform: none;
   overflow: visible;
   border: 1px solid var(--discord-border);
   border-radius: 1.1rem;
@@ -725,9 +921,10 @@ onUnmounted(() => {
 .copy-server:hover { transform: translateY(-1px); border-color: var(--discord-blue); background: var(--discord-card-hover); }
 .copy-server.is-copied { border-color: #23a55a; color: #23a55a; }
 .copy-server.is-error { border-color: #f23f43; color: #f23f43; }
-.activity-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: stretch; gap: clamp(.75rem, 1.4vw, 1.15rem); min-height: 0; }
-.reveal-card { min-width: 0; overflow: hidden; border: 1px solid var(--discord-border); border-radius: .9rem; background: var(--discord-panel); animation: card-enter 540ms cubic-bezier(.16,1,.3,1) both; }
-.profile-card { display: flex; flex-direction: column; }
+.activity-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: start; gap: clamp(.75rem, 1.4vw, 1.15rem); min-width: 0; }
+.reveal-card { min-width: 0; overflow: visible; border: 1px solid var(--discord-border); border-radius: .9rem; background: var(--discord-panel); animation: card-enter 540ms cubic-bezier(.16,1,.3,1) both; }
+.profile-card { display: flex; flex-direction: column; overflow: hidden; }
+.activity-pane { overflow: visible; }
 .profile-banner { position: relative; min-height: 168px; overflow: hidden; background: #e8f8ff; }
 .profile-banner::after { position: absolute; right: 1.3rem; top: 1.1rem; width: 84px; height: 84px; border: 1px solid rgba(64,156,201,.12); border-radius: 50%; background: rgba(255,255,255,.12); content: ""; }
 .profile-content { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 0 1.25rem 1.1rem; }
@@ -822,6 +1019,18 @@ onUnmounted(() => {
 .activity-more { margin-left: auto; color: var(--discord-label); font-size: .9rem; }
 .activity-card-content { display: flex; align-items: center; gap: .8rem; min-width: 0; color: inherit; text-decoration: none !important; }
 .activity-track-info { overflow-wrap: anywhere; }
+.rich-presence-content { align-items: flex-start; }
+.rich-presence-info { padding-top: .12rem; }
+.rich-app-label { display: block; margin-bottom: .16rem; color: var(--discord-muted); font-size: .62rem; font-weight: 700; letter-spacing: .025em; }
+.rich-artwork-wrap { position: relative; flex: 0 0 auto; width: clamp(74px, 8vw, 120px); height: clamp(74px, 8vw, 120px); }
+.rich-artwork-fallback { position: absolute; inset: 0; display: grid; place-items: center; border-radius: .55rem; background: var(--discord-border); color: var(--discord-muted); font-size: 1.55rem; }
+.rich-artwork { position: relative; width: 100%; height: 100%; flex: initial; }
+.rich-artwork-badge { position: absolute; right: -.2rem; bottom: -.2rem; width: 28px; height: 28px; border: 3px solid var(--discord-card); border-radius: .48rem; object-fit: cover; background: var(--discord-panel); }
+.rich-activity-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; margin-top: .75rem; padding-top: .65rem; border-top: 1px solid var(--discord-border); }
+.rich-action-button { display: inline-flex; align-items: center; gap: .4rem; min-height: 30px; padding: .42rem .58rem; border: 1px solid var(--discord-border); border-radius: .48rem; background: var(--discord-panel); color: var(--discord-text-soft) !important; font-size: .66rem; font-weight: 650; text-decoration: none !important; transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease; }
+.rich-action-button:hover { border-color: var(--discord-blue); background: var(--discord-card-hover); color: var(--discord-text) !important; }
+.rich-action-button > i { font-size: .68rem; }
+.rich-action-button.is-unavailable { opacity: .52; cursor: not-allowed; }
 .activity-card-content > .activity-track-info { flex: 1 1 auto; }
 .activity-artwork { flex-shrink: 0; }
 .activity-artwork { display: block; width: clamp(80px, 8.2vw, 126px); height: clamp(80px, 8.2vw, 126px); flex: 0 0 clamp(80px, 8.2vw, 126px); overflow: hidden; border-radius: .55rem; object-fit: cover; background: var(--discord-bg); }
@@ -895,15 +1104,16 @@ onUnmounted(() => {
 @keyframes bubble-appear { from { opacity: 0; transform: translateX(-6px) scale(.97); } to { opacity: 1; transform: translateX(0) scale(1); } }
 @keyframes status-pulse { 0% { opacity: .65; transform: scale(.75); } 100% { opacity: 0; transform: scale(1.8); } }
 
-@media (max-width: 1000px) {
-  .activity-layout { grid-template-columns: minmax(0, 1fr); aspect-ratio: auto; min-height: 0; }
+@media (max-width: 1040px) {
+  .my-activity { width: calc(100vw - 32px); max-width: calc(100vw - 32px); margin-left: calc(50% - 50vw + 16px); }
+  .activity-layout { grid-template-columns: minmax(0, 1fr); min-height: 0; }
   .profile-content { padding-inline: 1.2rem; }
   .activity-pane { width: 100%; }
   .social-links { margin-top: .15rem; }
   .activity-artwork { width: 112px; height: 112px; flex-basis: 112px; }
 }
 @media (max-width: 560px) {
-  .my-activity { width: calc(100vw - 24px); max-width: calc(100vw - 24px); margin: 2rem 0 2.4rem; padding: .65rem; border-radius: .95rem; }
+  .my-activity { width: calc(100vw - 24px); max-width: calc(100vw - 24px); margin-top: 2rem; margin-right: 0; margin-bottom: 2.4rem; margin-left: calc(50% - 50vw + 12px); padding: .65rem; border-radius: .95rem; }
   .activity-heading { align-items: flex-start; flex-direction: column; gap: .8rem; }
   .activity-actions { width: 100%; }
   .join-server { min-height: 39px; flex: 1; padding: .55rem .7rem; font-size: .76rem; }
@@ -927,7 +1137,9 @@ onUnmounted(() => {
   .social-link { width: 32px; height: 32px; }
   .activity-card { padding: .7rem; }
   .activity-card-content { gap: .55rem; }
-  .activity-artwork { width: clamp(68px, 23vw, 88px); height: clamp(68px, 23vw, 88px); flex-basis: clamp(68px, 23vw, 88px); border-radius: .5rem; }
+  .activity-artwork { width: 100%; height: 100%; flex-basis: auto; border-radius: .5rem; }
+  .rich-artwork-wrap { width: clamp(68px, 23vw, 88px); height: clamp(68px, 23vw, 88px); }
+  .rich-action-button { font-size: .62rem; }
   .activity-track-info h4 { font-size: .77rem; }
   .activity-track-info p { font-size: .68rem; }
   .activity-progress-line { gap: .3rem; font-size: .59rem; }
