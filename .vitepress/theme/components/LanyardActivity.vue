@@ -19,11 +19,13 @@ type Activity = {
 }
 type Presence = {
   discord_status?: string
-  discord_user?: { id: string; username?: string; global_name?: string | null; display_name?: string; avatar?: string | null; primary_guild?: { tag?: string | null; identity_enabled?: boolean } }
+  discord_user?: { id: string; username?: string; global_name?: string | null; display_name?: string; avatar?: string | null; discriminator?: string; public_flags?: number; primary_guild?: { tag?: string | null; identity_enabled?: boolean } }
   activities?: Activity[]
   active_on_discord_desktop?: boolean
   active_on_discord_mobile?: boolean
   active_on_discord_web?: boolean
+  listening_to_spotify?: boolean
+  kv?: Record<string, string>
   spotify?: { album?: string; album_art_url?: string; artist?: string; song?: string; track_id?: string; timestamps?: { start?: number; end?: number } } | null
 }
 type ApiResponse = { success: boolean; data?: Presence }
@@ -38,6 +40,7 @@ const guildEndpoint = 'https://discord.com/api/guilds/1435463197418192906/widget
 const fallbackInvite = 'https://discord.com/invite/nZAMJ7BD'
 const presence = ref<Presence | null>({
   discord_status: 'online',
+  listening_to_spotify: true,
   discord_user: {
     id: '776722084030054421',
     username: 'thiosaputra',
@@ -152,7 +155,42 @@ const activities = computed(() => presence.value?.activities || [])
 const customStatus = computed(() => activities.value.find(a => a.type === 4))
 const richActivities = computed(() => activities.value.filter(a => a.type !== 4 && a.name !== 'Spotify'))
 const currentActivity = computed(() => richActivities.value[0] || null)
-const spotify = computed(() => presence.value?.spotify || null)
+const spotify = computed(() => {
+  if (presence.value?.listening_to_spotify === false) return null
+  if (presence.value?.spotify) return presence.value.spotify
+  const activity = activities.value.find(item => item.name === 'Spotify')
+  if (!activity) return null
+  const imageKey = activity.assets?.large_image || ''
+  const albumArtUrl = imageKey.startsWith('spotify:') ? `https://i.scdn.co/image/${imageKey.slice('spotify:'.length)}` : ''
+  return {
+    album: activity.assets?.large_text || '',
+    album_art_url: albumArtUrl,
+    artist: activity.state || '',
+    song: activity.details || '',
+    track_id: activity.sync_id || '',
+    timestamps: activity.timestamps
+  }
+})
+const profileKv = computed(() => Object.entries(presence.value?.kv || {})
+  .filter(([key, value]) =>
+    /^[a-zA-Z0-9_]{1,255}$/.test(key) &&
+    !/secret|token|password|credential|api_?key/i.test(key) &&
+    !['bio', 'pronouns'].includes(key.toLowerCase()) &&
+    typeof value === 'string' &&
+    Boolean(value.trim())
+  )
+  .slice(0, 4))
+function kvLabel(key: string) {
+  return key.replace(/_/g, ' ').replace(/\\b[a-z]/g, letter => letter.toUpperCase())
+}
+function kvHref(value: string) {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : ''
+  } catch {
+    return ''
+  }
+}
 function activityElapsedFor(activity?: Activity | null) {
   const started = activity?.timestamps?.start
   if (!started || now.value < started) return ''
@@ -244,10 +282,12 @@ const totalTime = computed(() => {
   return t?.start && t.end ? formatTime((t.end - t.start) / 1000) : ''
 })
 const platformLabel = computed(() => {
-  if (presence.value?.active_on_discord_desktop) return 'Discord desktop'
-  if (presence.value?.active_on_discord_mobile) return 'Discord mobile'
-  if (presence.value?.active_on_discord_web) return 'Discord web'
-  return 'Discord presence'
+  const platforms = [
+    presence.value?.active_on_discord_desktop ? 'desktop' : '',
+    presence.value?.active_on_discord_mobile ? 'mobile' : '',
+    presence.value?.active_on_discord_web ? 'web' : ''
+  ].filter(Boolean)
+  return platforms.length ? `Discord ${platforms.join(' + ')}` : 'Discord presence'
 })
 const inviteUrl = computed(() => guild.value?.instant_invite || fallbackInvite)
 const copyButtonLabel = computed(() => copiedInvite.value ? 'Tautan undangan tersalin' : copyFailed.value ? 'Gagal menyalin tautan undangan' : 'Salin tautan undangan')
@@ -502,7 +542,9 @@ function connectLanyardSocket() {
         if (socket.readyState !== WebSocket.OPEN) return
         socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: '776722084030054421' } }))
         clearLanyardHeartbeat()
-        const heartbeatInterval = Math.max(5000, hello?.heartbeat_interval || 30000)
+        const heartbeatInterval = hello?.heartbeat_interval && hello.heartbeat_interval > 0
+          ? hello.heartbeat_interval
+          : 30000
         lanyardHeartbeatTimer = setInterval(() => {
           if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ op: 3 }))
         }, heartbeatInterval)
@@ -616,7 +658,8 @@ onUnmounted(() => {
               <span class="presence-orb" :data-status="status" :aria-label="statusLabel"></span>
             </a>
             <div class="profile-custom-status" :title="customStatus?.state || ''">
-              <span class="status-emoji">{{ customStatus?.emoji?.name || '✦' }}</span>
+              <img v-if="customStatus?.emoji?.id" :src="customEmojiUrl(customStatus)" class="status-emoji-image" :alt="customStatus.emoji?.name || 'Custom status emoji'" width="16" height="16" loading="lazy" v-pixel-reveal />
+              <span v-else class="status-emoji">{{ customStatus?.emoji?.name || '✦' }}</span>
               <span>{{ customStatus?.state || (unavailable ? 'Presence is temporarily unavailable.' : 'No custom status right now.') }}</span>
             </div>
           </div>
@@ -629,7 +672,7 @@ onUnmounted(() => {
               </div>
               <p class="identity-meta">
                 <span>{{ user?.username || 'thiosaputra' }}</span>
-                <span class="meta-dot">•</span><span>he</span>
+                <span class="meta-dot">•</span><span>{{ presence?.kv?.pronouns || 'he' }}</span>
                 <span v-if="user?.primary_guild?.tag" class="guild-tag" :title="'Primary guild: ' + user.primary_guild.tag">
                   <i class="fa-solid fa-shield-halved tag-mark" aria-hidden="true"></i>{{ user.primary_guild.tag }}
                   <i class="fa-solid fa-chevron-down guild-tag-chevron" aria-hidden="true"></i>
@@ -659,10 +702,22 @@ onUnmounted(() => {
 
             <div class="profile-bio">
               <span class="profile-section-label">Bio</span>
-              <p>please disturb meh, i'm friendly :)</p>
+              <p>{{ presence?.kv?.bio || "please disturb meh, i'm friendly :)" }}</p>
               <p>pls join if you want: <a :href="inviteUrl" target="_blank" rel="noopener noreferrer">thio.cc.cd/discord</a></p>
             </div>
 
+            <div v-if="profileKv.length" class="profile-detail-block profile-kv-block">
+              <span class="profile-section-label">Live profile details</span>
+              <dl class="profile-kv-list">
+                <div v-for="item in profileKv" :key="item[0]" class="profile-kv-item">
+                  <dt>{{ kvLabel(item[0]) }}</dt>
+                  <dd>
+                    <a v-if="kvHref(item[1])" :href="kvHref(item[1])" target="_blank" rel="noopener noreferrer">{{ item[1] }}</a>
+                    <span v-else>{{ item[1] }}</span>
+                  </dd>
+                </div>
+              </dl>
+            </div>
             <div class="profile-detail-block">
               <span class="profile-section-label">Member Since</span>
               <p>Nov 13, 2020</p>
@@ -875,19 +930,19 @@ onUnmounted(() => {
   --discord-bubble-border: #1a1b1e;
   --discord-white: #ffffff;
   position: relative;
-  left: auto;
-  width: min(calc(100vw - 40px), 1440px);
-  max-width: min(calc(100vw - 40px), 1440px);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
-  margin: 2.5rem 0 3rem calc(50% - 50vw + max(20px, (100vw - 1440px) / 2));
-  padding: clamp(.85rem, 2vw, 1.4rem);
+  margin: 1.9rem 0 2.5rem;
+  padding: .75rem;
   transform: none;
   overflow: visible;
   border: 1px solid var(--discord-border);
-  border-radius: 1.1rem;
+  border-radius: 1rem;
   background: var(--discord-bg);
   color: var(--discord-text-soft);
-  box-shadow: 0 18px 50px rgba(0,0,0,.13);
+  box-shadow: 0 14px 38px rgba(0,0,0,.11);
 }
 :global(html:not(.dark)) .my-activity {
   --discord-bg: #f3f4f7;
@@ -924,23 +979,24 @@ onUnmounted(() => {
 .copy-server:hover { transform: translateY(-1px); border-color: var(--discord-blue); background: var(--discord-card-hover); }
 .copy-server.is-copied { border-color: #23a55a; color: #23a55a; }
 .copy-server.is-error { border-color: #f23f43; color: #f23f43; }
-.activity-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: start; gap: clamp(.75rem, 1.4vw, 1.15rem); min-width: 0; }
+.activity-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 286px), 1fr)); align-items: start; gap: .75rem; min-width: 0; }
 .reveal-card { min-width: 0; overflow: visible; border: 1px solid var(--discord-border); border-radius: .9rem; background: var(--discord-panel); animation: card-enter 540ms cubic-bezier(.16,1,.3,1) both; }
 .profile-card { display: flex; flex-direction: column; overflow: hidden; }
 .activity-pane { overflow: visible; }
-.profile-banner { position: relative; min-height: 168px; overflow: hidden; background: #e8f8ff; }
+.profile-banner { position: relative; min-height: 132px; overflow: hidden; background: #e8f8ff; }
 .profile-banner::after { position: absolute; right: 1.3rem; top: 1.1rem; width: 84px; height: 84px; border: 1px solid rgba(64,156,201,.12); border-radius: 50%; background: rgba(255,255,255,.12); content: ""; }
-.profile-content { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 0 1.25rem 1.1rem; }
-.profile-avatar-line { position: relative; display: flex; align-items: flex-end; gap: .85rem; min-width: 0; margin-top: -82px; }
-.avatar-wrap { position: relative; z-index: 1; display: block; flex: 0 0 132px; width: 132px; height: 132px; padding: 6px; border: 7px solid var(--discord-panel); border-radius: 50%; background: var(--discord-panel); color: inherit; text-decoration: none; box-shadow: 0 0 0 1px rgba(255,255,255,.05); }
+.profile-content { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 0 1rem .95rem; }
+.profile-avatar-line { position: relative; display: flex; align-items: flex-end; gap: .7rem; min-width: 0; margin-top: -68px; }
+.avatar-wrap { position: relative; z-index: 1; display: block; flex: 0 0 112px; width: 112px; height: 112px; padding: 4px; border: 6px solid var(--discord-panel); border-radius: 50%; background: var(--discord-panel); color: inherit; text-decoration: none; box-shadow: 0 0 0 1px rgba(255,255,255,.05); }
 .avatar { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .presence-orb { position: absolute; right: 3px; bottom: 5px; width: 24px; height: 24px; border: 4px solid var(--discord-panel); border-radius: 50%; background: #80848e; }
 .presence-orb[data-status="online"] { background: #23a55a; }
 .presence-orb[data-status="idle"] { background: #f0b232; }
 .presence-orb[data-status="dnd"] { background: #f23f43; }
-.profile-custom-status { position: relative; display: flex; align-items: center; gap: .38rem; max-width: calc(100% - 125px); min-width: 0; margin-bottom: 1.15rem; padding: .58rem .68rem; border: 1px solid var(--discord-bubble-border); border-radius: 999px; background: var(--discord-card); color: var(--discord-text); font-size: .76rem; box-shadow: 0 4px 13px rgba(0,0,0,.08); animation: bubble-appear 650ms cubic-bezier(.16,1,.3,1) both; }
+.profile-custom-status { position: relative; display: flex; align-items: center; gap: .36rem; max-width: calc(100% - 102px); min-width: 0; margin-bottom: .9rem; padding: .5rem .58rem; border: 1px solid var(--discord-bubble-border); border-radius: 999px; background: var(--discord-card); color: var(--discord-text); font-size: .7rem; box-shadow: 0 4px 13px rgba(0,0,0,.08); animation: bubble-appear 650ms cubic-bezier(.16,1,.3,1) both; }
 .profile-custom-status > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .status-emoji { flex: 0 0 auto; font-size: 1rem; }
+.status-emoji-image { display: block; flex: 0 0 1rem; width: 1rem; height: 1rem; object-fit: contain; }
 .profile-main { display: flex; flex-direction: column; gap: 1rem; padding: .65rem .1rem 0; }
 .profile-name-block { min-width: 0; }
 .identity-name-line { display: flex; align-items: center; gap: .42rem; min-width: 0; }
@@ -1041,6 +1097,12 @@ onUnmounted(() => {
 .activity-card:hover .spotify-artwork, .watching-activity:hover .watching-artwork { transform: scale(1.025); }
 .artwork-fallback { display: grid; place-items: center; color: #1db954; font-size: 2rem; }
 .activity-track-info { flex: 1; min-width: 0; }
+.profile-kv-list { display: grid; gap: .42rem; margin: 0; }
+.profile-kv-item { display: flex; align-items: flex-start; gap: .6rem; min-width: 0; font-size: .74rem; line-height: 1.4; }
+.profile-kv-item dt { flex: 0 0 34%; color: var(--discord-muted); font-weight: 650; overflow-wrap: anywhere; }
+.profile-kv-item dd { min-width: 0; margin: 0; color: var(--discord-text-soft); overflow-wrap: anywhere; }
+.profile-kv-item a { color: var(--discord-link) !important; text-decoration: none !important; }
+.profile-kv-item a:hover { text-decoration: underline !important; }
 .activity-track-info h4 { margin: 0 0 .22rem; color: var(--discord-text); font-size: .86rem; font-weight: 750; letter-spacing: -.015em; line-height: 1.35; overflow-wrap: anywhere; }
 .activity-track-info p { margin: 0; color: var(--discord-text-soft); font-size: .75rem; line-height: 1.4; overflow-wrap: anywhere; }
 .activity-progress-line { display: flex; align-items: center; gap: .5rem; margin-top: .55rem; color: var(--discord-text-soft); font-size: .68rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -1108,22 +1170,20 @@ onUnmounted(() => {
 @keyframes status-pulse { 0% { opacity: .65; transform: scale(.75); } 100% { opacity: 0; transform: scale(1.8); } }
 
 @media (max-width: 1040px) {
-  .my-activity { width: calc(100vw - 32px); max-width: calc(100vw - 32px); margin-left: calc(50% - 50vw + 16px); }
-  .activity-layout { grid-template-columns: minmax(0, 1fr); min-height: 0; }
-  .profile-content { padding-inline: 1.2rem; }
+  .profile-content { padding-inline: 1rem; }
   .activity-pane { width: 100%; }
   .social-links { margin-top: .15rem; }
-  .activity-artwork { width: 112px; height: 112px; flex-basis: 112px; }
+  .activity-artwork { width: 96px; height: 96px; flex-basis: 96px; }
 }
 @media (max-width: 560px) {
-  .my-activity { width: calc(100vw - 24px); max-width: calc(100vw - 24px); margin-top: 2rem; margin-right: 0; margin-bottom: 2.4rem; margin-left: calc(50% - 50vw + 12px); padding: .65rem; border-radius: .95rem; }
+  .my-activity { width: 100%; max-width: 100%; margin: 1.65rem 0 2rem; padding: .6rem; border-radius: .95rem; }
   .activity-heading { align-items: flex-start; flex-direction: column; gap: .8rem; }
   .activity-actions { width: 100%; }
   .join-server { min-height: 39px; flex: 1; padding: .55rem .7rem; font-size: .76rem; }
   .copy-server { width: 39px; height: 39px; }
   .profile-banner { min-height: 118px; }
   .profile-content { padding: 0 .85rem .9rem; }
-  .profile-avatar-line { align-items: flex-end; gap: .55rem; margin-top: -65px; }
+  .profile-avatar-line { align-items: flex-end; gap: .5rem; margin-top: -60px; }
   .avatar-wrap { flex-basis: 104px; width: 104px; height: 104px; padding: 5px; border-width: 6px; }
   .presence-orb { right: 1px; bottom: 2px; width: 21px; height: 21px; }
   .profile-custom-status { max-width: calc(100% - 94px); margin-bottom: .8rem; padding: .48rem .55rem; font-size: .7rem; }
