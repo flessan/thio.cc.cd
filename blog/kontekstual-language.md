@@ -3,7 +3,7 @@ title: "Kontekstual: Indonesian programming language experiment"
 author:
   name: M. Thio Saputra
 date: "2026-10-18"
-description: The story behind Kontekstual, an Indonesian-syntax programming language experiment inspired by a school programming lesson and a goal of exploring classroom use.
+description: "The story behind Kontekstual, an Indonesian-syntax programming language experiment inspired by a school programming lesson and a goal of exploring classroom use."
 image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&h=840&q=85"
 imageAlt: "Computer screen showing source code in a development environment"
 inLanguage: "en"
