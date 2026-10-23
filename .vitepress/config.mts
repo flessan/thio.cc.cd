@@ -111,6 +111,9 @@ export default defineConfig({
     const rel = pageData.relativePath
     const isHome = rel === 'index.md'
     const isPost = /^blog\/.+\.md$/.test(rel) && rel !== 'blog.md'
+    const isBlogIndex = rel === 'blog.md'
+    const postSlug = isPost ? rel.replace(/^blog\//, '').replace(/\.md$/, '') : ''
+    const post = isPost ? blogPosts.find((item) => item.slug === postSlug) : undefined
 
     const canonical = isHome
       ? `${siteUrl}/`
@@ -131,9 +134,14 @@ export default defineConfig({
         : `${title} - Flessan`
     const desc =
       (pageData.description as string | undefined) || ogDescription
+    const imageAlt = String(pageData.frontmatter.imageAlt || post?.imageAlt || ogTitle)
+    const pageKeywords = pageData.frontmatter.keywords as string[] | undefined
 
     const head: any[] = [
       ['link', { rel: 'canonical', href: canonical }],
+      ['meta', { name: 'robots', content: 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' }],
+      ['meta', { name: 'googlebot', content: 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' }],
+      ['meta', { name: 'author', content: 'M. Thio Saputra' }],
 
       ['meta', { property: 'og:type', content: isPost ? 'article' : 'website' }],
       ['meta', { property: 'og:title', content: ogTitle }],
@@ -143,7 +151,7 @@ export default defineConfig({
       ['meta', { property: 'og:image', content: image }],
       ['meta', { property: 'og:image:width', content: String(dims.w) }],
       ['meta', { property: 'og:image:height', content: String(dims.h) }],
-      ['meta', { property: 'og:image:alt', content: ogTitle }],
+      ['meta', { property: 'og:image:alt', content: imageAlt }],
       ['meta', { property: 'og:locale', content: 'en_US' }],
 
       ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
@@ -153,6 +161,11 @@ export default defineConfig({
     ]
 
     if (isPost) {
+      if (pageKeywords?.length) {
+        head.push(['meta', { name: 'keywords', content: pageKeywords.join(', ') }])
+      }
+      if (post) head.push(['meta', { property: 'article:section', content: post.category }])
+      head.push(['meta', { property: 'article:author', content: `${siteUrl}/about` }])
       const published = toIso(pageData.frontmatter.date)
       const modified = pageData.lastUpdated
         ? new Date(pageData.lastUpdated).toISOString()
@@ -172,24 +185,72 @@ export default defineConfig({
     const lds: object[] = []
     if (isHome) {
       lds.push(websiteLd, personLd)
+    } else if (isBlogIndex) {
+      lds.push({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: title,
+        description: desc,
+        url: canonical,
+        isPartOf: websiteLd,
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListOrder: 'https://schema.org/ItemListOrderDescending',
+          numberOfItems: blogPosts.length,
+          itemListElement: blogPosts.map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: `${siteUrl}/blog/${item.slug}`,
+            name: item.title
+          }))
+        }
+      })
     } else if (isPost) {
       const published = toIso(pageData.frontmatter.date)
+      const modified = pageData.lastUpdated
+        ? new Date(pageData.lastUpdated).toISOString()
+        : published
+      const keywords = pageKeywords ?? post?.topics ?? []
+      const language = String(pageData.frontmatter.inLanguage || post?.language || 'en')
       lds.push({
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: title,
         description: desc,
-        image: [image],
+        image: [{
+          '@type': 'ImageObject',
+          url: image,
+          width: dims.w,
+          height: dims.h,
+          caption: imageAlt
+        }],
         datePublished: published,
-        dateModified: pageData.lastUpdated
-          ? new Date(pageData.lastUpdated).toISOString()
-          : undefined,
+        dateModified: modified,
+        inLanguage: language,
+        articleSection: post?.category,
+        keywords: keywords.join(', '),
+        isAccessibleForFree: true,
         author: {
           '@type': 'Person',
           name: 'M. Thio Saputra',
-          url: `${siteUrl}/about`
+          url: `${siteUrl}/about`,
+          sameAs: ['https://github.com/flessan']
+        },
+        publisher: {
+          '@type': 'Person',
+          name: 'M. Thio Saputra',
+          url: siteUrl
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical }
+      })
+      lds.push({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteUrl}/blog` },
+          { '@type': 'ListItem', position: 3, name: title, item: canonical }
+        ]
       })
     } else {
       lds.push(
