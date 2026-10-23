@@ -3,7 +3,7 @@ title: "teksreceh: Indonesian internet text generator"
 author:
   name: M. Thio Saputra
 date: "2026-09-01"
-description: teksreceh is an Indonesian internet text generator for alay, UwU, Rimsvek, binary text, and other playful ways of typing online.
+description: "teksreceh is an Indonesian internet text generator for alay, UwU, Rimsvek, binary text, and other playful ways of typing online."
 image: /images/covers/teksreceh.png
 imageAlt: "Cover artwork for teksreceh, a collection of Indonesian internet text styles"
 inLanguage: "id"
