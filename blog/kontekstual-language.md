@@ -1,10 +1,18 @@
 ---
-title: "Kontekstual: code in the language we speak"
+title: "Kontekstual: Indonesian programming language experiment"
 author:
   name: M. Thio Saputra
 date: "2026-10-18"
-description: A programming-language experiment born from a school lesson, with a long-term goal of making programming concepts more approachable in Indonesian.
+description: The story behind Kontekstual, an Indonesian-syntax programming language experiment inspired by a school programming lesson and a goal of exploring classroom use.
 image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&h=840&q=85"
+imageAlt: "Computer screen showing source code in a development environment"
+inLanguage: "en"
+keywords:
+  - "Kontekstual programming language"
+  - "Indonesian programming language"
+  - "programming education"
+  - "beginner programming"
+  - "SMK RPL"
 ---
 
 <BlogCover src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&h=840&q=85" alt="Source code displayed on a computer screen" credit="Image via Unsplash" license-url="https://unsplash.com/license" />
