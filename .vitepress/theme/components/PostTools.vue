@@ -65,7 +65,7 @@ onUnmounted(() => {
       <span :style="{ width: progress + '%' }"></span>
     </div>
     <div class="share-actions">
-      <span class="share-label">Keep this one</span>
+      <span class="share-label">Share this article</span>
       <button type="button" @click="copyLink">
         <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16">
           <rect x="8" y="8" width="12" height="12" rx="2" />
