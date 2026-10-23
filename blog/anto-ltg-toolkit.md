@@ -3,7 +3,7 @@ title: "ANTO-LTG: Windows repair toolkit for drivers and software"
 author:
   name: M. Thio Saputra
 date: "2026-10-18"
-description: ANTO-LTG is a Windows maintenance toolkit in development, focused on drivers, trusted installers, compatibility notes, and repair workflows.
+description: "ANTO-LTG is a Windows maintenance toolkit in development, focused on drivers, trusted installers, compatibility notes, and repair workflows."
 image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1600&h=840&q=85"
 imageAlt: "Computer components arranged on a repair workbench"
 inLanguage: "en"
