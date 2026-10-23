@@ -3,7 +3,7 @@ title: "Admin Panel Everywhere: API workspace and JSON editor"
 author:
   name: M. Thio Saputra
 date: "2026-10-18"
-description: Admin Panel Everywhere is a self-hostable API workspace for OpenAPI import, CRUD operations, and editing structured JSON data.
+description: "Admin Panel Everywhere is a self-hostable API workspace for OpenAPI import, CRUD operations, and editing structured JSON data."
 image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&h=840&q=85"
 imageAlt: "Data visualizations displayed on a computer monitor"
 inLanguage: "en"
