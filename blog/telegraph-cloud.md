@@ -1,10 +1,18 @@
 ---
-title: "Telegraph Cloud: files, APIs, and a Telegram-backed backend"
+title: "Telegraph Cloud: Telegram-backed storage and APIs"
 author:
   name: M. Thio Saputra
 date: "2026-10-18"
-description: A reusable storage layer for small projects, with clear boundaries between file storage, APIs, and document data.
+description: Telegraph Cloud is a Cloudflare-native storage project with Telegram-backed files, documented APIs, and a JSON document API for small web projects.
 image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=840&q=85"
+imageAlt: "Server racks representing the infrastructure behind a cloud storage service"
+inLanguage: "en"
+keywords:
+  - "Telegraph Cloud"
+  - "Telegram-backed storage"
+  - "Cloudflare storage"
+  - "document API"
+  - "S3-compatible storage"
 ---
 
 <BlogCover src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=840&q=85" alt="Rows of servers representing cloud infrastructure" credit="Image via Unsplash" license-url="https://unsplash.com/license" />
@@ -36,7 +44,7 @@ The goal is narrower: let applications work with structured documents through th
 
 ## Compatibility is part of the work
 
-Telegraph Cloud grew out of existing storage behavior, so modernizing the console can't come at the cost of unexpectedly breaking older integrations. Routes such as uploads and file retrieval need to remain predictable while the internals evolve. Documentation, error messages, access rules, and migration paths are part of the product—not chores to postpone until after the UI looks finished.
+Telegraph Cloud grew out of existing storage behavior, so modernizing the console can't come at the cost of unexpectedly breaking older integrations. Routes such as uploads and file retrieval need to remain predictable while the internals evolve. Documentation, error messages, access rules, and migration paths are part of the product, not chores to postpone until after the UI looks finished.
 
 The same principle applies to reliability claims. A feature being planned or present in the code is not the same as having every deployment path tested under real-world conditions. Telegraph Cloud is still under active development, and its docs and implementation should be checked together.
 
