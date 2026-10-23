@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     description: 'A programming-language experiment born from a school lesson, with a long-term goal of making programming concepts more approachable in Indonesian.',
     category: 'Programming & education',
     image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&h=630&q=85',
-    topics: ['programming', 'language design', 'education', 'Indonesian']
+    topics: ['programming', 'language design', 'education', 'Indonesian', 'learning']
   },
   {
     slug: 'telegraph-cloud',
@@ -63,7 +63,7 @@ export const blogPosts: BlogPost[] = [
     description: 'An early Rust and Wayland experiment exploring what a terminal-first, pane-oriented desktop could become.',
     category: 'Linux & systems',
     image: '/images/covers/slate-de.webp',
-    topics: ['Linux', 'Rust', 'Wayland', 'desktop']
+    topics: ['Linux', 'Rust', 'Wayland', 'desktop', 'learning']
   },
   {
     slug: 'teksreceh',
@@ -72,7 +72,7 @@ export const blogPosts: BlogPost[] = [
     description: 'A playful archive of Indonesian internet typing styles, from alay and UwU to reversed text and binary.',
     category: 'Internet culture',
     image: '/images/covers/teksreceh.webp',
-    topics: ['Indonesian internet', 'text tools', 'web toy', 'React']
+    topics: ['Indonesian internet', 'text tools', 'web toy', 'React', 'web']
   },
   {
     slug: 'gdips-reborn',
