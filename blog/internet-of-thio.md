@@ -1,10 +1,18 @@
 ---
-title: Many small sites
+title: "Many small sites: a personal web development ecosystem"
 author:
   name: M. Thio Saputra
 date: "2026-08-24"
-description: Why I keep separate small websites for different ideas, and how building them has become a way to learn.
+description: Why Flessan keeps multiple small websites for different projects, how each site serves a purpose, and what building them teaches along the way.
 image: /images/covers/internet-of-thio.png
+imageAlt: "Cover artwork representing the collection of small websites in the Flessan ecosystem"
+inLanguage: "id"
+keywords:
+  - "website pribadi"
+  - "ekosistem Flessan"
+  - "belajar web development"
+  - "proyek web kecil"
+  - "personal websites"
 ---
 
 <BlogCover src="/images/covers/internet-of-thio.png" alt="Cover for the collection of small websites in the Flessan ecosystem" />
@@ -36,11 +44,11 @@ Setiap proyek biasanya bermula dari pertanyaan kecil: bisa gak QR scanner berjal
 
 Kalau mau menjelajah, [ecosystem page](../ecosystem.md) mengumpulkan lebih banyak tautan. Beberapa pintu untuk mulai:
 
-- [gdips.pages.dev](https://gdips.pages.dev) — GDIPS
-- [tune.thio.cc.cd](https://tune.thio.cc.cd) — resontune, proyek musik
-- [text.thio.qzz.io](https://text.thio.qzz.io) — teksreceh
-- [slate.dotfiles.qzz.io](https://slate.dotfiles.qzz.io) — slate-de
-- [flessan.github.io](https://flessan.github.io) — project index
+- [gdips.pages.dev](https://gdips.pages.dev): GDIPS
+- [tune.thio.cc.cd](https://tune.thio.cc.cd): resontune, proyek musik
+- [text.thio.qzz.io](https://text.thio.qzz.io): teksreceh
+- [slate.dotfiles.qzz.io](https://slate.dotfiles.qzz.io): slate-de
+- [flessan.github.io](https://flessan.github.io): project index
 
 Setiap site punya alasan masing-masing untuk ada. Dan kalau satu eksperimen gagal, semoga yang lain gak ikut tumbang gara-gara semuanya dipaksa tinggal di satu rumah.
 
