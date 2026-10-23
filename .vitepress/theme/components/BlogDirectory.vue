@@ -34,7 +34,7 @@ function clearFilters() {
 </script>
 
 <template>
-  <main class="blog-archive" aria-labelledby="blog-title">
+  <section class="blog-archive" aria-labelledby="blog-title">
     <header class="archive-hero">
       <div class="hero-copy">
         <p class="eyebrow"><span class="eyebrow-dot"></span> FLESSAN'S BLOG</p>
@@ -170,7 +170,7 @@ function clearFilters() {
       <p>That's the archive for now. New ideas tend to show up when I should be asleep.</p>
       <a href="https://github.com/flessan" target="_blank" rel="noreferrer">More things on GitHub <span aria-hidden="true">↗</span></a>
     </footer>
-  </main>
+  </section>
 </template>
 
 <style scoped>
