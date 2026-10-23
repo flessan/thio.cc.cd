@@ -1079,7 +1079,7 @@ onUnmounted(() => {
 .profile-quick-menu-heading > span:last-child { display: grid; gap: .18rem; min-width: 0; }
 .profile-quick-menu-heading strong { color: var(--discord-text); font-size: .75rem; }
 .profile-quick-menu-heading small { color: var(--discord-muted); font-size: .61rem; }
-.profile-menu-wrap { z-index: 15; }
+.profile-menu-wrap { z-index: 15; margin-left: 0; }
 .profile-menu-trigger[aria-expanded="true"] { border-color: var(--discord-blue); background: var(--discord-card-hover); color: var(--discord-text); }
 .profile-card:has(.profile-quick-menu) { position: relative; z-index: 12; overflow: visible; }
 .profile-card:has(.profile-quick-menu) .profile-banner { border-radius: calc(.9rem - 1px) calc(.9rem - 1px) 0 0; }
