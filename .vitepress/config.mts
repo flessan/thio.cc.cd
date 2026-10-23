@@ -1,22 +1,18 @@
 import fs from 'node:fs'
 import { defineConfig } from 'vitepress'
+import { blogPosts } from './blog-posts'
 
 const siteUrl = 'https://thio.cc.cd'
 const ogDescription = `Flessan's projects, writing, and communities`
 const ogImage = `${siteUrl}/images/flessan-banner.png`
 
-// Blog posts, newest first - also used to generate /feed.xml at build time
-const posts = [
-  { title: 'Kontekstual: code in the language we speak', date: '2026-10-18', desc: 'Designing a beginner-friendly programming language that reads naturally in Indonesian', slug: 'kontekstual-language' },
-  { title: 'Telegraph Cloud: files, APIs, and a Telegram-backed backend', date: '2026-10-18', desc: 'Building a Cloudflare-native storage service that turns Telegram-backed files into a practical API for other projects', slug: 'telegraph-cloud' },
-  { title: 'Admin Panel Everywhere: from endpoints to a workspace', date: '2026-10-18', desc: 'Designing a self-hostable admin workspace for APIs, CRUD operations, OpenAPI, and structured data', slug: 'admin-panel-everywhere' },
-  { title: 'ANTO-LTG: a toolkit for the Windows repair bench', date: '2026-10-18', desc: 'Planning a practical Windows technician toolkit for drivers, software setup, and repeatable repair workflows', slug: 'anto-ltg-toolkit' },
-  { title: 'hello, internet', date: '2026-09-08', desc: 'A new home at thio.cc.cd - who I am, and what this site will hold', slug: 'hello-internet' },
-  { title: 'the command line is your d3sktop', date: '2026-09-04', desc: 'Building slate-de - a CLI-based, pane-oriented Wayland desktop environment in Rust', slug: 'slate-de' },
-  { title: 'teksreceh: a museum of +62 typing', date: '2026-09-01', desc: 'Alay, UwU, Rimsvek, Binary - preserving how the Indonesian internet types', slug: 'teksreceh' },
-  { title: 'GDIPS: a digital campfire', date: '2026-08-28', desc: 'How a free-server list grew into a community-driven Geometry Dash private server', slug: 'gdips-reborn' },
-  { title: 'Many small sites', date: '2026-08-24', desc: 'Why I keep lots of little websites instead of one big one', slug: 'internet-of-thio' }
-]
+// The shared catalogue keeps RSS metadata aligned with the blog directory and post navigation.
+const posts = blogPosts.map((post) => ({
+  title: post.title,
+  date: post.date,
+  desc: post.description,
+  slug: post.slug
+}))
 
 // ---------------------------------------------------------------------------
 // SEO: everything below generates per-page <head> tags from frontmatter
@@ -115,6 +111,9 @@ export default defineConfig({
     const rel = pageData.relativePath
     const isHome = rel === 'index.md'
     const isPost = /^blog\/.+\.md$/.test(rel) && rel !== 'blog.md'
+    const isBlogIndex = rel === 'blog.md'
+    const postSlug = isPost ? rel.replace(/^blog\//, '').replace(/\.md$/, '') : ''
+    const post = isPost ? blogPosts.find((item) => item.slug === postSlug) : undefined
 
     const canonical = isHome
       ? `${siteUrl}/`
@@ -125,7 +124,11 @@ export default defineConfig({
     const image = fmImage
       ? (isAbsoluteImage ? fmImage : `${siteUrl}${fmImage}`)
       : ogImage
-    const dims = image.includes('/covers/') ? coverDims : bannerDims
+    const dims = image.includes('images.unsplash.com')
+      ? { w: 1600, h: 840 }
+      : image.includes('/covers/')
+        ? coverDims
+        : bannerDims
 
     const title = String(pageData.title || 'Flessan')
     const ogTitle = isHome
@@ -135,9 +138,16 @@ export default defineConfig({
         : `${title} - Flessan`
     const desc =
       (pageData.description as string | undefined) || ogDescription
+    const imageAlt = String(pageData.frontmatter.imageAlt || post?.imageAlt || ogTitle)
+    const pageKeywords = pageData.frontmatter.keywords as string[] | undefined
+    const contentLanguage = String(pageData.frontmatter.inLanguage || post?.language || 'en')
+    const ogLocale = contentLanguage === 'id' ? 'id_ID' : 'en_US'
 
     const head: any[] = [
       ['link', { rel: 'canonical', href: canonical }],
+      ['meta', { name: 'robots', content: 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' }],
+      ['meta', { name: 'googlebot', content: 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' }],
+      ['meta', { name: 'author', content: 'M. Thio Saputra' }],
 
       ['meta', { property: 'og:type', content: isPost ? 'article' : 'website' }],
       ['meta', { property: 'og:title', content: ogTitle }],
@@ -147,16 +157,22 @@ export default defineConfig({
       ['meta', { property: 'og:image', content: image }],
       ['meta', { property: 'og:image:width', content: String(dims.w) }],
       ['meta', { property: 'og:image:height', content: String(dims.h) }],
-      ['meta', { property: 'og:image:alt', content: ogTitle }],
-      ['meta', { property: 'og:locale', content: 'en_US' }],
+      ['meta', { property: 'og:image:alt', content: imageAlt }],
+      ['meta', { property: 'og:locale', content: ogLocale }],
 
       ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
       ['meta', { name: 'twitter:title', content: ogTitle }],
       ['meta', { name: 'twitter:description', content: desc }],
-      ['meta', { name: 'twitter:image', content: image }]
+      ['meta', { name: 'twitter:image', content: image }],
+      ['meta', { name: 'twitter:image:alt', content: imageAlt }]
     ]
 
     if (isPost) {
+      if (pageKeywords?.length) {
+        head.push(['meta', { name: 'keywords', content: pageKeywords.join(', ') }])
+      }
+      if (post) head.push(['meta', { property: 'article:section', content: post.category }])
+      head.push(['meta', { property: 'article:author', content: `${siteUrl}/about` }])
       const published = toIso(pageData.frontmatter.date)
       const modified = pageData.lastUpdated
         ? new Date(pageData.lastUpdated).toISOString()
@@ -176,24 +192,72 @@ export default defineConfig({
     const lds: object[] = []
     if (isHome) {
       lds.push(websiteLd, personLd)
+    } else if (isBlogIndex) {
+      lds.push({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: title,
+        description: desc,
+        url: canonical,
+        isPartOf: websiteLd,
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListOrder: 'https://schema.org/ItemListOrderDescending',
+          numberOfItems: blogPosts.length,
+          itemListElement: blogPosts.map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: `${siteUrl}/blog/${item.slug}`,
+            name: item.title
+          }))
+        }
+      })
     } else if (isPost) {
       const published = toIso(pageData.frontmatter.date)
+      const modified = pageData.lastUpdated
+        ? new Date(pageData.lastUpdated).toISOString()
+        : published
+      const keywords = pageKeywords ?? post?.topics ?? []
+      const language = contentLanguage
       lds.push({
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: title,
         description: desc,
-        image: [image],
+        image: [{
+          '@type': 'ImageObject',
+          url: image,
+          width: dims.w,
+          height: dims.h,
+          caption: imageAlt
+        }],
         datePublished: published,
-        dateModified: pageData.lastUpdated
-          ? new Date(pageData.lastUpdated).toISOString()
-          : undefined,
+        dateModified: modified,
+        inLanguage: language,
+        articleSection: post?.category,
+        keywords: keywords.join(', '),
+        isAccessibleForFree: true,
         author: {
           '@type': 'Person',
           name: 'M. Thio Saputra',
-          url: `${siteUrl}/about`
+          url: `${siteUrl}/about`,
+          sameAs: ['https://github.com/flessan']
+        },
+        publisher: {
+          '@type': 'Person',
+          name: 'M. Thio Saputra',
+          url: siteUrl
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical }
+      })
+      lds.push({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteUrl}/blog` },
+          { '@type': 'ListItem', position: 3, name: title, item: canonical }
+        ]
       })
     } else {
       lds.push(
@@ -275,6 +339,7 @@ ${items}
   },
 
   head: [
+    ['link', { rel: 'preconnect', href: 'https://images.unsplash.com', crossorigin: '' }],
     ['link', { rel: 'icon', type: 'image/png', href: '/images/flessan-icon.png' }],
     ['link', { rel: 'apple-touch-icon', href: '/images/flessan-icon-180.png' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: "Flessan's blog", href: '/feed.xml' }],
