@@ -17,5 +17,6 @@
 
 # RSS feed
 /feed.xml
-  Content-Type: application/rss+xml; charset=utf-8
+  Content-Type: text/xml; charset=utf-8
+  Content-Disposition: inline
   Cache-Control: public, max-age=3600
