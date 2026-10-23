@@ -714,10 +714,19 @@ onUnmounted(() => {
                 <span class="connection-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>
                 <span>thio.cc.cd</span><i class="fa-solid fa-arrow-up-right-from-square connection-out" aria-hidden="true"></i>
               </a>
-              <a href="https://github.com/flessan" target="_blank" rel="noopener noreferrer" class="connection-item">
-                <span class="connection-icon github-connection"><i class="fa-brands fa-github" aria-hidden="true"></i></span>
-                <span>Flessan on GitHub</span><i class="fa-solid fa-arrow-up-right-from-square connection-out" aria-hidden="true"></i>
-              </a>
+              <div class="connections-social-grid" aria-label="Social profiles">
+                <a
+                  v-for="social in socialLinks"
+                  :key="social.id"
+                  class="connection-social-link"
+                  :data-network="social.id"
+                  :href="social.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-label="social.label"
+                  :title="social.label"
+                ><i :class="social.icon" aria-hidden="true"></i><span>{{ social.label }}</span><i class="fa-solid fa-arrow-up-right-from-square connection-out" aria-hidden="true"></i></a>
+              </div>
             </div>
 
             <div class="profile-presence-footer">
@@ -824,28 +833,6 @@ onUnmounted(() => {
           </div>
         </article>
 
-        <nav class="social-links" aria-label="Social media links">
-          <div class="social-links-heading">
-            <div>
-              <span class="social-links-eyebrow">AROUND THE WEB</span>
-              <h4>Find me elsewhere</h4>
-            </div>
-            <span class="social-links-caption">Let's connect</span>
-          </div>
-          <div class="social-links-grid">
-            <a
-              v-for="social in socialLinks"
-              :key="social.id"
-              class="social-link"
-              :data-network="social.id"
-              :href="social.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              :aria-label="social.label"
-              :title="social.label"
-            ><i :class="social.icon" aria-hidden="true"></i><span>{{ social.label }}</span></a>
-          </div>
-        </nav>
         <p v-if="activityMenuNotice" class="activity-menu-notice" role="status"><i :class="activityMenuNotice.startsWith('Details copied') ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-info'" aria-hidden="true"></i> {{ activityMenuNotice }}</p>
         <p v-if="unavailable && presence" class="activity-footnote"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Live refresh is unavailable; showing the last known snapshot.</p>
       </section>
@@ -1037,22 +1024,18 @@ onUnmounted(() => {
 
 .activity-pane { display: flex; flex-direction: column; min-height: 0; padding: clamp(1rem, 1.6vw, 1.4rem); }
 .activity-pane-heading { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin: .05rem 0 .7rem; }
-.social-links { display: block; margin: .9rem 0 1rem; padding: .9rem; border: 1px solid var(--discord-border); border-radius: .85rem; background: var(--discord-panel); box-shadow: inset 0 1px 0 rgba(255,255,255,.025); }
-.social-links-heading { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: .75rem; }
-.social-links-heading h4 { margin: .16rem 0 0; color: var(--discord-text); font-size: .84rem; font-weight: 800; letter-spacing: -.015em; }
-.social-links-eyebrow { color: var(--discord-muted); font-size: .56rem; font-weight: 850; letter-spacing: .14em; }
-.social-links-caption { padding: .3rem .5rem; border: 1px solid var(--discord-border); border-radius: 999px; color: var(--discord-muted); font-size: .6rem; white-space: nowrap; }
-.social-links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(66px, 1fr)); gap: .35rem; }
-.social-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .42rem; min-width: 0; min-height: 66px; padding: .55rem .25rem; border: 1px solid transparent; border-radius: .65rem; background: transparent; color: var(--discord-text-soft); font-size: .65rem; text-decoration: none !important; transition: transform 180ms ease, color 180ms ease, border-color 180ms ease, background-color 180ms ease; }
-.social-link > i { font-size: 1.22rem; line-height: 1; color: var(--discord-text-soft); transition: color 180ms ease, transform 180ms ease; }
-.social-link > span { max-width: 100%; overflow-wrap: anywhere; text-align: center; }
-.social-link[data-network="discord"] > i, .social-link[data-network="telegram"] > i { color: #58a9ff; }
-.social-link[data-network="instagram"] > i { color: #e66a95; }
-.social-link[data-network="youtube"] > i { color: #ff4d5b; }
-.social-link[data-network="tiktok"] > i { color: var(--discord-text); }
-.social-link:hover { transform: translateY(-2px); border-color: var(--discord-border); background: var(--discord-card); color: var(--discord-text); }
-.social-link:hover > i { transform: scale(1.08); color: var(--discord-blue-hover); }
-.social-link:focus-visible { outline: 2px solid var(--discord-blue); outline-offset: 3px; }
+.connections-social-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .38rem; margin-top: .5rem; }
+.connection-social-link { display: flex; align-items: center; gap: .42rem; min-width: 0; min-height: 37px; padding: .38rem .45rem; border: 1px solid var(--discord-border); border-radius: .55rem; background: var(--discord-card); color: var(--discord-text-soft); font-size: .67rem; text-decoration: none !important; transition: transform 180ms ease, color 180ms ease, border-color 180ms ease, background-color 180ms ease; }
+.connection-social-link > i:first-child { display: grid; place-items: center; flex: 0 0 22px; width: 22px; color: var(--discord-text); font-size: .96rem; }
+.connection-social-link > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.connection-social-link .connection-out { margin-left: auto; flex: 0 0 auto; font-size: .58rem; }
+.connection-social-link[data-network="discord"] > i:first-child { color: #5865f2; }
+.connection-social-link[data-network="telegram"] > i:first-child { color: #58a9ff; }
+.connection-social-link[data-network="instagram"] > i:first-child { color: #e66a95; }
+.connection-social-link[data-network="youtube"] > i:first-child { color: #ff4d5b; }
+.connection-social-link:hover { transform: translateY(-1px); border-color: var(--discord-blue); background: var(--discord-card-hover); color: var(--discord-text); }
+.connection-social-link:hover > i:first-child { color: var(--discord-blue-hover); }
+.connection-social-link:focus-visible { outline: 2px solid var(--discord-blue); outline-offset: 2px; }
 .profile-quick-menu { width: min(256px, calc(100vw - 48px)); }
 .profile-quick-menu-heading { display: flex; align-items: center; gap: .6rem; margin: 0 0 .15rem; padding: .55rem .6rem .7rem; border-bottom: 1px solid var(--discord-border); }
 .profile-quick-menu-icon { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; border-radius: .6rem; background: var(--discord-card); color: var(--discord-blue-hover); }
@@ -1083,10 +1066,7 @@ onUnmounted(() => {
 .activity-menu-notice { display: flex; align-items: center; gap: .4rem; margin: .65rem 0 0; color: var(--discord-muted); font-size: .7rem; animation: card-enter 180ms ease both; }
 .activity-menu-notice .fa-circle-check { color: #23a55a; }
 
-.social-logo { display: block; width: 22px; height: 22px; object-fit: contain; image-rendering: auto; }
-.social-link { background: #ffffff; border-color: rgba(0,0,0,.07); }
-:global(html:not(.dark)) .social-link { background: #ffffff; border-color: var(--discord-border); }
-.social-link:hover { background: #ffffff; }
+
 .nes-pixel-overlay { position: absolute; z-index: 3; display: block; max-width: none; pointer-events: none; object-fit: fill; image-rendering: pixelated; opacity: 1; transform-origin: center; }
 .nes-pixel-overlay.is-dissolving { animation: nes-pixel-dissolve 760ms steps(8, end) forwards; }
 @keyframes nes-pixel-dissolve { 0% { opacity: 1; filter: contrast(1.2) saturate(1.08); transform: scale(1.02); } 54% { opacity: .92; filter: contrast(1.08); transform: scale(1.01); } 100% { opacity: 0; filter: none; transform: scale(1); } }
@@ -1191,7 +1171,6 @@ onUnmounted(() => {
 @media (max-width: 1040px) {
   .profile-content { padding-inline: 1rem; }
   .activity-pane { width: 100%; }
-  .social-links { margin-top: .15rem; }
   .activity-artwork { width: 96px; height: 96px; flex-basis: 96px; }
 }
 @media (max-width: 560px) {
@@ -1214,11 +1193,9 @@ onUnmounted(() => {
   .message-button { flex: 1; min-height: 38px; }
   .profile-icon-button { width: 38px; height: 38px; }
   .activity-pane { padding: .85rem; }
-  .social-links { padding: .7rem; }
-  .social-links-grid { grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); gap: .2rem; }
-  .social-link { min-height: 60px; font-size: .6rem; }
-  .social-link > i { font-size: 1.12rem; }
-  .social-links-caption { font-size: .57rem; }
+  .connections-social-grid { gap: .3rem; }
+  .connection-social-link { min-height: 35px; padding: .35rem .38rem; font-size: .61rem; }
+  .connection-social-link > i:first-child { flex-basis: 19px; width: 19px; font-size: .87rem; }
   .activity-card { padding: .7rem; }
   .activity-card-content { gap: .55rem; }
   .activity-artwork { width: 100%; height: 100%; flex-basis: auto; border-radius: .5rem; }
