@@ -1,22 +1,18 @@
 import fs from 'node:fs'
 import { defineConfig } from 'vitepress'
+import { blogPosts } from './blog-posts'
 
 const siteUrl = 'https://thio.cc.cd'
 const ogDescription = `Flessan's projects, writing, and communities`
 const ogImage = `${siteUrl}/images/flessan-banner.png`
 
-// Blog posts, newest first - also used to generate /feed.xml at build time
-const posts = [
-  { title: 'Kontekstual: code in the language we speak', date: '2026-10-18', desc: 'Designing a beginner-friendly programming language that reads naturally in Indonesian', slug: 'kontekstual-language' },
-  { title: 'Telegraph Cloud: files, APIs, and a Telegram-backed backend', date: '2026-10-18', desc: 'Building a Cloudflare-native storage service that turns Telegram-backed files into a practical API for other projects', slug: 'telegraph-cloud' },
-  { title: 'Admin Panel Everywhere: from endpoints to a workspace', date: '2026-10-18', desc: 'Designing a self-hostable admin workspace for APIs, CRUD operations, OpenAPI, and structured data', slug: 'admin-panel-everywhere' },
-  { title: 'ANTO-LTG: a toolkit for the Windows repair bench', date: '2026-10-18', desc: 'Planning a practical Windows technician toolkit for drivers, software setup, and repeatable repair workflows', slug: 'anto-ltg-toolkit' },
-  { title: 'hello, internet', date: '2026-09-08', desc: 'A new home at thio.cc.cd - who I am, and what this site will hold', slug: 'hello-internet' },
-  { title: 'the command line is your d3sktop', date: '2026-09-04', desc: 'Building slate-de - a CLI-based, pane-oriented Wayland desktop environment in Rust', slug: 'slate-de' },
-  { title: 'teksreceh: a museum of +62 typing', date: '2026-09-01', desc: 'Alay, UwU, Rimsvek, Binary - preserving how the Indonesian internet types', slug: 'teksreceh' },
-  { title: 'GDIPS: a digital campfire', date: '2026-08-28', desc: 'How a free-server list grew into a community-driven Geometry Dash private server', slug: 'gdips-reborn' },
-  { title: 'Many small sites', date: '2026-08-24', desc: 'Why I keep lots of little websites instead of one big one', slug: 'internet-of-thio' }
-]
+// The shared catalogue keeps RSS metadata aligned with the blog directory and post navigation.
+const posts = blogPosts.map((post) => ({
+  title: post.title,
+  date: post.date,
+  desc: post.description,
+  slug: post.slug
+}))
 
 // ---------------------------------------------------------------------------
 // SEO: everything below generates per-page <head> tags from frontmatter
