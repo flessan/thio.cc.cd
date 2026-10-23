@@ -1,10 +1,18 @@
 ---
-title: "ANTO-LTG: a toolkit for the Windows repair bench"
+title: "ANTO-LTG: Windows repair toolkit for drivers and software"
 author:
   name: M. Thio Saputra
 date: "2026-10-18"
-description: A Windows maintenance toolkit idea built around trustworthy downloads, compatibility notes, and repeatable workflows.
+description: ANTO-LTG is a Windows maintenance toolkit in development, focused on drivers, trusted installers, compatibility notes, and repair workflows.
 image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1600&h=840&q=85"
+imageAlt: "Computer components arranged on a repair workbench"
+inLanguage: "en"
+keywords:
+  - "ANTO-LTG"
+  - "Windows repair toolkit"
+  - "Windows drivers"
+  - "software installation"
+  - "PC maintenance"
 ---
 
 <BlogCover src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1600&h=840&q=85" alt="Computer hardware and components on a workbench" credit="Image via Unsplash" license-url="https://unsplash.com/license" />
@@ -16,7 +24,7 @@ image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format
 
 ## The repair routine is repetitive for a reason
 
-Reinstalling Windows or fixing a machine often means repeating the same scavenger hunt: identify the hardware, find the right driver, locate a trustworthy installer, then make sure the basics are configured. A toolkit can make that workflow less tedious—but only if it helps the technician understand what each step will do.
+Reinstalling Windows or fixing a machine often means repeating the same scavenger hunt: identify the hardware, find the right driver, locate a trustworthy installer, then make sure the basics are configured. A toolkit can make that workflow less tedious, but only if it helps the technician understand what each step will do.
 
 That's the idea behind **[ANTO-LTG](https://github.com/flessan/ANTO-LTG)**, my project for organizing parts of Windows maintenance in one place.
 
