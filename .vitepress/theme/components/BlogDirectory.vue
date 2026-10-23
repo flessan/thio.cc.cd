@@ -55,7 +55,6 @@ function clearFilters() {
           placeholder="Search articles, projects, topics…"
           autocomplete="off"
         />
-        <kbd v-if="!search">/</kbd>
       </label>
 
       <label class="category-field">
@@ -166,14 +165,6 @@ function clearFilters() {
 .category-field option {
   background: var(--vp-c-bg);
   color: var(--vp-c-text-1);
-}
-kbd {
-  flex: 0 0 auto;
-  padding: 0.05rem 0.4rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 0.3rem;
-  color: var(--vp-c-text-3);
-  font: 0.75rem var(--vp-font-family-mono);
 }
 .results-row {
   display: flex;
