@@ -3,7 +3,7 @@ title: "slate-de: Rust and Wayland desktop environment experiment"
 author:
   name: M. Thio Saputra
 date: "2026-09-04"
-description: slate-de is an early Rust and Wayland desktop environment experiment that explores terminal-first, keyboard-driven workspaces built around panes.
+description: "slate-de is an early Rust and Wayland desktop environment experiment that explores terminal-first, keyboard-driven workspaces built around panes."
 image: /images/covers/slate-de.png
 imageAlt: "Cover artwork for the slate-de terminal-focused desktop experiment"
 inLanguage: "en"
