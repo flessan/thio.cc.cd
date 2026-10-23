@@ -827,9 +827,18 @@ onUnmounted(() => {
             </div>
           </div>
           <div v-if="activity.buttons?.length" class="rich-activity-actions">
-            <span v-for="button in activity.buttons" :key="button" class="rich-action-button is-api-label" :title="'Activity button label supplied by Lanyard; the payload does not include a destination URL.'">
-              <i class="fa-solid fa-link" aria-hidden="true"></i>{{ button }}
-            </span>
+            <a
+              v-for="button in activity.buttons"
+              :key="button"
+              class="rich-action-button is-api-label"
+              href="https://discord.com/users/776722084030054421"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="button + ' — open Flessann’s Discord profile'"
+              :title="'Open Flessann’s Discord profile (' + button + ')'"
+            >
+              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>{{ button }}
+            </a>
           </div>
         </article>
 
