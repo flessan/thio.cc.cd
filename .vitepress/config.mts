@@ -124,7 +124,11 @@ export default defineConfig({
     const image = fmImage
       ? (isAbsoluteImage ? fmImage : `${siteUrl}${fmImage}`)
       : ogImage
-    const dims = image.includes('/covers/') ? coverDims : bannerDims
+    const dims = image.includes('images.unsplash.com')
+      ? { w: 1600, h: 840 }
+      : image.includes('/covers/')
+        ? coverDims
+        : bannerDims
 
     const title = String(pageData.title || 'Flessan')
     const ogTitle = isHome
@@ -335,6 +339,7 @@ ${items}
   },
 
   head: [
+    ['link', { rel: 'preconnect', href: 'https://images.unsplash.com', crossorigin: '' }],
     ['link', { rel: 'icon', type: 'image/png', href: '/images/flessan-icon.png' }],
     ['link', { rel: 'apple-touch-icon', href: '/images/flessan-icon-180.png' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: "Flessan's blog", href: '/feed.xml' }],
