@@ -183,9 +183,24 @@ function activityFallbackImage(activity: Activity) {
 function activityAssetUrl(activity?: Activity | null, assetKey: 'large_image' | 'small_image' = 'large_image') {
   const raw = activity?.assets?.[assetKey]
   if (!raw) return ''
+
+  // Lanyard/Discord external proxy assets include the original URL after
+  // "mp:external/<proxy-key>/https/" (or "http/"). Use that source directly.
   if (raw.startsWith('mp:external/')) {
+    const match = raw.match(/^mp:external\/[^/]+\/(https?)\/(.+)$/i)
+    if (match) {
+      try {
+        const originalUrl = new URL(`${match[1]}://${match[2]}`)
+        if (originalUrl.protocol === 'https:' || originalUrl.protocol === 'http:') {
+          return originalUrl.href
+        }
+      } catch {
+        // Fall back to Discord's media proxy if the embedded source is malformed.
+      }
+    }
     return `https://media.discordapp.net/external/${raw.slice('mp:external/'.length)}?width=360&height=360&quality=85`
   }
+
   if (/^https?:\/\//i.test(raw)) return raw
   if (raw.startsWith('spotify:')) return ''
   if (/^\d+$/.test(raw) && activity?.application_id) {
@@ -716,7 +731,6 @@ onUnmounted(() => {
       <section class="activity-pane reveal-card" aria-label="Discord activity">
         <div class="activity-pane-heading">
           <h3>Current activity</h3>
-          <span class="activity-refresh" :class="{ 'is-stale': unavailable }"><i class="fa-solid fa-circle" aria-hidden="true"></i>{{ unavailable ? 'Offline snapshot' : loading ? 'Syncing' : 'Live' }}</span>
         </div>
 
         <article class="activity-card spotify-activity">
