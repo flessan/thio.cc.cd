@@ -1,10 +1,18 @@
 ---
-title: hello, internet
+title: "hello, internet: meet Flessan, developer and student"
 author:
   name: M. Thio Saputra
 date: "2026-09-08"
-description: A personal introduction to Thio, the little corners of the web I build, and what this site is for.
+description: Meet Thio Saputra, known as Flessan: a student developer in Banjarmasin building web apps, community tools, Linux experiments, and personal websites.
 image: /images/covers/hello-internet.png
+imageAlt: "Cover artwork for the hello internet introduction"
+inLanguage: "en"
+keywords:
+  - "Flessan"
+  - "Thio Saputra"
+  - "developer introduction"
+  - "Banjarmasin developer"
+  - "personal website"
 ---
 
 <BlogCover src="/images/covers/hello-internet.png" alt="Cover for hello, internet" />
@@ -14,7 +22,7 @@ image: /images/covers/hello-internet.png
 <PostMeta date="2026-09-08"></PostMeta>
 <PostTools></PostTools>
 
-Halo internet. This is the first post from my little corner at **[thio.cc.cd](https://thio.cc.cd)**. Online, most people know me as **Flessan**—or Fless, Flethio, and Thio2009_ depending on where we crossed paths first.
+Halo internet. This is the first post from my little corner at **[thio.cc.cd](https://thio.cc.cd)**. Online, most people know me as **Flessan**, or Fless, Flethio, and Thio2009_ depending on where we crossed paths first.
 
 If you found me through [GitHub](https://github.com/flessan), [GDIPS](../gdips.md), or one of my other sites, this is where more of those threads come together. Not because everything has to live inside one giant website, but because it helps to have a home base.
 
@@ -26,10 +34,10 @@ A lot of learning happens while I'm building something for an actual use case. S
 
 ## What you'll find here
 
-- **Projects and build notes** — decisions, trade-offs, things that worked, and things that still need work.
-- **Personal writing** — the story behind a project, a community, or a weird little corner of the internet.
-- **What I'm doing now** — the [/now page](../now.md) and [timeline](../timeline.md) collect the moving pieces.
-- **The wider ecosystem** — the [ecosystem page](../ecosystem.md) links to the other sites and tools I maintain.
+- **Projects and build notes**: decisions, trade-offs, things that worked, and things that still need work.
+- **Personal writing**: the story behind a project, a community, or a weird little corner of the internet.
+- **What I'm doing now**: the [/now page](../now.md) and [timeline](../timeline.md) collect the moving pieces.
+- **The wider ecosystem**: the [ecosystem page](../ecosystem.md) links to the other sites and tools I maintain.
 
 The blog may switch between English and Indonesian depending on the topic and the mood. Technical details should stay precise either way. No need to make a story sound like a corporate launch just because it involves code.
 
