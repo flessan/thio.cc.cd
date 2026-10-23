@@ -179,16 +179,13 @@ function activitySubtitle(activity: Activity) {
   return activity.state || activity.assets?.large_text || ''
 }
 function activityFallbackImage(activity: Activity) {
-  return activity.type === 3 ? profileImage : ''
+  return activity.type === 3 ? watchingInLoveImage : ''
 }
 
 function activityArtworkUrl(activity: Activity) {
-  const watchingText = [activity.name, activity.details, activity.state, activity.assets?.large_text]
-    .filter((value): value is string => Boolean(value))
-    .join(' ')
-  if (activity.type === 3 && /\bin\s+love\b/i.test(watchingText)) {
-    return watchingInLoveImage
-  }
+  // Discord's Watching activity is the "Watching in Love" card requested here.
+  // Prefer this explicit GIF over the remote activity artwork in the API payload.
+  if (activity.type === 3) return watchingInLoveImage
   return activityAssetUrl(activity) || activityFallbackImage(activity)
 }
 function activityAssetUrl(activity?: Activity | null, assetKey: 'large_image' | 'small_image' = 'large_image') {
@@ -323,7 +320,6 @@ function revealPixelImage(image: HTMLImageElement) {
   if (!image.naturalWidth || !image.naturalHeight || typeof window === 'undefined') return
   const source = image.currentSrc || image.src
   if (!source || image.dataset.pixelSource === source) return
-  image.dataset.pixelSource = source
 
   const parent = image.parentElement
   if (!parent) return
@@ -337,22 +333,38 @@ function revealPixelImage(image: HTMLImageElement) {
     parent.style.position = 'relative'
   }
 
-  const pixelWidth = Math.max(8, Math.round(rect.width / 5))
-  const pixelHeight = Math.max(8, Math.round(pixelWidth * rect.height / rect.width))
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
+  const outputWidth = Math.max(8, Math.round(rect.width * pixelRatio))
+  const outputHeight = Math.max(8, Math.round(rect.height * pixelRatio))
   const canvas = document.createElement('canvas')
-  canvas.width = pixelWidth
-  canvas.height = pixelHeight
+  canvas.width = outputWidth
+  canvas.height = outputHeight
   canvas.className = 'nes-pixel-overlay'
   canvas.setAttribute('aria-hidden', 'true')
-  canvas.style.left = `${rect.left - parentRect.left + parent.scrollLeft - parent.clientLeft}px`
-  canvas.style.top = `${rect.top - parentRect.top + parent.scrollTop - parent.clientTop}px`
-  canvas.style.width = `${rect.width}px`
-  canvas.style.height = `${rect.height}px`
+  canvas.style.left = String(rect.left - parentRect.left + parent.scrollLeft - parent.clientLeft) + 'px'
+  canvas.style.top = String(rect.top - parentRect.top + parent.scrollTop - parent.clientTop) + 'px'
+  canvas.style.width = String(rect.width) + 'px'
+  canvas.style.height = String(rect.height) + 'px'
   canvas.style.borderRadius = window.getComputedStyle(image).borderRadius
 
   const context = canvas.getContext('2d')
-  if (!context) return
-  context.imageSmoothingEnabled = false
+  if (!context) {
+    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
+      parent.style.position = parent.dataset.pixelRestorePosition
+      delete parent.dataset.pixelRestorePosition
+    }
+    return
+  }
+
+  const scratch = document.createElement('canvas')
+  const scratchContext = scratch.getContext('2d')
+  if (!scratchContext) {
+    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
+      parent.style.position = parent.dataset.pixelRestorePosition
+      delete parent.dataset.pixelRestorePosition
+    }
+    return
+  }
 
   const sourceWidth = image.naturalWidth
   const sourceHeight = image.naturalHeight
@@ -369,23 +381,76 @@ function revealPixelImage(image: HTMLImageElement) {
     cropHeight = sourceWidth / targetRatio
     cropY = (sourceHeight - cropHeight) / 2
   }
-  try {
-    context.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, pixelWidth, pixelHeight)
-  } catch {
-    return
-  }
 
-  parent.appendChild(canvas)
-  requestAnimationFrame(() => canvas.classList.add('is-dissolving'))
+  const previousVisibility = image.style.visibility
+  const levels = [0.035, 0.055, 0.085, 0.13, 0.2, 0.3, 0.43, 0.59, 0.76, 1]
+  const duration = 620
+  let lastLevel = -1
+  let frameId = 0
+  let fallbackTimer = 0
+  let finished = false
+
   const cleanup = () => {
+    if (finished) return
+    finished = true
+    if (frameId) cancelAnimationFrame(frameId)
+    if (fallbackTimer) window.clearTimeout(fallbackTimer)
     canvas.remove()
+    image.style.visibility = previousVisibility
     if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
       parent.style.position = parent.dataset.pixelRestorePosition
       delete parent.dataset.pixelRestorePosition
     }
   }
-  canvas.addEventListener('animationend', cleanup, { once: true })
-  window.setTimeout(cleanup, 1100)
+
+  const drawLevel = (level: number) => {
+    const sampleWidth = Math.max(8, Math.round(outputWidth * levels[level]))
+    const sampleHeight = Math.max(8, Math.round(sampleWidth / targetRatio))
+    scratch.width = sampleWidth
+    scratch.height = sampleHeight
+    scratchContext.imageSmoothingEnabled = true
+    scratchContext.clearRect(0, 0, sampleWidth, sampleHeight)
+    scratchContext.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, sampleWidth, sampleHeight)
+
+    context.imageSmoothingEnabled = false
+    context.clearRect(0, 0, outputWidth, outputHeight)
+    context.drawImage(scratch, 0, 0, outputWidth, outputHeight)
+    lastLevel = level
+  }
+
+  const animate = (timestamp: number) => {
+    if (!canvas.isConnected) {
+      cleanup()
+      return
+    }
+    const elapsed = Math.min(1, Math.max(0, (timestamp - startedAt) / duration))
+    const level = Math.min(levels.length - 1, Math.floor(elapsed * (levels.length - 1) + 0.0001))
+    if (level !== lastLevel) drawLevel(level)
+    if (elapsed >= 1) {
+      cleanup()
+      return
+    }
+    frameId = requestAnimationFrame(animate)
+  }
+
+  const startedAt = performance.now()
+  try {
+    drawLevel(0)
+  } catch {
+    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
+      parent.style.position = parent.dataset.pixelRestorePosition
+      delete parent.dataset.pixelRestorePosition
+    }
+    return
+  }
+
+  // Hide the source while the one-to-one canvas sharpens; this avoids a ghosted
+  // double image and the misaligned "second picture" effect of an overlay fade.
+  image.style.visibility = 'hidden'
+  image.dataset.pixelSource = source
+  parent.appendChild(canvas)
+  frameId = requestAnimationFrame(animate)
+  fallbackTimer = window.setTimeout(cleanup, duration + 350)
 }
 function onPixelImageLoad(event: Event) {
   if (event.currentTarget instanceof HTMLImageElement) revealPixelImage(event.currentTarget)
@@ -1087,9 +1152,7 @@ onUnmounted(() => {
 .activity-menu-notice .fa-circle-check { color: #23a55a; }
 
 
-.nes-pixel-overlay { position: absolute; z-index: 3; display: block; max-width: none; pointer-events: none; object-fit: fill; image-rendering: pixelated; opacity: 1; transform-origin: center; }
-.nes-pixel-overlay.is-dissolving { animation: nes-pixel-dissolve 760ms steps(8, end) forwards; }
-@keyframes nes-pixel-dissolve { 0% { opacity: 1; filter: contrast(1.2) saturate(1.08); transform: scale(1.02); } 54% { opacity: .92; filter: contrast(1.08); transform: scale(1.01); } 100% { opacity: 0; filter: none; transform: scale(1); } }
+.nes-pixel-overlay { position: absolute; z-index: 3; display: block; max-width: none; pointer-events: none; object-fit: fill; image-rendering: pixelated; opacity: 1; transform: none; }
 .activity-card:hover { transform: translateY(-1px); border-color: var(--discord-border-strong); background: var(--discord-card-hover); }
 .activity-card-heading { display: flex; align-items: center; gap: .45rem; min-width: 0; margin-bottom: .65rem; color: var(--discord-text); font-size: .73rem; font-weight: 600; }
 .activity-heading-brand { color: var(--discord-text-soft); font-size: .95rem; }
