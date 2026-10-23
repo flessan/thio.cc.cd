@@ -316,160 +316,6 @@ async function copyActivityDetails(kind: string) {
   activityMenuNoticeTimer = setTimeout(() => { activityMenuNotice.value = '' }, 2400)
 }
 
-function revealPixelImage(image: HTMLImageElement) {
-  if (!image.naturalWidth || !image.naturalHeight || typeof window === 'undefined') return
-  const source = image.currentSrc || image.src
-  if (!source || image.dataset.pixelSource === source) return
-
-  const parent = image.parentElement
-  if (!parent) return
-  const rect = image.getBoundingClientRect()
-  const parentRect = parent.getBoundingClientRect()
-  if (rect.width < 2 || rect.height < 2) return
-
-  const parentStyle = window.getComputedStyle(parent)
-  if (parentStyle.position === 'static') {
-    parent.dataset.pixelRestorePosition = parent.style.position
-    parent.style.position = 'relative'
-  }
-
-  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2)
-  const outputWidth = Math.max(8, Math.round(rect.width * pixelRatio))
-  const outputHeight = Math.max(8, Math.round(rect.height * pixelRatio))
-  const canvas = document.createElement('canvas')
-  canvas.width = outputWidth
-  canvas.height = outputHeight
-  canvas.className = 'nes-pixel-overlay'
-  canvas.setAttribute('aria-hidden', 'true')
-  canvas.style.left = String(rect.left - parentRect.left + parent.scrollLeft - parent.clientLeft) + 'px'
-  canvas.style.top = String(rect.top - parentRect.top + parent.scrollTop - parent.clientTop) + 'px'
-  canvas.style.width = String(rect.width) + 'px'
-  canvas.style.height = String(rect.height) + 'px'
-  canvas.style.borderRadius = window.getComputedStyle(image).borderRadius
-
-  const context = canvas.getContext('2d')
-  if (!context) {
-    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
-      parent.style.position = parent.dataset.pixelRestorePosition
-      delete parent.dataset.pixelRestorePosition
-    }
-    return
-  }
-
-  const scratch = document.createElement('canvas')
-  const scratchContext = scratch.getContext('2d')
-  if (!scratchContext) {
-    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
-      parent.style.position = parent.dataset.pixelRestorePosition
-      delete parent.dataset.pixelRestorePosition
-    }
-    return
-  }
-
-  const sourceWidth = image.naturalWidth
-  const sourceHeight = image.naturalHeight
-  const targetRatio = rect.width / rect.height
-  const sourceRatio = sourceWidth / sourceHeight
-  let cropX = 0
-  let cropY = 0
-  let cropWidth = sourceWidth
-  let cropHeight = sourceHeight
-  if (sourceRatio > targetRatio) {
-    cropWidth = sourceHeight * targetRatio
-    cropX = (sourceWidth - cropWidth) / 2
-  } else {
-    cropHeight = sourceWidth / targetRatio
-    cropY = (sourceHeight - cropHeight) / 2
-  }
-
-  const previousVisibility = image.style.visibility
-  const levels = [0.035, 0.055, 0.085, 0.13, 0.2, 0.3, 0.43, 0.59, 0.76, 1]
-  const duration = 620
-  let lastLevel = -1
-  let frameId = 0
-  let fallbackTimer = 0
-  let finished = false
-
-  const cleanup = () => {
-    if (finished) return
-    finished = true
-    if (frameId) cancelAnimationFrame(frameId)
-    if (fallbackTimer) window.clearTimeout(fallbackTimer)
-    canvas.remove()
-    image.style.visibility = previousVisibility
-    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
-      parent.style.position = parent.dataset.pixelRestorePosition
-      delete parent.dataset.pixelRestorePosition
-    }
-  }
-
-  const drawLevel = (level: number) => {
-    const sampleWidth = Math.max(8, Math.round(outputWidth * levels[level]))
-    const sampleHeight = Math.max(8, Math.round(sampleWidth / targetRatio))
-    scratch.width = sampleWidth
-    scratch.height = sampleHeight
-    scratchContext.imageSmoothingEnabled = true
-    scratchContext.clearRect(0, 0, sampleWidth, sampleHeight)
-    scratchContext.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, sampleWidth, sampleHeight)
-
-    context.imageSmoothingEnabled = false
-    context.clearRect(0, 0, outputWidth, outputHeight)
-    context.drawImage(scratch, 0, 0, outputWidth, outputHeight)
-    lastLevel = level
-  }
-
-  const startedAt = performance.now()
-  const animate = (timestamp: number) => {
-    if (!canvas.isConnected) {
-      cleanup()
-      return
-    }
-    const elapsed = Math.min(1, Math.max(0, (timestamp - startedAt) / duration))
-    const level = Math.min(levels.length - 1, Math.floor(elapsed * (levels.length - 1) + 0.0001))
-    if (level !== lastLevel) drawLevel(level)
-    if (elapsed >= 1) {
-      cleanup()
-      return
-    }
-    frameId = requestAnimationFrame(animate)
-  }
-
-  try {
-    drawLevel(0)
-  } catch {
-    if (!parent.querySelector('.nes-pixel-overlay') && parent.dataset.pixelRestorePosition !== undefined) {
-      parent.style.position = parent.dataset.pixelRestorePosition
-      delete parent.dataset.pixelRestorePosition
-    }
-    return
-  }
-
-  // Hide the source while the one-to-one canvas sharpens; this avoids a ghosted
-  // double image and the misaligned "second picture" effect of an overlay fade.
-  image.style.visibility = 'hidden'
-  image.dataset.pixelSource = source
-  parent.appendChild(canvas)
-  frameId = requestAnimationFrame(animate)
-  fallbackTimer = window.setTimeout(cleanup, duration + 350)
-}
-function onPixelImageLoad(event: Event) {
-  if (event.currentTarget instanceof HTMLImageElement) revealPixelImage(event.currentTarget)
-}
-const vPixelReveal = {
-  mounted(image: HTMLImageElement) {
-    image.addEventListener('load', onPixelImageLoad)
-    if (image.complete && image.naturalWidth) requestAnimationFrame(() => revealPixelImage(image))
-  },
-  updated(image: HTMLImageElement) {
-    if (image.complete && image.naturalWidth && image.dataset.pixelSource !== (image.currentSrc || image.src)) {
-      requestAnimationFrame(() => revealPixelImage(image))
-    }
-  },
-  unmounted(image: HTMLImageElement) {
-    image.removeEventListener('load', onPixelImageLoad)
-  }
-}
-
 function ensureFontAwesome() {
   if (typeof document === 'undefined' || document.getElementById('thio-font-awesome-css')) return
   const link = document.createElement('link')
@@ -693,11 +539,11 @@ onUnmounted(() => {
         <div class="profile-content">
           <div class="profile-avatar-line">
             <a class="avatar-wrap" :href="profileImage" target="_blank" rel="noopener noreferrer" aria-label="Open profile GIF">
-              <img :src="profileImage" class="avatar" alt="Profile GIF" width="112" height="112" loading="lazy" v-pixel-reveal />
+              <img :src="profileImage" class="avatar" alt="Profile GIF" width="112" height="112" loading="lazy" />
               <span class="presence-orb" :data-status="status" :aria-label="statusLabel"></span>
             </a>
             <div class="profile-custom-status" :title="customStatus?.state || ''">
-              <img v-if="customStatus?.emoji?.id" :src="customEmojiUrl(customStatus)" class="status-emoji-image" :alt="customStatus.emoji?.name || 'Custom status emoji'" width="16" height="16" loading="lazy" v-pixel-reveal />
+              <img v-if="customStatus?.emoji?.id" :src="customEmojiUrl(customStatus)" class="status-emoji-image" :alt="customStatus.emoji?.name || 'Custom status emoji'" width="16" height="16" loading="lazy" />
               <span v-else class="status-emoji">{{ customStatus?.emoji?.name || '✦' }}</span>
               <span>{{ customStatus?.state || (unavailable ? 'Presence is temporarily unavailable.' : 'No custom status right now.') }}</span>
             </div>
@@ -834,7 +680,7 @@ onUnmounted(() => {
           </div>
           <template v-if="spotify">
             <a class="activity-card-content" :href="spotifyUrl" target="_blank" rel="noopener noreferrer" :aria-label="'Open ' + spotify.song + ' in Spotify'">
-              <img v-if="spotify.album_art_url" :src="spotify.album_art_url" class="activity-artwork spotify-artwork" :alt="(spotify.album || 'Album') + ' artwork'" width="126" height="126" loading="lazy" v-pixel-reveal />
+              <img v-if="spotify.album_art_url" :src="spotify.album_art_url" class="activity-artwork spotify-artwork" :alt="(spotify.album || 'Album') + ' artwork'" width="126" height="126" loading="lazy" />
               <div v-else class="activity-artwork artwork-fallback"><i class="fa-solid fa-music" aria-hidden="true"></i></div>
               <div class="activity-track-info">
                 <h4>{{ spotify.song || 'Unknown track' }}</h4>
@@ -879,7 +725,6 @@ onUnmounted(() => {
                 class="activity-artwork rich-artwork"
                 :alt="activity.assets?.large_text || activity.name || 'Activity artwork'"
                 loading="lazy"
-                v-pixel-reveal
                 @error="onActivityImageError"
               />
               <img
@@ -888,7 +733,6 @@ onUnmounted(() => {
                 class="rich-artwork-badge"
                 :alt="activity.assets?.small_text || ''"
                 loading="lazy"
-                v-pixel-reveal
                 @error="onActivityImageError"
               />
             </div>
@@ -926,7 +770,7 @@ onUnmounted(() => {
     <article class="guild-card reveal-card" aria-label="Discord server widget">
         <div class="guild-topline">
           <a class="guild-brand-mark" :href="inviteUrl" target="_blank" rel="noopener noreferrer" aria-label="Join community server">
-            <img :src="communityImage" alt="" width="48" height="48" loading="lazy" v-pixel-reveal />
+            <img :src="communityImage" alt="" width="48" height="48" loading="lazy" />
           </a>
           <div class="guild-heading-copy">
             <span class="detail-label">COMMUNITY SERVER</span>
@@ -951,7 +795,7 @@ onUnmounted(() => {
             <div v-if="activeMembers.length" class="member-list">
               <a v-for="member in activeMembers" :key="member.id" class="guild-member" :class="{ 'member-is-link': member.id.length > 10 }" :href="member.id.length > 10 ? 'https://discord.com/users/' + member.id : undefined" :aria-label="member.id.length > 10 ? 'Open Discord profile for ' + member.username : undefined" :target="member.id.length > 10 ? '_blank' : undefined" :rel="member.id.length > 10 ? 'noopener noreferrer' : undefined">
                 <span class="member-avatar-wrap">
-                  <img v-if="member.avatar_url" :src="member.avatar_url" alt="" width="32" height="32" loading="lazy" v-pixel-reveal />
+                  <img v-if="member.avatar_url" :src="member.avatar_url" alt="" width="32" height="32" loading="lazy" />
                   <span v-else class="member-avatar-fallback">{{ (member.username || '?').slice(0, 1).toUpperCase() }}</span>
                   <span class="member-status-dot" :data-status="member.status || 'online'"></span>
                 </span>
@@ -973,46 +817,6 @@ onUnmounted(() => {
 
 <style scoped>
 .my-activity {
-  --discord-bg: #1e1f22;
-  --discord-panel: #232428;
-  --discord-card: #2b2d31;
-  --discord-card-hover: #303238;
-  --discord-border: #3f4147;
-  --discord-border-strong: #41434a;
-  --discord-text: #f2f3f5;
-  --discord-text-soft: #dbdee1;
-  --discord-muted: #949ba4;
-  --discord-label: #b5bac1;
-  --discord-blue: #5865f2;
-  --discord-blue-dark: #4752c4;
-  --discord-blue-hover: #8490ff;
-  --discord-link: #00a8fc;
-  --discord-bubble-border: #1a1b1e;
-  --discord-white: #ffffff;
-  --discord-profile-banner: #e8f8ff;
-  --discord-banner-decoration-border: rgba(64,156,201,.12);
-  --discord-banner-decoration-fill: rgba(255,255,255,.12);
-  --discord-icon-accent: #58c6ff;
-  --discord-subtle-divider: rgba(255,255,255,.08);
-  --discord-menu-shadow: 0 12px 32px rgba(0,0,0,.26);
-  --discord-soft-shadow: rgba(0,0,0,.08);
-  --discord-avatar-ring: rgba(255,255,255,.05);
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  margin: 1.9rem 0 2.5rem;
-  padding: .75rem;
-  transform: none;
-  overflow: visible;
-  border: 1px solid var(--discord-border);
-  border-radius: 1rem;
-  background: var(--discord-bg);
-  color: var(--discord-text-soft);
-  box-shadow: 0 14px 38px rgba(0,0,0,.11);
-}
-:global(html:not(.dark)) .my-activity {
   --discord-bg: #f3f4f7;
   --discord-panel: #ffffff;
   --discord-card: #e8eaf0;
@@ -1037,8 +841,51 @@ onUnmounted(() => {
   --discord-menu-shadow: 0 12px 28px rgba(38,50,75,.14);
   --discord-soft-shadow: rgba(38,50,75,.1);
   --discord-avatar-ring: rgba(38,50,75,.12);
+
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 1.9rem 0 2.5rem;
+  padding: .75rem;
+  transform: none;
+  overflow: visible;
+  border: 1px solid var(--discord-border);
+  border-radius: 1rem;
+  background: var(--discord-bg);
+  color: var(--discord-text-soft);
+
   color-scheme: light;
   box-shadow: 0 16px 42px rgba(38,50,75,.09);
+}
+:global(html.dark) .my-activity {
+  --discord-bg: #1e1f22;
+  --discord-panel: #232428;
+  --discord-card: #2b2d31;
+  --discord-card-hover: #303238;
+  --discord-border: #3f4147;
+  --discord-border-strong: #41434a;
+  --discord-text: #f2f3f5;
+  --discord-text-soft: #dbdee1;
+  --discord-muted: #949ba4;
+  --discord-label: #b5bac1;
+  --discord-blue: #5865f2;
+  --discord-blue-dark: #4752c4;
+  --discord-blue-hover: #8490ff;
+  --discord-link: #00a8fc;
+  --discord-bubble-border: #1a1b1e;
+  --discord-white: #ffffff;
+  --discord-profile-banner: #e8f8ff;
+  --discord-banner-decoration-border: rgba(64,156,201,.12);
+  --discord-banner-decoration-fill: rgba(255,255,255,.12);
+  --discord-icon-accent: #58c6ff;
+  --discord-subtle-divider: rgba(255,255,255,.08);
+  --discord-menu-shadow: 0 12px 32px rgba(0,0,0,.26);
+  --discord-soft-shadow: rgba(0,0,0,.08);
+  --discord-avatar-ring: rgba(255,255,255,.05);
+  color-scheme: dark;
+  box-shadow: 0 14px 38px rgba(0,0,0,.11);
 }
 .my-activity :deep(i) { line-height: 1; }
 .activity-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .85rem; }
@@ -1166,9 +1013,6 @@ onUnmounted(() => {
 .activity-menu-item:hover > i:first-child { color: var(--discord-blue); }
 .activity-menu-notice { display: flex; align-items: center; gap: .4rem; margin: .65rem 0 0; color: var(--discord-muted); font-size: .7rem; animation: card-enter 180ms ease both; }
 .activity-menu-notice .fa-circle-check { color: #23a55a; }
-
-
-.nes-pixel-overlay { position: absolute; z-index: 3; display: block; max-width: none; pointer-events: none; object-fit: fill; image-rendering: pixelated; opacity: 1; transform: none; }
 .activity-card:hover { transform: translateY(-1px); border-color: var(--discord-border-strong); background: var(--discord-card-hover); }
 .activity-card-heading { display: flex; align-items: center; gap: .45rem; min-width: 0; margin-bottom: .65rem; color: var(--discord-text); font-size: .73rem; font-weight: 600; }
 .activity-heading-brand { color: var(--discord-text-soft); font-size: .95rem; }
