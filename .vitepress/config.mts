@@ -136,6 +136,8 @@ export default defineConfig({
       (pageData.description as string | undefined) || ogDescription
     const imageAlt = String(pageData.frontmatter.imageAlt || post?.imageAlt || ogTitle)
     const pageKeywords = pageData.frontmatter.keywords as string[] | undefined
+    const contentLanguage = String(pageData.frontmatter.inLanguage || post?.language || 'en')
+    const ogLocale = contentLanguage === 'id' ? 'id_ID' : 'en_US'
 
     const head: any[] = [
       ['link', { rel: 'canonical', href: canonical }],
@@ -152,12 +154,13 @@ export default defineConfig({
       ['meta', { property: 'og:image:width', content: String(dims.w) }],
       ['meta', { property: 'og:image:height', content: String(dims.h) }],
       ['meta', { property: 'og:image:alt', content: imageAlt }],
-      ['meta', { property: 'og:locale', content: 'en_US' }],
+      ['meta', { property: 'og:locale', content: ogLocale }],
 
       ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
       ['meta', { name: 'twitter:title', content: ogTitle }],
       ['meta', { name: 'twitter:description', content: desc }],
-      ['meta', { name: 'twitter:image', content: image }]
+      ['meta', { name: 'twitter:image', content: image }],
+      ['meta', { name: 'twitter:image:alt', content: imageAlt }]
     ]
 
     if (isPost) {
@@ -211,7 +214,7 @@ export default defineConfig({
         ? new Date(pageData.lastUpdated).toISOString()
         : published
       const keywords = pageKeywords ?? post?.topics ?? []
-      const language = String(pageData.frontmatter.inLanguage || post?.language || 'en')
+      const language = contentLanguage
       lds.push({
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
