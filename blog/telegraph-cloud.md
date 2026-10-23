@@ -3,7 +3,7 @@ title: "Telegraph Cloud: Telegram-backed storage and APIs"
 author:
   name: M. Thio Saputra
 date: "2026-10-18"
-description: Telegraph Cloud is a Cloudflare-native storage project with Telegram-backed files, documented APIs, and a JSON document API for small web projects.
+description: "Telegraph Cloud is a Cloudflare-native storage project with Telegram-backed files, documented APIs, and a JSON document API for small web projects."
 image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=840&q=85"
 imageAlt: "Server racks representing the infrastructure behind a cloud storage service"
 inLanguage: "en"
