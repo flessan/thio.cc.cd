@@ -3,7 +3,7 @@ title: "GDIPS: Geometry Dash Indonesia Private Server"
 author:
   name: M. Thio Saputra
 date: "2026-08-28"
-description: The story of GDIPS, the Geometry Dash Indonesia Private Server, from a free-server directory to an open-source community project.
+description: "The story of GDIPS, the Geometry Dash Indonesia Private Server, from a free-server directory to an open-source community project."
 image: /images/covers/gdips-campfire.png
 imageAlt: "Cover artwork for the GDIPS Geometry Dash community project"
 inLanguage: "en"
