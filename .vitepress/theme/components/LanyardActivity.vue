@@ -972,7 +972,7 @@ onUnmounted(() => {
 .activity-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: .35rem; }
 .activity-platform-pill { display: inline-flex; align-items: center; gap: .28rem; padding: .2rem .4rem; border: 1px solid var(--discord-border); border-radius: .38rem; color: var(--discord-muted); font-size: .6rem; text-transform: capitalize; }
 .activity-platform-pill i { font-size: .62rem; }
-.rich-action-button.is-api-label { cursor: default; }
+.rich-action-button.is-api-label { cursor: pointer; }
 .activity-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 286px), 1fr)); align-items: start; gap: .75rem; min-width: 0; }
 .reveal-card { min-width: 0; overflow: visible; border: 1px solid var(--discord-border); border-radius: .9rem; background: var(--discord-panel); animation: card-enter 540ms cubic-bezier(.16,1,.3,1) both; }
 .profile-card { display: flex; flex-direction: column; overflow: hidden; }
