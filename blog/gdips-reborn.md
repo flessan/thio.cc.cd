@@ -1,55 +1,49 @@
 ---
-title: "\"GDIPS: a digital campfire\""
+title: "GDIPS: a digital campfire"
 author:
   name: M. Thio Saputra
 date: "2026-08-28"
-description: How a free-server list grew into a community-driven Geometry Dash private server
+description: The story of a Geometry Dash server project growing from a directory into a community effort.
 image: /images/covers/gdips-campfire.png
 ---
 
-<BlogCover src="/images/covers/gdips-campfire.png" />
+<BlogCover src="/images/covers/gdips-campfire.png" alt="Cover for GDIPS, the Geometry Dash Indonesia Private Server" />
 
 # GDIPS: a digital campfire
 
 <PostMeta date="2026-08-28"></PostMeta>
+<PostTools></PostTools>
 
-> "We're building a digital campfire, not a perfect one, but warm enough for those who want to gather around."
+> “We're building a digital campfire, not a perfect one, but warm enough for those who want to gather around.”
 
-This is the story of [GDIPS](../gdips.md) - the **Geometry Dash Indonesia Private Server** - and how it grew from a list into a community.
+This is the story of **[GDIPS](../gdips.md)**—the Geometry Dash Indonesia Private Server—and how a small utility idea turned into a community project.
 
 ## It started with a list
 
-On July 10, 2025 I published [Freedom-List](https://github.com/flessan/Freedom-List) - "Pomni Pomni Pomni" - a directory of free Geometry Dash servers. I had joined [GDPS Hub](https://gdpshub.com/user/8691) as a user the December before. The list was supposed to be a small utility: find a server, play, done.
+On July 10, 2025, I published [Freedom-List](https://github.com/flessan/Freedom-List), a directory of free Geometry Dash servers. I'd joined [GDPS Hub](https://gdpshub.com/user/8691) as a user the December before. At the time, the idea was straightforward: help people find a server, then get out of the way.
 
-But browsing communities is contagious. You start noticing what makes a server feel alive - and what makes one feel cold. So the idea grew: what if Indonesia had its own server, open-source from the first commit, built by the people who play on it?
+But spending time around communities changes what you notice. A server isn't just a URL or a collection of levels; it's also the people who help newcomers, share work, report bugs, and make it feel worth returning to. That led to a bigger question: what if there were an Indonesian server built openly, with players helping shape it?
 
 ## GDIPS Reborn
 
-On April 27, 2026, [GDIPS](https://github.com/flessan/GDIPS) went public: an **open-source, community-driven Geometry Dash private server**, licensed GPL-3.0. We call it *GDIPS Reborn* because by then the idea had already lived several lives in drafts and experiments.
+On April 27, 2026, **[GDIPS](https://github.com/flessan/GDIPS)** went public as an open-source, community-driven Geometry Dash private server under the GPL-3.0 license. We call it *GDIPS Reborn* because the idea had already gone through drafts and experiments before it became public.
 
-What makes it ours:
-
-- **Open source** - every line of code is public
-- **Community-driven** - collaborative moderation and creativity-focused rules
-- **Close to home** - an Asia-based CDN for smoother access from Indonesia
-- **Honest about its state** - basic server functionality and experimental tools, a UI overhaul in progress, a basic security framework, and ongoing database optimizations
-
-The philosophy is written on the box: *not the biggest, not the fanciest, but built with heart.*
+The project has several goals: keep the code public, encourage community participation, provide practical access for players in the region, and be honest about what is still experimental. At the time of writing, the core and tools are still evolving; the UI has work left, the security framework is basic, and database optimization remains ongoing. It's a project in progress, not a claim that every part is finished.
 
 ## The people around the fire
 
-A campfire is only as good as the people around it. GDIPS runs on kindness: **MathieuAR** keeps the servers running for free, **MegaSa1nt** built the GDPS core and dashboard, **ZeroxyGD** and **GiffariRMX** taught and helped from the beginning, **DANZGAME** made a texture pack for the server, **Migmatos** provides the custom songs, and **Blazen** helped more players find us. And of course - thank you **RobTop**, the absolute legend who created Geometry Dash in the first place.
+A community project doesn't run on a repository alone. **MathieuAR** keeps the servers running for free, **MegaSa1nt** built the GDPS core and dashboard, **ZeroxyGD** and **GiffariRMX** helped and taught from the beginning, **DANZGAME** made a texture pack, **Migmatos** provides custom songs, and **Blazen** helped more players find the project. And of course, thank you to **RobTop** for creating Geometry Dash.
 
-The community has since grown past 150 members, including collaborators from more than two countries. My proudest title isn't "founder" - it's "the person who lit the fire."
+When I wrote this, the community had passed 150 members and included collaborators from more than two countries. Those numbers are one sign of activity, but the people behind them matter more. My proudest title isn't “founder”; it's being one of the people who helped light the fire.
 
 ## Come gather
 
-If you play Geometry Dash, or you're just GDPS-curious:
+If you play Geometry Dash, or you're just curious about private servers, here are the main doors:
 
 - The server: [fless.ps.fhgdps.com](https://fless.ps.fhgdps.com/)
-- The pages: [gdips.pages.dev](https://gdips.pages.dev) (English & Bahasa Indonesia)
-- The campfire: [Discord](https://discord.gg/6HEyQBcM6E) - share levels, report bugs, or just hang out
+- The project pages: [gdips.pages.dev](https://gdips.pages.dev), available in English and Bahasa Indonesia
+- The community: [Discord](https://discord.gg/6HEyQBcM6E), for sharing levels, reporting bugs, or hanging out
 
-Every star on the repo fuels the fire. See you around it.
+The goal isn't to be the biggest or the fanciest server. It's to build something openly, learn along the way, and make it easier for people to contribute. If that sounds like your kind of campfire, come say hi.
 
 <PostNav></PostNav>
