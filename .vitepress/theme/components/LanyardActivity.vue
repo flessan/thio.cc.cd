@@ -244,21 +244,8 @@ function activityAssetUrl(activity?: Activity | null, assetKey: 'large_image' | 
   }
   return ''
 }
-function activityGamePageUrl(activity: Activity) {
-  if (activity.type !== 0 || !activity.details) return ''
-  const title = activity.details.replace(/^Playing\s+/i, '').trim()
-  return `https://www.roblox.com/discover/?Keyword=${encodeURIComponent(title)}`
-}
-function activityButtonUrl(activity: Activity, button: string) {
-  if (button === 'My Blog') return 'https://thio.cc.cd/blog/'
-  if (/see game page/i.test(button)) return activityGamePageUrl(activity)
-  return ''
-}
 function activityMenuKey(activity: Activity) {
   return activity.id || activity.name || 'activity'
-}
-function activityHasButtonUrl(activity: Activity, button: string) {
-  return Boolean(activityButtonUrl(activity, button))
 }
 function onActivityImageError(event: Event) {
   if (event.currentTarget instanceof HTMLImageElement) event.currentTarget.style.display = 'none'
@@ -294,19 +281,20 @@ const copyButtonLabel = computed(() => copiedInvite.value ? 'Tautan undangan ter
 
 // Social links template: replace URLs or add entries here when you are ready.
 const socialLinks = [
-  // Replace these URLs with your actual profiles, or add/remove entries as needed.
-  { id: 'github', label: 'GitHub', image: 'https://cdn-icons-png.flaticon.com/512/25/25231.png', url: 'https://github.com/flessan' },
-  { id: 'discord', label: 'Discord', image: 'https://cdn-icons-png.flaticon.com/512/5968/5968756.png', url: 'https://discord.com/users/776722084030054421' },
-  { id: 'instagram', label: 'Instagram', image: 'https://cdn-icons-png.flaticon.com/512/174/174855.png', url: 'https://instagram.com/YOUR_USERNAME' },
-  { id: 'youtube', label: 'YouTube', image: 'https://cdn-icons-png.flaticon.com/512/1384/1384060.png', url: 'https://youtube.com/@YOUR_CHANNEL' },
-  { id: 'tiktok', label: 'TikTok', image: 'https://cdn-icons-png.flaticon.com/512/3046/3046121.png', url: 'https://tiktok.com/@YOUR_USERNAME' },
-  { id: 'x', label: 'X', image: 'https://cdn-icons-png.flaticon.com/512/5969/5969020.png', url: 'https://x.com/YOUR_USERNAME' },
-  { id: 'telegram', label: 'Telegram', image: 'https://cdn-icons-png.flaticon.com/512/2111/2111646.png', url: 'https://t.me/YOUR_USERNAME' }
+  { id: 'github', label: 'GitHub', icon: 'fa-brands fa-github', url: 'https://github.com/flessan' },
+  { id: 'discord', label: 'Discord', icon: 'fa-brands fa-discord', url: 'https://discord.com/users/776722084030054421' },
+  { id: 'instagram', label: 'Instagram', icon: 'fa-brands fa-instagram', url: 'https://instagram.com/YOUR_USERNAME' },
+  { id: 'youtube', label: 'YouTube', icon: 'fa-brands fa-youtube', url: 'https://youtube.com/@YOUR_CHANNEL' },
+  { id: 'tiktok', label: 'TikTok', icon: 'fa-brands fa-tiktok', url: 'https://tiktok.com/@YOUR_USERNAME' },
+  { id: 'x', label: 'X', icon: 'fa-brands fa-x-twitter', url: 'https://x.com/YOUR_USERNAME' },
+  { id: 'telegram', label: 'Telegram', icon: 'fa-brands fa-telegram', url: 'https://t.me/YOUR_USERNAME' }
 ] as const
 
 type ActivityMenu = string | null
 const activeActivityMenu = ref<ActivityMenu>(null)
 const activityMenuNotice = ref('')
+const copiedProfileLink = ref(false)
+let profileLinkResetTimer: ReturnType<typeof setTimeout> | undefined
 let activityMenuNoticeTimer: ReturnType<typeof setTimeout> | undefined
 
 function toggleActivityMenu(menu: Exclude<ActivityMenu, null>) {
@@ -315,6 +303,11 @@ function toggleActivityMenu(menu: Exclude<ActivityMenu, null>) {
 }
 function closeActivityMenu() {
   activeActivityMenu.value = null
+}
+async function copyDiscordProfileLink() {
+  copiedProfileLink.value = await writeClipboard('https://discord.com/users/776722084030054421')
+  if (profileLinkResetTimer) clearTimeout(profileLinkResetTimer)
+  profileLinkResetTimer = setTimeout(() => { copiedProfileLink.value = false }, 2200)
 }
 function handleActivityOutside(event: MouseEvent) {
   if (!(event.target instanceof Element)) return
@@ -622,6 +615,7 @@ onUnmounted(() => {
   if (clockTimer) clearInterval(clockTimer)
   if (copyResetTimer) clearTimeout(copyResetTimer)
   if (activityMenuNoticeTimer) clearTimeout(activityMenuNoticeTimer)
+  if (profileLinkResetTimer) clearTimeout(profileLinkResetTimer)
 })
 </script>
 
@@ -684,7 +678,6 @@ onUnmounted(() => {
               <span class="mini-activity-icon" :title="platformLabel"><i :class="presence?.active_on_discord_mobile ? 'fa-solid fa-mobile-screen-button' : presence?.active_on_discord_web ? 'fa-solid fa-globe' : 'fa-solid fa-desktop'" aria-hidden="true"></i></span>
               <span class="mini-activity-icon" title="Discord"><i class="fa-brands fa-discord" aria-hidden="true"></i></span>
               <a v-if="spotify" class="mini-activity-icon is-active" :href="spotifyUrl" target="_blank" rel="noopener noreferrer" title="Open currently playing track in Spotify"><i class="fa-brands fa-spotify" aria-hidden="true"></i></a>
-              <a v-if="currentActivity?.buttons?.includes('My Blog')" class="mini-activity-icon is-active" href="https://thio.cc.cd/blog/" target="_blank" rel="noopener noreferrer" title="Open My Blog"><i class="fa-solid fa-heart" aria-hidden="true"></i></a>
               <span class="mini-activity-count">+1</span>
             </div>
 
@@ -693,11 +686,33 @@ onUnmounted(() => {
                 <i class="fa-solid fa-comment-dots" aria-hidden="true"></i> Message
               </a>
               <a class="profile-icon-button" :href="inviteUrl" target="_blank" rel="noopener noreferrer" aria-label="Join community server" title="Join community server">
-                <i class="fa-solid fa-store" aria-hidden="true"></i>
+                <i class="fa-brands fa-discord" aria-hidden="true"></i>
               </a>
-              <button class="profile-icon-button" type="button" :aria-label="copyButtonLabel" :title="copyButtonLabel" @click="copyInviteUrl">
-                <i :class="copiedInvite ? 'fa-solid fa-check' : 'fa-solid fa-ellipsis'" aria-hidden="true"></i>
-              </button>
+              <div class="activity-menu-wrap profile-menu-wrap">
+                <button class="profile-icon-button profile-menu-trigger" type="button" aria-haspopup="menu" :aria-expanded="activeActivityMenu === 'profile'" aria-label="More profile actions" title="More profile actions" @click.stop="toggleActivityMenu('profile')">
+                  <i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+                </button>
+                <div v-if="activeActivityMenu === 'profile'" class="activity-menu profile-quick-menu" role="menu" @click.stop>
+                  <div class="profile-quick-menu-heading">
+                    <span class="profile-quick-menu-icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
+                    <span><strong>Quick actions</strong><small>Flessann's corner of the web</small></span>
+                  </div>
+                  <button class="activity-menu-item" type="button" role="menuitem" @click="copyInviteUrl">
+                    <i :class="copiedInvite ? 'fa-solid fa-check' : 'fa-regular fa-copy'" aria-hidden="true"></i>
+                    <span>{{ copiedInvite ? 'Invite link copied' : 'Copy server invite' }}</span>
+                  </button>
+                  <button class="activity-menu-item" type="button" role="menuitem" @click="copyDiscordProfileLink">
+                    <i :class="copiedProfileLink ? 'fa-solid fa-check' : 'fa-brands fa-discord'" aria-hidden="true"></i>
+                    <span>{{ copiedProfileLink ? 'Discord profile link copied' : 'Copy Discord profile link' }}</span>
+                  </button>
+                  <a class="activity-menu-item" href="https://thio.cc.cd" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu">
+                    <i class="fa-solid fa-globe" aria-hidden="true"></i><span>Visit website</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i>
+                  </a>
+                  <a class="activity-menu-item" href="https://github.com/flessan" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu">
+                    <i class="fa-brands fa-github" aria-hidden="true"></i><span>Explore GitHub</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </div>
             </div>
 
             <div class="profile-bio">
@@ -796,8 +811,6 @@ onUnmounted(() => {
             <div class="activity-menu-wrap">
               <button class="activity-more-button" type="button" aria-haspopup="menu" :aria-expanded="activeActivityMenu === activityMenuKey(activity)" :aria-label="'Options for ' + (activity.name || 'activity')" :title="'More ' + (activity.name || 'activity') + ' actions'" @click.stop="toggleActivityMenu(activityMenuKey(activity))"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></button>
               <div v-if="activeActivityMenu === activityMenuKey(activity)" class="activity-menu" role="menu" @click.stop>
-                <a v-if="activityButtonUrl(activity, 'See game page')" class="activity-menu-item" :href="activityButtonUrl(activity, 'See game page')" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-gamepad" aria-hidden="true"></i><span>Find game on Roblox</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i></a>
-                <a v-if="activityButtonUrl(activity, 'My Blog')" class="activity-menu-item" :href="activityButtonUrl(activity, 'My Blog')" target="_blank" rel="noopener noreferrer" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span>Open My Blog</span><i class="fa-solid fa-arrow-up-right-from-square menu-external" aria-hidden="true"></i></a>
                 <button class="activity-menu-item" type="button" role="menuitem" @click="copyActivityDetails(activityMenuKey(activity))"><i class="fa-regular fa-copy" aria-hidden="true"></i><span>Copy activity details</span></button>
                 <button class="activity-menu-item" type="button" role="menuitem" @click="closeActivityMenu"><i class="fa-solid fa-xmark" aria-hidden="true"></i><span>Close menu</span></button>
               </div>
@@ -830,15 +843,11 @@ onUnmounted(() => {
               <h4>{{ activityTitle(activity) }}</h4>
               <p v-if="activitySubtitle(activity)">{{ activitySubtitle(activity) }}</p>
               <span v-if="activityElapsedFor(activity)" class="activity-duration"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ activityElapsedFor(activity) }}</span>
-              <a v-if="activityButtonUrl(activity, 'My Blog')" class="watching-link" :href="activityButtonUrl(activity, 'My Blog')" target="_blank" rel="noopener noreferrer">My Blog <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             </div>
           </div>
           <div v-if="activity.buttons?.length" class="rich-activity-actions">
-            <template v-for="button in activity.buttons" :key="button">
-              <a v-if="activityButtonUrl(activity, button)" class="rich-action-button" :href="activityButtonUrl(activity, button)" target="_blank" rel="noopener noreferrer">
-                <i :class="button === 'My Blog' ? 'fa-solid fa-book-open' : 'fa-solid fa-arrow-up-right-from-square'" aria-hidden="true"></i>{{ button }}
-              </a>
-              <button v-else type="button" class="rich-action-button is-unavailable" disabled :title="'Lanyard provides the button label, but not its direct action URL.'">
+            <template v-for="button in (activity.buttons || []).filter(label => !/my blog/i.test(label))" :key="button">
+              <button type="button" class="rich-action-button is-unavailable" disabled :title="'Lanyard includes this button label but does not provide its destination URL.'">
                 <i class="fa-solid fa-link-slash" aria-hidden="true"></i>{{ button }}
               </button>
             </template>
@@ -846,17 +855,26 @@ onUnmounted(() => {
         </article>
 
         <nav class="social-links" aria-label="Social media links">
-          <span class="social-links-label">Find me elsewhere</span>
-          <a
-            v-for="social in socialLinks"
-            :key="social.id"
-            class="social-link"
-            :href="social.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            :aria-label="social.label"
-            :title="social.label"
-          ><img class="social-logo" :src="social.image" :alt="social.label" loading="lazy" v-pixel-reveal /></a>
+          <div class="social-links-heading">
+            <div>
+              <span class="social-links-eyebrow">AROUND THE WEB</span>
+              <h4>Find me elsewhere</h4>
+            </div>
+            <span class="social-links-caption">Let's connect</span>
+          </div>
+          <div class="social-links-grid">
+            <a
+              v-for="social in socialLinks"
+              :key="social.id"
+              class="social-link"
+              :data-network="social.id"
+              :href="social.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="social.label"
+              :title="social.label"
+            ><i :class="social.icon" aria-hidden="true"></i><span>{{ social.label }}</span></a>
+          </div>
         </nav>
         <p v-if="activityMenuNotice" class="activity-menu-notice" role="status"><i :class="activityMenuNotice.startsWith('Details copied') ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-info'" aria-hidden="true"></i> {{ activityMenuNotice }}</p>
         <p v-if="unavailable && presence" class="activity-footnote"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Live refresh is unavailable; showing the last known snapshot.</p>
@@ -878,10 +896,10 @@ onUnmounted(() => {
         <div class="guild-divider"></div>
         <div class="guild-columns">
           <div class="guild-channels">
-            <h4><i class="fa-solid fa-hashtag" aria-hidden="true"></i> CHANNELS <span class="section-count">{{ sortedChannels.length }}</span></h4>
+            <h4><i class="fa-solid fa-volume-high" aria-hidden="true"></i> Voice <span class="section-count">{{ sortedChannels.length }}</span></h4>
             <div v-if="sortedChannels.length" class="channel-list">
               <a v-for="channel in sortedChannels" :key="channel.id" class="channel-pill" :href="'https://discord.com/channels/' + (guild?.id || '1435463197418192906') + '/' + channel.id" target="_blank" rel="noopener noreferrer">
-                <i class="fa-solid fa-hashtag" aria-hidden="true"></i>{{ channel.name }}<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                <i class="fa-solid fa-volume-high channel-voice-icon" aria-hidden="true"></i>{{ channel.name }}<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
               </a>
             </div>
             <p v-else class="guild-muted">{{ guildLoading ? 'Loading channels…' : 'No public channels available.' }}</p>
@@ -1039,11 +1057,32 @@ onUnmounted(() => {
 
 .activity-pane { display: flex; flex-direction: column; min-height: 0; padding: clamp(1rem, 1.6vw, 1.4rem); }
 .activity-pane-heading { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin: .05rem 0 .7rem; }
-.social-links { display: flex; align-items: center; flex-wrap: wrap; gap: .48rem; margin: 0 0 1rem; padding: 0 0 1rem; border-bottom: 1px solid var(--discord-border); }
-.social-links-label { margin-right: .25rem; color: var(--discord-muted); font-size: .68rem; white-space: nowrap; }
-.social-link { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--discord-border); border-radius: .6rem; background: var(--discord-card); color: var(--discord-text-soft); font-size: 1rem; text-decoration: none !important; transition: transform 180ms ease, color 180ms ease, border-color 180ms ease, background-color 180ms ease; }
-.social-link:hover { transform: translateY(-2px); border-color: var(--discord-blue); background: var(--discord-card-hover); color: var(--discord-blue); }
+.social-links { display: block; margin: .9rem 0 1rem; padding: .9rem; border: 1px solid var(--discord-border); border-radius: .85rem; background: var(--discord-panel); box-shadow: inset 0 1px 0 rgba(255,255,255,.025); }
+.social-links-heading { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: .75rem; }
+.social-links-heading h4 { margin: .16rem 0 0; color: var(--discord-text); font-size: .84rem; font-weight: 800; letter-spacing: -.015em; }
+.social-links-eyebrow { color: var(--discord-muted); font-size: .56rem; font-weight: 850; letter-spacing: .14em; }
+.social-links-caption { padding: .3rem .5rem; border: 1px solid var(--discord-border); border-radius: 999px; color: var(--discord-muted); font-size: .6rem; white-space: nowrap; }
+.social-links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(66px, 1fr)); gap: .35rem; }
+.social-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .42rem; min-width: 0; min-height: 66px; padding: .55rem .25rem; border: 1px solid transparent; border-radius: .65rem; background: transparent; color: var(--discord-text-soft); font-size: .65rem; text-decoration: none !important; transition: transform 180ms ease, color 180ms ease, border-color 180ms ease, background-color 180ms ease; }
+.social-link > i { font-size: 1.22rem; line-height: 1; color: var(--discord-text-soft); transition: color 180ms ease, transform 180ms ease; }
+.social-link > span { max-width: 100%; overflow-wrap: anywhere; text-align: center; }
+.social-link[data-network="discord"] > i, .social-link[data-network="telegram"] > i { color: #58a9ff; }
+.social-link[data-network="instagram"] > i { color: #e66a95; }
+.social-link[data-network="youtube"] > i { color: #ff4d5b; }
+.social-link[data-network="tiktok"] > i { color: var(--discord-text); }
+.social-link:hover { transform: translateY(-2px); border-color: var(--discord-border); background: var(--discord-card); color: var(--discord-text); }
+.social-link:hover > i { transform: scale(1.08); color: var(--discord-blue-hover); }
 .social-link:focus-visible { outline: 2px solid var(--discord-blue); outline-offset: 3px; }
+.profile-quick-menu { width: min(256px, calc(100vw - 48px)); }
+.profile-quick-menu-heading { display: flex; align-items: center; gap: .6rem; margin: 0 0 .15rem; padding: .55rem .6rem .7rem; border-bottom: 1px solid var(--discord-border); }
+.profile-quick-menu-icon { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; border-radius: .6rem; background: var(--discord-card); color: var(--discord-blue-hover); }
+.profile-quick-menu-heading > span:last-child { display: grid; gap: .18rem; min-width: 0; }
+.profile-quick-menu-heading strong { color: var(--discord-text); font-size: .75rem; }
+.profile-quick-menu-heading small { color: var(--discord-muted); font-size: .61rem; }
+.profile-menu-wrap { z-index: 15; }
+.profile-menu-trigger[aria-expanded="true"] { border-color: var(--discord-blue); background: var(--discord-card-hover); color: var(--discord-text); }
+.profile-card:has(.profile-quick-menu) { position: relative; z-index: 12; overflow: visible; }
+.profile-card:has(.profile-quick-menu) .profile-banner { border-radius: calc(.9rem - 1px) calc(.9rem - 1px) 0 0; }
 .activity-pane-heading h3 { margin: 0; color: var(--discord-label); font-size: .79rem; font-weight: 550; }
 .activity-refresh { display: inline-flex; align-items: center; gap: .35rem; color: #23a55a; font-size: .6rem; font-weight: 750; text-transform: uppercase; letter-spacing: .08em; }
 .activity-refresh > i { font-size: .4rem; animation: status-pulse 1.8s ease-out infinite; }
@@ -1144,7 +1183,7 @@ onUnmounted(() => {
 .channel-list { display: flex; flex-wrap: wrap; gap: .4rem; }
 .channel-pill { display: inline-flex; align-items: center; gap: .36rem; padding: .43rem .55rem; border: 1px solid var(--discord-border); border-radius: .55rem; background: var(--discord-card); color: var(--discord-text-soft); font-size: .72rem; text-decoration: none !important; transition: border-color 200ms ease, transform 200ms ease; }
 .channel-pill:hover { transform: translateY(-1px); border-color: var(--discord-blue); }
-.channel-pill .fa-hashtag { color: var(--discord-muted); font-size: .76rem; }
+.channel-voice-icon { color: var(--discord-muted); font-size: .78rem; }
 .channel-pill .fa-chevron-right { color: var(--discord-muted); font-size: .62rem; }
 .member-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem .85rem; }
 .guild-member { display: flex; align-items: center; gap: .5rem; min-width: 0; color: inherit; text-decoration: none !important; }
@@ -1195,9 +1234,11 @@ onUnmounted(() => {
   .message-button { flex: 1; min-height: 38px; }
   .profile-icon-button { width: 38px; height: 38px; }
   .activity-pane { padding: .85rem; }
-  .social-links { gap: .35rem; }
-  .social-links-label { width: 100%; margin-bottom: .1rem; }
-  .social-link { width: 32px; height: 32px; }
+  .social-links { padding: .7rem; }
+  .social-links-grid { grid-template-columns: repeat(auto-fit, minmax(54px, 1fr)); gap: .2rem; }
+  .social-link { min-height: 60px; font-size: .6rem; }
+  .social-link > i { font-size: 1.12rem; }
+  .social-links-caption { font-size: .57rem; }
   .activity-card { padding: .7rem; }
   .activity-card-content { gap: .55rem; }
   .activity-artwork { width: 100%; height: 100%; flex-basis: auto; border-radius: .5rem; }
