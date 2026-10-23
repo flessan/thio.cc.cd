@@ -118,7 +118,7 @@ function clearFilters() {
       <div v-if="featuredPost" class="article-results">
         <article class="featured-card">
           <a class="featured-image" :href="'/blog/' + featuredPost.slug" tabindex="-1" aria-hidden="true">
-            <img :src="featuredPost.image" :alt="featuredPost.imageAlt" loading="lazy" decoding="async" />
+            <img :src="featuredPost.image" :alt="featuredPost.imageAlt" loading="eager" fetchpriority="high" decoding="async" />
           </a>
           <div class="featured-body">
             <div class="article-meta">
