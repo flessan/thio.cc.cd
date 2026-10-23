@@ -66,6 +66,7 @@ type GuildWidget = { id: string; name: string; instant_invite?: string; channels
 
 const endpoint = 'https://api.lanyard.rest/v1/users/776722084030054421'
 const profileImage = 'https://c.tenor.com/ysQdVrOy6ZkAAAAd/tenor.gif'
+const watchingInLoveImage = 'https://c.tenor.com/RkqInYxSNLcAAAAd/tenor.gif'
 const communityImage = 'https://cdn.jsdelivr.net/gh/flessan/flessan/website/gudang/me.png'
 const guildEndpoint = 'https://discord.com/api/guilds/1435463197418192906/widget.json'
 const fallbackInvite = 'https://discord.com/invite/nZAMJ7BD'
@@ -179,6 +180,16 @@ function activitySubtitle(activity: Activity) {
 }
 function activityFallbackImage(activity: Activity) {
   return activity.type === 3 ? profileImage : ''
+}
+
+function activityArtworkUrl(activity: Activity) {
+  const watchingText = [activity.name, activity.details, activity.state, activity.assets?.large_text]
+    .filter((value): value is string => Boolean(value))
+    .join(' ')
+  if (activity.type === 3 && /\bin\s+love\b/i.test(watchingText)) {
+    return watchingInLoveImage
+  }
+  return activityAssetUrl(activity) || activityFallbackImage(activity)
 }
 function activityAssetUrl(activity?: Activity | null, assetKey: 'large_image' | 'small_image' = 'large_image') {
   const raw = activity?.assets?.[assetKey]
@@ -798,8 +809,8 @@ onUnmounted(() => {
             <div class="rich-artwork-wrap">
               <span class="rich-artwork-fallback"><i :class="activityIconClass(activity)" aria-hidden="true"></i></span>
               <img
-                v-if="activityAssetUrl(activity) || activityFallbackImage(activity)"
-                :src="activityAssetUrl(activity) || activityFallbackImage(activity)"
+                v-if="activityArtworkUrl(activity)"
+                :src="activityArtworkUrl(activity)"
                 class="activity-artwork rich-artwork"
                 :alt="activity.assets?.large_text || activity.name || 'Activity artwork'"
                 loading="lazy"
