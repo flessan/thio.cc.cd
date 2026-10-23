@@ -418,6 +418,7 @@ function revealPixelImage(image: HTMLImageElement) {
     lastLevel = level
   }
 
+  const startedAt = performance.now()
   const animate = (timestamp: number) => {
     if (!canvas.isConnected) {
       cleanup()
@@ -433,7 +434,6 @@ function revealPixelImage(image: HTMLImageElement) {
     frameId = requestAnimationFrame(animate)
   }
 
-  const startedAt = performance.now()
   try {
     drawLevel(0)
   } catch {
