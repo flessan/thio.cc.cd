@@ -1,48 +1,47 @@
 ---
-title: "\"teksreceh: a museum of +62 typing\""
+title: "teksreceh: a museum of +62 typing"
 author:
   name: M. Thio Saputra
 date: "2026-09-01"
-description: Alay, UwU, Rimsvek, Binary - preserving how the Indonesian internet types
+description: A playful archive of Indonesian internet typing styles, from alay and UwU to reversed text and binary.
 image: /images/covers/teksreceh.png
 ---
 
-<BlogCover src="/images/covers/teksreceh.png" />
+<BlogCover src="/images/covers/teksreceh.png" alt="Cover for teksreceh, a collection of Indonesian internet text styles" />
 
 # teksreceh: a museum of +62 typing
 
 <PostMeta date="2026-09-01"></PostMeta>
+<PostTools></PostTools>
 
-The Indonesian internet has its own typing culture. Before autocorrect and uniform keyboards flattened everything, there was a whole art to writing *alay* - stretched vowels, mixed caps, numbers standing in for letters. It was chaotic, creative, and very much ours.
+Internet Indonesia punya cara ngetiknya sendiri. Ada era huruf gede-kecil campur, vokal dipanjangin, angka jadi pengganti huruf, sampai gaya tulisan yang kalau dibaca keras-keras malah bikin kita mempertanyakan keputusan hidup.
 
-[**teksreceh**](https://github.com/flessan/teksreceh) - "Generator Teks Paling Ngaco Se-Indonesia", the most absurd text generator in all of Indonesia - is my attempt to keep that culture playable.
+**[teksreceh](https://github.com/flessan/teksreceh)**—dengan tagline “Generator Teks Paling Ngaco Se-Indonesia”—adalah caraku mengumpulkan gaya-gaya itu jadi sesuatu yang bisa dimainkan lagi. Bukan karena semua teks harus berguna. Kadang iseng juga termasuk alasan yang valid buat bikin web app.
 
-## The transforms
+## Museum kecilnya berisi apa?
 
-The live tool at [text.thio.qzz.io](https://text.thio.qzz.io) takes your text and runs it through the classic netizen transformations:
+Tool yang live di [text.thio.qzz.io](https://text.thio.qzz.io) punya beberapa transformasi:
 
-- **Alay** - the legendary style: gaya alay 2010
-- **UwU** - soft, warm, and aggressively cute
-- **Rimsvek** - reversed, mirrored, flipped
-- **Binary** - for when you want your chaos to be machine-checkable
+- **Alay** — gaya tulisan internet era 2010-an yang penuh variasi huruf dan angka.
+- **UwU** — versi super cute, dengan energi yang mungkin terlalu kuat untuk percakapan kantor.
+- **Rimsvek** — teks yang dibalik, dicerminkan, atau diputar sesuai transformasinya.
+- **Binary** — mengubah teks menjadi representasi biner.
+- Ada juga gaya bahasa Jaksel dan copypasta grup WhatsApp.
 
-Paste something in, get the whole museum back out. It also covers bahasa Jaksel and copypasta grup WA.
+Tinggal masukkan teks, lalu lihat hasilnya. Gak perlu menekan tombol Generate untuk setiap perubahan; transformasi berjalan langsung saat teks diubah.
 
-## How it's built
+## Dibangun sederhana, diproses di browser
 
-teksreceh is React 19 + Vite + Tailwind, deployed on Cloudflare Pages, and it follows a few rules I care about a lot:
+teksreceh memakai React 19, Vite, dan Tailwind CSS, lalu di-deploy ke Cloudflare Pages. Salah satu keputusan yang sengaja dipertahankan adalah pemrosesan di sisi browser: teks yang dimasukkan diubah secara lokal tanpa backend khusus atau pelacakan yang dibutuhkan oleh fitur transformasinya.
 
-- **Instant** - no Generate button, everything is realtime
-- **Simple by default** - advanced options only appear when you need them
-- **Mobile-first** - the layout feels like an app, not an article
-- **Privacy-first** - every transformation runs in the browser. No backend, no tracking.
+Prinsipnya juga sederhana: halaman utama tetap mudah dipakai, opsi tambahan gak harus memenuhi layar sejak awal, dan tampilannya mesti terasa nyaman di ponsel. Tool mungil seperti ini gak butuh tujuh menu buat mengubah satu kalimat.
 
-## Why "receh"?
+## Kenapa namanya “receh”?
 
-*Receh* is that small-change humor - cheap jokes, the kind that shouldn't be funny but are. *Teks receh* is exactly what this is: text transformed for no productive reason at all, and that's the point. Not everything needs a business case. Some things just need to exist on the internet.
+Receh itu humor murah meriah—kadang lucunya tipis, kadang bahkan gak ada, tapi tetap dikirim ke grup chat dengan penuh keyakinan. Teks receh kurang lebih begitu: teks yang diubah untuk alasan yang gak produktif sama sekali, dan justru itu poinnya.
 
-The repo is GPL-3.0 and open to contributions - if you remember a transform that's missing, open an issue.
+Repo-nya menggunakan lisensi GPL-3.0 dan terbuka untuk kontribusi. Kalau ingat gaya teks yang belum ada, atau nemu transformasi yang perlu diperbaiki, kamu bisa membuka issue di [repository teksreceh](https://github.com/flessan/teksreceh).
 
-Try it: [text.thio.qzz.io](https://text.thio.qzz.io)
+Coba langsung di [text.thio.qzz.io](https://text.thio.qzz.io). Gunakan dengan bertanggung jawab. Atau minimal, jangan kirim hasil UwU ke grup keluarga tanpa mempertimbangkan konsekuensinya.
 
 <PostNav></PostNav>
