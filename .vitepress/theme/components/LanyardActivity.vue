@@ -2,33 +2,64 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 type Activity = {
+  application_id?: string | null
+  assets?: { large_image?: string | null; large_text?: string | null; small_image?: string | null; small_text?: string | null }
+  buttons?: string[]
+  content_classification?: { data?: unknown; loaded?: boolean } | null
+  created_at?: number
+  details?: string | null
+  emoji?: { id?: string | null; name?: string; animated?: boolean } | null
+  flags?: number
   id?: string
   name?: string
-  type?: number
-  state?: string
-  details?: string
-  buttons?: string[]
-  application_id?: string
+  official_game_id?: string | number | null
+  party?: { id?: string; [key: string]: unknown } | null
   platform?: string
-  created_at?: number
-  flags?: number
+  session_id?: string
+  state?: string | null
   sync_id?: string
   timestamps?: { start?: number; end?: number }
-  assets?: { large_image?: string; large_text?: string; small_image?: string; small_text?: string }
-  emoji?: { id?: string | null; name?: string; animated?: boolean }
+  type?: number
+}
+type AvatarDecorationData = { asset?: string; expires_at?: number | null; sku_id?: string }
+type PrimaryGuild = { badge?: string | null; identity_enabled?: boolean; identity_guild_id?: string | null; tag?: string | null }
+type DiscordUser = {
+  avatar?: string | null
+  avatar_decoration_data?: AvatarDecorationData | null
+  bot?: boolean
+  collectibles?: unknown
+  discriminator?: string
+  display_name?: string | null
+  display_name_styles?: unknown
+  global_name?: string | null
+  id: string
+  primary_guild?: PrimaryGuild | null
+  public_flags?: number
+  username?: string
+  vad_colors?: unknown
+}
+type Spotify = {
+  album?: string
+  album_art_url?: string
+  artist?: string
+  song?: string
+  track_id?: string
+  timestamps?: { start?: number; end?: number }
 }
 type Presence = {
-  discord_status?: string
-  discord_user?: { id: string; username?: string; global_name?: string | null; display_name?: string; avatar?: string | null; discriminator?: string; public_flags?: number; primary_guild?: { tag?: string | null; identity_enabled?: boolean } }
-  activities?: Activity[]
   active_on_discord_desktop?: boolean
+  active_on_discord_embedded?: boolean
   active_on_discord_mobile?: boolean
+  active_on_discord_vr?: boolean
   active_on_discord_web?: boolean
-  listening_to_spotify?: boolean
+  activities?: Activity[]
+  discord_status?: string
+  discord_user?: DiscordUser
   kv?: Record<string, string>
-  spotify?: { album?: string; album_art_url?: string; artist?: string; song?: string; track_id?: string; timestamps?: { start?: number; end?: number } } | null
+  listening_to_spotify?: boolean
+  spotify?: Spotify | null
 }
-type ApiResponse = { success: boolean; data?: Presence }
+type type ApiResponse = { success: boolean; data?: Presence }
 type GuildChannel = { id: string; name: string; position?: number }
 type GuildMember = { id: string; username: string; status?: string; avatar_url?: string | null; game?: { name?: string } }
 type GuildWidget = { id: string; name: string; instant_invite?: string; channels?: GuildChannel[]; members?: GuildMember[]; presence_count?: number }
@@ -38,97 +69,8 @@ const profileImage = 'https://c.tenor.com/ysQdVrOy6ZkAAAAd/tenor.gif'
 const communityImage = 'https://cdn.jsdelivr.net/gh/flessan/flessan/website/gudang/me.png'
 const guildEndpoint = 'https://discord.com/api/guilds/1435463197418192906/widget.json'
 const fallbackInvite = 'https://discord.com/invite/nZAMJ7BD'
-const presence = ref<Presence | null>({
-  discord_status: 'online',
-  listening_to_spotify: true,
-  discord_user: {
-    id: '776722084030054421',
-    username: 'thiosaputra',
-    global_name: 'Flessann',
-    display_name: 'Flessann',
-    avatar: '37ee0b92f93540c784be1cb6beaff1d7',
-    primary_guild: { tag: '㏌tel', identity_enabled: true }
-  },
-  activities: [
-    {
-      id: 'custom',
-      name: 'Custom Status',
-      state: 'please do disturb',
-      type: 4,
-      emoji: { name: '✅' },
-      created_at: 1792672946309
-    },
-    {
-      id: 'spotify:1',
-      name: 'Spotify',
-      type: 2,
-      details: 'Murder Murder',
-      state: 'And One',
-      flags: 48,
-      sync_id: '1frg9NCLCUImqmbA18Pxtx',
-      assets: { large_image: 'spotify:ab67616d0000b273cb184ac2977824f989ebad9c', large_text: 'I.S.T.' },
-      timestamps: { start: 1792672894620, end: 1792673089953 },
-      created_at: 1792672894795
-    },
-    {
-      application_id: '1279031829940273203',
-      assets: {
-        large_image: 'mp:external/sxPfNGAfic6cxTeigGVSjj_c1g-pbeq_a3OjRlVv8Yc/https/tr.rbxcdn.com/180DAY-7fe70f786eea50c96ec21cdf480fe750/512/512/Image/Png/noFilter',
-        large_text: '[UPD 🎃] DONT SPLASH ',
-        small_image: '1279135753515044884',
-        small_text: 'Roblox'
-      },
-      buttons: ['Join server', 'See game page'],
-      created_at: 1792672946309,
-      details: 'Playing [UPD 🎃] DONT SPLASH ',
-      id: '4c28046396bc2cc8',
-      name: 'Roblox',
-      platform: 'desktop',
-      state: 'by slo7th',
-      timestamps: { start: 1792672884000 },
-      type: 0
-    },
-    {
-      application_id: '1540699723852152872',
-      buttons: ['My Blog'],
-      created_at: 1792663079866,
-      id: 'b5219b0dae885920',
-      name: 'in Love with',
-      state: 'Miyuki Takara',
-      timestamps: { start: 1792598400525 },
-      type: 3
-    }
-  ],
-  active_on_discord_desktop: true,
-  active_on_discord_mobile: false,
-  active_on_discord_web: false,
-  spotify: {
-    album: 'I.S.T.',
-    album_art_url: 'https://i.scdn.co/image/ab67616d0000b273cb184ac2977824f989ebad9c',
-    artist: 'And One',
-    song: 'Murder Murder',
-    timestamps: { start: 1792672894620, end: 1792673089953 },
-    track_id: '1frg9NCLCUImqmbA18Pxtx'
-  }
-})
-const guild = ref<GuildWidget | null>({
-  id: '1435463197418192906',
-  name: 'Thio Saputra Places',
-  instant_invite: fallbackInvite,
-  presence_count: 11,
-  channels: [
-    { id: '1435463198839935036', name: 'Lounge', position: 1 },
-    { id: '1435463199070879764', name: 'Meeting Room', position: 2 }
-  ],
-  members: [
-    { id: '0', username: 'Aspian', status: 'online' },
-    { id: '1', username: 'DANZGAME', status: 'idle', game: { name: 'ROBLOX' } },
-    { id: '2', username: 'FlaviBot 2', status: 'online' },
-    { id: '3', username: 'Flessann', status: 'online' },
-    { id: '4', username: 'Galaxyte', status: 'idle' },
-    { id: '5', username: 'kythia', status: 'online' }
-  ]
-})
+const presence = ref<Presence | null>(null)
+const guild = ref<GuildWidget | null>(null)
 const guildLoading = ref(true)
 const guildUnavailable = ref(false)
 const loading = ref(true)
@@ -155,6 +97,13 @@ const activities = computed(() => presence.value?.activities || [])
 const customStatus = computed(() => activities.value.find(a => a.type === 4))
 const richActivities = computed(() => activities.value.filter(a => a.type !== 4 && a.name !== 'Spotify'))
 const currentActivity = computed(() => richActivities.value[0] || null)
+const activePlatforms = computed(() => [
+  { id: 'desktop', label: 'Discord desktop', icon: 'fa-solid fa-desktop', active: Boolean(presence.value?.active_on_discord_desktop) },
+  { id: 'mobile', label: 'Discord mobile', icon: 'fa-solid fa-mobile-screen-button', active: Boolean(presence.value?.active_on_discord_mobile) },
+  { id: 'web', label: 'Discord web', icon: 'fa-solid fa-globe', active: Boolean(presence.value?.active_on_discord_web) },
+  { id: 'embedded', label: 'Discord embedded', icon: 'fa-solid fa-window-maximize', active: Boolean(presence.value?.active_on_discord_embedded) },
+  { id: 'vr', label: 'Discord VR', icon: 'fa-solid fa-vr-cardboard', active: Boolean(presence.value?.active_on_discord_vr) }
+].filter(platform => platform.active))
 const spotify = computed(() => {
   if (presence.value?.listening_to_spotify === false) return null
   if (presence.value?.spotify) return presence.value.spotify
@@ -205,7 +154,9 @@ const activityElapsed = computed(() => activityElapsedFor(currentActivity.value)
 function activityTypeLabel(activity: Activity) {
   if (activity.type === 0) return 'Playing'
   if (activity.type === 1) return 'Streaming'
+  if (activity.type === 2) return 'Listening to'
   if (activity.type === 3) return 'Watching'
+  if (activity.type === 4) return 'Custom status'
   if (activity.type === 5) return 'Competing'
   return activity.name || 'Activity'
 }
@@ -217,11 +168,9 @@ function activityIconClass(activity: Activity) {
   return 'fa-solid fa-display'
 }
 function activityTitle(activity: Activity) {
-  if (activity.type === 0 && activity.details) {
-    return activity.details.replace(/^Playing\s+/i, '').trim()
-  }
+  if (activity.type === 0 && activity.details) return activity.details.replace(/^Playing\s+/i, '').trim()
   if (activity.type === 3 && activity.state) return activity.state
-  return activity.details || activity.name || 'Discord activity'
+  return activity.details || activity.state || activity.name || 'Discord activity'
 }
 function activitySubtitle(activity: Activity) {
   if (activity.type === 0) return activity.state || 'Playing on desktop'
@@ -268,14 +217,9 @@ const totalTime = computed(() => {
   const t = spotify.value?.timestamps
   return t?.start && t.end ? formatTime((t.end - t.start) / 1000) : ''
 })
-const platformLabel = computed(() => {
-  const platforms = [
-    presence.value?.active_on_discord_desktop ? 'desktop' : '',
-    presence.value?.active_on_discord_mobile ? 'mobile' : '',
-    presence.value?.active_on_discord_web ? 'web' : ''
-  ].filter(Boolean)
-  return platforms.length ? `Discord ${platforms.join(' + ')}` : 'Discord presence'
-})
+const platformLabel = computed(() => activePlatforms.value.length
+  ? activePlatforms.value.map(platform => platform.label.replace('Discord ', '')).join(' + ')
+  : 'Discord presence')
 const inviteUrl = computed(() => guild.value?.instant_invite || fallbackInvite)
 const copyButtonLabel = computed(() => copiedInvite.value ? 'Tautan undangan tersalin' : copyFailed.value ? 'Gagal menyalin tautan undangan' : 'Salin tautan undangan')
 
@@ -341,7 +285,7 @@ async function copyActivityDetails(kind: string) {
   const activity = richActivities.value.find(item => activityMenuKey(item) === kind) || currentActivity.value
   const value = kind === 'spotify'
     ? [spotify.value?.song, spotify.value?.artist, spotify.value?.album ? `Album: ${spotify.value.album}` : '', spotifyUrl.value].filter(Boolean).join(' — ')
-    : [activity?.name, activity?.details, activity?.state, activity?.assets?.large_text, activity?.buttons?.join(', ')].filter(Boolean).join(' — ')
+    : [activity?.name, activity?.details, activity?.state, activity?.platform ? `Platform: ${activity.platform}` : '', activity?.timestamps?.start ? `Started: ${new Date(activity.timestamps.start).toISOString()}` : '', activity?.assets?.large_text, activity?.buttons?.join(', ')].filter(Boolean).join(' — ')
   const copied = await writeClipboard(value)
   closeActivityMenu()
   activityMenuNotice.value = copied ? 'Details copied to clipboard' : 'Could not copy details'
@@ -486,6 +430,8 @@ function customEmojiUrl(activity?: Activity) {
   return `https://cdn.discordapp.com/emojis/${emoji.id}.${emoji.animated ? 'gif' : 'png'}?size=32`
 }
 async function fetchPresence() {
+  loading.value = true
+  unavailable.value = false
   activeRequest?.abort()
   const controller = new AbortController()
   activeRequest = controller
@@ -641,6 +587,14 @@ onUnmounted(() => {
       <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
       <span>Connecting to Discord…</span>
     </div>
+    <div v-else-if="!presence" class="activity-api-error" role="status">
+      <span class="activity-api-error-icon"><i class="fa-solid fa-satellite-dish" aria-hidden="true"></i></span>
+      <div>
+        <strong>Discord presence unavailable</strong>
+        <p>Lanyard did not return a usable presence response. No placeholder activity is shown.</p>
+      </div>
+      <button type="button" class="activity-retry-button" @click="fetchPresence"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Retry</button>
+    </div>
 
     <div v-else class="activity-layout">
       <article class="profile-card reveal-card">
@@ -675,7 +629,8 @@ onUnmounted(() => {
             </div>
 
             <div class="profile-activity-icons" aria-label="Presence indicators">
-              <span class="mini-activity-icon" :title="platformLabel"><i :class="presence?.active_on_discord_mobile ? 'fa-solid fa-mobile-screen-button' : presence?.active_on_discord_web ? 'fa-solid fa-globe' : 'fa-solid fa-desktop'" aria-hidden="true"></i></span>
+              <span v-for="platform in activePlatforms" :key="platform.id" class="mini-activity-icon" :title="platform.label"><i :class="platform.icon" aria-hidden="true"></i></span>
+              <span v-if="!activePlatforms.length" class="mini-activity-icon" title="No active Discord client reported"><i class="fa-solid fa-circle-minus" aria-hidden="true"></i></span>
               <span class="mini-activity-icon" title="Discord"><i class="fa-brands fa-discord" aria-hidden="true"></i></span>
               <a v-if="spotify" class="mini-activity-icon is-active" :href="spotifyUrl" target="_blank" rel="noopener noreferrer" title="Open currently playing track in Spotify"><i class="fa-brands fa-spotify" aria-hidden="true"></i></a>
               <span class="mini-activity-count">+1</span>
@@ -842,15 +797,16 @@ onUnmounted(() => {
               <span v-if="activity.type !== 3" class="rich-app-label">{{ activity.name || 'Rich Presence' }}</span>
               <h4>{{ activityTitle(activity) }}</h4>
               <p v-if="activitySubtitle(activity)">{{ activitySubtitle(activity) }}</p>
-              <span v-if="activityElapsedFor(activity)" class="activity-duration"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ activityElapsedFor(activity) }}</span>
+              <div v-if="activity.platform || activityElapsedFor(activity)" class="activity-meta-row">
+                <span v-if="activity.platform" class="activity-platform-pill"><i class="fa-solid fa-display" aria-hidden="true"></i>{{ activity.platform }}</span>
+                <span v-if="activityElapsedFor(activity)" class="activity-duration"><i class="fa-regular fa-clock" aria-hidden="true"></i>{{ activityElapsedFor(activity) }}</span>
+              </div>
             </div>
           </div>
           <div v-if="activity.buttons?.length" class="rich-activity-actions">
-            <template v-for="button in (activity.buttons || []).filter(label => !/my blog/i.test(label))" :key="button">
-              <button type="button" class="rich-action-button is-unavailable" disabled :title="'Lanyard includes this button label but does not provide its destination URL.'">
-                <i class="fa-solid fa-link-slash" aria-hidden="true"></i>{{ button }}
-              </button>
-            </template>
+            <span v-for="button in activity.buttons" :key="button" class="rich-action-button is-api-label" :title="'Activity button label supplied by Lanyard; the payload does not include a destination URL.'">
+              <i class="fa-solid fa-link" aria-hidden="true"></i>{{ button }}
+            </span>
           </div>
         </article>
 
@@ -997,6 +953,16 @@ onUnmounted(() => {
 .copy-server:hover { transform: translateY(-1px); border-color: var(--discord-blue); background: var(--discord-card-hover); }
 .copy-server.is-copied { border-color: #23a55a; color: #23a55a; }
 .copy-server.is-error { border-color: #f23f43; color: #f23f43; }
+.activity-api-error { display: flex; align-items: center; gap: .8rem; min-width: 0; padding: 1rem; border: 1px solid var(--discord-border); border-radius: .8rem; background: var(--discord-panel); }
+.activity-api-error-icon { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: .65rem; background: var(--discord-card); color: var(--discord-muted); }
+.activity-api-error strong { color: var(--discord-text); font-size: .8rem; }
+.activity-api-error p { margin: .25rem 0 0; color: var(--discord-muted); font-size: .7rem; line-height: 1.45; }
+.activity-retry-button { display: inline-flex; align-items: center; gap: .4rem; flex: 0 0 auto; margin-left: auto; padding: .48rem .65rem; border: 1px solid var(--discord-border); border-radius: .55rem; background: var(--discord-card); color: var(--discord-text); font: inherit; font-size: .68rem; cursor: pointer; }
+.activity-retry-button:hover { border-color: var(--discord-blue); }
+.activity-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: .35rem; }
+.activity-platform-pill { display: inline-flex; align-items: center; gap: .28rem; padding: .2rem .4rem; border: 1px solid var(--discord-border); border-radius: .38rem; color: var(--discord-muted); font-size: .6rem; text-transform: capitalize; }
+.activity-platform-pill i { font-size: .62rem; }
+.rich-action-button.is-api-label { cursor: default; }
 .activity-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 286px), 1fr)); align-items: start; gap: .75rem; min-width: 0; }
 .reveal-card { min-width: 0; overflow: visible; border: 1px solid var(--discord-border); border-radius: .9rem; background: var(--discord-panel); animation: card-enter 540ms cubic-bezier(.16,1,.3,1) both; }
 .profile-card { display: flex; flex-direction: column; overflow: hidden; }
