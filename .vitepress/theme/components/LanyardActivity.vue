@@ -79,6 +79,8 @@ const unavailable = ref(false)
 const now = ref(Date.now())
 const copiedInvite = ref(false)
 const copyFailed = ref(false)
+const isLightTheme = ref(false)
+let appearanceObserver: MutationObserver | undefined
 let refreshTimer: ReturnType<typeof setInterval> | undefined
 let guildRefreshTimer: ReturnType<typeof setInterval> | undefined
 let clockTimer: ReturnType<typeof setInterval> | undefined
@@ -316,6 +318,13 @@ async function copyActivityDetails(kind: string) {
   activityMenuNoticeTimer = setTimeout(() => { activityMenuNotice.value = '' }, 2400)
 }
 
+function syncThemeAppearance() {
+  if (typeof document === 'undefined') return
+  // VitePress stores the active appearance on the document element's .dark class.
+  // The component gets its own class so scoped styles do not depend on a global selector.
+  isLightTheme.value = !document.documentElement.classList.contains('dark')
+}
+
 function ensureFontAwesome() {
   if (typeof document === 'undefined' || document.getElementById('thio-font-awesome-css')) return
   const link = document.createElement('link')
@@ -476,6 +485,9 @@ async function fetchGuildWidget() {
   }
 }
 onMounted(() => {
+  syncThemeAppearance()
+  appearanceObserver = new MutationObserver(syncThemeAppearance)
+  appearanceObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
   ensureFontAwesome()
   void fetchPresence()
   void fetchGuildWidget()
@@ -486,6 +498,8 @@ onMounted(() => {
   clockTimer = setInterval(() => { now.value = Date.now() }, 1_000)
 })
 onUnmounted(() => {
+  appearanceObserver?.disconnect()
+  appearanceObserver = undefined
   keepLanyardSocketOpen = false
   activeRequest?.abort()
   guildRequest?.abort()
@@ -503,7 +517,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="my-activity" aria-labelledby="my-activity-title" @click="handleActivityOutside" @keydown.esc="closeActivityMenu">
+  <section class="my-activity" :class="{ 'is-light-theme': isLightTheme }" aria-labelledby="my-activity-title" @click="handleActivityOutside" @keydown.esc="closeActivityMenu">
     <header class="activity-heading">
       <div class="heading-copy">
         <h2 id="my-activity-title">My Activity</h2>
@@ -817,6 +831,50 @@ onUnmounted(() => {
 
 <style scoped>
 .my-activity {
+  --discord-bg: #1e1f22;
+  --discord-panel: #232428;
+  --discord-card: #2b2d31;
+  --discord-card-hover: #303238;
+  --discord-border: #3f4147;
+  --discord-border-strong: #41434a;
+  --discord-text: #f2f3f5;
+  --discord-text-soft: #dbdee1;
+  --discord-muted: #949ba4;
+  --discord-label: #b5bac1;
+  --discord-blue: #5865f2;
+  --discord-blue-dark: #4752c4;
+  --discord-blue-hover: #8490ff;
+  --discord-link: #00a8fc;
+  --discord-bubble-border: #1a1b1e;
+  --discord-white: #ffffff;
+  --discord-profile-banner: #e8f8ff;
+  --discord-banner-decoration-border: rgba(64,156,201,.12);
+  --discord-banner-decoration-fill: rgba(255,255,255,.12);
+  --discord-icon-accent: #58c6ff;
+  --discord-subtle-divider: rgba(255,255,255,.08);
+  --discord-menu-shadow: 0 12px 32px rgba(0,0,0,.26);
+  --discord-soft-shadow: rgba(0,0,0,.08);
+  --discord-avatar-ring: rgba(255,255,255,.05);
+
+
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 1.9rem 0 2.5rem;
+  padding: .75rem;
+  transform: none;
+  overflow: visible;
+  border: 1px solid var(--discord-border);
+  border-radius: 1rem;
+  background: var(--discord-bg);
+  color: var(--discord-text-soft);
+
+  color-scheme: dark;
+  box-shadow: 0 14px 38px rgba(0,0,0,.11);
+}
+.my-activity.is-light-theme {
   --discord-bg: #f3f4f7;
   --discord-panel: #ffffff;
   --discord-card: #e8eaf0;
@@ -842,50 +900,8 @@ onUnmounted(() => {
   --discord-soft-shadow: rgba(38,50,75,.1);
   --discord-avatar-ring: rgba(38,50,75,.12);
 
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  margin: 1.9rem 0 2.5rem;
-  padding: .75rem;
-  transform: none;
-  overflow: visible;
-  border: 1px solid var(--discord-border);
-  border-radius: 1rem;
-  background: var(--discord-bg);
-  color: var(--discord-text-soft);
-
   color-scheme: light;
   box-shadow: 0 16px 42px rgba(38,50,75,.09);
-}
-:global(html.dark) .my-activity {
-  --discord-bg: #1e1f22;
-  --discord-panel: #232428;
-  --discord-card: #2b2d31;
-  --discord-card-hover: #303238;
-  --discord-border: #3f4147;
-  --discord-border-strong: #41434a;
-  --discord-text: #f2f3f5;
-  --discord-text-soft: #dbdee1;
-  --discord-muted: #949ba4;
-  --discord-label: #b5bac1;
-  --discord-blue: #5865f2;
-  --discord-blue-dark: #4752c4;
-  --discord-blue-hover: #8490ff;
-  --discord-link: #00a8fc;
-  --discord-bubble-border: #1a1b1e;
-  --discord-white: #ffffff;
-  --discord-profile-banner: #e8f8ff;
-  --discord-banner-decoration-border: rgba(64,156,201,.12);
-  --discord-banner-decoration-fill: rgba(255,255,255,.12);
-  --discord-icon-accent: #58c6ff;
-  --discord-subtle-divider: rgba(255,255,255,.08);
-  --discord-menu-shadow: 0 12px 32px rgba(0,0,0,.26);
-  --discord-soft-shadow: rgba(0,0,0,.08);
-  --discord-avatar-ring: rgba(255,255,255,.05);
-  color-scheme: dark;
-  box-shadow: 0 14px 38px rgba(0,0,0,.11);
 }
 .my-activity :deep(i) { line-height: 1; }
 .activity-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .85rem; }
