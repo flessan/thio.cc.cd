@@ -59,7 +59,7 @@ type Presence = {
   listening_to_spotify?: boolean
   spotify?: Spotify | null
 }
-type type ApiResponse = { success: boolean; data?: Presence }
+type ApiResponse = { success: boolean; data?: Presence }
 type GuildChannel = { id: string; name: string; position?: number }
 type GuildMember = { id: string; username: string; status?: string; avatar_url?: string | null; game?: { name?: string } }
 type GuildWidget = { id: string; name: string; instant_invite?: string; channels?: GuildChannel[]; members?: GuildMember[]; presence_count?: number }
