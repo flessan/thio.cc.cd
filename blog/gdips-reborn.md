@@ -1,10 +1,18 @@
 ---
-title: "GDIPS: a digital campfire"
+title: "GDIPS: Geometry Dash Indonesia Private Server"
 author:
   name: M. Thio Saputra
 date: "2026-08-28"
-description: The story of a Geometry Dash server project growing from a directory into a community effort.
+description: The story of GDIPS, the Geometry Dash Indonesia Private Server, from a free-server directory to an open-source community project.
 image: /images/covers/gdips-campfire.png
+imageAlt: "Cover artwork for the GDIPS Geometry Dash community project"
+inLanguage: "en"
+keywords:
+  - "GDIPS"
+  - "Geometry Dash Indonesia Private Server"
+  - "Geometry Dash community"
+  - "open source GDPS"
+  - "Freedom-List"
 ---
 
 <BlogCover src="/images/covers/gdips-campfire.png" alt="Cover for GDIPS, the Geometry Dash Indonesia Private Server" />
@@ -16,7 +24,7 @@ image: /images/covers/gdips-campfire.png
 
 > “We're building a digital campfire, not a perfect one, but warm enough for those who want to gather around.”
 
-This is the story of **[GDIPS](../gdips.md)**—the Geometry Dash Indonesia Private Server—and how a small utility idea turned into a community project.
+This is the story of **[GDIPS](../gdips.md)**, the Geometry Dash Indonesia Private Server, and how a small utility idea turned into a community project.
 
 ## It started with a list
 
