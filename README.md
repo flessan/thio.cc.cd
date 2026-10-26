@@ -33,6 +33,11 @@ pnpm run dev
 - **Full-text search** across every page - click the search field or press
   `Ctrl K` / `⌘K` (or `/`) anywhere. The index is built at compile time, so
   search works on plain static hosting.
+- **Personal browser start page at `/kerja`** - a centered Google search box and
+  categorized shortcuts for social media, messengers, development, projects,
+  and productivity. Edit `data/kerja.md` to add, remove, or reorganize links and
+  provide direct icon image URLs. The build renders the shortcuts into the page
+  and emits `.vitepress/dist/kerja/shortcuts.json`, so it needs no runtime API.
 - **Live project explorer** on `/projects` - real data from the public GitHub
   API (description, language, stars, license, last update), with filter,
   language, and sort controls; cached in your browser for 10 minutes and
@@ -144,7 +149,9 @@ now.md               /now page + channel feed + live activity
 timeline.md          the road so far
 ecosystem.md         the other places I keep online
 support.md           sponsor & support
-public/images/       artwork (avatar & character art by Flessan)
+public/images/       artwork (avatar & character art by Flessan
+data/kerja.md        Markdown source for the /kerja shortcut directory
+kerja.md             standalone browser start page at /kerja
 ```
 
 ## Credits
