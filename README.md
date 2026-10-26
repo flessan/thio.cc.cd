@@ -37,7 +37,7 @@ pnpm run dev
   categorized shortcuts for social media, messengers, development, projects,
   and productivity. Edit `data/kerja.md` to add, remove, or reorganize links and
   provide direct icon image URLs. The build renders the shortcuts into the page
-  and emits `.vitepress/dist/kerja/shortcuts.json`, so it needs no runtime API.
+  and emits `.vitepress/dist/kerja-shortcuts.json`, so it needs no runtime API.
   The workspace also supports System/Light/Dark appearance, five color palettes,
   a custom accent color, and saved preferences in the current browser.
 - **Live project explorer** on `/projects` - real data from the public GitHub
