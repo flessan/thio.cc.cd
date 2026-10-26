@@ -19,6 +19,7 @@ type Palette = {
 }
 
 const shortcuts = shortcutData as Shortcut[]
+const colorModes: ColorMode[] = ['system', 'light', 'dark']
 const query = ref('')
 const activeCategory = ref('Semua')
 const searchInput = ref<HTMLInputElement | null>(null)
@@ -158,6 +159,13 @@ function chooseMode(mode: ColorMode) {
 
 function choosePalette(id: string) {
   paletteId.value = id
+}
+
+function setCustomAccent(event: Event) {
+  const target = event.target
+  if (!(target instanceof HTMLInputElement) || !/^#[0-9a-fA-F]{6}$/.test(target.value)) return
+  customAccent.value = target.value
+  paletteId.value = 'custom'
 }
 
 function searchGoogle() {
@@ -318,7 +326,7 @@ onBeforeUnmount(() => {
               </div>
               <div class="mode-options" role="group" aria-label="Color mode">
                 <button
-                  v-for="mode in (['system', 'light', 'dark'] as ColorMode[])"
+                  v-for="mode in colorModes"
                   :key="mode"
                   type="button"
                   :class="{ selected: colorMode === mode }"
@@ -364,7 +372,7 @@ onBeforeUnmount(() => {
                 <span>Pick your own color</span>
               </label>
               <div class="custom-accent-control">
-                <input id="kerja-custom-accent" type="color" :value="customAccent" aria-label="Custom accent color" @input="customAccent = ($event.target as HTMLInputElement).value; paletteId = 'custom'" />
+                <input id="kerja-custom-accent" type="color" :value="customAccent" aria-label="Custom accent color" @input="setCustomAccent" />
                 <code>{{ customAccent.toUpperCase() }}</code>
               </div>
             </div>
