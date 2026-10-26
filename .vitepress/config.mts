@@ -320,7 +320,7 @@ export default defineConfig({
     fs.mkdirSync(shortcutDir, { recursive: true })
     fs.writeFileSync(
       path.join(shortcutDir, 'shortcuts.json'),
-      JSON.stringify(shortcutData, null, 2) + '\\n',
+      JSON.stringify(shortcutData, null, 2) + '\n',
       'utf8'
     )
 
