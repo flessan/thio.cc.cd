@@ -145,7 +145,7 @@ function parseKerjaShortcuts(markdown: string): KerjaShortcut[] {
 function kerjaShortcutsPlugin(): Plugin {
   const sourceFile = path.resolve(process.cwd(), 'data/kerja.md')
   const virtualModuleId = 'virtual:kerja-shortcuts'
-  const resolvedVirtualModuleId = `\\0${virtualModuleId}`
+  const resolvedVirtualModuleId = `\0${virtualModuleId}`
 
   return {
     name: 'kerja-shortcuts',
