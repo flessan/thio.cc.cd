@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import shortcutData from 'virtual:kerja-shortcuts'
 
 type Shortcut = {
@@ -9,11 +9,54 @@ type Shortcut = {
   category: string
 }
 
+type ColorMode = 'system' | 'light' | 'dark'
+type Palette = {
+  id: string
+  name: string
+  swatch: string
+  light: Record<string, string>
+  dark: Record<string, string>
+}
+
 const shortcuts = shortcutData as Shortcut[]
 const query = ref('')
 const activeCategory = ref('Semua')
 const searchInput = ref<HTMLInputElement | null>(null)
 const failedIcons = ref(new Set<string>())
+const themeSettingsOpen = ref(false)
+const colorMode = ref<ColorMode>('system')
+const paletteId = ref('forest')
+const customAccent = ref('#2f704d')
+const systemPrefersDark = ref(false)
+const settingsReady = ref(false)
+
+const palettes: Palette[] = [
+  {
+    id: 'forest', name: 'Evergreen', swatch: '#39734f',
+    light: { bg: '#f4f6f2', surface: '#ffffff', text: '#202820', muted: '#727d72', border: '#e1e7df', accent: '#2f704d', hover: '#3f8056', soft: '#e4f0e6', contrast: '#ffffff' },
+    dark: { bg: '#171b18', surface: '#202621', text: '#edf2ed', muted: '#a0ada1', border: '#303a32', accent: '#8bc99e', hover: '#a3d9b1', soft: '#283e2e', contrast: '#142118' }
+  },
+  {
+    id: 'ocean', name: 'Ocean', swatch: '#276b8a',
+    light: { bg: '#f2f6f8', surface: '#ffffff', text: '#1e2930', muted: '#6f7d84', border: '#dfe8ec', accent: '#276b8a', hover: '#1f5a75', soft: '#e0eef5', contrast: '#ffffff' },
+    dark: { bg: '#151c20', surface: '#1e292f', text: '#edf4f6', muted: '#a0b0b7', border: '#303e45', accent: '#83c5df', hover: '#a1d5e8', soft: '#243b45', contrast: '#102229' }
+  },
+  {
+    id: 'rose', name: 'Rose', swatch: '#9d4750',
+    light: { bg: '#faf4f3', surface: '#ffffff', text: '#2b2222', muted: '#827272', border: '#eee1df', accent: '#9d4750', hover: '#843842', soft: '#f7e4e5', contrast: '#ffffff' },
+    dark: { bg: '#201719', surface: '#2b2022', text: '#f6eeee', muted: '#b9a5a7', border: '#433034', accent: '#e8a0a8', hover: '#f0b5bb', soft: '#44282e', contrast: '#2b1519' }
+  },
+  {
+    id: 'amber', name: 'Amber', swatch: '#926516',
+    light: { bg: '#f8f5ee', surface: '#ffffff', text: '#2d281e', muted: '#817966', border: '#eae3d5', accent: '#926516', hover: '#7c5410', soft: '#f5ebd1', contrast: '#ffffff' },
+    dark: { bg: '#1f1b13', surface: '#2a251b', text: '#f4efe2', muted: '#b3a98f', border: '#403827', accent: '#e6bf72', hover: '#f0ce8e', soft: '#40331d', contrast: '#2c2110' }
+  },
+  {
+    id: 'slate', name: 'Slate', swatch: '#535f75',
+    light: { bg: '#f3f4f6', surface: '#ffffff', text: '#22262d', muted: '#737b89', border: '#e0e3e9', accent: '#535f75', hover: '#414b5f', soft: '#e7eaf0', contrast: '#ffffff' },
+    dark: { bg: '#191c22', surface: '#232730', text: '#eef0f5', muted: '#a5adbb', border: '#353a47', accent: '#aab8d5', hover: '#c2cce2', soft: '#2d3545', contrast: '#1a2030' }
+  }
+]
 
 const categories = computed(() => [
   'Semua',
@@ -27,7 +70,7 @@ const filteredShortcuts = computed(() => {
     const matchesCategory =
       activeCategory.value === 'Semua' ||
       shortcut.category === activeCategory.value
-    const searchable = `${shortcut.name} ${shortcut.category} ${shortcut.url}`.toLowerCase()
+    const searchable = (shortcut.name + ' ' + shortcut.category + ' ' + shortcut.url).toLowerCase()
     return matchesCategory && (!term || searchable.includes(term))
   })
 })
@@ -44,6 +87,78 @@ const groupedShortcuts = computed(() => {
   return [...groups.entries()].map(([category, items]) => ({ category, items }))
 })
 
+const resolvedMode = computed(() => {
+  if (colorMode.value === 'system') return systemPrefersDark.value ? 'dark' : 'light'
+  return colorMode.value
+})
+
+const selectedPalette = computed(() => {
+  const palette = palettes.find((item) => item.id === paletteId.value) ?? palettes[0]
+  if (paletteId.value !== 'custom') return palette
+
+  const lightAccent = customAccent.value
+  const darkAccent = mixHex(customAccent.value, '#ffffff', 0.3)
+  return {
+    ...palette,
+    light: { ...palette.light, accent: lightAccent, hover: mixHex(lightAccent, '#000000', 0.12), soft: mixHex(lightAccent, '#ffffff', 0.88), contrast: contrastColor(lightAccent) },
+    dark: { ...palette.dark, accent: darkAccent, hover: mixHex(darkAccent, '#ffffff', 0.13), soft: mixHex(darkAccent, palette.dark.bg, 0.82), contrast: contrastColor(darkAccent) }
+  }
+})
+
+const themeVariables = computed(() => {
+  const tones = resolvedMode.value === 'dark' ? selectedPalette.value.dark : selectedPalette.value.light
+  return {
+    '--workspace-bg': tones.bg,
+    '--workspace-surface': tones.surface,
+    '--workspace-text': tones.text,
+    '--workspace-muted': tones.muted,
+    '--workspace-border': tones.border,
+    '--workspace-accent': tones.accent,
+    '--workspace-accent-hover': tones.hover,
+    '--workspace-accent-soft': tones.soft,
+    '--workspace-accent-contrast': tones.contrast
+  }
+})
+
+function mixHex(color: string, other: string, amount: number) {
+  const parse = (hex: string) => {
+    const normalized = hex.replace('#', '')
+    return [0, 2, 4].map((index) => parseInt(normalized.slice(index, index + 2), 16))
+  }
+  const a = parse(color)
+  const b = parse(other)
+  return '#' + a.map((value, index) => Math.round(value * (1 - amount) + b[index] * amount).toString(16).padStart(2, '0')).join('')
+}
+
+function contrastColor(hex: string) {
+  const normalized = hex.replace('#', '')
+  const channels = [0, 2, 4].map((index) => parseInt(normalized.slice(index, index + 2), 16) / 255)
+  const linear = channels.map((channel) => channel <= 0.04045 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4))
+  const luminance = 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+  return luminance > 0.43 ? '#172019' : '#ffffff'
+}
+
+function saveSettings() {
+  if (!settingsReady.value) return
+  try {
+    localStorage.setItem('kerja-settings-v1', JSON.stringify({
+      colorMode: colorMode.value,
+      paletteId: paletteId.value,
+      customAccent: customAccent.value
+    }))
+  } catch {
+    // Private browsing or storage restrictions should not disable theming.
+  }
+}
+
+function chooseMode(mode: ColorMode) {
+  colorMode.value = mode
+}
+
+function choosePalette(id: string) {
+  paletteId.value = id
+}
+
 function searchGoogle() {
   const term = query.value.trim()
   if (!term) {
@@ -52,12 +167,19 @@ function searchGoogle() {
   }
 
   window.location.href =
-    `https://www.google.com/search?client=firefox-b-d&q=${encodeURIComponent(term)}`
+    'https://www.google.com/search?client=firefox-b-d&q=' + encodeURIComponent(term)
 }
 
 function focusSearch() {
   searchInput.value?.focus()
   searchInput.value?.select()
+}
+
+function handleOutsideClick(event: MouseEvent) {
+  const target = event.target
+  if (target instanceof Element && !target.closest('.theme-menu')) {
+    themeSettingsOpen.value = false
+  }
 }
 
 function handleShortcutKeys(event: KeyboardEvent) {
@@ -67,15 +189,18 @@ function handleShortcutKeys(event: KeyboardEvent) {
     (target.isContentEditable ||
       ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
 
-  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+  if (event.key === 'Escape') {
+    themeSettingsOpen.value = false
+    if (document.activeElement === searchInput.value) {
+      query.value = ''
+      searchInput.value?.blur()
+    }
+  } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
     event.preventDefault()
     focusSearch()
   } else if (event.key === '/' && !isTyping) {
     event.preventDefault()
     focusSearch()
-  } else if (event.key === 'Escape' && document.activeElement === searchInput.value) {
-    query.value = ''
-    searchInput.value?.blur()
   }
 }
 
@@ -96,19 +221,159 @@ function hostname(link: string) {
   }
 }
 
-onMounted(() => window.addEventListener('keydown', handleShortcutKeys))
-onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
+let systemThemeQuery: MediaQueryList | undefined
+function updateSystemTheme(event?: MediaQueryListEvent) {
+  systemPrefersDark.value = event?.matches ?? systemThemeQuery?.matches ?? false
+}
+
+onMounted(() => {
+  systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  updateSystemTheme()
+  systemThemeQuery.addEventListener('change', updateSystemTheme)
+  document.addEventListener('click', handleOutsideClick)
+  window.addEventListener('keydown', handleShortcutKeys)
+
+  try {
+    const stored = localStorage.getItem('kerja-settings-v1')
+    if (stored) {
+      const parsed = JSON.parse(stored) as {
+        colorMode?: ColorMode
+        paletteId?: string
+        customAccent?: string
+      }
+      if (['system', 'light', 'dark'].includes(parsed.colorMode ?? '')) {
+        colorMode.value = parsed.colorMode!
+      }
+      if ([...palettes.map((palette) => palette.id), 'custom'].includes(parsed.paletteId ?? '')) {
+        paletteId.value = parsed.paletteId!
+      }
+      if (typeof parsed.customAccent === 'string' && /^#[0-9a-fA-F]{6}$/.test(parsed.customAccent)) {
+        customAccent.value = parsed.customAccent
+      }
+    }
+  } catch {
+    // Invalid or unavailable saved settings fall back to defaults.
+  }
+
+  settingsReady.value = true
+})
+
+watch([colorMode, paletteId, customAccent], saveSettings)
+
+onBeforeUnmount(() => {
+  systemThemeQuery?.removeEventListener('change', updateSystemTheme)
+  document.removeEventListener('click', handleOutsideClick)
+  window.removeEventListener('keydown', handleShortcutKeys)
+})
 </script>
 
 <template>
-  <div class="kerja-shell">
+  <div class="kerja-shell" :data-mode="resolvedMode" :style="themeVariables">
     <header class="workspace-header">
       <a class="brand" href="/" aria-label="Back to thio.cc.cd">
         <span class="brand-mark">f.</span>
         <span>flessan</span>
       </a>
       <span class="workspace-label">PERSONAL WORKSPACE</span>
-      <a class="site-link" href="/">thio.cc.cd <span aria-hidden="true">↗</span></a>
+
+      <div class="header-actions">
+        <div class="theme-menu">
+          <button
+            class="theme-button"
+            type="button"
+            :aria-expanded="themeSettingsOpen"
+            aria-controls="kerja-theme-panel"
+            @click.stop="themeSettingsOpen = !themeSettingsOpen"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3a9 9 0 1 0 9 9c0-.55-.45-1-1-1h-2.2a1.8 1.8 0 0 1-1.45-2.87A2.1 2.1 0 0 0 14.65 5H12" />
+              <circle cx="7.5" cy="10" r="1" />
+              <circle cx="10" cy="6.5" r="1" />
+              <circle cx="7.5" cy="14" r="1" />
+            </svg>
+            <span>Theme</span>
+            <span class="theme-dot" :style="{ backgroundColor: selectedPalette.swatch }"></span>
+          </button>
+
+          <section
+            v-if="themeSettingsOpen"
+            id="kerja-theme-panel"
+            class="theme-panel"
+            aria-label="Theme settings"
+            @click.stop
+          >
+            <div class="theme-panel-heading">
+              <div>
+                <p class="eyebrow">PERSONALIZE</p>
+                <h2>Make it yours</h2>
+              </div>
+              <button class="panel-close" type="button" aria-label="Close theme settings" @click="themeSettingsOpen = false">×</button>
+            </div>
+
+            <div class="theme-setting">
+              <div class="setting-label">
+                <strong>Appearance</strong>
+                <span>Choose how the workspace looks</span>
+              </div>
+              <div class="mode-options" role="group" aria-label="Color mode">
+                <button
+                  v-for="mode in (['system', 'light', 'dark'] as ColorMode[])"
+                  :key="mode"
+                  type="button"
+                  :class="{ selected: colorMode === mode }"
+                  :aria-pressed="colorMode === mode"
+                  @click="chooseMode(mode)"
+                >
+                  <svg v-if="mode === 'system'" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                  <svg v-else-if="mode === 'light'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+                  <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
+                  {{ mode === 'system' ? 'System' : mode === 'light' ? 'Light' : 'Dark' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="theme-setting">
+              <div class="setting-label">
+                <strong>Color theme</strong>
+                <span>Five ready-made palettes</span>
+              </div>
+              <div class="palette-grid" role="group" aria-label="Color theme">
+                <button
+                  v-for="palette in palettes"
+                  :key="palette.id"
+                  type="button"
+                  class="palette-option"
+                  :class="{ selected: paletteId === palette.id }"
+                  :aria-label="palette.name + ' theme'"
+                  :aria-pressed="paletteId === palette.id"
+                  :title="palette.name"
+                  @click="choosePalette(palette.id)"
+                >
+                  <span class="palette-swatch" :style="{ backgroundColor: palette.swatch }">
+                    <svg v-if="paletteId === palette.id" viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>
+                  </span>
+                  <span>{{ palette.name }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="custom-accent-row">
+              <label for="kerja-custom-accent">
+                <strong>Custom accent</strong>
+                <span>Pick your own color</span>
+              </label>
+              <div class="custom-accent-control">
+                <input id="kerja-custom-accent" type="color" :value="customAccent" aria-label="Custom accent color" @input="customAccent = ($event.target as HTMLInputElement).value; paletteId = 'custom'" />
+                <code>{{ customAccent.toUpperCase() }}</code>
+              </div>
+            </div>
+
+            <p class="theme-saved-note">Settings are saved on this device.</p>
+          </section>
+        </div>
+
+        <a class="site-link" href="/">thio.cc.cd <span aria-hidden="true">↗</span></a>
+      </div>
     </header>
 
     <main class="workspace-main">
@@ -182,7 +447,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
                 :href="shortcut.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                :aria-label="`${shortcut.name} (opens in a new tab)`"
+                :aria-label="shortcut.name + ' (opens in a new tab)'"
               >
                 <span class="shortcut-icon" aria-hidden="true">
                   <img
@@ -235,15 +500,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
   margin: 0;
 }
 
-:global(html) {
-  background: #f4f6f2;
-  color-scheme: light dark;
-}
-
-:global(body) {
-  background: #f4f6f2;
-}
-
 .kerja-shell {
   --workspace-bg: #f4f6f2;
   --workspace-surface: #ffffff;
@@ -251,16 +507,24 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
   --workspace-muted: #727d72;
   --workspace-border: #e1e7df;
   --workspace-accent: #2f704d;
+  --workspace-accent-hover: #3f8056;
   --workspace-accent-soft: #e4f0e6;
+  --workspace-accent-contrast: #ffffff;
   box-sizing: border-box;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 28px clamp(18px, 4.2vw, 64px) 22px;
+  padding: 24px clamp(16px, 4.2vw, 64px) 22px;
   display: flex;
   flex-direction: column;
   background: var(--workspace-bg);
   color: var(--workspace-text);
+  color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.kerja-shell[data-mode="dark"] {
+  color-scheme: dark;
 }
 
 .workspace-header,
@@ -292,13 +556,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
 
 .brand-mark {
   display: grid;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   place-items: center;
-  border-radius: 10px;
+  border-radius: 11px;
   background: var(--workspace-accent);
-  color: #fff;
-  font-size: 18px;
+  color: var(--workspace-accent-contrast);
+  font-size: 19px;
   font-weight: 800;
   letter-spacing: -0.08em;
 }
@@ -308,7 +572,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
   color: var(--workspace-muted);
   font-size: 10px;
   font-weight: 750;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
 }
 
 .site-link {
@@ -318,11 +582,265 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
   color: var(--workspace-muted);
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .site-link:hover,
 .workspace-footer a:hover {
   color: var(--workspace-accent);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.theme-menu {
+  position: relative;
+}
+
+.theme-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 12px;
+  background: var(--workspace-surface);
+  color: var(--workspace-text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+.theme-button:hover,
+.theme-button[aria-expanded="true"] {
+  border-color: var(--workspace-accent);
+}
+
+.theme-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--workspace-surface);
+  outline: 1px solid var(--workspace-border);
+  border-radius: 50%;
+}
+
+.theme-panel {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(340px, calc(100vw - 32px));
+  padding: 19px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 18px;
+  background: var(--workspace-surface);
+  color: var(--workspace-text);
+  box-shadow: 0 18px 50px rgb(18 28 20 / 17%);
+  text-align: left;
+  animation: panel-enter 140ms ease-out;
+}
+
+@keyframes panel-enter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.theme-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 21px;
+}
+
+.theme-panel-heading .eyebrow {
+  margin: 0 0 5px;
+  font-size: 9px;
+}
+
+.theme-panel-heading h2 {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: -0.04em;
+}
+
+.panel-close {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--workspace-muted);
+  font: inherit;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.theme-setting {
+  display: grid;
+  gap: 11px;
+  padding: 15px 0;
+  border-top: 1px solid var(--workspace-border);
+}
+
+.setting-label,
+.custom-accent-row label {
+  display: grid;
+  gap: 4px;
+}
+
+.setting-label strong,
+.custom-accent-row strong {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.setting-label span,
+.custom-accent-row label span {
+  color: var(--workspace-muted);
+  font-size: 11px;
+}
+
+.mode-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.mode-options button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 9px 5px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 10px;
+  background: var(--workspace-bg);
+  color: var(--workspace-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.mode-options button.selected {
+  border-color: var(--workspace-accent);
+  background: var(--workspace-accent-soft);
+  color: var(--workspace-accent);
+  font-weight: 700;
+}
+
+.mode-options svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.palette-option {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 5px 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--workspace-muted);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.palette-option:hover,
+.palette-option.selected {
+  border-color: var(--workspace-border);
+  background: var(--workspace-bg);
+  color: var(--workspace-text);
+}
+
+.palette-swatch {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 9px;
+  color: #ffffff;
+}
+
+.palette-swatch svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.custom-accent-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 15px;
+  border-top: 1px solid var(--workspace-border);
+}
+
+.custom-accent-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-accent-control input {
+  width: 34px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 9px;
+  background: var(--workspace-bg);
+  cursor: pointer;
+}
+
+.custom-accent-control code {
+  color: var(--workspace-muted);
+  font-size: 10px;
+}
+
+.theme-saved-note {
+  margin: 15px 0 0;
+  color: var(--workspace-muted);
+  font-size: 10px;
 }
 
 .workspace-main {
@@ -333,7 +851,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
 }
 
 .hero {
-  padding: clamp(56px, 8.4vh, 100px) 0 58px;
+  padding: clamp(55px, 8vh, 92px) 0 53px;
   text-align: center;
 }
 
@@ -368,12 +886,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
   border-radius: 18px;
   background: var(--workspace-surface);
   box-shadow: 0 8px 24px rgb(28 52 34 / 4%);
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 180ms ease;
 }
 
 .search-form:focus-within {
-  border-color: #8bb49a;
-  box-shadow: 0 0 0 3px rgb(71 132 88 / 10%), 0 8px 24px rgb(28 52 34 / 4%);
+  border-color: var(--workspace-accent);
+  box-shadow: 0 0 0 3px var(--workspace-accent-soft);
 }
 
 .search-submit {
@@ -411,7 +929,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcutKeys))
 }
 
 .search-form input::placeholder {
-  color: #8c968d;
+  color: var(--workspace-muted);
+  opacity: 0.8;
 }
 
 .search-form input::-webkit-search-cancel-button {
@@ -503,14 +1022,14 @@ kbd {
 }
 
 .category-tabs button:hover {
-  border-color: #a8bca9;
+  border-color: var(--workspace-accent);
   color: var(--workspace-text);
 }
 
 .category-tabs button.active {
   border-color: var(--workspace-accent);
   background: var(--workspace-accent);
-  color: #fff;
+  color: var(--workspace-accent-contrast);
 }
 
 .shortcut-groups {
@@ -546,13 +1065,21 @@ kbd {
   background: var(--workspace-surface);
   color: var(--workspace-text);
   text-decoration: none;
-  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease, background-color 180ms ease;
 }
 
 .shortcut-card:hover {
   transform: translateY(-2px);
-  border-color: #b6cab8;
-  box-shadow: 0 7px 18px rgb(28 52 34 / 5%);
+  border-color: var(--workspace-accent);
+  box-shadow: 0 7px 18px rgb(28 52 34 / 6%);
+}
+
+.shortcut-card:focus-visible,
+.category-tabs button:focus-visible,
+.theme-button:focus-visible,
+.panel-close:focus-visible {
+  outline: 3px solid var(--workspace-accent-soft);
+  outline-offset: 2px;
 }
 
 .shortcut-icon {
@@ -673,6 +1200,14 @@ kbd {
     display: none;
   }
 
+  .workspace-header {
+    flex-wrap: wrap;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+
   .hero {
     padding-top: 58px;
     padding-bottom: 45px;
@@ -685,15 +1220,35 @@ kbd {
 
 @media (max-width: 520px) {
   .kerja-shell {
-    padding: 19px 15px 16px;
+    padding: 18px 14px 16px;
+  }
+
+  .workspace-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-actions {
+    align-items: flex-end;
+    flex-direction: column-reverse;
+    gap: 9px;
   }
 
   .site-link {
     font-size: 11px;
   }
 
+  .theme-button {
+    min-height: 36px;
+  }
+
+  .theme-panel {
+    right: -1px;
+    padding: 16px;
+  }
+
   .hero {
-    padding-top: 54px;
+    padding-top: 52px;
   }
 
   .hero h1 {
@@ -727,7 +1282,8 @@ kbd {
   }
 
   .search-notes {
-    gap: 13px;
+    flex-wrap: wrap;
+    gap: 8px 13px;
     font-size: 10px;
   }
 
@@ -765,42 +1321,15 @@ kbd {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :global(html),
-  :global(body) {
-    background: #171b18;
-  }
-
-  .kerja-shell {
-    --workspace-bg: #171b18;
-    --workspace-surface: #202621;
-    --workspace-text: #edf2ed;
-    --workspace-muted: #a0ada1;
-    --workspace-border: #303a32;
-    --workspace-accent: #8bc99e;
-    --workspace-accent-soft: #283e2e;
-  }
-
-  .brand-mark {
-    color: #142118;
-  }
-
-  .category-tabs button.active {
-    color: #142118;
-  }
-
-  .shortcut-card:hover {
-    border-color: #587660;
-    box-shadow: 0 7px 18px rgb(0 0 0 / 12%);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
+  .kerja-shell,
   .search-form,
   .category-tabs button,
   .shortcut-card,
-  .shortcut-arrow {
+  .shortcut-arrow,
+  .theme-panel {
     transition: none;
+    animation: none;
   }
 
   .shortcut-card:hover {
