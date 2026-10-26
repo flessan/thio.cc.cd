@@ -1,6 +1,5 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { Plugin } from 'vite'
 import { defineConfig } from 'vitepress'
 import { blogPosts } from './blog-posts'
 
@@ -137,7 +136,7 @@ function parseKerjaShortcuts(markdown: string): KerjaShortcut[] {
 }
 
 /** Lets the Vue page render the Markdown data at build time without a runtime API. */
-function kerjaShortcutsPlugin(): Plugin {
+function kerjaShortcutsPlugin() {
   const sourceFile = path.resolve(process.cwd(), 'data/kerja.md')
   const virtualModuleId = 'virtual:kerja-shortcuts'
   const resolvedVirtualModuleId = `\0${virtualModuleId}`
@@ -145,16 +144,16 @@ function kerjaShortcutsPlugin(): Plugin {
   return {
     name: 'kerja-shortcuts',
     enforce: 'pre',
-    resolveId(id) {
+    resolveId(id: string) {
       if (id === virtualModuleId) return resolvedVirtualModuleId
     },
-    load(id) {
+    load(this: { addWatchFile: (file: string) => void }, id: string) {
       if (id !== resolvedVirtualModuleId) return
       this.addWatchFile(sourceFile)
       const shortcuts = parseKerjaShortcuts(fs.readFileSync(sourceFile, 'utf8'))
       return `export default ${JSON.stringify(shortcuts)};`
     },
-    configureServer(server) {
+    configureServer(server: any) {
       server.watcher.add(sourceFile)
       server.watcher.on('change', (changedFile) => {
         if (path.resolve(changedFile) !== sourceFile) return
@@ -379,10 +378,9 @@ export default defineConfig({
     const shortcutData = parseKerjaShortcuts(
       fs.readFileSync(path.resolve(process.cwd(), 'data/kerja.md'), 'utf8')
     )
-    const shortcutDir = path.join(outDir, 'kerja')
-    fs.mkdirSync(shortcutDir, { recursive: true })
+    const shortcutDataPath = path.join(outDir, 'kerja-shortcuts.json')
     fs.writeFileSync(
-      path.join(shortcutDir, 'shortcuts.json'),
+      shortcutDataPath,
       JSON.stringify(shortcutData, null, 2) + '\n',
       'utf8'
     )
