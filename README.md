@@ -149,7 +149,7 @@ now.md               /now page + channel feed + live activity
 timeline.md          the road so far
 ecosystem.md         the other places I keep online
 support.md           sponsor & support
-public/images/       artwork (avatar & character art by Flessan
+public/images/       artwork (avatar & character art by Flessan)
 data/kerja.md        Markdown source for the /kerja shortcut directory
 kerja.md             standalone browser start page at /kerja
 ```
