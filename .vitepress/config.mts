@@ -104,16 +104,16 @@ function parseKerjaShortcuts(markdown: string): KerjaShortcut[] {
   let category = ''
   const shortcuts: KerjaShortcut[] = []
 
-  markdown.split(/\\r?\\n/).forEach((raw, index) => {
+  markdown.split(/\r?\n/).forEach((raw, index) => {
     const line = raw.trim()
-    const heading = line.match(/^##\\s+(.+)$/)
+    const heading = line.match(/^##\s+(.+)$/)
     if (heading) {
       category = heading[1].trim()
       return
     }
     if (!line.startsWith('|') || !category) return
 
-    const cells = line.replace(/^\\|/, '').replace(/\\|$/, '').split('|').map((cell) => cell.trim())
+    const cells = line.replace(/^\|/, '').replace(/\|$/, '').split('|').map((cell) => cell.trim())
     if (cells.length < 3 || cells.every((cell) => /^:?-{3,}:?$/.test(cell))) return
     if (cells[0].toLowerCase() === 'name') return
 
