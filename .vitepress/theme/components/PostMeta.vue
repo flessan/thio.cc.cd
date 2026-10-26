@@ -5,19 +5,24 @@ const props = defineProps<{ date: string }>()
 
 const minutes = ref(0)
 
-const formatted = new Date(`${props.date}T00:00:00`).toLocaleDateString('en-US', {
+const formatted = new Date(`${props.date}T12:00:00`).toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
   day: 'numeric'
 })
 
-// Reading time is computed from the rendered article, so it never drifts
+// Count the article itself, not the reading controls or navigation around it.
 onMounted(() => {
-  const el = document.querySelector('.vp-doc')
-  if (el) {
-    const words = el.textContent?.trim().split(/\s+/).length ?? 0
-    minutes.value = Math.max(1, Math.round(words / 200))
-  }
+  const root = document.querySelector('.vp-doc')
+  if (!root) return
+
+  const article = root.cloneNode(true) as HTMLElement
+  article.querySelectorAll(
+    '.blog-cover, .post-meta, .post-tools, .post-nav, .post-navigation, .educator-invite, .reading-progress'
+  ).forEach((node) => node.remove())
+
+  const words = article.textContent?.trim().match(/\S+/g)?.length ?? 0
+  minutes.value = Math.max(1, Math.ceil(words / 200))
 })
 </script>
 
