@@ -23,6 +23,8 @@ import PostTools from './components/PostTools.vue'
 import EducatorInvite from './components/EducatorInvite.vue'
 import YouTubeVideo from './components/YouTubeVideo.vue'
 import LanyardActivity from './components/LanyardActivity.vue'
+import Kerja from './components/Kerja.vue'
+import KerjaLaunch from './components/KerjaLaunch.vue'
 
 function openSearch() {
   const btn = document.querySelector<HTMLElement>('.VPNavBarSearch button')
@@ -221,6 +223,8 @@ export default {
     app.component('EducatorInvite', EducatorInvite)
     app.component('YouTubeVideo', YouTubeVideo)
     app.component('LanyardActivity', LanyardActivity)
+    app.component('Kerja', Kerja)
+    app.component('KerjaLaunch', KerjaLaunch)
 
     // click any content image to view it full-size (styles injected in JS,
     // so style.css keeps its original bytes)
