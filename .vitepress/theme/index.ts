@@ -18,6 +18,9 @@ import NotFound from './components/NotFound.vue'
 import { installLightbox } from './lightbox'
 import BlogCover from './components/BlogCover.vue'
 import BlogPost from './components/BlogPost.vue'
+import BlogDirectory from './components/BlogDirectory.vue'
+import PostTools from './components/PostTools.vue'
+import EducatorInvite from './components/EducatorInvite.vue'
 import YouTubeVideo from './components/YouTubeVideo.vue'
 import LanyardActivity from './components/LanyardActivity.vue'
 
@@ -213,6 +216,9 @@ export default {
     app.component('LinkPreview', LinkPreview)
     app.component('BlogCover', BlogCover)
     app.component('BlogPost', BlogPost)
+    app.component('BlogDirectory', BlogDirectory)
+    app.component('PostTools', PostTools)
+    app.component('EducatorInvite', EducatorInvite)
     app.component('YouTubeVideo', YouTubeVideo)
     app.component('LanyardActivity', LanyardActivity)
 

@@ -1,42 +1,55 @@
 ---
-title: Many small sites
+title: "Many small sites: a personal web development ecosystem"
 author:
   name: M. Thio Saputra
 date: "2026-08-24"
-description: Why I keep lots of little websites instead of one big one
+description: "Why Flessan keeps multiple small websites for different projects, how each site serves a purpose, and what building them teaches along the way."
 image: /images/covers/internet-of-thio.png
+imageAlt: "Cover artwork representing the collection of small websites in the Flessan ecosystem"
+inLanguage: "id"
+keywords:
+  - "website pribadi"
+  - "ekosistem Flessan"
+  - "belajar web development"
+  - "proyek web kecil"
+  - "personal websites"
 ---
 
-<BlogCover src="/images/covers/internet-of-thio.png" />
+<BlogCover src="/images/covers/internet-of-thio.png" alt="Cover for the collection of small websites in the Flessan ecosystem" />
 
 # Many small sites
 
 <PostMeta date="2026-08-24"></PostMeta>
+<PostTools></PostTools>
 
-People ask why my corner of the web looks like a small town instead of a single website. There's [flessan.pages.dev](https://flessan.pages.dev), [flessan.github.io](https://flessan.github.io), [gdips.pages.dev](https://gdips.pages.dev), [tune.thio.cc.cd](https://tune.thio.cc.cd), [text.thio.qzz.io](https://text.thio.qzz.io), and now this site at [thio.cc.cd](https://thio.cc.cd). This post is why.
+Kalau dilihat sekilas, sudut internetku lebih mirip kota kecil daripada satu website: ada [flessan.pages.dev](https://flessan.pages.dev), [flessan.github.io](https://flessan.github.io), [gdips.pages.dev](https://gdips.pages.dev), [tune.thio.cc.cd](https://tune.thio.cc.cd), [text.thio.qzz.io](https://text.thio.qzz.io), dan sekarang [thio.cc.cd](https://thio.cc.cd). Wajar kalau muncul pertanyaan: kenapa gak dijadikan satu website besar aja?
 
-## Sites, not pages
+## Satu tempat gak harus mengerjakan semuanya
 
-A big website wants to be everything at once: portfolio, blog, shop, profile. It grows heavy, and every change risks breaking something else. A pile of small sites behaves differently:
+Website yang pengin jadi portfolio, blog, music player, tool, dokumentasi, dan dashboard sekaligus bisa tumbuh jadi terlalu berat. Aku lebih suka memberi tiap proyek tempat yang sesuai dengan tugasnya.
 
-- **Each site has one job.** GDIPS is a Geometry Dash server. teksreceh is a text toy. resontune is music. None of them pretend to be anything else.
-- **Each site can be rebuilt** without evicting the others. When I learned React, then Rust, then Go, I started new sites instead of migrating a monolith.
-- **Old sites stay standing.** flessan.pages.dev, my first little site, is still online. Old work is part of the work.
+- **Satu site, satu tujuan utama.** GDIPS adalah proyek Geometry Dash; teksreceh adalah text toy; resontune berurusan dengan musik. Mereka gak harus berpura-pura menjadi hal yang sama.
+- **Eksperimen bisa bergerak sendiri.** Kalau ingin mencoba framework atau arsitektur baru, aku bisa bikin proyek terpisah tanpa membongkar semuanya.
+- **Proyek lama tetap punya tempat.** [flessan.pages.dev](https://flessan.pages.dev), salah satu site awalku, masih online. Kode lama bukan otomatis sampah hanya karena aku belajar cara baru.
 
-## Learning by building
+Pemisahan ini ada trade-off-nya juga: lebih banyak deployment, domain, konfigurasi, dan hal yang harus diingat. Banyak website kecil bukan strategi ajaib untuk menghilangkan maintenance. Kadang itu cuma cara supaya masalahnya tetap punya batas yang jelas.
 
-The deeper reason is simple: building real things is how I learn. Reading about Wayland teaches me a little. Building [slate-de](https://github.com/flessan/slate-de) teaches me a lot. Every site in the pile started as a question - *can a QR scanner be fully local? what does a GDPS need? can a text generator be a museum?* - and became an answer you can visit.
+## Building is how I learn
 
-## A map of the pile
+Membaca dokumentasi membantu, tapi membangun sesuatu memaksaku berhadapan dengan keputusan nyata. Belajar Wayland jadi lebih konkret saat mengerjakan [slate-de](https://github.com/flessan/slate-de). Penasaran soal teks internet menghasilkan [teksreceh](https://text.thio.qzz.io). Kebutuhan komunitas mendorongku mengerjakan GDIPS.
 
-If you want to wander, the full list is on the [ecosystem page](../ecosystem.md). A quick tour:
+Setiap proyek biasanya bermula dari pertanyaan kecil: bisa gak QR scanner berjalan sepenuhnya lokal? Apa yang dibutuhkan sebuah GDPS? Bisa gak generator teks jadi semacam museum? Jawabannya gak selalu sukses, tapi prosesnya tetap memberi bahan belajar.
 
-- 🎮 [gdips.pages.dev](https://gdips.pages.dev) - GDIPS, the campfire
-- 🎵 [tune.thio.cc.cd](https://tune.thio.cc.cd) - resontune, music without the paywall
-- 🗿 [text.thio.qzz.io](https://text.thio.qzz.io) - teksreceh, the text museum
-- 🖥️ [slate.dotfiles.qzz.io](https://slate.dotfiles.qzz.io) - slate-de, the d3sktop
-- 📦 [flessan.github.io](https://flessan.github.io) - the project index
+## A quick map of the ecosystem
 
-Every site has a door. Every door is open.
+Kalau mau menjelajah, [ecosystem page](../ecosystem.md) mengumpulkan lebih banyak tautan. Beberapa pintu untuk mulai:
+
+- [gdips.pages.dev](https://gdips.pages.dev): GDIPS
+- [tune.thio.cc.cd](https://tune.thio.cc.cd): resontune, proyek musik
+- [text.thio.qzz.io](https://text.thio.qzz.io): teksreceh
+- [slate.dotfiles.qzz.io](https://slate.dotfiles.qzz.io): slate-de
+- [flessan.github.io](https://flessan.github.io): project index
+
+Setiap site punya alasan masing-masing untuk ada. Dan kalau satu eksperimen gagal, semoga yang lain gak ikut tumbang gara-gara semuanya dipaksa tinggal di satu rumah.
 
 <PostNav></PostNav>

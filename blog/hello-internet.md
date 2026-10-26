@@ -1,45 +1,56 @@
 ---
-title: hello, internet
+title: "hello, internet: meet Flessan, developer and student"
 author:
   name: M. Thio Saputra
 date: "2026-09-08"
-description: A new home at thio.cc.cd - who I am, and what this site will hold
+description: "Meet Thio Saputra, known as Flessan: a student developer in Banjarmasin building web apps, community tools, Linux experiments, and personal websites."
 image: /images/covers/hello-internet.png
+imageAlt: "Cover artwork for the hello internet introduction"
+inLanguage: "en"
+keywords:
+  - "Flessan"
+  - "Thio Saputra"
+  - "developer introduction"
+  - "Banjarmasin developer"
+  - "personal website"
 ---
 
-<BlogCover src="/images/covers/hello-internet.png" />
+<BlogCover src="/images/covers/hello-internet.png" alt="Cover for hello, internet" />
 
 # hello, internet
 
 <PostMeta date="2026-09-08"></PostMeta>
+<PostTools></PostTools>
 
-Halo! This is the first post from a new home on the web: **[thio.cc.cd](https://thio.cc.cd)** - the personal site of **M. Thio Saputra**, known online as **Flessan**.
+Halo internet. This is the first post from my little corner at **[thio.cc.cd](https://thio.cc.cd)**. Online, most people know me as **Flessan**, or Fless, Flethio, and Thio2009_ depending on where we crossed paths first.
 
-If you've followed my work before, you've probably met me through [@flessan on GitHub](https://github.com/flessan), through [GDIPS](../gdips.md) - the Geometry Dash Indonesia Private Server I founded - or through one of my other little sites like [flessan.pages.dev](https://flessan.pages.dev) or [tune.thio.cc.cd](https://tune.thio.cc.cd). This site gathers all of it under one roof.
+If you found me through [GitHub](https://github.com/flessan), [GDIPS](../gdips.md), or one of my other sites, this is where more of those threads come together. Not because everything has to live inside one giant website, but because it helps to have a home base.
 
-## Who is writing here
+## Who's writing this?
 
-One thing about the name: my full name is **Muhammad Thio Saputra**. People shorten it to "M." - and honestly, I don't really like that, so instead of adding "M." everywhere I've mostly just hidden it. Online, I'm Flessan. Also Fless, Flethio, or Thio2009_, depending on which corner of the internet you found first.
+My full name is Muhammad Thio Saputra. I'm a self-taught developer and an RPL (Software Engineering) student at SMKN 4 Banjarmasin, South Kalimantan, Indonesia. I'm into Geometry Dash, community projects, web apps, Linux tooling, and the kind of experiments that start with “can I make this work?” before turning into another repository.
 
-I'm a self-taught developer with a deep love for Geometry Dash and community-driven projects. By day I'm a student in the RPL (Software Engineering) program at SMKN 4 Banjarmasin, in South Kalimantan, Indonesia. By night I build web apps, Linux tooling, and small experiments - usually between 11 PM and 3 AM - and I document all of it in public.
+A lot of learning happens while I'm building something for an actual use case. Some projects become tools people can use; others stay experiments that teach me what I didn't understand at the beginning. Both count.
 
-## What this site will hold
+## What you'll find here
 
-- **Projects** - the full rack, from [GDIPS](../gdips.md) and [slate-de](./slate-de.md) to small tools like [teksreceh](./teksreceh.md), with links to everything that's live.
-- **Writing** - build notes and stories, right here in the [blog](../blog.md).
-- **Now & timeline** - a [/now page](../now.md) for what I'm currently building and listening to, and a [timeline](../timeline.md) of how I got here.
-- **Ecosystem** - an [ecosystem page](../ecosystem.md) linking every other place I keep online.
+- **Projects and build notes**: decisions, trade-offs, things that worked, and things that still need work.
+- **Personal writing**: the story behind a project, a community, or a weird little corner of the internet.
+- **What I'm doing now**: the [/now page](../now.md) and [timeline](../timeline.md) collect the moving pieces.
+- **The wider ecosystem**: the [ecosystem page](../ecosystem.md) links to the other sites and tools I maintain.
 
-## Why another site?
+The blog may switch between English and Indonesian depending on the topic and the mood. Technical details should stay precise either way. No need to make a story sound like a corporate launch just because it involves code.
 
-Because building sites is how I learn. My first website was coded at age 15 using ZArchiver and Chrome on a phone. Since then there's been [flessan.pages.dev](https://flessan.pages.dev) - the first little site - and a growing pile of small places online. This domain, **thio.cc.cd**, is the newest room: a home built with VitePress, and a place to write.
+## Why another website?
 
-Old work is part of the work. The previous sites stay online, nothing gets buried, and everything gets a door.
+Because building websites is one of the ways I learn. My first site was made at 15 using ZArchiver and Chrome on a phone. Since then, there's been [flessan.pages.dev](https://flessan.pages.dev), [flessan.github.io](https://flessan.github.io), projects such as [GDIPS](../gdips.md), and tools including [teksreceh](https://text.thio.qzz.io).
+
+This domain is built with VitePress and gives the writing, projects, and personal pages a more consistent home. The older sites can stay online and keep doing their jobs; they don't have to be deleted just because a new one exists. This is a website, not an eviction notice.
 
 ## Say hello
 
-The fastest way to reach me is [tio@cc.cc](mailto:tio@cc.cc). You can also find me on [GitHub](https://github.com/flessan), [Instagram](https://www.instagram.com/flethio) or [Threads](https://www.threads.com/flethio), or join the [GDIPS Discord](https://discord.gg/6HEyQBcM6E) campfire.
+You can reach me at [tio@cc.cc](mailto:tio@cc.cc), find me on [GitHub](https://github.com/flessan), [Instagram](https://www.instagram.com/flethio), or [Threads](https://www.threads.com/flethio), or join the [GDIPS Discord](https://discord.gg/6HEyQBcM6E).
 
-Thanks for stopping by. Let's build something amazing together.
+Glad you found your way here. There's probably another project in progress somewhere.
 
 <PostNav></PostNav>
