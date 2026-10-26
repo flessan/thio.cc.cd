@@ -20,6 +20,7 @@ import BlogCover from './components/BlogCover.vue'
 import BlogPost from './components/BlogPost.vue'
 import YouTubeVideo from './components/YouTubeVideo.vue'
 import LanyardActivity from './components/LanyardActivity.vue'
+import Kerja from './components/Kerja.vue'
 
 function openSearch() {
   const btn = document.querySelector<HTMLElement>('.VPNavBarSearch button')
@@ -215,6 +216,7 @@ export default {
     app.component('BlogPost', BlogPost)
     app.component('YouTubeVideo', YouTubeVideo)
     app.component('LanyardActivity', LanyardActivity)
+    app.component('Kerja', Kerja)
 
     // click any content image to view it full-size (styles injected in JS,
     // so style.css keeps its original bytes)
