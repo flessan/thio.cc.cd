@@ -38,6 +38,8 @@ pnpm run dev
   and productivity. Edit `data/kerja.md` to add, remove, or reorganize links and
   provide direct icon image URLs. The build renders the shortcuts into the page
   and emits `.vitepress/dist/kerja/shortcuts.json`, so it needs no runtime API.
+  The workspace also supports System/Light/Dark appearance, five color palettes,
+  a custom accent color, and saved preferences in the current browser.
 - **Live project explorer** on `/projects` - real data from the public GitHub
   API (description, language, stars, license, last update), with filter,
   language, and sort controls; cached in your browser for 10 minutes and
