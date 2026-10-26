@@ -1,4 +1,6 @@
 import fs from 'node:fs'
+import path from 'node:path'
+import type { Plugin } from 'vite'
 import { defineConfig } from 'vitepress'
 import { blogPosts } from './blog-posts'
 
@@ -85,6 +87,85 @@ function toIso(d: unknown): string | undefined {
   return isNaN(dt.getTime()) ? undefined : dt.toISOString()
 }
 
+type KerjaShortcut = {
+  name: string
+  url: string
+  icon: string
+  category: string
+}
+
+/** Parse the editable Markdown table into safe, build-time shortcut data. */
+function parseKerjaShortcuts(markdown: string): KerjaShortcut[] {
+  let category = ''
+  const shortcuts: KerjaShortcut[] = []
+
+  markdown.split(/\r?\n/).forEach((raw, index) => {
+    const line = raw.trim()
+    const heading = line.match(/^##\s+(.+)$/)
+    if (heading) {
+      category = heading[1].trim()
+      return
+    }
+    if (!line.startsWith('|') || !category) return
+
+    const cells = line.replace(/^\|/, '').replace(/\|$/, '').split('|').map((cell) => cell.trim())
+    if (cells.length < 3 || cells.every((cell) => /^:?-{3,}:?$/.test(cell))) return
+    if (cells[0].toLowerCase() === 'name') return
+
+    const [name, url, icon] = cells
+    if (!name || !url || !icon) {
+      throw new Error(`Invalid shortcut row in data/kerja.md at line ${index + 1}. Expected Name | Link | Icon.`)
+    }
+
+    for (const [kind, value] of [['link', url], ['icon', icon]] as const) {
+      let parsed: URL
+      try {
+        parsed = new URL(value)
+      } catch {
+        throw new Error(`Invalid ${kind} URL in data/kerja.md at line ${index + 1}: ${value}`)
+      }
+      if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+        throw new Error(`Only HTTP(S) ${kind} URLs are allowed in data/kerja.md at line ${index + 1}.`)
+      }
+    }
+
+    shortcuts.push({ name, url, icon, category })
+  })
+
+  if (!shortcuts.length) throw new Error('No shortcut rows found in data/kerja.md.')
+  return shortcuts
+}
+
+/** Lets the Vue page render the Markdown data at build time without a runtime API. */
+function kerjaShortcutsPlugin(): Plugin {
+  const sourceFile = path.resolve(process.cwd(), 'data/kerja.md')
+  const virtualModuleId = 'virtual:kerja-shortcuts'
+  const resolvedVirtualModuleId = `\0${virtualModuleId}`
+
+  return {
+    name: 'kerja-shortcuts',
+    enforce: 'pre',
+    resolveId(id) {
+      if (id === virtualModuleId) return resolvedVirtualModuleId
+    },
+    load(id) {
+      if (id !== resolvedVirtualModuleId) return
+      this.addWatchFile(sourceFile)
+      const shortcuts = parseKerjaShortcuts(fs.readFileSync(sourceFile, 'utf8'))
+      return `export default ${JSON.stringify(shortcuts)};`
+    },
+    configureServer(server) {
+      server.watcher.add(sourceFile)
+      server.watcher.on('change', (changedFile) => {
+        if (path.resolve(changedFile) !== sourceFile) return
+        const module = server.moduleGraph.getModuleById(resolvedVirtualModuleId)
+        if (module) server.moduleGraph.invalidateModule(module)
+        server.ws.send({ type: 'full-reload' })
+      })
+    }
+  }
+}
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'flessan',
@@ -94,12 +175,13 @@ export default defineConfig({
 
   // Cloudflare Pages: build output is .vitepress/dist (see package.json / README)
   cleanUrls: true,
-  srcExclude: ['README.md'],
+  srcExclude: ['README.md', 'data/kerja.md'],
   sitemap: {
     hostname: siteUrl
   },
 
   vite: {
+    plugins: [kerjaShortcutsPlugin()],
     server: {
       // allow preview proxies (e.g. *.e2b.app) in dev
       allowedHosts: true
@@ -294,6 +376,16 @@ export default defineConfig({
 
   // Generate /feed.xml (RSS 2.0) into the build output - works on any static host
   buildEnd({ outDir }) {
+    const shortcutData = parseKerjaShortcuts(
+      fs.readFileSync(path.resolve(process.cwd(), 'data/kerja.md'), 'utf8')
+    )
+    const shortcutDir = path.join(outDir, 'kerja')
+    fs.mkdirSync(shortcutDir, { recursive: true })
+    fs.writeFileSync(
+      path.join(shortcutDir, 'shortcuts.json'),
+      JSON.stringify(shortcutData, null, 2) + '\n',
+      'utf8'
+    )
     const feedUrl = `${siteUrl}/feed.xml`
     const feedTitle = "Flessan's blog"
     const latestDate = posts.length
