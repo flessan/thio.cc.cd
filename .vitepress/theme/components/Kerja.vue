@@ -100,6 +100,7 @@ const selectedPalette = computed(() => {
   const darkAccent = mixHex(customAccent.value, '#ffffff', 0.3)
   return {
     ...palette,
+    swatch: customAccent.value,
     light: { ...palette.light, accent: lightAccent, hover: mixHex(lightAccent, '#000000', 0.12), soft: mixHex(lightAccent, '#ffffff', 0.88), contrast: contrastColor(lightAccent) },
     dark: { ...palette.dark, accent: darkAccent, hover: mixHex(darkAccent, '#ffffff', 0.13), soft: mixHex(darkAccent, palette.dark.bg, 0.82), contrast: contrastColor(darkAccent) }
   }
