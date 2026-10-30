@@ -8,6 +8,10 @@
 /gitlab            https://gitlab.com/flessan 302
 /repo              https://github.com/flessan?tab=repositories 302
 
+# fix workapp
+/kerja/kerja       https://thio.cc.cd/kerja
+/kerja/projects    https://thio.cc.cd/projects
+
 # support the work
 /sponsor           https://github.com/sponsors/flessan 302
 /patreon           https://patreon.com/flessan 302
