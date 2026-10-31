@@ -267,4 +267,120 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 @media (max-width: 720px) { .archive-hero { grid-template-columns: 1fr; margin-bottom: 2.2rem; } .category-select { display: flex; } .category-chips { display: none; } .hero-note { padding: 1rem; } .note-number { font-size: 3.3rem; } .section-heading { align-items: flex-start; flex-direction: column; gap: 0.35rem; } .archive-controls { grid-template-columns: 1fr; } .featured-card { grid-template-columns: 1fr; } .featured-image, .featured-image img { min-height: 0; height: auto; aspect-ratio: 16 / 8; } .featured-body { min-height: 18rem; } }
 @media (max-width: 520px) { .article-grid { grid-template-columns: 1fr; } .hero-copy h1 { font-size: clamp(2rem, 10vw, 3rem); } .hero-links { width: 100%; } .hero-link { flex: 1 1 auto; } .article-grid { gap: 0.8rem; } .card-image { aspect-ratio: 16 / 8; } .card-body { padding: 0.95rem; } .featured-body { min-height: 0; } }
 @media (prefers-reduced-motion: reduce) { .hero-link, .featured-card, .article-card, .featured-image img, .card-image img, .category-chips button { transition: none; } .hero-link:hover, .featured-image:hover img, .card-image:hover img { transform: none; } }
+
+/* Editorial refresh */
+.archive-hero {
+  position: relative;
+  gap: clamp(1.25rem, 3.5vw, 3rem);
+  margin-bottom: clamp(2rem, 5vw, 3.4rem);
+  border-radius: 22px;
+  background: var(--vp-c-bg-alt);
+  box-shadow: 0 12px 34px rgba(20, 35, 25, 0.045);
+}
+.archive-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: clamp(1.15rem, 3vw, 2rem);
+  width: 3.2rem;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+  background: var(--vp-c-brand-1);
+}
+.hero-copy h1 {
+  max-width: 13ch;
+  line-height: 1.02;
+}
+.hero-note {
+  border-radius: 15px;
+  background: var(--vp-c-bg-elv);
+}
+.note-number { letter-spacing: -0.085em; }
+.archive-section { padding-top: 0.3rem; }
+.section-heading { margin-bottom: 1rem; }
+.section-heading h2 { letter-spacing: -0.045em; }
+.search-field,
+.category-select {
+  min-height: 3.2rem;
+  border-radius: 12px;
+  background: var(--vp-c-bg-elv);
+}
+.search-field:focus-within,
+.category-select:focus-within { box-shadow: 0 0 0 3px var(--vp-c-brand-soft); }
+.category-chips button {
+  min-height: 2.25rem;
+  padding-inline: 0.85rem;
+  background: var(--vp-c-bg-alt);
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+.category-chips button:hover { transform: translateY(-1px); }
+.featured-card,
+.article-card {
+  border-radius: 17px;
+  background: var(--vp-c-bg-alt);
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), border-color 180ms ease, box-shadow 260ms ease, background-color 220ms ease;
+}
+.featured-card:hover,
+.article-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg-elv);
+  box-shadow: 0 14px 30px rgba(20, 35, 25, 0.075);
+}
+.featured-image,
+.card-image { background: var(--vp-c-bg-soft); }
+.featured-image img,
+.card-image img {
+  transition: transform 850ms cubic-bezier(0.16, 1, 0.3, 1), filter 450ms ease;
+}
+.featured-card:hover .featured-image img,
+.article-card:hover .card-image img { transform: scale(1.045); }
+.featured-body h3,
+.card-body h3 { letter-spacing: -0.04em; line-height: 1.28; }
+.card-body { padding: 1.1rem; }
+.article-description { line-height: 1.7; }
+.topic-list span {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+}
+.read-link { transition: gap 180ms ease, color 180ms ease; }
+.read-link:hover { gap: 0.55rem; text-decoration: none; }
+.empty-state {
+  border-color: var(--vp-c-divider);
+  background: var(--vp-c-bg-alt);
+}
+.archive-footer {
+  margin-top: 2.5rem;
+  padding-top: 1.35rem;
+}
+@keyframes archive-card-arrive {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.featured-card,
+.article-card {
+  animation: archive-card-arrive 540ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.article-card:nth-child(2) { animation-delay: 35ms; }
+.article-card:nth-child(3) { animation-delay: 70ms; }
+.article-card:nth-child(4) { animation-delay: 105ms; }
+.article-card:nth-child(5) { animation-delay: 140ms; }
+.article-card:nth-child(6) { animation-delay: 175ms; }
+.article-card:nth-child(7) { animation-delay: 210ms; }
+.article-card:nth-child(8) { animation-delay: 245ms; }
+@media (max-width: 720px) {
+  .archive-hero { border-radius: 18px; padding: 1.25rem; }
+  .featured-body { min-height: 0; }
+  .featured-card:hover,
+  .article-card:hover { transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .featured-card,
+  .article-card { animation: none; }
+  .category-chips button:hover,
+  .featured-card:hover,
+  .article-card:hover { transform: none; }
+}
+
 </style>
