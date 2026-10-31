@@ -1,31 +1,17 @@
 ---
 title: Home
-description: Flessan (M. Thio Saputra) - self-taught web developer & automation engineer from Banjarmasin, Indonesia. Projects, writing, and communities.
+description: Flessan (M. Thio Saputra) - developer, automation tinkerer, and builder from Banjarmasin, Indonesia.
 ---
 
-<BlogCover src="/images/flessan-banner.webp" />
+<HomeHero />
 
-## Welcome!
+## Live activity
 
-My name is M. Thio Saputra - known online as **Flessan**. Here you'll find my adventures around the web, automation, open source, and the Geometry Dash community.
+<LanyardActivity />
 
-I'm a self-taught web developer & automation engineer from Banjarmasin, Indonesia. I build and deploy fast, scalable static and dynamic web applications, and I'm currently a student in the RPL (Software Engineering) program at SMKN 4 Banjarmasin.
+<LatestUpdate />
 
-My biggest adventure so far is [GDIPS](./gdips.md), the open-source, community-driven Geometry Dash Indonesia Private Server.
-
-Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Copy email"></CopyButton> - or join the [GDIPS Discord](https://discord.gg/6HEyQBcM6E)<CopyButton text="https://discord.gg/6HEyQBcM6E" label="Copy invite"></CopyButton>.
-
-*Tip: press **Ctrl K** (or **/**) anywhere on this site to search everything.*
-
-## Your workspace
-
-<KerjaLaunch />
-
-<LanyardActivity></LanyardActivity>
-
-<LatestUpdate></LatestUpdate>
-
-## Latest Posts
+## Fresh from the workbench
 
 <BlogPost image="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&h=840&q=85" category="Language design">
 
@@ -59,26 +45,10 @@ Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Cop
 
 </BlogPost>
 
-**[hello, internet](./blog/hello-internet.md)**
-<br>A new home at thio.cc.cd - who I am, and what this site will hold
-<br>September 8, 2026
+<p class="home-more-writing"><a href="/blog">Browse all writing <span aria-hidden="true">↗</span></a><span>New notes from the workbench, whenever something is worth sharing.</span></p>
 
-Checkout all posts at the [Blog](./blog.md) - or subscribe with [RSS](./feed.xml).
-<GithubActivity :limit="3"></GithubActivity>
+<GithubActivity :limit="3" />
 
-## Other resources
+## Explore more
 
-**[GDIPS](https://gdips.pages.dev)**
-<br>Open-source, community-driven Geometry Dash Indonesia Private Server
-
-**[My GitHub](https://github.com/flessan)**
-<br>All 47 public repositories - tools, experiments, and community projects
-
-**[teksreceh](https://text.thio.qzz.io)**
-<br>Generator Teks Paling Ngaco Se-Indonesia
-
-**[resontune](https://tune.thio.cc.cd)**
-<br>Community-driven music, without the paywall
-
-**[My writing on Hashnode](https://fless.hashnode.dev)**
-<br>Longer write-ups about tools and builds
+<HomeLinks />

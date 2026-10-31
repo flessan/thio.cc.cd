@@ -136,4 +136,41 @@ function openSearch() {
   color: var(--vp-c-brand-1);
   font-weight: 500;
 }
+
+.nf {
+  box-sizing: border-box;
+  max-width: 38rem;
+  padding: clamp(3.5rem, 8vw, 6rem) 1.5rem 6rem;
+}
+.nf-art {
+  max-width: 240px;
+  margin-bottom: 1.8rem;
+  border-radius: 16px;
+}
+.nf-code {
+  color: var(--vp-c-brand-1);
+  font-size: clamp(4.5rem, 12vw, 6rem);
+  font-weight: 820;
+  letter-spacing: -0.09em;
+}
+.nf-title {
+  margin-top: 1rem;
+  font-size: clamp(1.7rem, 5vw, 2.1rem);
+  letter-spacing: -0.045em;
+}
+.nf-actions { gap: 0.6rem; }
+.nf-btn {
+  min-height: 2.8rem;
+  border-radius: 11px;
+  padding: 0.65rem 1rem;
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+.nf-btn:hover { transform: translateY(-2px); }
+.nf-btn-primary { box-shadow: 0 6px 15px rgba(35, 93, 59, 0.15); }
+.nf-links { margin-top: 2.2rem; line-height: 2; }
+@media (prefers-reduced-motion: reduce) {
+  .nf-btn,
+  .nf-btn:hover { transition: none; transform: none; }
+}
+
 </style>

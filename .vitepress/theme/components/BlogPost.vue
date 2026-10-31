@@ -7,51 +7,61 @@ defineProps<{
 
 <template>
   <article class="container" :class="{ 'has-image': image }">
-    <img v-if="image" :src="image" loading="lazy" decoding="async" alt="" />
+    <div v-if="image" class="post-image" aria-hidden="true">
+      <img :src="image" loading="lazy" decoding="async" alt="" />
+    </div>
     <div v-else class="category-cover" aria-hidden="true">
       <span>{{ category || 'BUILD NOTES' }}</span>
     </div>
     <div class="post-content">
+      <p v-if="category" class="post-category">{{ category }}</p>
       <slot />
     </div>
+    <span class="post-arrow" aria-hidden="true">↗</span>
   </article>
 </template>
 
 <style scoped>
 .container {
-  display: flex;
-  gap: 1.5rem;
-  margin: 1.25rem 0;
-  background-color: var(--vp-c-bg-alt);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 0.85rem;
-  align-items: center;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(190px, 30%) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  min-width: 0;
+  margin: 1rem 0;
   overflow: hidden;
-  transition:
-    border-color 280ms ease,
-    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 280ms ease,
-    box-shadow 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 17px;
+  background: var(--vp-c-bg-alt);
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), border-color 180ms ease, background-color 220ms ease, box-shadow 260ms ease;
 }
 
 .container:hover {
+  transform: translateY(-3px);
   border-color: var(--vp-c-brand-1);
-  transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(20, 35, 25, 0.10);
+  background: var(--vp-c-bg-elv);
+  box-shadow: 0 13px 28px rgba(20, 35, 25, 0.075);
 }
 
-img,
+.post-image,
 .category-cover {
-  flex: 0 0 30%;
-  width: 30%;
-  min-height: 10rem;
-  height: 10rem;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 175px;
+  overflow: hidden;
+  background: var(--vp-c-brand-soft);
 }
 
 img {
   display: block;
-  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  height: 100%;
+  min-height: 175px;
+  object-fit: cover;
+  transition: transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .container:hover img {
@@ -59,76 +69,125 @@ img {
 }
 
 .category-cover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-sizing: border-box;
   padding: 1.25rem;
-  background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-1);
   text-align: center;
-  font-size: 0.78rem;
-  font-weight: 750;
-  letter-spacing: 0.09em;
-  line-height: 1.5;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1.55;
   text-transform: uppercase;
 }
 
 .post-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   min-width: 0;
-  flex: 1;
-  padding: 1.2rem 1.35rem 1.2rem 0;
+  padding: 1.25rem 2.1rem 1.25rem 1.4rem;
+}
+
+.post-category {
+  margin: 0 0 0.45rem;
+  color: var(--vp-c-brand-1);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
 }
 
 .post-content :deep(p) {
-  margin: 0.35rem 0;
+  margin: 0.3rem 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.84rem;
   line-height: 1.65;
 }
 
-.post-content :deep(p:first-child) {
-  margin-top: 0;
+.post-content :deep(p strong) {
+  display: inline-block;
+  color: var(--vp-c-text-1);
+  font-size: 1.04rem;
+  font-weight: 740;
+  letter-spacing: -0.025em;
+  line-height: 1.4;
+}
+
+.post-content :deep(p strong a) {
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  transition: color 180ms ease;
+}
+
+.post-content :deep(p strong a:hover) {
+  color: var(--vp-c-brand-1);
 }
 
 .post-content :deep(p:last-child) {
-  margin-bottom: 0;
+  color: var(--vp-c-text-3);
+  font-size: 0.72rem;
 }
 
-.post-content :deep(a) {
-  text-underline-offset: 0.18em;
+.post-arrow {
+  position: absolute;
+  top: 1rem;
+  right: 1.15rem;
+  color: var(--vp-c-text-3);
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translate(-3px, 3px);
+  transition: opacity 180ms ease, transform 220ms ease, color 180ms ease;
 }
 
-@media (max-width: 768px) {
+.container:hover .post-arrow {
+  color: var(--vp-c-brand-1);
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+@media (max-width: 680px) {
   .container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    margin: 1rem 0;
+    grid-template-columns: 1fr;
+    border-radius: 14px;
   }
 
-  img,
+  .post-image,
   .category-cover {
-    flex: none;
-    width: 100%;
-    height: auto;
-    min-height: 5.5rem;
-    max-height: 12rem;
+    min-height: 0;
+    max-height: 165px;
+    aspect-ratio: 16 / 7;
   }
 
-  .category-cover {
-    padding: 1.1rem;
+  img {
+    min-height: 0;
+    max-height: 165px;
   }
 
   .post-content {
-    padding: 1rem 1.1rem 1.1rem;
+    padding: 1rem 1.05rem 1.1rem;
+  }
+
+  .post-arrow {
+    top: auto;
+    right: 1rem;
+    bottom: 1rem;
+    opacity: 1;
+    transform: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .container {
+  .container,
+  img,
+  .post-arrow,
+  .post-content :deep(p strong a) {
     transition: none;
   }
 
-  .container:hover {
+  .container:hover,
+  .container:hover img {
     transform: none;
   }
 }
