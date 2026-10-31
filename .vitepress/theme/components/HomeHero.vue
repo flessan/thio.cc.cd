@@ -278,8 +278,7 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@media (prefers-color-scheme: dark) {
-  :global(html.dark) .home-hero {
+:global(html.dark) .home-hero {
     --hero-ink: #e8efe9;
     --hero-muted: #a7b5aa;
     --hero-green: #a3d1b0;
@@ -327,7 +326,6 @@
   :global(html.dark) .home-hero__orbit {
     border-color: rgba(185, 211, 190, 0.16);
   }
-}
 
 @media (max-width: 760px) {
   .home-hero {
