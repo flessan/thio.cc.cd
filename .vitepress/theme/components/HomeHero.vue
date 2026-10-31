@@ -23,6 +23,12 @@
         <span>Linux</span>
         <span>Open source</span>
       </div>
+      <p class="home-hero__contact">
+        Want to connect?
+        <a href="mailto:tio@cc.cc">Send me an email</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://discord.gg/6HEyQBcM6E" target="_blank" rel="noopener noreferrer">Join the community</a>
+      </p>
     </div>
 
     <div class="home-hero__visual">
@@ -189,6 +195,22 @@
   font-size: 0.68rem;
   font-weight: 620;
 }
+.home-hero__contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin: 1rem 0 0;
+  color: var(--hero-muted);
+  font-size: 0.74rem;
+}
+.home-hero__contact a {
+  color: var(--hero-green);
+  font-weight: 700;
+  text-decoration: none;
+  text-underline-offset: 0.18em;
+}
+.home-hero__contact a:hover { text-decoration: underline; }
 
 .home-hero__visual {
   position: relative;
