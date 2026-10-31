@@ -23,13 +23,55 @@ const links = [
     description: 'A little more about the person behind the projects.',
     href: '/about',
     label: 'PROFILE'
+  },
+  {
+    title: 'GDIPS',
+    description: 'The Geometry Dash community project I help build.',
+    href: 'https://gdips.pages.dev',
+    label: 'COMMUNITY',
+    external: true
+  },
+  {
+    title: 'GitHub',
+    description: 'Repositories, experiments, and things in progress.',
+    href: 'https://github.com/flessan',
+    label: 'CODE',
+    external: true
+  },
+  {
+    title: 'ResonTune',
+    description: 'A community-driven music project.',
+    href: 'https://tune.thio.cc.cd',
+    label: 'MUSIC',
+    external: true
+  },
+  {
+    title: 'teksreceh',
+    description: 'A little museum of Indonesian internet typing.',
+    href: 'https://text.thio.qzz.io',
+    label: 'CULTURE',
+    external: true
+  },
+  {
+    title: 'Hashnode',
+    description: 'Longer write-ups and notes from the workbench.',
+    href: 'https://fless.hashnode.dev',
+    label: 'WRITING',
+    external: true
   }
 ]
 </script>
 
 <template>
-  <nav class="home-links" aria-label="Explore the site">
-    <a v-for="(link, index) in links" :key="link.href" class="home-links__item" :href="link.href">
+  <nav class="home-links" aria-label="Explore the site and projects">
+    <a
+      v-for="(link, index) in links"
+      :key="link.href"
+      class="home-links__item"
+      :href="link.href"
+      :target="link.external ? '_blank' : undefined"
+      :rel="link.external ? 'noopener noreferrer' : undefined"
+    >
       <span class="home-links__number">{{ String(index + 1).padStart(2, '0') }}</span>
       <span class="home-links__body">
         <span class="home-links__label">{{ link.label }}</span>
@@ -122,13 +164,8 @@ const links = [
 
 @media (prefers-reduced-motion: reduce) {
   .home-links__item,
-  .home-links__arrow {
-    transition: none;
-  }
-
+  .home-links__arrow { transition: none; }
   .home-links__item:hover,
-  .home-links__item:hover .home-links__arrow {
-    transform: none;
-  }
+  .home-links__item:hover .home-links__arrow { transform: none; }
 }
 </style>
