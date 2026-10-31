@@ -154,4 +154,49 @@ onMounted(load)
   color: var(--vp-c-text-3);
   font-size: 0.78rem;
 }
+
+/* A compact update panel that matches the rest of the site surfaces. */
+.lu {
+  margin: 0.65rem 0 1.8rem;
+  padding: 1.1rem 1.15rem 1rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 15px;
+  background: var(--vp-c-bg-alt);
+  animation: update-card-arrive 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.lu-title {
+  margin: 0 0 0.8rem;
+  padding: 0;
+  border: 0;
+  color: var(--vp-c-text-1);
+  font-size: 0.85rem;
+  font-weight: 760;
+  letter-spacing: -0.015em;
+}
+.lu-card {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 11px;
+  padding: 1rem 1.05rem;
+  background: var(--vp-c-bg-elv);
+}
+.lu-meta { margin-bottom: 0.5rem; }
+.lu-when { font-variant-numeric: tabular-nums; }
+.lu-links { margin-top: 0.75rem; }
+.lu-note { margin-top: 0.45rem; line-height: 1.55; }
+.lu-refresh {
+  padding: 0.15rem 0.3rem;
+  border-radius: 5px;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.lu-refresh:hover {
+  background: var(--vp-c-brand-soft);
+}
+@keyframes update-card-arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lu { animation: none; }
+}
+
 </style>
