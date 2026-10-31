@@ -1345,4 +1345,87 @@ kbd {
     transform: none;
   }
 }
+
+/* Consistent micro-interactions and a calmer, layered workspace surface. */
+.kerja-shell {
+  transition: background-color 240ms ease, color 240ms ease;
+}
+.workspace-header { min-height: 38px; }
+.hero { position: relative; }
+.hero .eyebrow { letter-spacing: 0.19em; }
+.hero h1 { line-height: 1.06; text-wrap: balance; }
+.search-form {
+  min-height: 66px;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgb(28 52 34 / 5%);
+}
+.search-form:focus-within {
+  box-shadow: 0 0 0 4px var(--workspace-accent-soft), 0 12px 30px rgb(28 52 34 / 5%);
+}
+.theme-button,
+.enter-key,
+.search-submit,
+.panel-close,
+.custom-accent-control input {
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+.theme-button:hover,
+.enter-key:hover,
+.panel-close:hover { transform: translateY(-1px); }
+.shortcut-group h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.shortcut-group h3::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--workspace-border);
+}
+.shortcut-card {
+  min-height: 80px;
+  border-radius: 16px;
+  box-shadow: 0 2px 7px rgb(28 52 34 / 2%);
+}
+.shortcut-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgb(28 52 34 / 7%);
+}
+.shortcut-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+}
+.theme-panel {
+  border-radius: 20px;
+  box-shadow: 0 22px 60px rgb(18 28 20 / 18%);
+}
+.palette-option,
+.mode-options button {
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 180ms ease;
+}
+.palette-option:hover,
+.mode-options button:hover { transform: translateY(-1px); }
+@keyframes kerja-section-arrive {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: kerja-section-arrive 560ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.shortcuts-section { animation: kerja-section-arrive 620ms 80ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (max-width: 520px) {
+  .search-form { min-height: 60px; border-radius: 16px; }
+  .shortcut-card { min-height: 72px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .shortcuts-section { animation: none; }
+  .theme-button:hover,
+  .enter-key:hover,
+  .panel-close:hover,
+  .palette-option:hover,
+  .mode-options button:hover,
+  .shortcut-card:hover { transform: none; }
+}
+
 </style>
