@@ -701,7 +701,7 @@ onUnmounted(() => {
                 <p>{{ spotify.artist || 'Unknown artist' }}</p>
                 <div class="activity-progress-line">
                   <span>{{ elapsedTime }}</span>
-                  <div class="activity-progress"><i :style="{ width: songProgress + '%' }"></i></div>
+                  <div class="activity-progress"><i :style="{ transform: `scaleX(${songProgress / 100})` }"></i></div>
                   <span>{{ totalTime }}</span>
                 </div>
               </div>
@@ -1065,7 +1065,7 @@ onUnmounted(() => {
 .activity-track-info p { margin: 0; color: var(--discord-text-soft); font-size: .75rem; line-height: 1.4; overflow-wrap: anywhere; }
 .activity-progress-line { display: flex; align-items: center; gap: .5rem; margin-top: .55rem; color: var(--discord-text-soft); font-size: .68rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .activity-progress { height: 3px; flex: 1; min-width: 20px; overflow: hidden; border-radius: 99px; background: var(--discord-border-strong); }
-.activity-progress i { display: block; height: 100%; border-radius: inherit; background: var(--discord-text); transition: width 800ms linear; }
+.activity-progress i { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--discord-text); transform-origin: 0 50%; transition: transform 800ms linear; }
 .activity-card-open { align-self: flex-start; color: var(--discord-muted); font-size: .72rem; }
 .activity-card-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: .5rem; margin-top: .7rem; padding-top: .55rem; border-top: 1px solid var(--discord-subtle-divider); }
 .text-action { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem 0; border: 0; background: transparent; color: var(--discord-label); font: inherit; font-size: .67rem; cursor: pointer; text-decoration: none !important; transition: color 180ms ease; }

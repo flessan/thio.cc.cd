@@ -479,7 +479,6 @@ function playFlip(previous: Map<string, DOMRect>) {
       animate(card, {
         opacity: [0, 1],
         scale: [0.9, 1],
-        rotate: profile.expressive ? [-2, 0] : 0,
         duration: Math.round(460 * profile.duration),
         delay: Math.round(order++ * 22 * profile.delay),
         ease: 'outBack(1.6)'
@@ -593,7 +592,6 @@ onMounted(async () => {
     opacity: [0, 1],
     y: [Math.round(10 * profile.travel), 0],
     scale: [0.92, 1],
-    rotate: profile.expressive ? [-1.2, 0] : 0,
     duration: Math.round(520 * profile.duration),
     delay: stagger(Math.round(18 * profile.delay), { start: 260 }),
     ease: 'outBack(1.4)',
@@ -1172,9 +1170,11 @@ onBeforeUnmount(() => {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: color-mix(in srgb, var(--md-surface) 90%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
-  backdrop-filter: blur(16px) saturate(120%);
+  /* An opaque tonal surface instead of a live backdrop blur: blurring the
+     scrolling page underneath is the single most expensive thing a sticky bar
+     can do, and Material 3 surfaces are solid anyway. */
+  background: var(--md-surface);
+  box-shadow: 0 1px 0 var(--md-outline-variant);
 }
 
 .k-appbar-inner {

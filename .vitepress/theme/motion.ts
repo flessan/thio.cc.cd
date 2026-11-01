@@ -73,6 +73,9 @@ const INTRO_SELECTORS = [
 
 let scope: Scope | null = null
 let mutationObserver: MutationObserver | null = null
+let lastMotionPath = ''
+let ambientObserver: IntersectionObserver | null = null
+let revealObserver: IntersectionObserver | null = null
 let routeAnimation: JSAnimation | null = null
 let routeGuard: number | undefined
 let splitters: Array<{ revert: () => void }> = []
@@ -123,6 +126,8 @@ function startTicker(hero: HTMLElement) {
 
 /** Put an element back into its stylesheet state (used by the safety net). */
 function restoreElement(element: HTMLElement) {
+  element.classList.remove('motion-pending', 'reveal-pending', 'is-revealed')
+  element.style.removeProperty('transition-delay')
   element.style.removeProperty('opacity')
   element.style.removeProperty('translate')
   element.style.removeProperty('scale')
@@ -138,6 +143,66 @@ function releaseTransforms(elements: HTMLElement[]) {
     element.style.removeProperty('translate')
     element.style.removeProperty('scale')
     element.style.removeProperty('rotate')
+    element.classList.remove('motion-pending')
+    element.classList.add('motion-done')
+  })
+}
+
+/** Promote an element for the duration of its entrance, then let it go. */
+function promote(elements: HTMLElement[]) {
+  elements.forEach((element) => element.classList.add('motion-pending'))
+}
+
+/**
+ * Scroll reveals are plain CSS transitions on `opacity` + `translate`:
+ * compositor-only work, no per-element JS animation, and nothing that can be
+ * reverted mid-flight and leave a block invisible.
+ */
+function prepareReveal(element: HTMLElement) {
+  element.classList.add('reveal-pending')
+}
+
+let sweepFrame = 0
+
+/**
+ * Fast scrolling (Home/End, restored scroll positions, anchor jumps) can skip a
+ * block entirely: it was never intersecting, so the observer never fires. Sweep
+ * anything that is now *above* the viewport and reveal it straight away.
+ */
+function sweepSkippedReveals() {
+  sweepFrame = 0
+  const pending = Array.from(document.querySelectorAll<HTMLElement>('.reveal-pending'))
+  if (!pending.length) {
+    window.removeEventListener('scroll', onRevealScroll)
+    return
+  }
+  const skipped = pending.filter((element) => element.getBoundingClientRect().bottom < 0)
+  if (skipped.length) revealNow(skipped)
+}
+
+let lastSweep = 0
+
+function onRevealScroll() {
+  // A short throttle is enough for a safety net and keeps scrolling free.
+  const now = performance.now()
+  if (sweepFrame || now - lastSweep < 120) return
+  lastSweep = now
+  sweepFrame = window.requestAnimationFrame(sweepSkippedReveals)
+}
+
+function watchSkippedReveals() {
+  window.addEventListener('scroll', onRevealScroll, { passive: true })
+}
+
+function revealNow(elements: HTMLElement[], staggerStep = 0) {
+  elements.forEach((element, index) => {
+    const delay = staggerStep * index
+    if (delay) element.style.transitionDelay = `${delay}ms`
+    element.classList.add('is-revealed')
+    window.setTimeout(() => {
+      element.classList.remove('reveal-pending', 'is-revealed')
+      element.style.removeProperty('transition-delay')
+    }, 1500 + delay)
   })
 }
 
@@ -165,6 +230,13 @@ function teardown() {
   routeAnimation = null
   mutationObserver?.disconnect()
   mutationObserver = null
+  ambientObserver?.disconnect()
+  ambientObserver = null
+  revealObserver?.disconnect()
+  revealObserver = null
+  window.removeEventListener('scroll', onRevealScroll)
+  if (sweepFrame) window.cancelAnimationFrame(sweepFrame)
+  sweepFrame = 0
   try {
     scope?.revert()
   } catch {
@@ -256,6 +328,7 @@ function animateHero(hero: HTMLElement) {
   ].filter((element): element is HTMLElement => Boolean(element))
 
   introTargets.forEach((element) => (element.dataset.motionTarget = 'true'))
+  promote(introTargets)
   utils.set(introTargets, { opacity: 0 })
 
   // Split the subtitle so it can arrive as a soft wave.
@@ -299,7 +372,6 @@ function animateHero(hero: HTMLElement) {
       {
         opacity: [0, 1],
         y: [V(40), 0],
-        scale: [0.96, 1],
         duration: D(920),
         ease: 'outExpo'
       },
@@ -346,7 +418,6 @@ function animateHero(hero: HTMLElement) {
       {
         opacity: [0, 1],
         y: [V(44), 0],
-        scale: [0.9, 1],
         rotate: [-3.5 * profile.travel, 0],
         duration: D(1180),
         ease: 'outBack(1.25)',
@@ -411,6 +482,11 @@ function animateHero(hero: HTMLElement) {
     )
   }
 
+  // Release the compositor hints once the entrance is over.
+  void timeline.then(() => {
+    introTargets.forEach((element) => element.classList.remove('motion-pending'))
+  })
+
   // Uppercase status line scrambles in (anime.js text API).
   if (chipText) {
     try {
@@ -449,46 +525,28 @@ function animateHero(hero: HTMLElement) {
     })
   })
 
-  // Ambient shape morph — the Material Expressive signature.
+  // Ambient motion is deliberately transform-only: one animation per blob, so
+  // every frame writes a single composited transform. Morphing border-radius
+  // (the old approach) repainted a 400px area every frame and stuttered.
+  const ambient: JSAnimation[] = []
   shapes.forEach((shape, index) => {
     try {
-      animate(shape, {
-        borderRadius: [
-          '42% 58% 63% 37% / 41% 44% 56% 59%',
-          '58% 42% 38% 62% / 55% 39% 61% 45%',
-          '42% 58% 63% 37% / 41% 44% 56% 59%'
-        ],
-        duration: Math.round(
-          (9000 + index * 1600) * (profile.expressive ? 1.7 : 1)
-        ),
-        loop: true,
-        ease: 'inOutSine',
-        delay: T(900 + index * 220)
-      })
-      animate(shape, {
-        rotate: index % 2 === 0 ? [0, 24] : [0, -20],
-        scale: [1, profile.expressive ? 1.06 : 1.04],
-        duration: Math.round(
-          (6400 + index * 900) * (profile.expressive ? 1.7 : 1)
-        ),
-        loop: true,
-        alternate: true,
-        ease: 'inOutSine',
-        delay: T(1000 + index * 260)
-      })
-      if (profile.expressive) {
-        // Extra layer: the blobs drift up and down like slow lava. The
-        // draggable blob owns its own translate, so it is left alone.
-        if (shape.classList.contains('hero-shape-a')) return
+      const period = Math.round(
+        (7200 + index * 1100) * (profile.expressive ? 1.7 : 1.2)
+      )
+      const drift = profile.expressive && !shape.classList.contains('hero-shape-a')
+      ambient.push(
         animate(shape, {
-          y: [-(6 + index * 5), 6 + index * 5],
-          duration: Math.round((5200 + index * 900) * profile.duration),
+          rotate: index % 2 === 0 ? [-2.5, 2.5] : [2.5, -2.5],
+          scale: [1, profile.expressive ? 1.045 : 1.025],
+          ...(drift ? { y: [-(5 + index * 4), 5 + index * 4] } : {}),
+          duration: period,
           loop: true,
           alternate: true,
           ease: 'inOutSine',
-          delay: T(1800 + index * 300)
+          delay: T(1100 + index * 260)
         })
-      }
+      )
     } catch {
       /* ambient motion is a bonus */
     }
@@ -497,13 +555,13 @@ function animateHero(hero: HTMLElement) {
   // Scroll-linked drift on the art panel, without fighting the entrance.
   if (art) {
     animate(art, {
-      y: ['0%', profile.expressive ? '11%' : '7%'],
+      y: ['0%', profile.expressive ? '8%' : '5%'],
       ease: 'linear',
       autoplay: onScroll({
         target: hero,
         enter: { target: 'top', container: 'top' },
         leave: { target: 'bottom', container: 'top' },
-        sync: 0.35
+        sync: 0.3
       })
     })
   }
@@ -511,24 +569,28 @@ function animateHero(hero: HTMLElement) {
   // Expressive gets a second, quieter layer of ambient motion on the art.
   if (profile.expressive && figure) {
     try {
-      animate(figure, {
-        scale: [1, 1.035],
-        duration: 9600,
-        loop: true,
-        alternate: true,
-        ease: 'inOutSine',
-        delay: 2400
-      })
-      if (badge) {
-        animate(badge, {
-          y: [-4, 4],
-          rotate: [-1.4, 1.4],
-          duration: 5600,
+      ambient.push(
+        animate(figure, {
+          scale: [1, 1.03],
+          duration: 9600,
           loop: true,
           alternate: true,
           ease: 'inOutSine',
-          delay: 2600
+          delay: 2400
         })
+      )
+      if (badge) {
+        ambient.push(
+          animate(badge, {
+            y: [-4, 4],
+            rotate: [-1.4, 1.4],
+            duration: 5600,
+            loop: true,
+            alternate: true,
+            ease: 'inOutSine',
+            delay: 2600
+          })
+        )
       }
       if (search) {
         // A single soft settle after the entrance, not a loop.
@@ -542,6 +604,26 @@ function animateHero(hero: HTMLElement) {
     } catch {
       /* ambient motion is a bonus */
     }
+  }
+
+  // Off-screen loops are wasted work: pause them when the hero scrolls away so
+  // the compositor has nothing left to do, and resume on the way back.
+  if (ambient.length && typeof IntersectionObserver === 'function') {
+    ambientObserver = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[entries.length - 1]
+        ambient.forEach((animation) => {
+          try {
+            if (entry.isIntersecting) animation.resume()
+            else animation.pause()
+          } catch {
+            /* keep the page usable whatever happens */
+          }
+        })
+      },
+      { rootMargin: '120px' }
+    )
+    ambientObserver.observe(hero)
   }
 
   // Expressive: one draggable shape on precise pointers.
@@ -569,8 +651,6 @@ const motionLevelPlayful = () =>
 /** Reveal direct children of the markdown body as they enter the viewport. */
 function revealContent(hero: HTMLElement | null) {
   const profile = motionProfile()
-  const duration = Math.round(780 * profile.duration)
-  const travel = Math.round(18 * profile.travel)
 
   const candidates = Array.from(
     document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR)
@@ -585,45 +665,37 @@ function revealContent(hero: HTMLElement | null) {
   candidates.forEach((element) => {
     element.dataset.motionSeen = 'true'
     element.dataset.motionTarget = 'true'
+    prepareReveal(element)
     const rect = element.getBoundingClientRect()
     if (rect.top < viewport * 0.94 && rect.bottom > -40) inView.push(element)
     else below.push(element)
   })
 
   if (inView.length) {
-    utils.set(inView, {
-      opacity: 0,
-      y: travel,
-      scale: profile.expressive ? 0.985 : 1
-    })
-    animate(inView, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration,
-      delay: stagger(Math.round(48 * profile.delay), {
-        start: Math.round(80 * profile.delay)
-      }),
-      ease: 'outQuint',
-      onComplete: () => releaseTransforms(inView)
-    })
+    const step = Math.round(70 * profile.delay)
+    window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() => revealNow(inView, step))
+    )
   }
 
-  below.forEach((element) => {
-    utils.set(element, { opacity: 0, y: Math.round(24 * profile.travel) })
-    animate(element, {
-      opacity: 1,
-      y: 0,
-      duration,
-      ease: 'outQuint',
-      onComplete: () => releaseTransforms([element]),
-      autoplay: onScroll({
-        target: element,
-        enter: { target: 'top', container: 'bottom' },
-        repeat: false
-      })
-    })
-  })
+  // Below-the-fold blocks reveal on intersection: one shared observer, zero
+  // work per scroll frame, and no way for a block to stay hidden if a scroll
+  // event is missed.
+  if (!revealObserver) {
+    revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          const element = entry.target as HTMLElement
+          revealObserver?.unobserve(element)
+          revealNow([element])
+        })
+      },
+      { rootMargin: '0px 0px -4% 0px', threshold: 0.01 }
+    )
+  }
+
+  below.forEach((element) => revealObserver?.observe(element))
 }
 
 /** Async islands (GitHub, Telegram…) mount later; reveal them when they do. */
@@ -653,23 +725,26 @@ function watchLateContent() {
     fresh.forEach((element) => {
       element.dataset.motionSeen = 'true'
       element.dataset.motionTarget = 'true'
+      prepareReveal(element)
     })
-    const profile = motionProfile()
-    utils.set(fresh, { opacity: 0, y: Math.round(18 * profile.travel) })
-    animate(fresh, {
-      opacity: 1,
-      y: 0,
-      duration: Math.round(700 * profile.duration),
-      delay: stagger(Math.round(40 * profile.delay)),
-      ease: 'outQuint',
-      onComplete: () => releaseTransforms(fresh)
-    })
+    window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() =>
+        revealNow(fresh, Math.round(50 * motionProfile().delay))
+      )
+    )
   })
 
   mutationObserver.observe(root, { childList: true, subtree: true })
 }
 
-function runPageMotion() {
+function runPageMotion(force = false) {
+  // VitePress reports the first route change during hydration as well, which
+  // used to run the entrance twice: the second teardown reverted the first
+  // run's hidden state and quietly cancelled the scroll reveals. One run per
+  // route keeps the choreography intact; a motion-change re-run passes force.
+  const path = window.location.pathname + window.location.search
+  if (!force && path === lastMotionPath) return
+  lastMotionPath = path
   teardown()
 
   if (reducedMotion() || motionOff()) {
@@ -692,6 +767,7 @@ function runPageMotion() {
       }
     }
     revealContent(hero)
+    watchSkippedReveals()
     watchLateContent()
     armVisibilityFallback()
   })
@@ -725,7 +801,7 @@ export function installMotion(router?: Router) {
       teardown()
       showEverything()
     } else {
-      runPageMotion()
+      runPageMotion(true)
     }
   })
 
@@ -735,7 +811,7 @@ export function installMotion(router?: Router) {
     const next = document.documentElement.dataset.motion ?? 'playful'
     if (next === lastMotion) return
     lastMotion = next
-    runPageMotion()
+    runPageMotion(true)
   })
 
   if (!router) return
@@ -757,7 +833,6 @@ export function installMotion(router?: Router) {
     routeAnimation = animate('.vp-doc', {
       opacity: [1, 0],
       y: [0, -8 * profile.travel],
-      scale: profile.expressive ? [1, 0.985] : 1,
       duration: Math.round(190 * profile.duration),
       ease: 'inQuad'
     })
@@ -776,29 +851,7 @@ export function installMotion(router?: Router) {
 
   router.onAfterRouteChanged = () => {
     window.requestAnimationFrame(() =>
-      window.requestAnimationFrame(() => {
-        runPageMotion()
-        const profile = motionProfile()
-        if (!profile.expressive || reducedMotion()) return
-        const shell =
-          document.querySelector<HTMLElement>('#VPContent') ??
-          document.querySelector<HTMLElement>('.VPContent')
-        if (!shell) return
-        try {
-          animate(shell, {
-            opacity: [0.4, 1],
-            y: [12, 0],
-            duration: 560,
-            ease: 'outQuint',
-            onComplete: () => {
-              shell.style.removeProperty('opacity')
-              shell.style.removeProperty('translate')
-            }
-          })
-        } catch {
-          /* the entrance is decoration only */
-        }
-      })
+      window.requestAnimationFrame(runPageMotion)
     )
   }
 }

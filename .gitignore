@@ -13,3 +13,4 @@ node_modules
 # local QA artifacts
 /.tmp-ui
 /shots11
+/shots12

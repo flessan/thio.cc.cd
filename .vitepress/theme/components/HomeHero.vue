@@ -389,6 +389,9 @@ onUnmounted(() => {
   position: absolute;
   display: block;
   z-index: 0;
+  /* Ambient loops only ever move transforms, so promote them once and let the
+     compositor do the work instead of repainting the art panel. */
+  will-change: transform;
 }
 
 .hero-shape-a {

@@ -192,6 +192,8 @@ html[data-motion='playful'] {
   --md-duration-short: 240ms;
   --md-duration-medium: 440ms;
   --md-duration-long: 760ms;
+  --reveal-duration: 1250ms;
+  --reveal-y: 30px;
 }
 
 html[data-motion='calm'] {
@@ -749,9 +751,9 @@ button {
 }
 
 .VPNavBar:not(.top) {
-  background-color: var(--flessan-nav-glass) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
-  backdrop-filter: blur(16px) saturate(120%);
+  /* Opaque tonal surface: a live backdrop blur over scrolling content forces a
+     full-width recomposite every frame and makes the whole page stutter. */
+  background-color: var(--md-surface) !important;
   box-shadow: 0 1px 0 var(--md-outline-variant);
 }
 
@@ -1247,11 +1249,17 @@ button {
    16. Utilities & theme transition
    ========================================================================== */
 
+/* Slow, cinematic dark/light transition: a soft reveal grows from the toggle. */
 :root {
   --theme-toggle-x: 88vw;
   --theme-toggle-y: 32px;
-  --theme-transition-duration: 620ms;
-  --theme-transition-ease: cubic-bezier(0.2, 0, 0, 1);
+  --theme-transition-duration: 2800ms;
+  --theme-transition-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 html,
@@ -1263,9 +1271,11 @@ body,
 .vp-doc,
 .VPFooter,
 .VPSidebar {
-  transition: background-color 480ms var(--theme-transition-ease),
-    color 360ms var(--theme-transition-ease),
-    border-color 420ms var(--theme-transition-ease);
+  transition:
+    background-color 2200ms var(--theme-transition-ease),
+    color 1900ms var(--theme-transition-ease),
+    border-color 2000ms var(--theme-transition-ease),
+    box-shadow 2000ms var(--theme-transition-ease);
 }
 
 ::view-transition-group(root) {
@@ -1288,8 +1298,11 @@ body,
   0% {
     clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
   }
+  45% {
+    clip-path: circle(48vmax at var(--theme-toggle-x) var(--theme-toggle-y));
+  }
   100% {
-    clip-path: circle(140vmax at var(--theme-toggle-x) var(--theme-toggle-y));
+    clip-path: circle(150vmax at var(--theme-toggle-x) var(--theme-toggle-y));
   }
 }
 
@@ -1297,19 +1310,38 @@ body,
   0% {
     opacity: 1;
   }
+  55% {
+    opacity: 0.985;
+  }
   100% {
-    opacity: 0.92;
+    opacity: 0.96;
   }
 }
 
 .VPSwitchAppearance {
   border-radius: var(--md-shape-full) !important;
-  transition: transform var(--md-duration-medium) var(--md-ease-spring),
-    background-color 480ms var(--theme-transition-ease);
+  transform-origin: center;
+  transition:
+    transform 1000ms var(--theme-transition-ease),
+    background-color 1600ms var(--theme-transition-ease),
+    border-color 1600ms var(--theme-transition-ease),
+    box-shadow 1600ms var(--theme-transition-ease);
 }
 
 .VPSwitchAppearance:hover {
-  transform: rotate(-8deg) scale(1.06);
+  transform: rotate(-7deg) scale(1.06);
+}
+
+.VPSwitchAppearance:active {
+  transform: rotate(7deg) scale(0.94);
+}
+
+.VPSwitchAppearance svg {
+  transition: transform 1300ms var(--theme-transition-ease);
+}
+
+.VPSwitchAppearance:hover svg {
+  transform: rotate(28deg);
 }
 
 html.theme-switching .VPNavBar,
@@ -1320,12 +1352,35 @@ html.theme-switching .VPFooter {
 }
 
 .motion-pending {
-  opacity: 0;
+  /* Only a compositor hint: never hide content from CSS, because a reverted or
+     interrupted animation must always leave the page readable. */
   will-change: opacity, transform;
 }
 
 .motion-done {
   will-change: auto;
+}
+
+/* Scroll reveals are CSS transitions: compositor-driven, cheap, and nothing
+   that can be left half-applied by a cancelled JS animation. */
+.reveal-pending {
+  opacity: 0;
+  translate: 0 var(--reveal-y, 20px);
+  transition:
+    opacity var(--reveal-duration, 780ms) var(--md-ease-emphasized-decel),
+    translate var(--reveal-duration, 780ms) var(--md-ease-emphasized-decel);
+  will-change: opacity, translate;
+}
+
+.reveal-pending.is-revealed {
+  opacity: 1;
+  translate: 0 0;
+}
+
+html[data-motion='off'] .reveal-pending {
+  opacity: 1;
+  translate: none;
+  transition: none;
 }
 
 html[data-motion='off'] *,
@@ -1479,9 +1534,7 @@ html[data-density='compact'] .vp-doc > div > h2 {
 
 .VPLocalNav {
   border-bottom: 0;
-  background: color-mix(in srgb, var(--md-surface) 88%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
-  backdrop-filter: blur(14px) saturate(120%);
+  background: var(--md-surface);
 }
 
 .VPLocalNavOutlineDropdown {

@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const progress = ref(0)
 const copied = ref(false)
 const notice = ref('')
 const canShare = ref(false)
-
-function updateProgress() {
-  const scrollable = document.documentElement.scrollHeight - window.innerHeight
-  progress.value = scrollable > 0
-    ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100))
-    : 0
-}
 
 async function copyLink() {
   try {
@@ -41,29 +33,12 @@ async function shareArticle() {
 
 onMounted(() => {
   canShare.value = typeof navigator.share === 'function'
-  updateProgress()
-  window.addEventListener('scroll', updateProgress, { passive: true })
-  window.addEventListener('resize', updateProgress, { passive: true })
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', updateProgress)
-  window.removeEventListener('resize', updateProgress)
 })
 </script>
 
 <template>
   <div class="post-tools">
-    <div
-      class="reading-progress"
-      role="progressbar"
-      aria-label="Article reading progress"
-      :aria-valuenow="Math.round(progress)"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <span :style="{ width: progress + '%' }"></span>
-    </div>
+    <!-- The reading line lives once, at the top of the layout (ReadingProgress). -->
     <div class="share-actions">
       <span class="share-label">Share this article</span>
       <button type="button" @click="copyLink">
@@ -88,25 +63,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.reading-progress {
-  position: fixed;
-  z-index: 60;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--md-primary) 14%, transparent);
-  pointer-events: none;
-}
-.reading-progress span {
-  display: block;
-  height: 100%;
-  border-radius: 0 2px 2px 0;
-  background: var(--md-primary);
-  box-shadow: none;
-  transition: width 120ms linear;
-}
 .share-actions {
   display: flex;
   align-items: center;
@@ -164,9 +120,6 @@ onUnmounted(() => {
   margin: 0 0 2.4rem;
 }
 @media (prefers-reduced-motion: reduce) {
-  .reading-progress span {
-    transition: none;
-  }
   .share-actions button:hover,
   .share-actions button:active {
     transform: none;

@@ -1,75 +1,119 @@
 <script setup lang="ts">
 /**
  * A chunky reading-progress line for long-form pages.
- * Animated with anime.js so it eases instead of snapping, and disabled when the
- * visitor asked for less motion (or set the playground to "Still").
+ *
+ * The bar follows the scroll position with a damped animation loop instead of
+ * easing towards it per scroll event: one requestAnimationFrame loop writes a
+ * single `transform` (never `width` or `left`), so the line glides like a
+ * native progress indicator and stops costing anything once it settles.
+ * Disabled when the visitor asked for less motion (or set the playground to
+ * "Reduced").
  */
 import { onMounted, onUnmounted, ref } from 'vue'
-import { animate } from 'animejs'
 import { motionLevel } from '../effects'
 import { markHydrated } from '../hydration'
 
 const visible = ref(false)
+const track = ref<HTMLElement | null>(null)
 const bar = ref<HTMLElement | null>(null)
 const tip = ref<HTMLElement | null>(null)
-let frame = 0
-let current = 0
 
-function render(value: number) {
-  if (bar.value) bar.value.style.transform = `scaleX(${value})`
-  if (tip.value) tip.value.style.left = `${value * 100}%`
+let scrollFrame = 0
+let animFrame = 0
+let lastTime = 0
+let current = 0
+let target = 0
+let trackWidth = 0
+let maxScroll = 0
+
+function paint() {
+  if (bar.value) bar.value.style.transform = `scale3d(${current}, 1, 1)`
+  if (tip.value) tip.value.style.transform = `translate3d(${current * trackWidth}px, 0, 0)`
+}
+
+function step(time: number) {
+  // Frame-rate independent damping: the same feel at 60, 90 or 120 Hz.
+  const delta = lastTime ? Math.min(64, time - lastTime) : 16.667
+  lastTime = time
+  const factor = 1 - Math.pow(0.84, delta / 16.667)
+  current += (target - current) * factor
+
+  if (Math.abs(target - current) < 0.0005) {
+    current = target
+    paint()
+    animFrame = 0
+    lastTime = 0
+    return
+  }
+
+  paint()
+  animFrame = window.requestAnimationFrame(step)
+}
+
+function follow() {
+  if (motionLevel() === 'off') {
+    current = target
+    paint()
+    return
+  }
+  if (!animFrame) animFrame = window.requestAnimationFrame(step)
+}
+
+function measureTrack() {
+  if (!track.value) return
+  trackWidth = track.value.getBoundingClientRect().width
+  paint()
 }
 
 function measure() {
-  frame = 0
-  const doc = document.documentElement
-  const max = doc.scrollHeight - window.innerHeight
-  if (max < 260) {
+  scrollFrame = 0
+  const scrollY = window.scrollY
+  if (maxScroll < 260) {
     visible.value = false
     return
   }
-  const value = Math.min(1, Math.max(0, window.scrollY / max))
-  visible.value = window.scrollY > 80
-  if (Math.abs(value - current) < 0.002) return
-
-  if (motionLevel() === 'off') {
-    current = value
-    render(value)
-    return
-  }
-
-  current = value
-  const state = { value: 0 }
-  animate(state, {
-    value,
-    duration: 260,
-    ease: 'outQuad',
-    onUpdate: () => render(state.value)
-  })
+  target = Math.min(1, Math.max(0, scrollY / maxScroll))
+  visible.value = scrollY > 80
+  follow()
 }
 
 function onScroll() {
-  if (frame) return
-  frame = window.requestAnimationFrame(measure)
+  if (scrollFrame) return
+  scrollFrame = window.requestAnimationFrame(measure)
+}
+
+let resizeObserver: ResizeObserver | null = null
+
+function onResize() {
+  maxScroll = document.documentElement.scrollHeight - window.innerHeight
+  measureTrack()
+  measure()
 }
 
 onMounted(() => {
+  onResize()
   measure()
   markHydrated()
   window.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('resize', onScroll)
+  window.addEventListener('resize', onResize, { passive: true })
+  if (typeof ResizeObserver === 'function') {
+    resizeObserver = new ResizeObserver(onResize)
+    resizeObserver.observe(document.documentElement)
+  }
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
-  window.removeEventListener('resize', onScroll)
-  if (frame) window.cancelAnimationFrame(frame)
+  window.removeEventListener('resize', onResize)
+  resizeObserver?.disconnect()
+  if (scrollFrame) window.cancelAnimationFrame(scrollFrame)
+  if (animFrame) window.cancelAnimationFrame(animFrame)
 })
 </script>
 
 <template>
   <div class="rp" :class="{ 'is-visible': visible }" aria-hidden="true">
-    <div class="rp-track">
+    <div ref="track" class="rp-track">
       <div ref="bar" class="rp-bar"></div>
       <span ref="tip" class="rp-tip"></span>
     </div>
@@ -84,8 +128,9 @@ onUnmounted(() => {
   right: 0;
   z-index: 70;
   pointer-events: none;
+  contain: layout style;
   opacity: 0;
-  transition: opacity 240ms ease;
+  transition: opacity 200ms linear;
 }
 
 .rp.is-visible {
@@ -94,7 +139,7 @@ onUnmounted(() => {
 
 .rp-track {
   position: relative;
-  height: 4px;
+  height: 3px;
   background: color-mix(in srgb, var(--md-primary) 14%, transparent);
 }
 
@@ -103,19 +148,21 @@ onUnmounted(() => {
   inset: 0;
   border-radius: 0 2px 2px 0;
   background: var(--md-primary);
-  transform: scaleX(0);
+  transform: scale3d(0, 1, 1);
   transform-origin: 0 50%;
+  will-change: transform;
 }
 
 .rp-tip {
   position: absolute;
   top: -2px;
-  width: 8px;
-  height: 8px;
-  margin-left: -4px;
-  border: 2px solid var(--md-surface);
+  left: 0;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
   border-radius: 50%;
   background: var(--md-primary);
-  transition: left 120ms linear;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 </style>
