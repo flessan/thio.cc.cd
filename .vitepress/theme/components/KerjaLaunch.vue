@@ -31,43 +31,45 @@
   align-items: center;
   gap: 1rem;
   margin: 1.8rem 0 2.2rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+  border: 0;
+  border-radius: var(--md-shape-2xl);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
   text-decoration: none;
   transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    transform 220ms var(--flessan-ease-out),
-    box-shadow 240ms var(--flessan-ease-out);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring),
+    box-shadow var(--md-duration-medium) var(--md-ease-standard);
 }
 
 .kerja-launch:hover {
-  border-color: var(--vp-c-text-3);
   transform: translateY(-2px);
-  box-shadow: var(--flessan-shadow-md);
+  box-shadow: var(--md-elevation-2);
+}
+
+.kerja-launch:active {
+  transform: scale(0.995);
 }
 
 .launch-icon {
   display: grid;
   flex: none;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--fl-accent-line);
-  border-radius: 10px;
-  background: var(--fl-accent-soft);
-  color: var(--fl-accent-ink);
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--md-on-primary-container) 12%, transparent);
+  color: var(--md-on-primary-container);
 }
 
 .launch-icon svg {
-  width: 19px;
-  height: 19px;
+  width: 21px;
+  height: 21px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -75,30 +77,30 @@
 .launch-copy {
   display: grid;
   min-width: 0;
-  gap: 0.15rem;
+  gap: 0.18rem;
 }
 
 .launch-eyebrow {
-  color: var(--vp-c-text-3);
+  color: color-mix(in srgb, var(--md-on-primary-container) 70%, transparent);
   font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .launch-copy strong {
-  color: var(--vp-c-text-1);
-  font-size: 0.96rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
+  color: var(--md-on-primary-container);
+  font-size: 1.02rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .launch-desc {
   overflow: hidden;
-  color: var(--vp-c-text-2);
-  font-size: 0.79rem;
-  line-height: 1.55;
+  color: color-mix(in srgb, var(--md-on-primary-container) 80%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.6;
   text-overflow: ellipsis;
 }
 
@@ -111,46 +113,42 @@
 }
 
 .launch-pill {
-  padding: 0.2rem 0.45rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 5px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-3);
+  padding: 0.25rem 0.6rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: color-mix(in srgb, var(--md-on-primary-container) 12%, transparent);
+  color: var(--md-on-primary-container);
   font-family: var(--vp-font-family-mono);
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   white-space: nowrap;
 }
 
 .launch-arrow {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  color: var(--vp-c-text-2);
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
   transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 220ms var(--flessan-ease-out);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .launch-arrow svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.7;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .kerja-launch:hover .launch-arrow {
-  border-color: var(--fl-accent);
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 @media (max-width: 720px) {
@@ -161,7 +159,7 @@
   }
 
   .launch-copy {
-    flex: 1 1 calc(100% - 56px);
+    flex: 1 1 calc(100% - 64px);
   }
 
   .launch-desc {
@@ -172,7 +170,7 @@
 
   .launch-meta {
     margin-left: 0;
-    padding-left: 3.1rem;
+    padding-left: 3.6rem;
   }
 
   .launch-pill {

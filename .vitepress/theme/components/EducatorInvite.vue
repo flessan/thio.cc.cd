@@ -45,34 +45,36 @@ async function copyInvitation() {
 <style scoped>
 .educator-invite {
   margin: 2.5rem 0;
-  padding: clamp(1.1rem, 3vw, 1.6rem);
-  border: 1px solid var(--fl-accent-line);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-alt);
-  box-shadow: var(--flessan-shadow-sm);
+  padding: clamp(1.15rem, 3vw, 1.6rem);
+  border: 0;
+  border-radius: var(--md-shape-2xl);
+  background: var(--md-surface-container-low);
+  box-shadow: none;
 }
 .eyebrow {
   margin: 0 0 0.55rem;
-  color: var(--fl-accent-ink);
+  color: var(--md-primary);
   font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 .educator-invite h2 {
   margin: 0 0 0.6rem;
+  color: var(--md-on-surface);
   font-size: 1.35rem;
+  font-weight: 500;
   line-height: 1.35;
 }
 .intro {
   margin: 0 0 1rem;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   line-height: 1.7;
 }
 .invitation {
-  padding: 1rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 0.75rem;
-  background: var(--vp-c-bg);
+  padding: 1rem 1.1rem;
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-high);
 }
 .invitation p {
   margin: 0 0 0.9rem;
@@ -84,22 +86,21 @@ async function copyInvitation() {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  min-height: 2.25rem;
-  padding: 0.45rem 0.75rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 0.55rem;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
+  min-height: 38px;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
   font: inherit;
-  font-size: 0.82rem;
-  font-weight: 650;
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: border-color 200ms ease, color 180ms ease, background-color 200ms ease, transform 320ms var(--flessan-ease-out);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 .invitation button:hover {
-  border-color: var(--flessan-accent-line);
-  background: var(--flessan-accent-soft);
-  color: var(--flessan-accent-ink);
+  background: color-mix(in srgb, var(--md-primary-container) 82%, var(--md-on-primary-container));
   transform: translateY(-1px);
 }
 .invitation svg {
@@ -111,7 +112,7 @@ async function copyInvitation() {
 }
 .feedback {
   margin: 0.6rem 0 0;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   font-size: 0.8rem;
 }
 .project-link {
@@ -119,8 +120,9 @@ async function copyInvitation() {
   align-items: center;
   gap: 0.4rem;
   margin-top: 1rem;
+  color: var(--md-primary);
   font-size: 0.9rem;
-  font-weight: 650;
+  font-weight: 500;
   text-decoration: none;
 }
 .project-link:hover {

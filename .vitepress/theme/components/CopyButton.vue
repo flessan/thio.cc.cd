@@ -53,39 +53,42 @@ async function copy() {
 .copy-btn {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-2);
-  border-radius: 8px;
-  padding: 0.15rem 0.7rem;
-  font-size: 0.82rem;
-  font-weight: 550;
-  line-height: 1.7;
+  gap: 0.3rem;
+  min-height: 22px;
+  margin-left: 0.35rem;
+  padding: 0 0.6rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  font-family: inherit;
+  font-size: 0.71rem;
+  font-weight: 500;
+  line-height: 1.4;
+  vertical-align: middle;
   cursor: pointer;
   transition:
-    border-color 200ms ease,
-    color 180ms ease,
-    background-color 200ms ease,
-    transform 360ms var(--flessan-ease-out);
-  vertical-align: middle;
-  margin-left: 0.4rem;
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 
 .copy-btn:hover {
-  border-color: var(--flessan-accent-line);
-  background: var(--flessan-accent-soft);
-  color: var(--flessan-accent-ink);
+  background: color-mix(in srgb, var(--md-secondary-container) 82%, var(--md-on-secondary-container));
   transform: translateY(-1px);
 }
 
+.copy-btn:active {
+  transform: scale(0.96);
+}
+
 .copy-btn.is-copied {
-  border-color: var(--flessan-accent-line);
-  background: var(--flessan-accent-soft);
-  color: var(--flessan-accent-ink);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
 }
 
 .copy-btn:focus-visible {
-  outline: 2px solid var(--vp-c-brand-1);
+  outline: 2px solid var(--md-primary);
   outline-offset: 2px;
 }
 </style>

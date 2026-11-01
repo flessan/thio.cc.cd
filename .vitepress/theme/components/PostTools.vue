@@ -94,16 +94,16 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 4px;
   overflow: hidden;
-  background: transparent;
+  background: color-mix(in srgb, var(--md-primary) 14%, transparent);
   pointer-events: none;
 }
 .reading-progress span {
   display: block;
   height: 100%;
   border-radius: 0 2px 2px 0;
-  background: var(--flessan-accent-fill);
+  background: var(--md-primary);
   box-shadow: none;
   transition: width 120ms linear;
 }
@@ -116,7 +116,7 @@ onUnmounted(() => {
 }
 .share-label {
   margin-right: 0.2rem;
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.78rem;
 }
 .share-actions button {
@@ -124,30 +124,29 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  min-height: 2rem;
-  padding: 0.4rem 0.7rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 0.6rem;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
+  min-height: 38px;
+  padding: 0 0.95rem;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-full);
+  background: transparent;
+  color: var(--md-on-surface-variant);
   font: inherit;
   font-size: 0.8rem;
-  font-weight: 550;
+  font-weight: 500;
   cursor: pointer;
   transition:
-    border-color 200ms ease,
-    color 180ms ease,
-    background-color 200ms ease,
-    transform 380ms var(--flessan-ease-out);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    border-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 .share-actions button:hover {
-  border-color: var(--flessan-accent-line);
-  background: var(--vp-c-bg);
-  color: var(--flessan-accent-ink);
-  transform: translateY(-1px);
+  border-color: transparent;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 .share-actions button:active {
-  transform: translateY(0) scale(0.98);
+  transform: scale(0.97);
 }
 .share-actions svg {
   fill: none;
@@ -158,7 +157,7 @@ onUnmounted(() => {
 }
 .share-notice {
   flex-basis: 100%;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   font-size: 0.78rem;
 }
 .post-tools {

@@ -41,23 +41,23 @@ onMounted(() => {
   display: flex;
   gap: 1.5rem;
   margin: 1.25rem 0;
-  background-color: var(--vp-c-bg-alt);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
+  background-color: var(--md-surface-container-low);
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-xl);
   align-items: center;
   overflow: hidden;
   box-shadow: none;
   transition:
-    border-color 260ms ease,
-    transform 520ms var(--flessan-ease-out),
-    background-color 260ms ease,
-    box-shadow 520ms var(--flessan-ease-out);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
 .container:hover {
-  border-color: var(--vp-c-border);
+  border-color: transparent;
+  background-color: var(--md-surface-container-high);
   transform: translateY(-2px);
-  box-shadow: var(--flessan-shadow-sm);
+  box-shadow: var(--md-elevation-1);
 }
 
 img,
@@ -84,9 +84,9 @@ img {
   justify-content: center;
   box-sizing: border-box;
   padding: 1.25rem;
-  border: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-2);
+  border: 0;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
   text-align: center;
   font-size: 0.74rem;
   font-weight: 600;

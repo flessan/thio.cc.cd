@@ -22,7 +22,21 @@ const form = ref<HTMLFormElement | null>(null)
 const goButton = ref<HTMLButtonElement | null>(null)
 
 const engine = computed<Engine>(() => ENGINES.find((item) => item.id === settings.value.engine) ?? ENGINES[0])
-const placeholder = computed(() => `Search with ${engine.value.name} — or type a URL`)
+const narrow = ref(false)
+function syncNarrow() {
+  if (typeof window !== 'undefined') narrow.value = window.innerWidth < 560
+}
+onMounted(() => {
+  syncNarrow()
+  window.addEventListener('resize', syncNarrow, { passive: true })
+})
+onBeforeUnmount(() => window.removeEventListener('resize', syncNarrow))
+
+const placeholder = computed(() =>
+  narrow.value
+    ? 'Search or paste a link'
+    : `Search with ${engine.value.name} — or type a URL`
+)
 
 function selectEngine(id: Engine['id']) {
   applySettings({ engine: id })
@@ -181,7 +195,7 @@ onBeforeUnmount(() => {
           aria-label="Search the web"
           @keydown="onInputKeydown"
         />
-        <kbd v-if="!props.compact" class="dock-kbd">!</kbd>
+        <span v-if="!props.compact" class="dock-kbd">!bang</span>
       </div>
 
       <button ref="goButton" type="submit" class="dock-go" aria-label="Search">
@@ -214,30 +228,32 @@ onBeforeUnmount(() => {
 
 .dock-heading {
   margin: 0 0 0.5rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
 }
 
 .dock-bar {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0;
-  padding: 5px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
-  box-shadow: var(--flessan-shadow-sm);
-  transition: border-color 180ms ease, box-shadow 220ms var(--flessan-ease-out);
+  gap: 0.4rem;
+  padding: 6px;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-1);
+  transition: box-shadow var(--md-duration-medium) var(--md-ease-standard),
+    background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.dock-bar:hover {
+  box-shadow: var(--md-elevation-2);
 }
 
 .dock-bar:focus-within {
-  border-color: var(--fl-accent);
-  box-shadow: 0 0 0 3px var(--fl-accent-soft), var(--flessan-shadow-sm);
+  background: var(--md-surface-container-highest);
+  box-shadow: var(--md-elevation-2), inset 0 0 0 2px var(--md-primary);
 }
 
 .dock-engine-wrap {
@@ -248,23 +264,23 @@ onBeforeUnmount(() => {
 .dock-engine {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  height: 2.35rem;
-  max-width: 10.5rem;
-  padding: 0 0.55rem 0 0.65rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: calc(var(--fl-r-md) - 4px);
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
-  font-size: 0.8rem;
-  font-weight: 550;
+  gap: 0.45rem;
+  height: 44px;
+  max-width: 11rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .dock-engine:hover {
-  border-color: var(--vp-c-text-3);
-  background: var(--vp-c-bg-soft);
+  background: color-mix(in srgb, var(--md-secondary-container) 88%, var(--md-on-secondary-container));
 }
 
 .engine-dot {
@@ -272,7 +288,6 @@ onBeforeUnmount(() => {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
 }
 
 .engine-name {
@@ -282,15 +297,15 @@ onBeforeUnmount(() => {
 }
 
 .engine-chevron {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   flex: none;
   fill: none;
-  stroke: var(--vp-c-text-3);
+  stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform 180ms var(--flessan-ease-out);
+  transition: transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .engine-chevron.is-open {
@@ -302,34 +317,35 @@ onBeforeUnmount(() => {
   flex: 1 1 auto;
   align-items: center;
   min-width: 0;
-  gap: 0.5rem;
-  padding: 0 0.6rem;
+  gap: 0.55rem;
+  padding: 0 0.4rem;
 }
 
 .field-icon {
   flex: none;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   fill: none;
-  stroke: var(--vp-c-text-3);
-  stroke-width: 1.7;
+  stroke: var(--md-on-surface-variant);
+  stroke-width: 2;
   stroke-linecap: round;
 }
 
 .dock-input {
   width: 100%;
   min-width: 0;
-  height: 2.35rem;
+  height: 44px;
   border: 0;
   background: transparent;
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
   font-family: inherit;
-  font-size: 0.92rem;
+  font-size: 1rem;
+  letter-spacing: 0.15px;
   outline: none;
 }
 
 .dock-input::placeholder {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   opacity: 1;
 }
 
@@ -339,51 +355,49 @@ onBeforeUnmount(() => {
 
 .dock-kbd {
   flex: none;
-  display: grid;
-  place-items: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-3);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--md-shape-full);
+  background: color-mix(in srgb, var(--md-on-surface) 9%, transparent);
+  color: var(--md-on-surface);
   font-family: var(--vp-font-family-mono);
   font-size: 0.66rem;
-  line-height: 1;
+  letter-spacing: 0.2px;
 }
 
 .dock-go {
   display: inline-flex;
   flex: none;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
-  height: 2.35rem;
-  padding: 0 0.85rem;
-  border: 1px solid transparent;
-  border-radius: calc(var(--fl-r-md) - 4px);
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
+  height: 44px;
+  padding: 0 1.15rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
   font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 160ms ease, transform 180ms var(--flessan-ease-out);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 
 .dock-go:hover {
-  background: var(--fl-accent-hover);
+  background: color-mix(in srgb, var(--md-primary) 90%, var(--md-on-primary));
 }
 
 .dock-go:active {
-  transform: scale(0.98);
+  transform: scale(0.96);
 }
 
 .dock-go svg {
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -392,13 +406,12 @@ onBeforeUnmount(() => {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
-  margin-top: 0.6rem;
-  padding-inline: 0.15rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.01em;
+  gap: 0.5rem 0.9rem;
+  margin-top: 0.65rem;
+  padding-inline: 0.9rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  letter-spacing: 0.2px;
 }
 
 .dock-hint {
@@ -411,34 +424,37 @@ onBeforeUnmount(() => {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--fl-accent);
+  background: var(--md-primary);
 }
 
 .dock-engines {
-  letter-spacing: 0.02em;
+  opacity: 0.9;
 }
 
 .dock-workspace {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
   margin-left: auto;
-  color: var(--vp-c-text-2);
+  min-height: 28px;
+  padding: 0 0.6rem;
+  border-radius: var(--md-shape-full);
+  color: var(--md-primary);
   font-weight: 500;
   text-decoration: none;
-  transition: color 150ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .dock-workspace:hover {
-  color: var(--fl-accent-ink);
+  background: var(--md-primary-container);
 }
 
 .dock-workspace svg {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 2;
   stroke-linecap: round;
 }
 
@@ -448,31 +464,36 @@ onBeforeUnmount(() => {
   z-index: 40;
   top: calc(100% + 8px);
   left: 0;
-  width: min(21rem, calc(100vw - 2.5rem));
-  padding: 5px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
-  box-shadow: var(--flessan-shadow-lg);
+  width: min(22rem, calc(100vw - 2rem));
+  padding: 8px;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-3);
 }
 
 .dock-option {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.6rem;
   width: 100%;
-  padding: 0.45rem 0.5rem;
+  padding: 0.55rem 0.65rem;
   border: 0;
-  border-radius: calc(var(--fl-r-md) - 5px);
+  border-radius: var(--md-shape-full);
   background: transparent;
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .dock-option.is-active {
-  background: var(--vp-c-bg-alt);
+  background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
+}
+
+.dock-option.is-selected {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 
 .option-body {
@@ -483,26 +504,30 @@ onBeforeUnmount(() => {
 }
 
 .option-name {
-  font-size: 0.83rem;
-  font-weight: 550;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .option-hint {
   overflow: hidden;
-  color: var(--vp-c-text-3);
-  font-size: 0.7rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.dock-option.is-selected .option-hint {
+  color: color-mix(in srgb, var(--md-on-secondary-container) 75%, transparent);
+}
+
 .option-check {
   margin-left: auto;
-  color: var(--fl-accent-ink);
+  color: var(--md-primary);
 }
 
 .option-check svg {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -511,44 +536,47 @@ onBeforeUnmount(() => {
 }
 
 .dock-menu-note {
-  margin: 0;
-  padding: 0.4rem 0.55rem 0.3rem;
-  border-top: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.63rem;
+  margin: 6px 0 0;
+  padding: 0.5rem 0.65rem 0.2rem;
+  border-top: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+  font-size: 0.7rem;
 }
 
 .dock-menu-enter-active,
 .dock-menu-leave-active {
-  transition: opacity 140ms ease, transform 160ms var(--flessan-ease-out);
+  transition: opacity var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .dock-menu-enter-from,
 .dock-menu-leave-to {
   opacity: 0;
-  transform: translateY(-4px) scale(0.985);
+  transform: translateY(-6px) scale(0.94);
 }
 
 /* ------------------------------------------------------------ compact */
 .is-compact .dock-bar {
   padding: 4px;
+  box-shadow: none;
+  background: var(--md-surface-container);
 }
 
 .is-compact .dock-engine {
-  height: 2.1rem;
-  max-width: 9rem;
-  font-size: 0.76rem;
+  height: 36px;
+  max-width: 9.5rem;
+  font-size: 0.78rem;
+  padding: 0 0.7rem;
 }
 
 .is-compact .dock-input {
-  height: 2.1rem;
-  font-size: 0.86rem;
+  height: 36px;
+  font-size: 0.9rem;
 }
 
 .is-compact .dock-go {
-  height: 2.1rem;
-  padding: 0 0.7rem;
+  height: 36px;
+  padding: 0 0.8rem;
 }
 
 .is-compact .dock-go-label {
@@ -560,9 +588,14 @@ onBeforeUnmount(() => {
     display: none;
   }
 
+  .dock-bar {
+    gap: 0.25rem;
+    padding: 5px;
+  }
+
   .dock-engine {
     max-width: 3rem;
-    padding-inline: 0.55rem;
+    padding: 0 0.7rem;
   }
 
   .engine-name {
@@ -570,16 +603,17 @@ onBeforeUnmount(() => {
   }
 
   .dock-field {
-    padding-inline: 0.45rem;
+    padding-inline: 0.15rem;
     gap: 0.4rem;
   }
 
   .dock-input {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
   }
 
   .dock-go {
-    padding: 0 0.65rem;
+    width: 44px;
+    padding: 0;
   }
 
   .dock-go-label {
@@ -587,7 +621,8 @@ onBeforeUnmount(() => {
   }
 
   .dock-meta {
-    font-size: 0.62rem;
+    padding-inline: 0.5rem;
+    font-size: 0.68rem;
   }
 
   .dock-engines {
@@ -599,7 +634,7 @@ onBeforeUnmount(() => {
   }
 
   .dock-menu {
-    left: -5px;
+    left: -4px;
   }
 }
 </style>

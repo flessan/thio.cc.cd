@@ -57,18 +57,17 @@ const REVEAL_SELECTOR = [
 ].join(',')
 
 const INTRO_SELECTORS = [
-  '.hero-eyebrow',
+  '.hero-chip',
   '.hero-line',
   '.hero-line-sub',
   '.hero-lead',
   '.hero-btn',
-  '.hero-support',
+  '.hero-meta',
   '.hero-stat',
-  '.hero-frame',
-  '.hero-clock',
-  '.hero-ticker',
+  '.hero-art',
+  '.hero-badge',
   '.hero-search',
-  '[data-hero-sticker]'
+  '[data-hero-shape]'
 ].join(',')
 
 let scope: Scope | null = null
@@ -220,39 +219,35 @@ function mark(...elements: Array<HTMLElement | null>) {
  * choreographed timeline instead of scattered effects.
  */
 function animateHero(hero: HTMLElement) {
-  const eyebrow = hero.querySelector<HTMLElement>('.hero-eyebrow')
-  const eyebrowText = hero.querySelector<HTMLElement>('.hero-eyebrow-text')
+  const chip = hero.querySelector<HTMLElement>('.hero-chip')
+  const chipText = hero.querySelector<HTMLElement>('.hero-chip-text')
   const lines = Array.from(hero.querySelectorAll<HTMLElement>('.hero-line'))
   const subtitle = hero.querySelector<HTMLElement>('.hero-line-sub')
-  const scribble = hero.querySelector<SVGPathElement>('.hero-scribble path')
   const lead = hero.querySelector<HTMLElement>('.hero-lead')
-  const actions = Array.from(
-    hero.querySelectorAll<HTMLElement>('.hero-btn, .hero-support')
-  )
+  const actions = Array.from(hero.querySelectorAll<HTMLElement>('.hero-btn'))
+  const meta = hero.querySelector<HTMLElement>('.hero-meta')
   const stats = Array.from(hero.querySelectorAll<HTMLElement>('.hero-stat'))
-  const frame = hero.querySelector<HTMLElement>('.hero-frame')
-  const sticker = hero.querySelector<HTMLElement>('[data-hero-sticker]')
-  const clock = hero.querySelector<HTMLElement>('.hero-clock')
-  const ticker = hero.querySelector<HTMLElement>('.hero-ticker')
-  const dock = hero.querySelector<HTMLElement>('.hero-search')
+  const art = hero.querySelector<HTMLElement>('.hero-art')
+  const badge = hero.querySelector<HTMLElement>('.hero-badge')
+  const search = hero.querySelector<HTMLElement>('.hero-search')
+  const shapes = Array.from(hero.querySelectorAll<HTMLElement>('[data-hero-shape]'))
 
   const introTargets = [
-    eyebrow,
-    clock,
+    chip,
     ...lines,
     lead,
     ...actions,
+    meta,
     ...stats,
-    ticker,
-    dock,
-    frame,
-    sticker
+    art,
+    badge,
+    search
   ].filter((element): element is HTMLElement => Boolean(element))
 
   introTargets.forEach((element) => (element.dataset.motionTarget = 'true'))
   utils.set(introTargets, { opacity: 0 })
 
-  // Split the subtitle into words so it can arrive as a gentle wave.
+  // Split the subtitle so it can arrive as a soft wave.
   let words: HTMLElement[] = []
   if (subtitle) {
     try {
@@ -260,128 +255,137 @@ function animateHero(hero: HTMLElement) {
       splitters.push(splitter)
       words = splitter.words as HTMLElement[]
       utils.set(subtitle, { opacity: 1 })
-      utils.set(words, { opacity: 0, y: '0.55em', rotate: 2.5 })
+      utils.set(words, { opacity: 0, y: '0.6em', scale: 0.94 })
     } catch {
       subtitle.style.opacity = '1'
     }
   }
 
+  // M3 expressive shapes: visible, slowly breathing behind the photo.
+  shapes.forEach((shape) => {
+    shape.dataset.motionTarget = 'true'
+    utils.set(shape, { opacity: 0, scale: 0.6, rotate: -18 })
+  })
+
   const timeline = createTimeline({ defaults: { ease: 'outQuint' } })
 
-  if (eyebrow) {
-    timeline.add(eyebrow, { opacity: [0, 1], y: [10, 0], duration: 620 }, 0)
-  }
-  if (clock) {
+  if (chip) {
     timeline.add(
-      clock,
-      { opacity: [0, 1], y: [10, 0], rotate: [-4, 0], duration: 620 },
-      120
+      chip,
+      { opacity: [0, 1], y: [16, 0], scale: [0.9, 1], duration: 640, ease: 'outBack(1.7)' },
+      0
     )
   }
   if (lines[0]) {
-    timeline.add(lines[0], { opacity: [0, 1], y: [26, 0], duration: 900 }, 90)
+    timeline.add(
+      lines[0],
+      { opacity: [0, 1], y: [40, 0], scale: [0.96, 1], duration: 920, ease: 'outExpo' },
+      90
+    )
   }
   if (words.length) {
     timeline.add(
       words,
       {
         opacity: [0, 1],
-        y: ['0.55em', 0],
-        rotate: [2.5, 0],
-        duration: 780,
-        delay: stagger(38)
+        y: ['0.6em', 0],
+        scale: [0.94, 1],
+        duration: 760,
+        delay: stagger(26)
       },
-      320
+      300
     )
   }
   if (lead) {
-    timeline.add(lead, { opacity: [0, 1], y: [16, 0], duration: 760 }, 560)
+    timeline.add(lead, { opacity: [0, 1], y: [20, 0], duration: 760 }, 460)
   }
   if (actions.length) {
     timeline.add(
       actions,
       {
         opacity: [0, 1],
-        y: [14, 0],
-        scale: [0.97, 1],
-        duration: 680,
-        delay: stagger(70),
+        y: [18, 0],
+        scale: [0.92, 1],
+        duration: 720,
+        delay: stagger(80),
+        ease: 'outBack(1.5)',
         onComplete: () => releaseTransforms(actions)
       },
-      700
+      520
+    )
+  }
+  if (meta) {
+    timeline.add(meta, { opacity: [0, 1], y: [12, 0], duration: 620 }, 640)
+  }
+  if (art) {
+    timeline.add(
+      art,
+      {
+        opacity: [0, 1],
+        y: [44, 0],
+        scale: [0.9, 1],
+        rotate: [-3.5, 0],
+        duration: 1180,
+        ease: 'outBack(1.25)',
+        onComplete: () => releaseTransforms([art])
+      },
+      160
+    )
+  }
+  if (shapes.length) {
+    timeline.add(
+      shapes,
+      {
+        opacity: [0, 1],
+        scale: [0.6, 1],
+        rotate: [-18, 0],
+        duration: 1000,
+        delay: stagger(120),
+        ease: 'outBack(1.5)',
+        onComplete: () => releaseTransforms(shapes)
+      },
+      120
+    )
+  }
+  if (badge) {
+    timeline.add(
+      badge,
+      { opacity: [0, 1], y: [14, 0], scale: [0.9, 1], duration: 700, ease: 'outBack(1.6)' },
+      760
     )
   }
   if (stats.length) {
     timeline.add(
       stats,
-      { opacity: [0, 1], y: [12, 0], duration: 640, delay: stagger(60) },
-      820
+      { opacity: [0, 1], y: [18, 0], duration: 640, delay: stagger(70) },
+      720
     )
   }
-  if (frame) {
+  if (search) {
     timeline.add(
-      frame,
+      search,
       {
         opacity: [0, 1],
         y: [26, 0],
-        rotate: [-3.4, -1.6],
-        duration: 1100,
-        onComplete: () => releaseTransforms([frame])
-      },
-      220
-    )
-  }
-  if (ticker) {
-    timeline.add(ticker, { opacity: [0, 1], y: [10, 0], duration: 620 }, 980)
-  }
-  if (dock) {
-    timeline.add(
-      dock,
-      {
-        opacity: [0, 1],
-        y: [22, 0],
-        scale: [0.985, 1],
+        scale: [0.97, 1],
         duration: 900,
-        onComplete: () => releaseTransforms([dock])
+        onComplete: () => releaseTransforms([search])
       },
-      1040
+      860
     )
   }
 
-  // Draw the hand-made underline beneath the title.
-  const drawable = scribbleDrawable(scribble)
-  if (drawable.length) {
-    timeline.add(drawable, { draw: '0 1', duration: 900 }, 620)
-  }
-
-  // The sticker pops in with its own springy beat.
-  if (sticker) {
-    mark(sticker)
-    utils.set(sticker, { scale: 0.4, rotate: -14 })
-    timeline.add(
-      sticker,
-      {
-        opacity: [0, 1],
-        scale: [0.4, 1],
-        rotate: [-14, 5],
-        duration: 1000,
-        ease: 'outBack(2.2)'
-      },
-      900
-    )
-  }
-
-  // Scramble the uppercase location line in (newest anime.js text API).
-  if (eyebrowText) {
+  // Uppercase status line scrambles in (anime.js text API).
+  if (chipText) {
     try {
-      animate(eyebrowText, {
+      animate(chipText, {
         innerHTML: scrambleText({
-          chars: 'a-zA-Z#%&*+=',
+          chars: 'a-z#%&*+=',
           cursor: true,
-          perturbation: 12
+          perturbation: 10
         }),
-        duration: 1150,
-        delay: 140,
+        duration: 1100,
+        delay: 180,
         ease: 'linear'
       })
     } catch {
@@ -389,7 +393,7 @@ function animateHero(hero: HTMLElement) {
     }
   }
 
-  // Counters: animate plain objects, write the rounded value back to the DOM.
+  // Counters: animate a plain object, write the rounded value back.
   hero.querySelectorAll<HTMLElement>('[data-count]').forEach((element) => {
     const value = Number.parseInt(element.dataset.count ?? '', 10)
     if (!Number.isFinite(value) || value <= 0) return
@@ -398,7 +402,7 @@ function animateHero(hero: HTMLElement) {
     animate(counter, {
       value,
       duration: 1500,
-      delay: 760,
+      delay: 780,
       ease: 'outExpo',
       onUpdate: () => {
         element.textContent = String(Math.round(counter.value))
@@ -409,39 +413,69 @@ function animateHero(hero: HTMLElement) {
     })
   })
 
-  // Scroll-linked parallax on the atmosphere, without touching the frame hover.
-  const atmosphere = hero.querySelector<HTMLElement>('.hero-atmosphere')
-  if (atmosphere) {
-    animate(atmosphere, {
-      y: ['0%', '12%'],
+  // Ambient shape morph — the Material Expressive signature.
+  shapes.forEach((shape, index) => {
+    try {
+      animate(shape, {
+        borderRadius: [
+          '42% 58% 63% 37% / 41% 44% 56% 59%',
+          '58% 42% 38% 62% / 55% 39% 61% 45%',
+          '42% 58% 63% 37% / 41% 44% 56% 59%'
+        ],
+        duration: 9000 + index * 1600,
+        loop: true,
+        ease: 'inOutSine',
+        delay: 900 + index * 220
+      })
+      animate(shape, {
+        rotate: index % 2 === 0 ? [0, 24] : [0, -20],
+        scale: [1, 1.04],
+        duration: 6400 + index * 900,
+        loop: true,
+        alternate: true,
+        ease: 'inOutSine',
+        delay: 1000 + index * 260
+      })
+    } catch {
+      /* ambient motion is a bonus */
+    }
+  })
+
+  // Scroll-linked drift on the art panel, without fighting the entrance.
+  if (art) {
+    animate(art, {
+      y: ['0%', '7%'],
       ease: 'linear',
       autoplay: onScroll({
         target: hero,
         enter: { target: 'top', container: 'top' },
         leave: { target: 'bottom', container: 'top' },
-        sync: true
+        sync: 0.35
       })
     })
   }
 
-  // A playful, draggable sticker — skip phones, where dragging fights scrolling.
+  // Expressive: one draggable shape on precise pointers.
   const touchOnly =
-    window.matchMedia('(pointer: coarse)').matches &&
-    !window.matchMedia('(any-pointer: fine)').matches
-  if (sticker && !touchOnly) {
+    typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+  const draggableShape = hero.querySelector<HTMLElement>('.hero-shape-a')
+  if (draggableShape && !touchOnly && motionLevelPlayful()) {
     try {
-      createDraggable(sticker, {
-        container: hero.querySelector<HTMLElement>('.hero-stage') ?? hero,
-        containerPadding: 8,
-        releaseEase: spring({ stiffness: 90, damping: 11 }),
-        onGrab: () => animate(sticker, { scale: 1.08, rotate: 8, duration: 280 }),
-        onRelease: () => animate(sticker, { scale: 1, rotate: 5, duration: 500 })
+      draggableShape.dataset.motionTarget = 'true'
+      createDraggable(draggableShape, {
+        container: hero.querySelector<HTMLElement>('.hero-art') ?? hero,
+        releaseEase: spring({ stiffness: 220, damping: 18 }),
+        onGrab: () => animate(draggableShape, { scale: 1.12, duration: 260 }),
+        onRelease: () => animate(draggableShape, { scale: 1, duration: 520 })
       })
     } catch {
       /* dragging is a bonus, never a requirement */
     }
   }
 }
+
+const motionLevelPlayful = () =>
+  typeof document !== 'undefined' && (document.documentElement.dataset.motion ?? 'playful') === 'playful'
 
 /** Reveal direct children of the markdown body as they enter the viewport. */
 function revealContent(hero: HTMLElement | null) {

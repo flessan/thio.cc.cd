@@ -6,6 +6,7 @@ import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
 import { installMotion } from './motion'
+import { installRipple } from './effects'
 
 import CopyButton from './components/CopyButton.vue'
 import PostMeta from './components/PostMeta.vue'
@@ -143,6 +144,9 @@ export default {
 
     // anime.js-driven page reveals, hero choreography and page transitions
     installMotion(router)
+
+    // Material state layer: ink ripples on every interactive surface
+    installRipple()
 
     // Ctrl K / Cmd K (or "/" outside inputs) opens search, anywhere on the site
     if (typeof window !== 'undefined' && !hotkeyBound) {

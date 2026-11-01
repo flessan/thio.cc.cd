@@ -94,28 +94,28 @@ onUnmounted(() => {
 
 .rp-track {
   position: relative;
-  height: 6px;
-  background: transparent;
+  height: 4px;
+  background: color-mix(in srgb, var(--md-primary) 14%, transparent);
 }
 
 .rp-bar {
   position: absolute;
   inset: 0;
-  background: var(--fl-accent);
+  border-radius: 0 2px 2px 0;
+  background: var(--md-primary);
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
 
 .rp-tip {
   position: absolute;
-  top: 2px;
-  width: 10px;
-  height: 10px;
-  margin-left: -5px;
-  border: 1px solid var(--vp-c-bg);
+  top: -2px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border: 2px solid var(--md-surface);
   border-radius: 50%;
-  background: var(--fl-accent);
-  box-shadow: 0 0 0 1px var(--fl-accent);
+  background: var(--md-primary);
   transition: left 120ms linear;
 }
 </style>

@@ -35,10 +35,10 @@ withDefaults(defineProps<{
   width: 100%;
   margin: 1.25rem 0 3rem;
   overflow: hidden;
-  border: 1px solid var(--flessan-card-border);
-  border-radius: 1.1rem;
-  background: var(--vp-c-bg-soft);
-  box-shadow: var(--flessan-shadow-md);
+  border: 0;
+  border-radius: var(--md-shape-2xl);
+  background: var(--md-surface-container-low);
+  box-shadow: none;
 }
 
 .blog-cover-image {
@@ -60,8 +60,8 @@ withDefaults(defineProps<{
   display: flex;
   justify-content: flex-end;
   padding: 0.55rem 0.8rem 0.65rem;
-  color: var(--vp-c-text-3);
-  font-size: 0.75rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
   line-height: 1.4;
 }
 
@@ -80,7 +80,7 @@ withDefaults(defineProps<{
   .blog-cover {
     margin-top: 1rem;
     margin-bottom: 2rem;
-    border-radius: 0.7rem;
+    border-radius: var(--md-shape-xl);
   }
 
   .blog-cover-image {

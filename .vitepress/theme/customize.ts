@@ -45,34 +45,34 @@ export interface Engine {
 }
 
 export const ACCENTS: Array<{ id: AccentId; label: string; swatch: string }> = [
-  { id: 'cobalt', label: 'Cobalt', swatch: '#2a48d8' },
-  { id: 'emerald', label: 'Emerald', swatch: '#0f7a5a' },
-  { id: 'amber', label: 'Amber', swatch: '#e0a020' },
-  { id: 'rose', label: 'Rose', swatch: '#c0365f' },
-  { id: 'violet', label: 'Violet', swatch: '#6a3fd1' },
-  { id: 'graphite', label: 'Graphite', swatch: '#2a2d33' }
+  { id: 'violet', label: 'Violet', swatch: '#6750a4' },
+  { id: 'cobalt', label: 'Cobalt', swatch: '#0b57d0' },
+  { id: 'emerald', label: 'Emerald', swatch: '#00696d' },
+  { id: 'amber', label: 'Amber', swatch: '#a97400' },
+  { id: 'rose', label: 'Rose', swatch: '#a93b57' },
+  { id: 'graphite', label: 'Graphite', swatch: '#4a4a52' }
 ]
 
 export const PAPERS: Array<{ id: PaperId; label: string; swatch: string }> = [
-  { id: 'paper', label: 'Paper', swatch: '#f7f6f2' },
-  { id: 'white', label: 'White', swatch: '#ffffff' },
-  { id: 'sand', label: 'Sand', swatch: '#f6f1e7' }
+  { id: 'paper', label: 'Tonal', swatch: '#f3edf7' },
+  { id: 'white', label: 'Bright', swatch: '#fffbfe' },
+  { id: 'sand', label: 'Warm', swatch: '#f8f1e7' }
 ]
 
 export const CORNERS: Array<{ id: CornerId; label: string }> = [
-  { id: 'round', label: 'Rounded' },
-  { id: 'soft', label: 'Soft' },
-  { id: 'sharp', label: 'Sharp' }
+  { id: 'round', label: 'Extra' },
+  { id: 'soft', label: 'Standard' },
+  { id: 'sharp', label: 'Reduced' }
 ]
 
 export const MOTIONS: Array<{ id: MotionId; label: string; note: string }> = [
-  { id: 'playful', label: 'Full', note: 'all choreography' },
-  { id: 'calm', label: 'Calm', note: 'no ambient loops' },
-  { id: 'off', label: 'None', note: 'no animation at all' }
+  { id: 'playful', label: 'Expressive', note: 'springs, morphs, ambient loops' },
+  { id: 'calm', label: 'Standard', note: 'no ambient loops' },
+  { id: 'off', label: 'Reduced', note: 'no animation at all' }
 ]
 
 export const DENSITIES: Array<{ id: DensityId; label: string }> = [
-  { id: 'cozy', label: 'Cozy' },
+  { id: 'cozy', label: 'Comfortable' },
   { id: 'compact', label: 'Compact' }
 ]
 
@@ -195,7 +195,7 @@ export const ENGINE_PREFIXES: Record<string, EngineId> = {
 const STORAGE_KEY = 'flessan-playground-v1'
 
 export const DEFAULT_SETTINGS: Settings = {
-  accent: 'cobalt',
+  accent: 'violet',
   paper: 'paper',
   corners: 'soft',
   motion: 'playful',
@@ -248,7 +248,12 @@ function paint(settings: Settings) {
   root.dataset.density = settings.density
 }
 
-export const settings = ref<Settings>(readSettings())
+/**
+ * Starts at the documented defaults so server-rendered markup and the first
+ * client render agree; saved choices are loaded in `bootCustomization()`,
+ * which runs after hydration.
+ */
+export const settings = ref<Settings>({ ...DEFAULT_SETTINGS })
 
 export function applySettings(next: Partial<Settings>, persist = true) {
   settings.value = { ...settings.value, ...next }
@@ -272,6 +277,7 @@ export function resetSettings() {
 /** Paint saved choices as soon as the module loads (client only). */
 export function bootCustomization() {
   if (typeof window === 'undefined') return
+  settings.value = readSettings()
   paint(settings.value)
   window.addEventListener('storage', (event) => {
     if (event.key !== STORAGE_KEY) return

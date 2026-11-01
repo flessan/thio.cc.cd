@@ -1,336 +1,459 @@
 /**
- * thio.cc.cd — editorial theme
+ * thio.cc.cd — Material 3 Expressive theme
  * ---------------------------------------------------------------------------
- * A quiet, typographic layer over VitePress: warm paper, near-black ink, one
- * saturated accent, hairline rules and soft elevation. No gradients anywhere.
+ * Dynamic-colour roles, tonal surfaces, a shape scale and state layers, on top
+ * of a VitePress default theme. No gradients: every surface is a flat tone.
  *
- *   1. tokens (light)  · 2. tokens (dark)  · 3. base  · 4. type  · 5. buttons
- *   6. nav  · 7. sidebar  · 8. layout  · 9. code/tables  · 10. footer
- *   11. search  · 12. theme switch  · 13. motion  · 14. utilities  · 15. a11y
+ *   1. colour roles (light)   2. colour roles (dark)   3. surface tones
+ *   4. shape / motion / type  5. base                   6. typography
+ *   7. state layers & ripple  8. buttons                9. top app bar
+ *  10. navigation drawer     11. layout                12. content surfaces
+ *  13. search dialog         14. footer                15. floating actions
+ *  16. utilities             17. responsive / a11y
  */
 
 /* ==========================================================================
-   1. Design tokens — light
+   1. Colour roles — light
    ========================================================================== */
 
 :root {
   color-scheme: light;
 
-  --vp-font-family-base: 'Inter', ui-sans-serif, system-ui, -apple-system,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular,
-    'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --vp-font-family-base: 'Roboto', 'Inter', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', 'Noto Sans', Arial, sans-serif;
+  --vp-font-family-mono: 'Roboto Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace;
 
-  /* Primitives */
-  --fl-ink: #14161a;
-  --fl-paper: #f7f6f2;
-  --fl-paper-tint: #f1efe9;
-  --fl-line: #e4e1d8;
-  --fl-line-strong: #d3cfc4;
+  /* Seed — overridden by [data-accent] */
+  --md-seed: #6750a4;
+  --md-primary: #6750a4;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #eaddff;
+  --md-on-primary-container: #21005d;
+  --md-tertiary: #7d5260;
+  --md-tertiary-container: #ffd8e4;
+  --md-on-tertiary-container: #31111d;
 
-  /* Accent — cobalt by default */
-  --fl-accent: #2a48d8;
-  --fl-accent-hover: #1f3ab8;
-  --fl-accent-ink: #2340b8;
-  --fl-accent-soft: rgba(42, 72, 216, 0.09);
-  --fl-accent-line: rgba(42, 72, 216, 0.24);
-  --fl-on-accent: #ffffff;
+  /* Surfaces — tinted from the seed */
+  --md-surface: color-mix(in srgb, var(--md-seed) 4%, #fffbfe);
+  --md-surface-dim: color-mix(in srgb, var(--md-seed) 15%, #ded8e2);
+  --md-surface-bright: #fffbfe;
+  --md-surface-container-lowest: #ffffff;
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 6%, #fdf8ff);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 9%, #faf4ff);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 12%, #f5eefb);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 15%, #efe7f7);
 
-  /* Surfaces */
-  --vp-c-bg: var(--fl-paper);
-  --vp-c-bg-alt: var(--fl-paper-tint);
-  --vp-c-bg-soft: #eae7df;
-  --vp-c-bg-elv: #ffffff;
-  --vp-c-bg-mute: #eae7df;
+  --md-on-surface: #1c1b1f;
+  --md-on-surface-variant: #49454f;
+  --md-outline: #79747e;
+  --md-outline-variant: color-mix(in srgb, var(--md-on-surface) 16%, transparent);
 
-  /* Text */
-  --vp-c-text-1: var(--fl-ink);
-  --vp-c-text-2: #4b4f57;
-  --vp-c-text-3: #6d727b;
+  /* Derived roles */
+  --md-secondary-container: color-mix(
+    in srgb,
+    var(--md-primary-container) 62%,
+    var(--md-surface-container-low)
+  );
+  --md-on-secondary-container: var(--md-on-primary-container);
+  --md-tertiary-container-soft: color-mix(
+    in srgb,
+    var(--md-tertiary-container) 55%,
+    var(--md-surface)
+  );
 
-  /* Lines */
-  --vp-c-divider: var(--fl-line);
-  --vp-c-border: var(--fl-line-strong);
-  --vp-c-gutter: #f1efe9;
+  --md-error: #b3261e;
+  --md-on-error: #ffffff;
+  --md-error-container: #f9dedc;
+  --md-on-error-container: #410e0b;
 
-  /* Brand scale */
-  --vp-c-brand-1: var(--fl-accent-ink);
-  --vp-c-brand-2: var(--fl-accent-hover);
-  --vp-c-brand-3: var(--fl-accent);
-  --vp-c-brand-soft: var(--fl-accent-soft);
+  --md-inverse-surface: #313033;
+  --md-inverse-on-surface: #f4eff4;
+  --md-scrim: rgba(0, 0, 0, 0.32);
+  --md-shadow: rgba(0, 0, 0, 0.15);
 
-  /* Status */
-  --vp-c-tip-1: var(--fl-accent-ink);
-  --vp-c-tip-2: var(--fl-accent-hover);
-  --vp-c-tip-3: var(--fl-accent);
-  --vp-c-tip-soft: var(--fl-accent-soft);
+  /* State layers */
+  --md-state-hover: 0.08;
+  --md-state-focus: 0.1;
+  --md-state-pressed: 0.1;
 
-  --vp-c-warning-1: #8a5a00;
-  --vp-c-warning-2: #6f4900;
-  --vp-c-warning-3: #e0a020;
-  --vp-c-warning-soft: rgba(224, 160, 32, 0.12);
+  /* Elevation — tonal surfaces do most of the work */
+  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.12), 0 1px 3px 1px rgba(0, 0, 0, 0.06);
+  --md-elevation-2: 0 1px 2px rgba(0, 0, 0, 0.14), 0 2px 6px 2px rgba(0, 0, 0, 0.07);
+  --md-elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.14);
+  --md-elevation-4: 0 6px 10px 4px rgba(0, 0, 0, 0.08), 0 2px 3px rgba(0, 0, 0, 0.14);
+  --md-elevation-5: 0 8px 12px 6px rgba(0, 0, 0, 0.08), 0 4px 4px rgba(0, 0, 0, 0.14);
 
-  --vp-c-danger-1: #b02a37;
-  --vp-c-danger-2: #8f1f2b;
-  --vp-c-danger-3: #c0365f;
-  --vp-c-danger-soft: rgba(192, 54, 95, 0.1);
+  /* ------------------------------------------------------------------ shape */
+  --md-shape-xs: 4px;
+  --md-shape-sm: 8px;
+  --md-shape-md: 12px;
+  --md-shape-lg: 16px;
+  --md-shape-xl: 24px;
+  --md-shape-2xl: 28px;
+  --md-shape-full: 999px;
 
-  /* Flessan tokens kept for shared components */
-  --flessan-accent-fill: var(--fl-accent);
-  --flessan-accent-fill-hover: var(--fl-accent-hover);
-  --flessan-accent-fill-active: var(--fl-accent-hover);
-  --flessan-on-accent: var(--fl-on-accent);
-  --flessan-accent-ink: var(--fl-accent-ink);
-  --flessan-accent-soft: var(--fl-accent-soft);
-  --flessan-accent-line: var(--fl-accent-line);
-  --flessan-card: var(--vp-c-bg-elv);
-  --flessan-card-border: var(--vp-c-divider);
-  --flessan-shadow-sm: 0 1px 2px rgba(20, 22, 26, 0.05),
-    0 8px 24px -18px rgba(20, 22, 26, 0.25);
-  --flessan-shadow-md: 0 1px 2px rgba(20, 22, 26, 0.05),
-    0 18px 44px -26px rgba(20, 22, 26, 0.28);
-  --flessan-shadow-lg: 0 2px 6px rgba(20, 22, 26, 0.06),
-    0 32px 70px -34px rgba(20, 22, 26, 0.34);
+  /* ----------------------------------------------------------------- motion */
+  --md-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-ease-emphasized-decel: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-ease-emphasized-accel: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --md-duration-short: 180ms;
+  --md-duration-medium: 320ms;
+  --md-duration-long: 520ms;
 
-  --flessan-radius-sm: var(--fl-r-sm);
-  --flessan-radius-md: var(--fl-r-md);
-  --flessan-radius-lg: var(--fl-r-lg);
-  --flessan-radius-xl: var(--fl-r-xl);
+  /* VitePress mapping */
+  --vp-c-bg: var(--md-surface);
+  --vp-c-bg-alt: var(--md-surface-container-low);
+  --vp-c-bg-soft: var(--md-surface-container);
+  --vp-c-bg-elv: var(--md-surface-container-lowest);
+  --vp-c-bg-mute: var(--md-surface-container-high);
 
-  --fl-r-sm: 8px;
-  --fl-r-md: 12px;
-  --fl-r-lg: 16px;
-  --fl-r-xl: 20px;
+  --vp-c-text-1: var(--md-on-surface);
+  --vp-c-text-2: var(--md-on-surface-variant);
+  --vp-c-text-3: color-mix(in srgb, var(--md-on-surface-variant) 82%, var(--md-surface));
+
+  --vp-c-divider: var(--md-outline-variant);
+  --vp-c-border: var(--md-outline);
+  --vp-c-gutter: var(--md-surface-container-low);
+
+  --vp-c-brand-1: var(--md-primary);
+  --vp-c-brand-2: var(--md-primary);
+  --vp-c-brand-3: var(--md-primary);
+  --vp-c-brand-soft: var(--md-primary-container);
+
+  --vp-c-tip-1: var(--md-on-primary-container);
+  --vp-c-tip-2: var(--md-on-primary-container);
+  --vp-c-tip-3: var(--md-primary-container);
+  --vp-c-tip-soft: var(--md-primary-container);
+
+  --vp-c-warning-1: var(--md-on-tertiary-container);
+  --vp-c-warning-2: var(--md-tertiary);
+  --vp-c-warning-3: var(--md-tertiary-container);
+  --vp-c-warning-soft: var(--md-tertiary-container-soft);
+
+  --vp-c-danger-1: var(--md-on-error-container);
+  --vp-c-danger-2: var(--md-error);
+  --vp-c-danger-3: var(--md-error-container);
+  --vp-c-danger-soft: var(--md-error-container);
+
+  /* Legacy aliases so older components inherit the Material roles */
+  --fl-ink: var(--md-on-surface);
+  --fl-paper: var(--md-surface);
+  --fl-paper-tint: var(--md-surface-container-low);
+  --fl-line: var(--md-outline-variant);
+  --fl-line-strong: var(--md-outline);
+  --fl-accent: var(--md-primary);
+  --fl-accent-hover: color-mix(in srgb, var(--md-primary) 88%, var(--md-on-surface));
+  --fl-accent-ink: var(--md-primary);
+  --fl-accent-soft: var(--md-primary-container);
+  --fl-accent-line: color-mix(in srgb, var(--md-primary) 38%, transparent);
+  --fl-on-accent: var(--md-on-primary);
+  --fl-r-sm: var(--md-shape-md);
+  --fl-r-md: var(--md-shape-lg);
+  --fl-r-lg: var(--md-shape-xl);
+  --fl-r-xl: var(--md-shape-2xl);
   --fl-border: 1px;
 
-  --flessan-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --flessan-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
-  --flessan-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --flessan-accent-fill: var(--md-primary);
+  --flessan-accent-fill-hover: var(--fl-accent-hover);
+  --flessan-accent-fill-active: var(--fl-accent-hover);
+  --flessan-on-accent: var(--md-on-primary);
+  --flessan-accent-ink: var(--md-primary);
+  --flessan-accent-soft: var(--md-primary-container);
+  --flessan-accent-line: var(--fl-accent-line);
+  --flessan-card: var(--md-surface-container-low);
+  --flessan-card-border: var(--md-outline-variant);
+  --flessan-shadow-sm: var(--md-elevation-1);
+  --flessan-shadow-md: var(--md-elevation-2);
+  --flessan-shadow-lg: var(--md-elevation-3);
+  --flessan-radius-sm: var(--md-shape-md);
+  --flessan-radius-md: var(--md-shape-lg);
+  --flessan-radius-lg: var(--md-shape-xl);
+  --flessan-radius-xl: var(--md-shape-2xl);
+  --flessan-ease-out: var(--md-ease-emphasized-decel);
+  --flessan-ease-in-out: var(--md-ease-standard);
+  --flessan-ease-spring: var(--md-ease-spring);
 
-  /* Nav */
-  --vp-nav-height: 60px;
-  --vp-nav-bg-color: var(--vp-c-bg);
-  --flessan-nav-glass: var(--vp-c-bg);
-  --flessan-nav-border: var(--vp-c-divider);
+  /* Navigation */
+  --vp-nav-height: 64px;
+  --vp-nav-bg-color: var(--md-surface);
+  --flessan-nav-glass: color-mix(in srgb, var(--md-surface) 92%, transparent);
+  --flessan-nav-border: transparent;
   --flessan-nav-shadow: none;
 
-  scroll-padding-top: calc(var(--vp-nav-height) + 32px);
+  scroll-padding-top: calc(var(--vp-nav-height) + 28px);
 }
 
-/* Paper tints ------------------------------------------------------------- */
+/* Dynamic colour seeds ----------------------------------------------------- */
 
-html[data-paper='white'] {
-  --fl-paper: #fdfdfc;
-  --fl-paper-tint: #f6f6f4;
-  --vp-c-bg-soft: #efefec;
-  --vp-c-bg-mute: #efefec;
-  --vp-c-gutter: #f6f6f4;
-  --fl-line: #e8e7e2;
-  --fl-line-strong: #d8d6cf;
+html[data-accent='cobalt'] {
+  --md-seed: #0b57d0;
+  --md-primary: #0b57d0;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #d3e3fd;
+  --md-on-primary-container: #041e49;
+  --md-tertiary: #00639b;
+  --md-tertiary-container: #c2e7ff;
+  --md-on-tertiary-container: #001d35;
 }
-
-html[data-paper='sand'] {
-  --fl-paper: #f6f1e7;
-  --fl-paper-tint: #efe8da;
-  --vp-c-bg-soft: #e8dfcd;
-  --vp-c-bg-mute: #e8dfcd;
-  --vp-c-gutter: #efe8da;
-  --fl-line: #e3dac7;
-  --fl-line-strong: #d2c6ac;
-}
-
-/* Corner presets --------------------------------------------------------- */
-
-html[data-corners='round'] {
-  --fl-r-sm: 10px;
-  --fl-r-md: 14px;
-  --fl-r-lg: 18px;
-  --fl-r-xl: 24px;
-}
-
-html[data-corners='sharp'] {
-  --fl-r-sm: 3px;
-  --fl-r-md: 4px;
-  --fl-r-lg: 6px;
-  --fl-r-xl: 8px;
-}
-
-/* Accent presets (light) ------------------------------------------------- */
 
 html[data-accent='emerald'] {
-  --fl-accent: #0f7a5a;
-  --fl-accent-hover: #0b6449;
-  --fl-accent-ink: #0b6b4f;
-  --fl-accent-soft: rgba(15, 122, 90, 0.09);
-  --fl-accent-line: rgba(15, 122, 90, 0.24);
-  --fl-on-accent: #ffffff;
+  --md-seed: #00696d;
+  --md-primary: #006a6a;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #a7eef1;
+  --md-on-primary-container: #002021;
+  --md-tertiary: #4a6266;
+  --md-tertiary-container: #cce8eb;
+  --md-on-tertiary-container: #051f22;
 }
 
 html[data-accent='amber'] {
-  --fl-accent: #e0a020;
-  --fl-accent-hover: #c88c15;
-  --fl-accent-ink: #7d5100;
-  --fl-accent-soft: rgba(224, 160, 32, 0.14);
-  --fl-accent-line: rgba(224, 160, 32, 0.32);
-  --fl-on-accent: #241a00;
+  --md-seed: #b07a00;
+  --md-primary: #7a5900;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #ffdf9e;
+  --md-on-primary-container: #261a00;
+  --md-tertiary: #6c5d2f;
+  --md-tertiary-container: #f5e1a6;
+  --md-on-tertiary-container: #241a00;
 }
 
 html[data-accent='rose'] {
-  --fl-accent: #c0365f;
-  --fl-accent-hover: #a52b50;
-  --fl-accent-ink: #a12a50;
-  --fl-accent-soft: rgba(192, 54, 95, 0.09);
-  --fl-accent-line: rgba(192, 54, 95, 0.24);
-  --fl-on-accent: #ffffff;
-}
-
-html[data-accent='violet'] {
-  --fl-accent: #6a3fd1;
-  --fl-accent-hover: #5830b8;
-  --fl-accent-ink: #5b34b8;
-  --fl-accent-soft: rgba(106, 63, 209, 0.09);
-  --fl-accent-line: rgba(106, 63, 209, 0.24);
-  --fl-on-accent: #ffffff;
+  --md-seed: #a93b57;
+  --md-primary: #a93b57;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #ffd9df;
+  --md-on-primary-container: #3f0018;
+  --md-tertiary: #7d5260;
+  --md-tertiary-container: #ffd8e4;
+  --md-on-tertiary-container: #31111d;
 }
 
 html[data-accent='graphite'] {
-  --fl-accent: #2a2d33;
-  --fl-accent-hover: #14161a;
-  --fl-accent-ink: #24272c;
-  --fl-accent-soft: rgba(20, 22, 26, 0.07);
-  --fl-accent-line: rgba(20, 22, 26, 0.2);
-  --fl-on-accent: #ffffff;
+  --md-seed: #4a4a52;
+  --md-primary: #4a4a52;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #e3e1e9;
+  --md-on-primary-container: #1b1b21;
+  --md-tertiary: #5b5d72;
+  --md-tertiary-container: #e0e1f9;
+  --md-on-tertiary-container: #181a2c;
 }
 
 /* ==========================================================================
-   2. Design tokens — dark
+   2. Colour roles — dark
    ========================================================================== */
 
 .dark {
   color-scheme: dark;
 
-  --fl-ink: #ecebe6;
-  --fl-paper: #0e0f11;
-  --fl-paper-tint: #15171a;
-  --fl-line: #26292e;
-  --fl-line-strong: #343840;
+  --md-seed: #cfbcff;
+  --md-primary: #d0bcff;
+  --md-on-primary: #381e72;
+  --md-primary-container: #4f378b;
+  --md-on-primary-container: #eaddff;
+  --md-tertiary: #efb8c8;
+  --md-tertiary-container: #633b48;
+  --md-on-tertiary-container: #ffd8e4;
 
-  --fl-accent: #7d90ff;
-  --fl-accent-hover: #93a3ff;
-  --fl-accent-ink: #a7b6ff;
-  --fl-accent-soft: rgba(125, 144, 255, 0.12);
-  --fl-accent-line: rgba(125, 144, 255, 0.3);
-  --fl-on-accent: #0b1020;
+  --md-surface: color-mix(in srgb, var(--md-seed) 5%, #121016);
+  --md-surface-dim: #0f0d13;
+  --md-surface-bright: color-mix(in srgb, var(--md-seed) 10%, #3b383e);
+  --md-surface-container-lowest: #0d0b11;
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 7%, #16141b);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 9%, #1b1921);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 12%, #221f28);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 15%, #2a2633);
 
-  --vp-c-bg: var(--fl-paper);
-  --vp-c-bg-alt: var(--fl-paper-tint);
-  --vp-c-bg-soft: #1b1e22;
-  --vp-c-bg-elv: #17191d;
-  --vp-c-bg-mute: #1b1e22;
+  --md-on-surface: #e7e0eb;
+  --md-on-surface-variant: #cac4d0;
+  --md-outline: #938f99;
+  --md-outline-variant: color-mix(in srgb, var(--md-on-surface) 16%, transparent);
 
-  --vp-c-text-1: #ecebe6;
-  --vp-c-text-2: #b4b7bd;
-  --vp-c-text-3: #8b9099;
+  --md-secondary-container: color-mix(
+    in srgb,
+    var(--md-primary-container) 52%,
+    var(--md-surface-container-high)
+  );
+  --md-on-secondary-container: var(--md-on-primary-container);
 
-  --vp-c-divider: var(--fl-line);
-  --vp-c-border: var(--fl-line-strong);
-  --vp-c-gutter: #0a0b0d;
+  --md-error: #f2b8b5;
+  --md-on-error: #601410;
+  --md-error-container: #8c1d18;
+  --md-on-error-container: #f9dedc;
 
-  --vp-c-brand-1: var(--fl-accent-ink);
-  --vp-c-brand-2: var(--fl-accent-hover);
-  --vp-c-brand-3: var(--fl-accent);
-  --vp-c-brand-soft: var(--fl-accent-soft);
+  --md-inverse-surface: #e7e0eb;
+  --md-inverse-on-surface: #313033;
+  --md-scrim: rgba(0, 0, 0, 0.55);
 
-  --vp-c-tip-1: var(--fl-accent-ink);
-  --vp-c-tip-2: var(--fl-accent-hover);
-  --vp-c-tip-3: var(--fl-accent);
-  --vp-c-tip-soft: var(--fl-accent-soft);
+  --md-elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.6);
+  --md-elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.6);
+  --md-elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.6);
+  --md-elevation-4: 0 6px 10px 4px rgba(0, 0, 0, 0.45), 0 2px 3px rgba(0, 0, 0, 0.6);
+  --md-elevation-5: 0 8px 12px 6px rgba(0, 0, 0, 0.5), 0 4px 4px rgba(0, 0, 0, 0.6);
 
-  --vp-c-warning-1: #f0bc4b;
-  --vp-c-warning-2: #ffd98a;
-  --vp-c-warning-3: #e0a020;
-  --vp-c-warning-soft: rgba(224, 160, 32, 0.14);
+  --vp-c-bg: var(--md-surface);
+  --vp-c-bg-alt: var(--md-surface-container-low);
+  --vp-c-bg-soft: var(--md-surface-container);
+  --vp-c-bg-elv: var(--md-surface-container-lowest);
+  --vp-c-bg-mute: var(--md-surface-container-high);
 
-  --vp-c-danger-1: #f07096;
-  --vp-c-danger-2: #ff9db8;
-  --vp-c-danger-3: #c0365f;
-  --vp-c-danger-soft: rgba(192, 54, 95, 0.16);
+  --vp-c-text-1: var(--md-on-surface);
+  --vp-c-text-2: var(--md-on-surface-variant);
+  --vp-c-text-3: color-mix(in srgb, var(--md-on-surface-variant) 78%, var(--md-surface));
 
-  --flessan-card: var(--vp-c-bg-elv);
-  --flessan-card-border: var(--vp-c-divider);
-  --flessan-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4),
-    0 10px 26px -18px rgba(0, 0, 0, 0.9);
-  --flessan-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45),
-    0 22px 50px -26px rgba(0, 0, 0, 0.95);
-  --flessan-shadow-lg: 0 4px 10px rgba(0, 0, 0, 0.5),
-    0 36px 80px -34px rgba(0, 0, 0, 1);
+  --vp-c-divider: var(--md-outline-variant);
+  --vp-c-border: var(--md-outline);
+  --vp-c-gutter: var(--md-surface-container-low);
+
+  --vp-c-brand-1: var(--md-primary);
+  --vp-c-brand-2: var(--md-primary);
+  --vp-c-brand-3: var(--md-primary);
+  --vp-c-brand-soft: var(--md-primary-container);
+  --vp-c-tip-1: var(--md-on-primary-container);
+  --vp-c-tip-2: var(--md-on-primary-container);
+  --vp-c-tip-3: var(--md-primary-container);
+  --vp-c-tip-soft: var(--md-primary-container);
+
+  --vp-c-warning-1: var(--md-on-tertiary-container);
+  --vp-c-warning-2: var(--md-tertiary);
+  --vp-c-warning-3: var(--md-tertiary-container);
+  --vp-c-warning-soft: var(--md-tertiary-container-soft);
+
+  --vp-c-danger-1: var(--md-on-error-container);
+  --vp-c-danger-2: var(--md-error);
+  --vp-c-danger-3: var(--md-error-container);
+  --vp-c-danger-soft: var(--md-error-container);
+
+  --flessan-card: var(--md-surface-container-low);
+  --flessan-card-border: var(--md-outline-variant);
+  --flessan-shadow-sm: var(--md-elevation-1);
+  --flessan-shadow-md: var(--md-elevation-2);
+  --flessan-shadow-lg: var(--md-elevation-3);
 }
 
-html.dark[data-paper='white'] {
-  --fl-paper: #101315;
-  --fl-paper-tint: #171a1d;
-  --fl-line: #282c31;
-  --fl-line-strong: #383d45;
-  --vp-c-bg-soft: #1c2024;
-  --vp-c-gutter: #0b0d0f;
-}
-
-html.dark[data-paper='sand'] {
-  --fl-paper: #12100d;
-  --fl-paper-tint: #191612;
-  --fl-line: #2b2721;
-  --fl-line-strong: #3b362e;
-  --vp-c-bg-soft: #211d18;
-  --vp-c-gutter: #0d0b09;
+html.dark[data-accent='cobalt'] {
+  --md-seed: #a8c7fa;
+  --md-primary: #a8c7fa;
+  --md-on-primary: #062e6f;
+  --md-primary-container: #0842a0;
+  --md-on-primary-container: #d3e3fd;
+  --md-tertiary: #7fcfff;
+  --md-tertiary-container: #004a77;
+  --md-on-tertiary-container: #c2e7ff;
 }
 
 html.dark[data-accent='emerald'] {
-  --fl-accent: #4fcaa0;
-  --fl-accent-hover: #6fdbb6;
-  --fl-accent-ink: #8fe4c4;
-  --fl-accent-soft: rgba(79, 202, 160, 0.12);
-  --fl-accent-line: rgba(79, 202, 160, 0.3);
-  --fl-on-accent: #04231a;
+  --md-seed: #4dd9e0;
+  --md-primary: #4dd9e0;
+  --md-on-primary: #00363a;
+  --md-primary-container: #004f53;
+  --md-on-primary-container: #a7eef1;
+  --md-tertiary: #b1cbd0;
+  --md-tertiary-container: #334b4f;
+  --md-on-tertiary-container: #cce8eb;
 }
 
 html.dark[data-accent='amber'] {
-  --fl-accent: #f0bc4b;
-  --fl-accent-hover: #ffd071;
-  --fl-accent-ink: #ffd98a;
-  --fl-accent-soft: rgba(240, 188, 75, 0.13);
-  --fl-accent-line: rgba(240, 188, 75, 0.32);
-  --fl-on-accent: #241a00;
+  --md-seed: #f2c048;
+  --md-primary: #f2c048;
+  --md-on-primary: #402d00;
+  --md-primary-container: #5c4300;
+  --md-on-primary-container: #ffdf9e;
+  --md-tertiary: #d8c68c;
+  --md-tertiary-container: #52461f;
+  --md-on-tertiary-container: #f5e1a6;
 }
 
 html.dark[data-accent='rose'] {
-  --fl-accent: #f07096;
-  --fl-accent-hover: #ff90b0;
-  --fl-accent-ink: #ff9db8;
-  --fl-accent-soft: rgba(240, 112, 150, 0.12);
-  --fl-accent-line: rgba(240, 112, 150, 0.3);
-  --fl-on-accent: #2a0713;
-}
-
-html.dark[data-accent='violet'] {
-  --fl-accent: #a98bff;
-  --fl-accent-hover: #bfa6ff;
-  --fl-accent-ink: #c3aeff;
-  --fl-accent-soft: rgba(169, 139, 255, 0.12);
-  --fl-accent-line: rgba(169, 139, 255, 0.3);
-  --fl-on-accent: #150a2e;
+  --md-seed: #ffb1c1;
+  --md-primary: #ffb1c1;
+  --md-on-primary: #5f1129;
+  --md-primary-container: #86243e;
+  --md-on-primary-container: #ffd9df;
+  --md-tertiary: #efb8c8;
+  --md-tertiary-container: #633b48;
+  --md-on-tertiary-container: #ffd8e4;
 }
 
 html.dark[data-accent='graphite'] {
-  --fl-accent: #e6e4de;
-  --fl-accent-hover: #f6f5f1;
-  --fl-accent-ink: #ecebe6;
-  --fl-accent-soft: rgba(236, 235, 230, 0.1);
-  --fl-accent-line: rgba(236, 235, 230, 0.26);
-  --fl-on-accent: #101214;
+  --md-seed: #c7c5d0;
+  --md-primary: #c7c5d0;
+  --md-on-primary: #303038;
+  --md-primary-container: #46464e;
+  --md-on-primary-container: #e3e1e9;
+  --md-tertiary: #c4c5dd;
+  --md-tertiary-container: #42444f;
+  --md-on-tertiary-container: #e0e1f9;
 }
 
 /* ==========================================================================
-   3. Base
+   3. Surface tone presets
+   ========================================================================== */
+
+html[data-paper='white'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 2%, #fffbfe);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 4%, #fffbfe);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 6%, #fdf9ff);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 9%, #f8f3fe);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 12%, #f2ecf9);
+}
+
+html[data-paper='sand'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 3%, #fbf5ec);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 5%, #faf3e8);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 8%, #f6eee1);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 11%, #f1e7d8);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 14%, #eadecc);
+}
+
+html.dark[data-paper='white'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 3%, #121016);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 5%, #17151b);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 7%, #1c1a21);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 10%, #232028);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 13%, #2b2831);
+}
+
+html.dark[data-paper='sand'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 3%, #151210);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 5%, #1a1613);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 7%, #1f1a16);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 10%, #26201b);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 13%, #2e2721);
+}
+
+/* ==========================================================================
+   4. Shape / density variants
+   ========================================================================== */
+
+html[data-corners='round'] {
+  --md-shape-xs: 8px;
+  --md-shape-sm: 12px;
+  --md-shape-md: 16px;
+  --md-shape-lg: 22px;
+  --md-shape-xl: 28px;
+  --md-shape-2xl: 32px;
+}
+
+html[data-corners='sharp'] {
+  --md-shape-xs: 2px;
+  --md-shape-sm: 4px;
+  --md-shape-md: 8px;
+  --md-shape-lg: 10px;
+  --md-shape-xl: 12px;
+  --md-shape-2xl: 16px;
+}
+
+html[data-density='compact'] {
+  --vp-nav-height: 56px;
+}
+
+/* ==========================================================================
+   5. Base
    ========================================================================== */
 
 html {
@@ -341,21 +464,24 @@ html {
 
 body {
   overflow-x: clip;
-  background-color: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
+  background-color: var(--md-surface);
+  color: var(--md-on-surface);
+  font-family: var(--vp-font-family-base);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: 0.15px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--vp-c-text-3) 40%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--md-outline) 70%, transparent) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -363,19 +489,15 @@ body {
   height: 10px;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
 ::-webkit-scrollbar-thumb {
   border: 3px solid transparent;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--vp-c-text-3) 40%, transparent);
+  border-radius: var(--md-shape-full);
+  background: color-mix(in srgb, var(--md-outline) 70%, transparent);
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--vp-c-text-2) 60%, transparent);
+  background: var(--md-outline);
   background-clip: content-box;
 }
 
@@ -390,95 +512,92 @@ body {
 }
 
 /* ==========================================================================
-   4. Typography & prose
+   6. Typography
    ========================================================================== */
 
 .vp-doc {
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
 }
 
 .vp-doc h1,
 .vp-doc h2,
 .vp-doc h3,
 .vp-doc h4 {
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
   text-wrap: balance;
+  letter-spacing: -0.015em;
 }
 
 .vp-doc h1 {
-  margin-bottom: 0.9rem;
-  font-size: clamp(1.9rem, 3.4vw, 2.55rem);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.12;
+  margin-bottom: 0.75rem;
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
 }
 
 .vp-doc h2 {
-  position: relative;
-  margin-top: 3.2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--vp-c-divider);
-  border-bottom: none;
-  font-size: clamp(1.3rem, 2.1vw, 1.5rem);
-  font-weight: 650;
-  letter-spacing: -0.022em;
+  margin-top: 3rem;
+  padding-top: 0;
+  border-top: none;
+  font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
   line-height: 1.3;
 }
 
-.vp-doc h2::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 34px;
-  height: 2px;
-  background: var(--fl-accent);
+.vp-doc h3 {
+  margin-top: 2rem;
+  font-size: 1.12rem;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
-.vp-doc h3 {
-  margin-top: 2.1rem;
-  font-size: 1.12rem;
-  font-weight: 650;
-  letter-spacing: -0.015em;
+.vp-doc h4 {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .vp-doc p,
 .vp-doc li {
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
+  font-size: 1rem;
   line-height: 1.75;
+  letter-spacing: 0.15px;
 }
 
 .vp-doc strong {
-  color: var(--vp-c-text-1);
-  font-weight: 600;
+  color: var(--md-on-surface);
+  font-weight: 500;
 }
 
 .vp-doc a {
-  color: var(--fl-accent-ink);
+  color: var(--md-primary);
   font-weight: 500;
   text-decoration: underline;
-  text-decoration-color: var(--fl-accent-line);
+  text-decoration-color: color-mix(in srgb, var(--md-primary) 40%, transparent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;
-  transition: color 160ms ease, text-decoration-color 160ms ease;
+  transition: color var(--md-duration-short) var(--md-ease-standard),
+    text-decoration-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .vp-doc a:not(.header-anchor):hover {
-  color: var(--fl-accent-hover);
+  color: var(--md-primary);
   text-decoration-color: currentColor;
 }
 
 .vp-doc .header-anchor {
-  color: var(--vp-c-text-3);
+  color: var(--md-outline);
 }
 
 .vp-doc ul,
 .vp-doc ol {
-  padding-left: 1.3rem;
+  padding-left: 1.4rem;
 }
 
 .vp-doc li::marker {
-  color: var(--fl-accent);
+  color: var(--md-primary);
 }
 
 .vp-doc li + li {
@@ -486,96 +605,140 @@ body {
 }
 
 .vp-doc hr {
-  margin: 2.8rem 0;
+  margin: 2.6rem 0;
   border: 0;
-  border-top: 1px solid var(--vp-c-divider);
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .vp-doc blockquote {
   margin: 1.6rem 0;
-  padding: 0.9rem 1.2rem;
-  border-left: 2px solid var(--fl-accent);
-  border-radius: 0 var(--fl-r-sm) var(--fl-r-sm) 0;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-2);
+  padding: 1.1rem 1.35rem;
+  border: 0;
+  border-radius: var(--md-shape-xl);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 
 .vp-doc blockquote > p {
-  color: var(--vp-c-text-2);
+  color: color-mix(in srgb, var(--md-on-secondary-container) 88%, transparent);
   font-size: 0.95rem;
 }
 
+.vp-doc blockquote strong {
+  color: var(--md-on-secondary-container);
+}
+
 .vp-doc img {
-  border-radius: var(--fl-r-md);
+  border-radius: var(--md-shape-xl);
+  box-shadow: none;
+}
+
+.vp-doc kbd {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--md-outline-variant);
+  border-bottom-width: 2px;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.78em;
 }
 
 /* ==========================================================================
-   5. Buttons
+   7. State layers & ripple
+   ========================================================================== */
+
+.VPButton,
+.VPNavBarMenuLink,
+.VPNavBarSearch button,
+.VPSidebarItem .item,
+.vp-doc .custom-block a,
+button {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.md-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0);
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   8. Buttons
    ========================================================================== */
 
 :root {
   --vp-button-brand-border: transparent;
-  --vp-button-brand-text: var(--fl-on-accent);
-  --vp-button-brand-bg: var(--fl-accent);
+  --vp-button-brand-text: var(--md-on-primary);
+  --vp-button-brand-bg: var(--md-primary);
   --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-hover-text: var(--fl-on-accent);
-  --vp-button-brand-hover-bg: var(--fl-accent-hover);
+  --vp-button-brand-hover-text: var(--md-on-primary);
+  --vp-button-brand-hover-bg: color-mix(in srgb, var(--md-primary) 90%, var(--md-on-primary));
   --vp-button-brand-active-border: transparent;
-  --vp-button-brand-active-text: var(--fl-on-accent);
-  --vp-button-brand-active-bg: var(--fl-accent-hover);
+  --vp-button-brand-active-text: var(--md-on-primary);
+  --vp-button-brand-active-bg: var(--md-primary);
 
-  --vp-button-alt-border: var(--vp-c-border);
-  --vp-button-alt-text: var(--vp-c-text-1);
-  --vp-button-alt-bg: var(--vp-c-bg-elv);
-  --vp-button-alt-hover-border: var(--vp-c-text-3);
-  --vp-button-alt-hover-text: var(--vp-c-text-1);
-  --vp-button-alt-hover-bg: var(--vp-c-bg-alt);
-  --vp-button-alt-active-border: var(--vp-c-text-2);
-  --vp-button-alt-active-text: var(--vp-c-text-1);
-  --vp-button-alt-active-bg: var(--vp-c-bg-soft);
+  --vp-button-alt-border: transparent;
+  --vp-button-alt-text: var(--md-on-secondary-container);
+  --vp-button-alt-bg: var(--md-secondary-container);
+  --vp-button-alt-hover-border: transparent;
+  --vp-button-alt-hover-text: var(--md-on-secondary-container);
+  --vp-button-alt-hover-bg: color-mix(in srgb, var(--md-secondary-container) 92%, var(--md-on-secondary-container));
+  --vp-button-alt-active-border: transparent;
+  --vp-button-alt-active-text: var(--md-on-secondary-container);
+  --vp-button-alt-active-bg: var(--md-secondary-container);
 }
 
 .VPButton {
-  border-radius: var(--fl-r-sm);
-  border-width: 1px;
-  padding: 0.55rem 1.05rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: -0.005em;
+  min-height: 40px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  box-shadow: none;
   transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease,
-    box-shadow 200ms var(--flessan-ease-out),
-    transform 200ms var(--flessan-ease-out);
-}
-
-.VPButton.brand {
-  box-shadow: var(--flessan-shadow-sm);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 
 .VPButton:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--flessan-shadow-sm);
+  transform: none;
+  box-shadow: var(--md-elevation-1);
 }
 
 .VPButton:active {
-  transform: translateY(0);
-  box-shadow: none;
+  transform: scale(0.98);
 }
 
 /* ==========================================================================
-   6. Navigation
+   9. Top app bar
    ========================================================================== */
 
 .VPNavBar,
 .VPNavBar.top,
 .VPNavBar:not(.has-sidebar):not(.top) {
-  background-color: var(--vp-c-bg) !important;
-  border-bottom: 1px solid var(--vp-c-divider);
+  background-color: var(--md-surface) !important;
+  border-bottom: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
-  transition: background-color 240ms ease, border-color 240ms ease;
+  transition: background-color var(--md-duration-medium) var(--md-ease-standard),
+    box-shadow var(--md-duration-medium) var(--md-ease-standard);
+}
+
+.VPNavBar:not(.top) {
+  background-color: var(--flessan-nav-glass) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+  box-shadow: 0 1px 0 var(--md-outline-variant);
 }
 
 .VPNavBar .divider {
@@ -585,152 +748,198 @@ body {
 .VPNavBarTitle .title {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  color: var(--vp-c-text-1) !important;
-  font-size: 0.94rem;
-  font-weight: 650;
-  letter-spacing: -0.025em;
+  gap: 10px;
+  color: var(--md-on-surface) !important;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
   text-decoration: none;
 }
 
 .VPNavBarTitle .title::before {
   content: '';
   display: block;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   margin: 0;
   border-radius: 50%;
   background: url('/images/flessan-avatar.png') center / cover no-repeat;
-  box-shadow: 0 0 0 1px var(--vp-c-divider);
+  box-shadow: 0 0 0 1px var(--md-outline-variant);
 }
 
 .VPNavBarMenuLink,
 .VPNavBarMenuGroup .button {
-  position: relative;
-  min-height: 34px;
-  padding-inline: 10px;
-  border-radius: 6px;
-  color: var(--vp-c-text-2);
-  font-size: 0.84rem;
+  min-height: 36px;
+  padding-inline: 14px;
+  border-radius: var(--md-shape-full);
+  color: var(--md-on-surface-variant);
+  font-size: 0.875rem;
   font-weight: 500;
-  letter-spacing: -0.005em;
-  transition: color 160ms ease, background-color 160ms ease;
+  letter-spacing: 0.1px;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .VPNavBarMenuLink:hover,
 .VPNavBarMenuGroup .button:hover {
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg-alt);
+  color: var(--md-on-surface);
+  background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
 }
 
 .VPNavBarMenuLink.active {
-  color: var(--vp-c-text-1);
-  font-weight: 600;
+  color: var(--md-on-secondary-container);
+  background: var(--md-secondary-container);
+  font-weight: 500;
 }
 
 .VPNavBarMenuLink::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 4px;
-  width: 14px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--fl-accent);
-  opacity: 0;
-  transform: translate(-50%, 2px);
-  transition: opacity 180ms ease, transform 220ms var(--flessan-ease-out);
-}
-
-.VPNavBarMenuLink.active::after {
-  opacity: 1;
-  transform: translate(-50%, 0);
+  display: none;
 }
 
 .VPNavBarSearch .DocSearch-Button,
 .VPNavBarSearch button {
-  height: 34px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-2);
-  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
 .VPNavBarSearch .DocSearch-Button:hover,
 .VPNavBarSearch button:hover {
-  border-color: var(--vp-c-text-3);
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
+  border-color: transparent;
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface);
+  box-shadow: var(--md-elevation-1);
+}
+
+.VPNavBarSearch .DocSearch-Button-Keys {
+  gap: 3px;
+}
+
+.VPNavBarSearch .DocSearch-Button-Key,
+.VPNavBarSearch kbd {
+  min-width: 0;
+  height: 20px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-highest);
+  box-shadow: none;
+  color: var(--md-on-surface-variant);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  line-height: 20px;
+}
+
+.VPNavBarSearch .DocSearch-Button:hover .DocSearch-Button-Key {
+  background: var(--md-surface-container-lowest);
 }
 
 .VPSocialLink {
-  width: 32px;
-  height: 32px;
-  border-radius: 7px;
-  color: var(--vp-c-text-3);
-  transition: color 160ms ease, background-color 160ms ease;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--md-on-surface-variant);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .VPSocialLink:hover {
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg-alt);
+  color: var(--md-primary);
+  background: var(--md-primary-container);
+}
+
+.VPNavBarHamburger {
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
 }
 
 /* Focus rings */
 .vp-doc :where(button, a, input, select, textarea, summary):focus-visible,
 .VPNavBar :where(button, a, input):focus-visible,
 .VPFooter :where(a, button):focus-visible {
-  outline: 2px solid var(--fl-accent);
+  outline: 3px solid var(--md-primary);
   outline-offset: 2px;
-  border-radius: 4px;
-}
-
-.VPNavBarHamburger {
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  background: var(--vp-c-bg-elv);
+  border-radius: var(--md-shape-xs);
 }
 
 /* ==========================================================================
-   7. Sidebar & aside
+   10. Navigation drawer / sidebar
    ========================================================================== */
 
 .VPSidebar {
-  background-color: var(--vp-c-bg);
-  border-right: 1px solid var(--vp-c-divider);
+  background-color: var(--md-surface);
+  border-right: 1px solid transparent;
+}
+
+.VPSidebarItem .item {
+  border-radius: var(--md-shape-full);
+  padding-inline: 14px;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.VPSidebarItem .item:hover {
+  background: color-mix(in srgb, var(--md-on-surface) 7%, transparent);
 }
 
 .VPSidebarItem .text {
-  font-size: 0.85rem;
-  color: var(--vp-c-text-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: var(--md-on-surface-variant);
+}
+
+.VPSidebarItem.is-active > .item {
+  background: var(--md-secondary-container);
 }
 
 .VPSidebarItem.is-active > .item .text {
-  color: var(--fl-accent-ink);
-  font-weight: 600;
+  color: var(--md-on-secondary-container);
+  font-weight: 500;
+}
+
+.VPSidebarItem.level-0 > .item .text {
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+  color: var(--md-on-surface-variant);
 }
 
 .VPDocAsideOutline .outline-title {
-  font-size: 0.7rem;
-  font-weight: 650;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--vp-c-text-3);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: var(--md-on-surface-variant);
 }
 
 .VPDocAsideOutline .outline-link {
-  font-size: 0.8rem;
-  color: var(--vp-c-text-3);
+  font-size: 0.81rem;
+  color: var(--md-on-surface-variant);
+  border-radius: var(--md-shape-full);
+  padding: 3px 10px;
+  margin-left: -10px;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
-.VPDocAsideOutline .outline-link:hover,
+.VPDocAsideOutline .outline-link:hover {
+  background: color-mix(in srgb, var(--md-on-surface) 7%, transparent);
+  color: var(--md-on-surface);
+}
+
 .VPDocAsideOutline .outline-link.active {
-  color: var(--fl-accent-ink);
+  color: var(--md-primary);
+  background: var(--md-primary-container);
+}
+
+.VPDocAsideOutline .outline-marker {
+  background-color: var(--md-primary);
 }
 
 /* ==========================================================================
-   8. Layout & widths
+   11. Layout & widths
    ========================================================================== */
 
 .Layout.home-page .VPDoc .content-container,
@@ -742,7 +951,7 @@ body {
   display: none;
 }
 
-.Layout.wide-page .VPDoc.has-aside .content-container,
+.Layout.wide-page .VPDoc .content-container,
 .Layout.wide-page .VPDoc .content {
   max-width: 1040px;
   margin-inline: auto;
@@ -757,10 +966,9 @@ body {
 }
 
 .VPDoc .content-container {
-  max-width: 720px;
+  max-width: 728px;
 }
 
-/* The home prose sits in a calm column under the hero. */
 .Layout.home-page .vp-doc > div > h1,
 .Layout.home-page .vp-doc > div > h2,
 .Layout.home-page .vp-doc > div > h3,
@@ -778,73 +986,77 @@ body {
 .Layout.home-page .vp-doc > div > .my-activity,
 .Layout.home-page .vp-doc > div > .educator-invite,
 .Layout.home-page .vp-doc > div > .post-navigation {
-  max-width: 780px;
+  max-width: 800px;
 }
 
 /* ==========================================================================
-   9. Code, tables, custom blocks
+   12. Content surfaces: code, tables, blocks, cards
    ========================================================================== */
 
 .vp-doc :not(pre) > code {
-  padding: 0.16em 0.4em;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 5px;
-  background: var(--vp-c-bg-alt);
-  color: var(--fl-accent-ink);
-  font-size: 0.85em;
+  padding: 0.16em 0.45em;
+  border: 0;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-high);
+  color: var(--md-primary);
+  font-size: 0.86em;
   font-weight: 500;
 }
 
 .vp-doc div[class*='language-'] {
   position: relative;
   margin: 1.4rem 0;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-alt);
-  transition: border-color 200ms ease;
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-lowest);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  transition: box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
 .vp-doc div[class*='language-']:hover {
-  border-color: var(--vp-c-border);
+  box-shadow: inset 0 0 0 1px var(--md-outline), var(--md-elevation-1);
 }
 
 .vp-doc div[class*='language-'] > span.lang {
-  top: 9px;
-  right: 14px;
-  color: var(--vp-c-text-3);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  top: 10px;
+  right: 16px;
+  color: var(--md-on-surface-variant);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .vp-doc div[class*='language-'] > button.copy {
-  top: 7px;
-  right: 7px;
-  border-radius: 6px;
+  top: 8px;
+  right: 8px;
+  border-radius: var(--md-shape-full);
+}
+
+.vp-doc div[class*='language-'] code {
+  color: var(--md-on-surface);
 }
 
 .vp-doc table {
   width: 100%;
-  margin: 1.5rem 0;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
+  margin: 1.4rem 0;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-lg);
   border-collapse: separate;
   border-spacing: 0;
   overflow: hidden;
 }
 
 .vp-doc th {
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
-  font-weight: 600;
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface);
+  font-weight: 500;
   font-size: 0.82rem;
 }
 
 .vp-doc th,
 .vp-doc td {
-  padding: 0.55rem 0.8rem;
-  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--md-outline-variant);
 }
 
 .vp-doc tr:last-child td {
@@ -852,98 +1064,180 @@ body {
 }
 
 .vp-doc .custom-block {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-alt);
-  padding: 1rem 1.15rem;
-  font-size: 0.9rem;
+  padding: 1rem 1.2rem;
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-high);
+  font-size: 0.92rem;
   line-height: 1.65;
 }
 
 .vp-doc .custom-block.tip {
-  border-color: var(--fl-accent-line);
-  background: var(--fl-accent-soft);
+  background: var(--md-primary-container);
 }
 
 .vp-doc .custom-block.tip .custom-block-title {
-  color: var(--fl-accent-ink);
+  color: var(--md-on-primary-container);
+}
+
+.vp-doc .custom-block.tip p,
+.vp-doc .custom-block.tip a {
+  color: var(--md-on-primary-container);
 }
 
 .vp-doc .custom-block.warning {
-  border-color: rgba(224, 160, 32, 0.35);
+  background: var(--md-tertiary-container-soft);
+}
+
+.vp-doc .custom-block.warning .custom-block-title {
+  color: var(--md-on-tertiary-container);
 }
 
 .vp-doc .custom-block.danger {
-  border-color: rgba(192, 54, 95, 0.3);
+  background: var(--md-error-container);
+}
+
+.vp-doc .custom-block.danger .custom-block-title,
+.vp-doc .custom-block.danger p {
+  color: var(--md-on-error-container);
 }
 
 .vp-doc .custom-block p {
-  color: var(--vp-c-text-2);
-  font-size: 0.9rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.92rem;
+}
+
+/* Material cards used by custom components */
+.md-card {
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-low);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
+}
+
+.md-card.is-elevated {
+  background: var(--md-surface-container-low);
+  box-shadow: var(--md-elevation-1);
+}
+
+.md-card.is-filled {
+  background: var(--md-surface-container-high);
 }
 
 /* ==========================================================================
-   10. Footer
+   13. Search dialog
+   ========================================================================== */
+
+.VPLocalSearchBox .shell {
+  border: 0;
+  border-radius: var(--md-shape-2xl);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-4);
+}
+
+.VPLocalSearchBox .search-bar {
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-highest);
+}
+
+.VPLocalSearchBox .result {
+  border-radius: var(--md-shape-md);
+}
+
+.VPLocalSearchBox .result.selected {
+  background: var(--md-secondary-container);
+}
+
+.DocSearch {
+  --docsearch-primary-color: var(--md-primary) !important;
+  --docsearch-container-background: var(--md-scrim) !important;
+}
+
+/* ==========================================================================
+   14. Footer
    ========================================================================== */
 
 .VPFooter {
-  border-top: 1px solid var(--vp-c-divider);
+  border-top: 1px solid var(--md-outline-variant);
   background: transparent;
 }
 
 .VPFooter .message,
 .VPFooter .copyright {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.78rem;
 }
 
 .VPFooter .copyright a,
 .VPFooter a {
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
 }
 
 .VPFooter a:hover {
-  color: var(--fl-accent-ink);
+  color: var(--md-primary);
 }
 
 /* ==========================================================================
-   11. Search dialog
+   15. Floating actions
    ========================================================================== */
 
-.VPLocalSearchBox .shell {
-  border: 1px solid var(--vp-c-border);
-  border-radius: var(--fl-r-lg);
-  background: var(--vp-c-bg-elv);
-  box-shadow: var(--flessan-shadow-lg);
+.flessan-back-to-top {
+  position: fixed;
+  right: clamp(16px, 3vw, 28px);
+  bottom: calc(clamp(16px, 3vw, 28px) + 68px);
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  box-shadow: var(--md-elevation-1);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.92);
+  transition:
+    opacity var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring),
+    background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
-.VPLocalSearchBox .search-bar {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-sm);
-  background: var(--vp-c-bg-alt);
+.flessan-back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
-.VPLocalSearchBox .result {
-  border-radius: var(--fl-r-sm);
+.flessan-back-to-top:hover {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 
-.VPLocalSearchBox .result.selected {
-  background: var(--vp-c-bg-alt);
-}
-
-.DocSearch {
-  --docsearch-primary-color: var(--fl-accent-ink) !important;
+.flessan-back-to-top svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
 }
 
 /* ==========================================================================
-   12. Theme switching
+   16. Utilities & theme transition
    ========================================================================== */
 
 :root {
   --theme-toggle-x: 88vw;
   --theme-toggle-y: 32px;
-  --theme-transition-duration: 720ms;
-  --theme-transition-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --theme-transition-duration: 620ms;
+  --theme-transition-ease: cubic-bezier(0.2, 0, 0, 1);
 }
 
 html,
@@ -955,9 +1249,9 @@ body,
 .vp-doc,
 .VPFooter,
 .VPSidebar {
-  transition: background-color 520ms var(--theme-transition-ease),
-    color 420ms var(--theme-transition-ease),
-    border-color 480ms var(--theme-transition-ease);
+  transition: background-color 480ms var(--theme-transition-ease),
+    color 360ms var(--theme-transition-ease),
+    border-color 420ms var(--theme-transition-ease);
 }
 
 ::view-transition-group(root) {
@@ -990,16 +1284,18 @@ body,
     opacity: 1;
   }
   100% {
-    opacity: 0.94;
+    opacity: 0.92;
   }
 }
 
 .VPSwitchAppearance {
-  transition: transform 240ms var(--flessan-ease-out), background-color 480ms ease;
+  border-radius: var(--md-shape-full) !important;
+  transition: transform var(--md-duration-medium) var(--md-ease-spring),
+    background-color 480ms var(--theme-transition-ease);
 }
 
 .VPSwitchAppearance:hover {
-  transform: rotate(-4deg);
+  transform: rotate(-8deg) scale(1.06);
 }
 
 html.theme-switching .VPNavBar,
@@ -1009,20 +1305,6 @@ html.theme-switching .VPFooter {
   transition-duration: var(--theme-transition-duration);
 }
 
-/* ==========================================================================
-   13. Motion helpers
-   ========================================================================== */
-
-@keyframes flessan-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.45;
-  }
-}
-
 .motion-pending {
   opacity: 0;
   will-change: opacity, transform;
@@ -1030,59 +1312,6 @@ html.theme-switching .VPFooter {
 
 .motion-done {
   will-change: auto;
-}
-
-/* ==========================================================================
-   14. Utilities owned by the theme
-   ========================================================================== */
-
-.flessan-back-to-top {
-  position: fixed;
-  right: clamp(16px, 3vw, 30px);
-  bottom: calc(clamp(16px, 3vw, 26px) + 46px);
-  z-index: 45;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 10px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-2);
-  box-shadow: var(--flessan-shadow-sm);
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(8px);
-  transition:
-    opacity 200ms ease,
-    transform 220ms var(--flessan-ease-out),
-    color 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease;
-}
-
-.flessan-back-to-top.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.flessan-back-to-top:hover {
-  color: var(--vp-c-text-1);
-  border-color: var(--vp-c-text-3);
-  background: var(--vp-c-bg-alt);
-}
-
-.flessan-back-to-top svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.7;
 }
 
 html[data-motion='off'] *,
@@ -1100,24 +1329,21 @@ html[data-density='compact'] .vp-doc li {
 }
 
 html[data-density='compact'] .vp-doc > div > h2 {
-  margin-top: 2.3rem;
-}
-
-html[data-density='compact'] .vp-doc > div > * + * {
-  margin-top: 0.8rem;
+  margin-top: 2.2rem;
 }
 
 /* ==========================================================================
-   15. Responsive & accessibility
+   17. Responsive & accessibility
    ========================================================================== */
 
 @media (max-width: 767px) {
   .vp-doc h1 {
-    font-size: clamp(1.7rem, 6.5vw, 2.1rem);
+    font-size: clamp(1.85rem, 7vw, 2.35rem);
+    font-weight: 400;
   }
 
   .vp-doc h2 {
-    margin-top: 2.5rem;
+    margin-top: 2.4rem;
   }
 
   .vp-doc p,
@@ -1129,7 +1355,161 @@ html[data-density='compact'] .vp-doc > div > * + * {
     width: 100%;
     justify-content: center;
   }
+
+  .VPFooter {
+    padding-bottom: 72px;
+  }
 }
+
+/* ==========================================================================
+   11b. Local search dialog
+   ========================================================================== */
+
+.VPLocalSearchBox .shell {
+  width: min(100vw - 32px, 660px);
+  padding: 14px;
+  gap: 12px;
+  border: 0 !important;
+  border-radius: var(--md-shape-2xl) !important;
+  background: var(--md-surface-container-high) !important;
+  box-shadow: var(--md-elevation-5) !important;
+}
+
+.VPLocalSearchBox .search-bar {
+  padding: 0 14px;
+  border: 0 !important;
+  border-radius: var(--md-shape-full) !important;
+  background: var(--md-surface-container-highest) !important;
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: box-shadow var(--md-duration-short) var(--md-ease-standard);
+}
+
+.VPLocalSearchBox .search-bar:focus-within {
+  border: 0 !important;
+  box-shadow: inset 0 0 0 2px var(--md-primary) !important;
+}
+
+.VPLocalSearchBox .search-input {
+  color: var(--md-on-surface);
+}
+
+.VPLocalSearchBox .results {
+  gap: 4px;
+  padding: 2px;
+}
+
+.VPLocalSearchBox .result {
+  padding-inline: 12px;
+  border: 0 !important;
+  border-radius: var(--md-shape-full) !important;
+  background: transparent !important;
+  color: var(--md-on-surface) !important;
+}
+
+.VPLocalSearchBox .result.selected {
+  background: var(--md-secondary-container) !important;
+  color: var(--md-on-secondary-container);
+}
+
+.VPLocalSearchBox .result .title {
+  font-weight: 500;
+}
+
+.VPLocalSearchBox .result .breadcrumbs,
+.VPLocalSearchBox .result .excerpt {
+  color: var(--md-on-surface-variant) !important;
+  opacity: 1;
+}
+
+.VPLocalSearchBox .result.selected .breadcrumbs,
+.VPLocalSearchBox .result.selected .excerpt {
+  color: color-mix(in srgb, var(--md-on-secondary-container) 78%, transparent) !important;
+}
+
+.VPLocalSearchBox .result.selected .title-icon,
+.VPLocalSearchBox .result .title-icon {
+  color: var(--md-primary);
+}
+
+.VPLocalSearchBox .fade-top,
+.VPLocalSearchBox .fade-bottom {
+  display: none;
+}
+
+.VPLocalSearchBox mark {
+  border-radius: var(--md-shape-xs);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.VPLocalSearchBox .search-keyboard-shortcuts {
+  color: var(--md-on-surface-variant);
+}
+
+.VPLocalSearchBox .search-keyboard-shortcuts kbd {
+  padding: 2px 7px;
+  border: 0 !important;
+  border-radius: var(--md-shape-full) !important;
+  background: var(--md-surface-container-highest) !important;
+  box-shadow: none !important;
+  color: var(--md-on-surface-variant) !important;
+}
+
+.VPLocalSearchBox .no-results {
+  color: var(--md-on-surface-variant);
+}
+
+/* ==========================================================================
+   12. Mobile local nav (outline / back-to-top)
+   ========================================================================== */
+
+.VPLocalNav {
+  border-bottom: 0;
+  background: color-mix(in srgb, var(--md-surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+}
+
+.VPLocalNavOutlineDropdown {
+  padding: 9px 0;
+}
+
+.VPLocalNavOutlineDropdown button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.VPLocalNavOutlineDropdown button:hover,
+.VPLocalNavOutlineDropdown button.open {
+  background: var(--md-surface-container-highest);
+  color: var(--md-primary);
+}
+
+.VPLocalNavOutlineDropdown button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.VPLocalNav .outline {
+  border-radius: 0 0 var(--md-shape-xl) var(--md-shape-xl);
+  border-bottom: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container-low);
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   html {

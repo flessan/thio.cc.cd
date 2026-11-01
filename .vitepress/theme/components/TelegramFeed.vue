@@ -110,7 +110,7 @@ onMounted(load)
 }
 
 .tg-sub {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.88rem;
   margin: 0 0 1rem;
 }
@@ -119,12 +119,12 @@ onMounted(load)
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--vp-c-divider);
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .tg-item {
   padding: 0.9rem 0;
-  border-bottom: 1px solid var(--vp-c-divider);
+  border-bottom: 1px solid var(--md-outline-variant);
 }
 
 .tg-meta {
@@ -135,24 +135,25 @@ onMounted(load)
 }
 
 .tg-when {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.8rem;
 }
 
 .tg-badge {
   font-size: 0.72rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 999px;
-  padding: 0 0.55rem;
-  color: var(--vp-c-text-3);
-  line-height: 1.6;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  padding: 0 0.6rem;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  line-height: 1.7;
 }
 
 .tg-open {
   display: inline-block;
   margin-top: 0.5rem;
   font-size: 0.82rem;
-  color: var(--vp-c-brand-1);
+  color: var(--md-primary);
   font-weight: 500;
 }
 

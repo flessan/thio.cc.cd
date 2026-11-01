@@ -66,22 +66,21 @@ onMounted(async () => {
   align-items: stretch;
   gap: 12px;
   min-width: 0;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-sm);
-  padding: 10px 12px;
-  background: var(--vp-c-bg-alt);
+  border: 0;
+  border-radius: var(--md-shape-xl);
+  padding: 12px;
+  background: var(--md-surface-container-low);
   text-decoration: none;
   transition:
-    border-color 220ms ease,
-    background-color 220ms ease,
-    box-shadow 420ms var(--flessan-ease-out),
-    transform 480ms var(--flessan-ease-out);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .lp:hover {
   text-decoration: none;
-  border-color: var(--fl-accent-line);
-  box-shadow: var(--flessan-shadow-sm);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-1);
   transform: translateY(-2px);
 }
 
@@ -90,10 +89,10 @@ onMounted(async () => {
   align-self: center;
   aspect-ratio: 3 / 2;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--md-shape-md);
   flex-shrink: 0;
-  background: var(--vp-c-default-soft);
-  transition: transform 600ms var(--flessan-ease-out);
+  background: var(--md-surface-container-highest);
+  transition: transform var(--md-duration-long) var(--md-ease-spring);
 }
 
 .lp:hover .lp-img {
@@ -103,14 +102,16 @@ onMounted(async () => {
 .lp-body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
+  padding: 2px 4px 2px 0;
 }
 
 .lp-site {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
+  letter-spacing: 0.3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -119,7 +120,7 @@ onMounted(async () => {
 .lp-arrow {
   display: inline-block;
   font-size: 0.7rem;
-  transition: transform 360ms var(--flessan-ease-out);
+  transition: transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .lp:hover .lp-arrow {
@@ -128,19 +129,17 @@ onMounted(async () => {
 
 .lp-title {
   font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--vp-c-text-1);
+  font-weight: 500;
+  color: var(--md-primary);
   overflow-wrap: anywhere;
-}
-
-.lp:hover .lp-title {
-  color: var(--flessan-accent-ink);
+  line-height: 1.45;
 }
 
 .lp-desc {
   font-size: 0.8rem;
   font-weight: 400;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
+  line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

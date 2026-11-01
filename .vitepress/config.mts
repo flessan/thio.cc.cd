@@ -433,10 +433,10 @@ ${items}
     ['link', { rel: 'icon', type: 'image/png', href: '/images/flessan-icon.png' }],
     ['link', { rel: 'apple-touch-icon', href: '/images/flessan-icon-180.png' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: "Flessan's blog", href: '/feed.xml' }],
-    ['meta', { name: 'theme-color', content: '#f7f6f2' }],
-    ['meta', { name: 'theme-color', content: '#0e0f11', media: '(prefers-color-scheme: dark)' }],
+    ['meta', { name: 'theme-color', content: '#fdf7ff' }],
+    ['meta', { name: 'theme-color', content: '#141218', media: '(prefers-color-scheme: dark)' }],
     // Apply the visitor's playground choices before first paint (no flash).
-    ['script', {}, `(function(){try{var s=JSON.parse(localStorage.getItem('flessan-playground-v1')||'{}');var d=document.documentElement;d.dataset.accent=s.accent||'cobalt';d.dataset.paper=s.paper||'paper';d.dataset.corners=s.corners||'soft';d.dataset.motion=s.motion||'playful';d.dataset.density=s.density||'cozy'}catch(e){}})();`]
+    ['script', {}, `(function(){try{var s=JSON.parse(localStorage.getItem('flessan-playground-v1')||'{}');var d=document.documentElement;d.dataset.accent=s.accent||'violet';d.dataset.paper=s.paper||'paper';d.dataset.corners=s.corners||'soft';d.dataset.motion=s.motion||'playful';d.dataset.density=s.density||'cozy'}catch(e){}})();`]
   ],
 
   themeConfig: {

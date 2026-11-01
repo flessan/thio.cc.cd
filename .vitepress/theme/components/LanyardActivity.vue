@@ -1184,36 +1184,120 @@ onUnmounted(() => {
    --------------------------------------------------------------------------- */
 .my-activity,
 .my-activity.is-light-theme {
-  --discord-bg: var(--vp-c-bg-alt);
-  --discord-panel: var(--vp-c-bg-elv);
-  --discord-card: var(--vp-c-bg-alt);
-  --discord-card-hover: var(--vp-c-bg-soft);
-  --discord-border: var(--vp-c-divider);
-  --discord-border-strong: var(--vp-c-border);
-  --discord-text: var(--vp-c-text-1);
-  --discord-text-soft: var(--vp-c-text-2);
-  --discord-muted: var(--vp-c-text-3);
-  --discord-label: var(--vp-c-text-3);
-  --discord-blue: var(--fl-accent);
-  --discord-blue-dark: var(--fl-accent-hover);
-  --discord-blue-hover: var(--fl-accent-ink);
-  --discord-link: var(--fl-accent-ink);
-  --discord-white: var(--fl-on-accent);
-  --discord-profile-banner: var(--fl-accent-soft);
-  --discord-banner-decoration-border: var(--fl-accent-line);
-  --discord-banner-decoration-fill: var(--fl-accent-soft);
-  --discord-icon-accent: var(--fl-accent-ink);
-  --discord-subtle-divider: var(--vp-c-divider);
-  --discord-menu-shadow: var(--flessan-shadow-md);
-  --discord-soft-shadow: rgba(20, 22, 26, 0.06);
-  --discord-avatar-ring: var(--vp-c-divider);
+  --discord-bg: var(--md-surface-container-low);
+  --discord-panel: var(--md-surface-container);
+  --discord-card: var(--md-surface-container-high);
+  --discord-card-hover: var(--md-surface-container-highest);
+  --discord-border: var(--md-outline-variant);
+  --discord-border-strong: var(--md-outline);
+  --discord-text: var(--md-on-surface);
+  --discord-text-soft: var(--md-on-surface-variant);
+  --discord-muted: var(--md-on-surface-variant);
+  --discord-label: var(--md-on-surface-variant);
+  --discord-blue: var(--md-primary);
+  --discord-blue-dark: var(--md-primary);
+  --discord-blue-hover: var(--md-primary);
+  --discord-link: var(--md-primary);
+  --discord-white: var(--md-on-primary);
+  --discord-profile-banner: var(--md-primary-container);
+  --discord-banner-decoration-border: color-mix(in srgb, var(--md-on-primary-container) 9%, transparent);
+  --discord-banner-decoration-fill: color-mix(in srgb, var(--md-on-primary-container) 5%, transparent);
+  --discord-icon-accent: var(--md-primary);
+  --discord-subtle-divider: var(--md-outline-variant);
+  --discord-menu-shadow: var(--md-elevation-3);
+  --discord-soft-shadow: transparent;
+  --discord-avatar-ring: var(--md-outline-variant);
 
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-2);
+  border: 0;
+  border-radius: var(--md-shape-2xl);
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface-variant);
   box-shadow: none;
   color-scheme: normal;
+}
+
+.my-activity .join-server,
+.my-activity .message-button {
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-primary);
+  color: var(--md-on-primary) !important;
+  font-weight: 500;
+}
+
+.my-activity .join-server:hover,
+.my-activity .message-button:hover {
+  background: color-mix(in srgb, var(--md-primary) 88%, var(--md-on-primary));
+  box-shadow: var(--md-elevation-1);
+}
+
+.my-activity .copy-server,
+.my-activity .activity-retry-button,
+.my-activity .guild-join-link {
+  border-radius: var(--md-shape-full);
+}
+
+.my-activity .profile-banner {
+  border-radius: var(--md-shape-lg);
+}
+
+.my-activity .activity-api-error,
+.my-activity .reveal-card {
+  border: 0;
+  background: var(--md-surface-container-high);
+}
+
+.my-activity .activity-api-error {
+  padding: 1rem 1.05rem;
+  border-radius: var(--md-shape-lg);
+}
+
+.my-activity .reveal-card {
+  border-radius: var(--md-shape-lg);
+}
+
+.my-activity .activity-api-error-icon {
+  border-radius: 50%;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.my-activity .activity-retry-button {
+  border: 0;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.my-activity .activity-retry-button:hover {
+  border: 0;
+  background: color-mix(in srgb, var(--md-secondary-container) 80%, var(--md-on-secondary-container));
+}
+
+.my-activity .copy-server {
+  border: 0;
+  background: var(--md-surface-container-high);
+}
+
+.my-activity .copy-server:hover {
+  border: 0;
+  background: var(--md-surface-container-highest);
+  color: var(--md-primary);
+}
+
+.my-activity .guild-tag,
+.my-activity .activity-platform-pill,
+.my-activity .profile-custom-status {
+  border: 0;
+  background: var(--md-surface-container-high);
+}
+
+.my-activity .guild-divider {
+  background: var(--md-outline-variant);
+}
+
+.my-activity .activity-heading h2 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 .my-activity .activity-heading h2 {

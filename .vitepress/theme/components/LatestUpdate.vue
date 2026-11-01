@@ -92,9 +92,10 @@ onMounted(load)
 }
 
 .lu-card {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  padding: 1rem 1.2rem;
+  border: 0;
+  border-radius: var(--md-shape-xl);
+  background: var(--md-surface-container-low);
+  padding: 1.1rem 1.3rem;
 }
 
 .lu-meta {
@@ -105,17 +106,18 @@ onMounted(load)
 }
 
 .lu-when {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.8rem;
 }
 
 .lu-badge {
   font-size: 0.72rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 999px;
-  padding: 0 0.55rem;
-  color: var(--vp-c-text-3);
-  line-height: 1.6;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  padding: 0 0.6rem;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  line-height: 1.7;
 }
 
 .lu-links {
@@ -124,19 +126,19 @@ onMounted(load)
 }
 
 .lu-links a {
-  color: var(--vp-c-brand-1);
+  color: var(--md-primary);
   font-weight: 500;
 }
 
 .lu-sep {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   margin: 0 0.4rem;
 }
 
 .lu-refresh {
   border: none;
   background: none;
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.85rem;
   font-family: inherit;
   cursor: pointer;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * /kerja — the personal workspace.
- * Shares the site's design tokens, settings store and search engines so the
- * workspace feels like a room in the same house, not a separate island.
+ * Material 3 Expressive: one tonal system with the rest of the site, a pill
+ * search bar, filter chips, a command palette and a spring-animated grid.
  */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import shortcutData from 'virtual:kerja-shortcuts'
@@ -61,18 +61,19 @@ const engineMenu = ref(false)
 const lookOpen = ref(false)
 const activeCategory = ref('All')
 const input = ref<HTMLInputElement | null>(null)
-const bar = ref<HTMLElement | null>(null)
+const root = ref<HTMLElement | null>(null)
 const engineWrap = ref<HTMLElement | null>(null)
 const lookWrap = ref<HTMLElement | null>(null)
-const root = ref<HTMLElement | null>(null)
+const resultsRoot = ref<HTMLElement | null>(null)
+const fab = ref<HTMLButtonElement | null>(null)
 const failed = ref(new Set<string>())
 const mode = ref<Mode>('system')
 const isDark = ref(false)
 const clock = ref('--:--')
 
-const pins = ref<string[]>(readList(PIN_KEY))
-const recent = ref<string[]>(readList(RECENT_KEY))
-const history = ref<string[]>(readList(HISTORY_KEY))
+const pins = ref<string[]>([])
+const recent = ref<string[]>([])
+const history = ref<string[]>([])
 
 function readList(key: string): string[] {
   if (typeof window === 'undefined') return []
@@ -126,6 +127,7 @@ const groups = computed(() => {
 })
 
 const desktop = computed(() => settings.value.density === 'compact')
+const narrow = ref(false)
 
 /* -------------------------------------------------------------- utilities */
 
@@ -147,6 +149,16 @@ function markFailed(url: string) {
   failed.value = new Set(failed.value).add(url)
 }
 
+function sweepIcons() {
+  const broken = new Set(failed.value)
+  root.value?.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) {
+      broken.add(img.getAttribute('src') as string)
+    }
+  })
+  if (broken.size !== failed.value.size) failed.value = broken
+}
+
 function rememberRecent(url: string) {
   recent.value = [url, ...recent.value.filter((item) => item !== url)].slice(0, MAX_RECENT)
   writeList(RECENT_KEY, recent.value)
@@ -159,11 +171,12 @@ function rememberSearch(term: string) {
   writeList(HISTORY_KEY, history.value)
 }
 
-function togglePin(url: string) {
+function togglePin(url: string, event?: Event) {
   pins.value = pins.value.includes(url)
     ? pins.value.filter((item) => item !== url)
     : [url, ...pins.value]
   writeList(PIN_KEY, pins.value)
+  if (event) pop(event.currentTarget as HTMLElement)
 }
 
 function clearRecent() {
@@ -178,8 +191,9 @@ function selectEngine(id: Engine['id'], event?: Event) {
   nextTick(() => input.value?.focus())
 }
 
-function toggleDensity() {
+function toggleDensity(event?: Event) {
   applySettings({ density: desktop.value ? 'cozy' : 'compact' })
+  if (event) pop(event.currentTarget as HTMLElement)
 }
 
 function pickMode(next: Mode) {
@@ -269,7 +283,9 @@ const items = computed<Item[]>(() => {
   }
 
   const matches = shortcuts.filter((item) =>
-    !q ? pins.value.includes(item.url) : `${item.name} ${item.category} ${hostOf(item.url)}`.toLowerCase().includes(q)
+    !q
+      ? pins.value.includes(item.url)
+      : `${item.name} ${item.category} ${hostOf(item.url)}`.toLowerCase().includes(q)
   )
   matches.slice(0, q ? 6 : 4).forEach((item) =>
     list.push({
@@ -310,15 +326,39 @@ const items = computed<Item[]>(() => {
     )
 
   const actions: Array<{ id: string; label: string; hint: string; run: () => void }> = [
-    { id: 'theme', label: isDark.value ? 'Switch to light theme' : 'Switch to dark theme', hint: 'appearance', run: cycleTheme },
-    { id: 'density', label: desktop.value ? 'Comfortable grid' : 'Compact grid', hint: 'layout', run: toggleDensity },
-    { id: 'engine', label: 'Change search engine', hint: engine.value.name, run: () => { palette.value = false; engineMenu.value = true } }
+    {
+      id: 'theme',
+      label: isDark.value ? 'Switch to light theme' : 'Switch to dark theme',
+      hint: 'appearance',
+      run: cycleTheme
+    },
+    {
+      id: 'density',
+      label: desktop.value ? 'Comfortable grid' : 'Compact grid',
+      hint: 'layout',
+      run: () => toggleDensity()
+    },
+    {
+      id: 'engine',
+      label: 'Change search engine',
+      hint: engine.value.name,
+      run: () => {
+        palette.value = false
+        engineMenu.value = true
+      }
+    }
   ]
 
   actions
     .filter((action) => !q || action.label.toLowerCase().includes(q))
     .forEach((action) =>
-      list.push({ id: `action:${action.id}`, kind: 'action', label: action.label, hint: action.hint, action: action.run })
+      list.push({
+        id: `action:${action.id}`,
+        kind: 'action',
+        label: action.label,
+        hint: action.hint,
+        action: action.run
+      })
     )
 
   return list
@@ -358,8 +398,7 @@ function onKeydown(event: KeyboardEvent) {
     focusSearch()
     return
   }
-  const typing = isTyping(event.target)
-  if (event.key === '/' && !typing) {
+  if (event.key === '/' && !isTyping(event.target)) {
     event.preventDefault()
     focusSearch()
     return
@@ -404,6 +443,52 @@ function onDocumentPointer(event: PointerEvent) {
   if (lookOpen.value && lookWrap.value && !lookWrap.value.contains(node)) lookOpen.value = false
 }
 
+/* ------------------------------------------------------------- grid FLIP */
+
+function captureCards() {
+  const positions = new Map<string, DOMRect>()
+  resultsRoot.value?.querySelectorAll<HTMLElement>('.k-card').forEach((card) => {
+    if (card.dataset.key) positions.set(card.dataset.key, card.getBoundingClientRect())
+  })
+  return positions
+}
+
+function playFlip(previous: Map<string, DOMRect>) {
+  if (motionLevel() === 'off' || !resultsRoot.value) return
+  let order = 0
+  resultsRoot.value.querySelectorAll<HTMLElement>('.k-card').forEach((card) => {
+    const before = previous.get(card.dataset.key ?? '')
+    const after = card.getBoundingClientRect()
+    if (!before) {
+      animate(card, {
+        opacity: [0, 1],
+        scale: [0.9, 1],
+        duration: 460,
+        delay: order++ * 22,
+        ease: 'outBack(1.6)'
+      })
+      return
+    }
+    const dx = before.left - after.left
+    const dy = before.top - after.top
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return
+    animate(card, {
+      translateX: [dx, 0],
+      translateY: [dy, 0],
+      duration: 560,
+      ease: 'outQuint'
+    })
+  })
+}
+
+async function setCategory(name: string) {
+  if (name === activeCategory.value) return
+  const previous = captureCards()
+  activeCategory.value = name
+  await nextTick()
+  playFlip(previous)
+}
+
 /* ------------------------------------------------------------------- clock */
 
 let clockTimer: number | undefined
@@ -425,18 +510,19 @@ watch(palette, (value) => {
   if (value) active.value = 0
 })
 
-function sweepIcons() {
-  const broken = new Set(failed.value)
-  root.value?.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
-    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) {
-      broken.add(img.getAttribute('src') as string)
-    }
-  })
-  if (broken.size !== failed.value.size) failed.value = broken
+let narrowQuery: MediaQueryList | undefined
+function syncNarrow() {
+  narrow.value = window.matchMedia('(max-width: 640px)').matches
 }
 
 onMounted(async () => {
   bootCustomization()
+  pins.value = readList(PIN_KEY)
+  recent.value = readList(RECENT_KEY)
+  history.value = readList(HISTORY_KEY)
+  syncNarrow()
+  narrowQuery = window.matchMedia('(max-width: 640px)')
+  narrowQuery.addEventListener('change', syncNarrow)
   tick()
   clockTimer = window.setInterval(tick, 20000)
 
@@ -455,16 +541,26 @@ onMounted(async () => {
 
   if (motionLevel() === 'off' || !root.value) return
   await nextTick()
-  animate(root.value.querySelectorAll('[data-anim]'), {
+  const intro = root.value.querySelectorAll<HTMLElement>('[data-anim]')
+  animate(intro, {
     opacity: [0, 1],
-    y: [14, 0],
-    duration: 620,
-    delay: stagger(55, { start: 60 }),
+    y: [18, 0],
+    duration: 640,
+    delay: stagger(60, { start: 60 }),
     ease: 'outQuint'
+  })
+  const cards = root.value.querySelectorAll<HTMLElement>('.k-card')
+  animate(cards, {
+    opacity: [0, 1],
+    scale: [0.92, 1],
+    duration: 520,
+    delay: stagger(18, { start: 260 }),
+    ease: 'outBack(1.4)'
   })
 })
 
 onBeforeUnmount(() => {
+  narrowQuery?.removeEventListener('change', syncNarrow)
   if (clockTimer) window.clearInterval(clockTimer)
   document.removeEventListener('keydown', onKeydown)
   document.removeEventListener('pointerdown', onDocumentPointer)
@@ -473,41 +569,40 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="root" class="kerja" :class="{ 'is-compact': desktop }">
-    <header class="k-header">
-      <div class="k-header-inner">
-        <a class="k-brand" href="/" aria-label="Back to thio.cc.cd">
-          <img src="/images/flessan-avatar.png" alt="" width="26" height="26" />
-          <span class="k-brand-name">thio.cc.cd</span>
-          <span class="k-brand-sep" aria-hidden="true">/</span>
-          <span class="k-brand-page">Workspace</span>
+    <header class="k-appbar">
+      <div class="k-appbar-inner">
+        <a class="k-icon-btn k-back" href="/" aria-label="Back to thio.cc.cd">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5M11 6L5 12l6 6" />
+          </svg>
         </a>
 
-        <p class="k-clock" data-anim>
-          <span class="k-live" aria-hidden="true"></span>
-          Banjarmasin · <span class="k-clock-time">{{ clock }}</span> WITA
-        </p>
+        <div class="k-appbar-title">
+          <h1>Workspace</h1>
+          <p>thio.cc.cd · Banjarmasin · {{ clock }} WITA</p>
+        </div>
 
-        <div class="k-actions">
+        <div class="k-appbar-actions">
           <div ref="lookWrap" class="k-pop-wrap">
             <button
               type="button"
-              class="k-icon-btn k-look-btn"
+              class="k-icon-btn"
               :aria-expanded="lookOpen"
               aria-haspopup="dialog"
+              aria-label="Appearance"
               @click="lookOpen = !lookOpen"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
-                <circle cx="16" cy="7" r="2.2" />
-                <circle cx="10" cy="17" r="2.2" />
+                <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+                <circle cx="15" cy="7" r="2.2" />
+                <circle cx="9" cy="17" r="2.2" />
               </svg>
-              <span class="k-btn-label">Look</span>
             </button>
 
             <Transition name="k-pop">
               <div v-if="lookOpen" class="k-pop k-look" role="dialog" aria-label="Appearance">
                 <div class="k-pop-group">
-                  <span class="k-pop-label">Accent</span>
+                  <span class="k-pop-label">Seed colour</span>
                   <div class="k-swatches">
                     <button
                       v-for="accent in ACCENTS"
@@ -519,7 +614,11 @@ onBeforeUnmount(() => {
                       :aria-label="accent.label"
                       :aria-pressed="settings.accent === accent.id"
                       @click="applySettings({ accent: accent.id })"
-                    />
+                    >
+                      <svg v-if="settings.accent === accent.id" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
 
@@ -590,11 +689,6 @@ onBeforeUnmount(() => {
               <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
             </svg>
           </button>
-
-          <a class="k-back" href="/">
-            <span>Back to site</span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg>
-          </a>
         </div>
       </div>
     </header>
@@ -602,14 +696,14 @@ onBeforeUnmount(() => {
     <main class="k-main">
       <section class="k-hero" data-anim>
         <div class="k-hero-copy">
-          <p class="k-kicker">
-            <span class="k-dot" aria-hidden="true"></span>
-            Personal workspace · {{ shortcuts.length }} shortcuts · {{ categories.length - 1 }} categories
-          </p>
-          <h1 class="k-title">
+          <span class="k-chip">
+            <span class="k-chip-dot" aria-hidden="true"></span>
+            Personal workspace · {{ shortcuts.length }} shortcuts
+          </span>
+          <h2 class="k-title">
             Everything I use,
-            <em>one keystroke away.</em>
-          </h1>
+            <span>one keystroke away.</span>
+          </h2>
           <p class="k-lead">
             Search the web, jump straight to a pinned tool, or browse the library
             below. Pins, recent visits and your engine are remembered on this device.
@@ -629,7 +723,7 @@ onBeforeUnmount(() => {
         </aside>
       </section>
 
-      <div ref="bar" class="k-search" data-anim>
+      <div class="k-search" data-anim>
         <form class="k-bar" role="search" @submit.prevent="submit">
           <div ref="engineWrap" class="k-engine-wrap">
             <button
@@ -642,6 +736,7 @@ onBeforeUnmount(() => {
             >
               <span class="k-engine-dot" :style="{ background: engine.color }" aria-hidden="true"></span>
               <span class="k-engine-name">{{ engine.name }}</span>
+              <span class="k-engine-initial" aria-hidden="true">{{ engine.name.slice(0, 1) }}</span>
               <svg class="k-chevron" :class="{ open: engineMenu }" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M7 10l5 5 5-5" />
               </svg>
@@ -688,7 +783,7 @@ onBeforeUnmount(() => {
               aria-autocomplete="list"
               aria-controls="k-palette"
               :aria-expanded="palette"
-              :placeholder="`Search ${engine.name}, or type a command`"
+              :placeholder="narrow ? 'Search the web' : `Search ${engine.name}, or type a command`"
               aria-label="Search the web or the workspace"
               @focus="palette = true"
               @keydown="onInputKeydown"
@@ -705,7 +800,7 @@ onBeforeUnmount(() => {
             </button>
           </div>
 
-          <button type="submit" class="k-submit">
+          <button type="submit" class="k-submit" aria-label="Search">
             <span class="k-submit-label">Search</span>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M5 12h13M12.5 6.5L19 12l-6.5 5.5" />
@@ -741,9 +836,9 @@ onBeforeUnmount(() => {
                   <path d="M14 4v4h4" />
                 </svg>
                 <svg v-else-if="item.kind === 'action'" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
-                  <circle cx="16" cy="7" r="2.2" />
-                  <circle cx="10" cy="17" r="2.2" />
+                  <path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+                  <circle cx="15" cy="7" r="2.2" />
+                  <circle cx="9" cy="17" r="2.2" />
                 </svg>
                 <svg v-else-if="item.kind === 'history'" viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="12" cy="12" r="8" />
@@ -784,12 +879,16 @@ onBeforeUnmount(() => {
             v-for="term in history.slice(0, 5)"
             :key="term"
             type="button"
-            class="k-chip"
+            class="k-chip-btn"
             @click="openWeb(term)"
           >
             {{ term }}
           </button>
-          <button type="button" class="k-chip k-chip-ghost" @click="history = []; writeList(HISTORY_KEY, [])">
+          <button
+            type="button"
+            class="k-chip-btn k-chip-ghost"
+            @click="history = []; writeList(HISTORY_KEY, [])"
+          >
             Clear
           </button>
         </div>
@@ -797,14 +896,19 @@ onBeforeUnmount(() => {
 
       <section v-if="pinnedItems.length" class="k-section" data-anim>
         <header class="k-section-head">
-          <h2>
+          <h3>
             Pinned
             <span class="k-count">{{ pinnedItems.length }}</span>
-          </h2>
+          </h3>
         </header>
-        <div class="k-grid k-grid-pinned" :class="{ compact: desktop }">
-          <article v-for="item in pinnedItems" :key="item.url" class="k-card">
-            <a class="k-card-link" :href="item.url" target="_blank" rel="noopener" @click="rememberRecent(item.url)">
+        <div ref="resultsRoot" class="k-grid k-grid-pinned" :class="{ compact: desktop }">
+          <article
+            v-for="item in pinnedItems"
+            :key="item.url"
+            class="k-card"
+            :data-key="item.url"
+          >
+            <div class="k-card-main">
               <span class="k-icon">
                 <img
                   v-if="!failed.has(item.icon)"
@@ -818,17 +922,17 @@ onBeforeUnmount(() => {
                 />
                 <span v-else class="k-mono">{{ initials(item.name) }}</span>
               </span>
-              <span class="k-card-body">
+              <a class="k-card-link" :href="item.url" target="_blank" rel="noopener" @click="rememberRecent(item.url)">
                 <span class="k-card-name">{{ item.name }}</span>
                 <span class="k-card-host">{{ hostOf(item.url) }}</span>
-              </span>
-            </a>
+              </a>
+            </div>
             <button
               type="button"
-              class="k-star"
+              class="k-star pinned"
               aria-label="Unpin shortcut"
               :aria-pressed="true"
-              @click="togglePin(item.url)"
+              @click="togglePin(item.url, $event)"
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 3.8l2.5 5.4 5.9.7-4.4 4.1 1.2 5.9-5.2-2.9-5.2 2.9 1.2-5.9L3.6 9.9l5.9-.7z" />
@@ -838,7 +942,7 @@ onBeforeUnmount(() => {
         </div>
       </section>
 
-      <section v-else class="k-section k-empty-pinned" data-anim>
+      <section v-else class="k-empty-pinned" data-anim>
         <span class="k-empty-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <path d="M12 3.8l2.5 5.4 5.9.7-4.4 4.1 1.2 5.9-5.2-2.9-5.2 2.9 1.2-5.9L3.6 9.9l5.9-.7z" />
@@ -849,10 +953,10 @@ onBeforeUnmount(() => {
 
       <section v-if="recentItems.length" class="k-section" data-anim>
         <header class="k-section-head">
-          <h2>
+          <h3>
             Recently opened
             <span class="k-count">{{ recentItems.length }}</span>
-          </h2>
+          </h3>
           <button type="button" class="k-text-btn" @click="clearRecent()">Clear</button>
         </header>
         <div class="k-recents">
@@ -885,21 +989,21 @@ onBeforeUnmount(() => {
 
       <section class="k-section" data-anim>
         <header class="k-section-head">
-          <h2>
+          <h3>
             Library
             <span class="k-count">{{ shortcuts.length }}</span>
-          </h2>
+          </h3>
           <button
             type="button"
-            class="k-text-btn k-density-btn"
+            class="k-chip-btn"
             :aria-pressed="desktop"
-            @click="toggleDensity"
+            @click="toggleDensity($event)"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="4" y="4" width="6" height="6" rx="1.2" />
-              <rect x="14" y="4" width="6" height="6" rx="1.2" />
-              <rect x="4" y="14" width="6" height="6" rx="1.2" />
-              <rect x="14" y="14" width="6" height="6" rx="1.2" />
+            <svg class="k-chip-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="4" width="6" height="6" rx="1.5" />
+              <rect x="14" y="4" width="6" height="6" rx="1.5" />
+              <rect x="4" y="14" width="6" height="6" rx="1.5" />
+              <rect x="14" y="14" width="6" height="6" rx="1.5" />
             </svg>
             {{ desktop ? 'Compact' : 'Comfortable' }}
           </button>
@@ -914,28 +1018,27 @@ onBeforeUnmount(() => {
             class="k-tab"
             :class="{ active: activeCategory === category.name }"
             :aria-selected="activeCategory === category.name"
-            @click="activeCategory = category.name"
+            @click="setCategory(category.name)"
           >
             {{ category.name }}
             <span class="k-tab-count">{{ category.count }}</span>
           </button>
         </div>
 
-        <div class="k-groups">
+        <div ref="resultsRoot" class="k-groups">
           <div v-for="group in groups" :key="group.name" class="k-group">
             <p v-if="activeCategory === 'All'" class="k-group-title">
               {{ group.name }}
               <span>{{ group.count }}</span>
             </p>
             <div class="k-grid" :class="{ compact: desktop }">
-              <article v-for="item in group.items" :key="item.url" class="k-card">
-                <a
-                  class="k-card-link"
-                  :href="item.url"
-                  target="_blank"
-                  rel="noopener"
-                  @click="rememberRecent(item.url)"
-                >
+              <article
+                v-for="item in group.items"
+                :key="item.url"
+                class="k-card"
+                :data-key="item.url"
+              >
+                <div class="k-card-main">
                   <span class="k-icon">
                     <img
                       v-if="!failed.has(item.icon)"
@@ -949,18 +1052,24 @@ onBeforeUnmount(() => {
                     />
                     <span v-else class="k-mono">{{ initials(item.name) }}</span>
                   </span>
-                  <span class="k-card-body">
+                  <a
+                    class="k-card-link"
+                    :href="item.url"
+                    target="_blank"
+                    rel="noopener"
+                    @click="rememberRecent(item.url)"
+                  >
                     <span class="k-card-name">{{ item.name }}</span>
                     <span class="k-card-host">{{ hostOf(item.url) }}</span>
-                  </span>
-                </a>
+                  </a>
+                </div>
                 <button
                   type="button"
                   class="k-star"
                   :class="{ pinned: pins.includes(item.url) }"
                   :aria-label="pins.includes(item.url) ? 'Unpin shortcut' : 'Pin shortcut'"
                   :aria-pressed="pins.includes(item.url)"
-                  @click="togglePin(item.url)"
+                  @click="togglePin(item.url, $event)"
                 >
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 3.8l2.5 5.4 5.9.7-4.4 4.1 1.2 5.9-5.2-2.9-5.2 2.9 1.2-5.9L3.6 9.9l5.9-.7z" />
@@ -984,265 +1093,219 @@ onBeforeUnmount(() => {
         </p>
       </footer>
     </main>
+
+    <button
+      ref="fab"
+      type="button"
+      class="k-fab"
+      aria-label="Open the command palette"
+      @click="pop(fab ?? undefined); focusSearch()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5" />
+        <path d="M16 16l4 4" />
+      </svg>
+    </button>
   </div>
 </template>
 
 <style scoped>
 .kerja {
   min-height: 100vh;
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
+  background: var(--md-surface);
+  color: var(--md-on-surface);
 }
 
-/* --------------------------------------------------------------- header */
-.k-header {
+/* ------------------------------------------------------------- app bar */
+.k-appbar {
   position: sticky;
   top: 0;
   z-index: 40;
-  border-bottom: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg);
+  background: color-mix(in srgb, var(--md-surface) 90%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
 }
 
-.k-header-inner {
+.k-appbar-inner {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 0 clamp(1rem, 4vw, 2.5rem);
-  min-height: 62px;
-}
-
-.k-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--vp-c-text-1);
-  font-size: 0.9rem;
-  font-weight: 650;
-  letter-spacing: -0.025em;
-  text-decoration: none;
-}
-
-.k-brand img {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px var(--vp-c-divider);
-}
-
-.k-brand-sep {
-  color: var(--vp-c-text-3);
-  font-weight: 400;
-}
-
-.k-brand-page {
-  color: var(--vp-c-text-2);
-  font-weight: 500;
-}
-
-.k-clock {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin: 0 0 0 auto;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
-.k-live {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--fl-accent);
-  animation: k-pulse 3.4s ease-in-out infinite;
-}
-
-@keyframes k-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.k-clock-time {
-  color: var(--vp-c-text-2);
-  font-variant-numeric: tabular-nums;
-}
-
-.k-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-left: auto;
-}
-
-.k-clock + .k-actions {
-  margin-left: 0;
+  padding: 0 clamp(0.75rem, 4vw, 2.5rem);
+  min-height: 64px;
 }
 
 .k-icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  height: 32px;
-  padding: 0 0.55rem;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 8px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-2);
-  font-family: inherit;
-  font-size: 0.76rem;
-  font-weight: 500;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--md-on-surface-variant);
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-icon-btn:hover {
-  border-color: var(--vp-c-text-3);
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg-alt);
+  background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
+  color: var(--md-on-surface);
 }
 
 .k-icon-btn svg {
-  width: 15px;
-  height: 15px;
+  width: 21px;
+  height: 21px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.k-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  height: 32px;
-  padding: 0 0.6rem;
-  border-radius: 8px;
-  color: var(--vp-c-text-2);
-  font-size: 0.76rem;
+.k-appbar-title {
+  min-width: 0;
+}
+
+.k-appbar-title h1 {
+  margin: 0;
+  color: var(--md-on-surface);
+  font-size: 1.25rem;
   font-weight: 500;
-  text-decoration: none;
-  transition: color 150ms ease, background-color 150ms ease;
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
-.k-back:hover {
-  color: var(--fl-accent-ink);
-  background: var(--vp-c-bg-alt);
+.k-appbar-title p {
+  margin: 0.1rem 0 0;
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  letter-spacing: 0.3px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.k-back svg {
-  width: 12px;
-  height: 12px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
+.k-appbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
 }
 
+/* ------------------------------------------------------------------ pop */
 .k-pop-wrap {
   position: relative;
 }
 
-/* ------------------------------------------------------------------ pop */
 .k-pop {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
   z-index: 50;
-  border: 1px solid var(--vp-c-border);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
-  box-shadow: var(--flessan-shadow-lg);
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-3);
 }
 
 .k-look {
-  width: 262px;
-  padding: 0.85rem;
+  width: 280px;
+  padding: 1rem;
 }
 
 .k-pop-group + .k-pop-group {
-  margin-top: 0.85rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--vp-c-divider);
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .k-pop-label {
   display: block;
-  margin-bottom: 0.45rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
 }
 
 .k-swatches {
   display: flex;
-  gap: 0.45rem;
+  gap: 0.5rem;
 }
 
 .k-swatch {
-  width: 24px;
-  height: 24px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: var(--swatch);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
+  color: #ffffff;
   cursor: pointer;
-  transition: transform 170ms var(--flessan-ease-out), box-shadow 170ms ease;
+  transition: transform var(--md-duration-medium) var(--md-ease-spring),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-swatch:hover {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .k-swatch.active {
-  box-shadow: 0 0 0 2px var(--vp-c-bg-elv), 0 0 0 3.5px var(--swatch);
+  box-shadow: 0 0 0 2px var(--md-surface-container-high), 0 0 0 4px var(--swatch);
+}
+
+.k-swatch svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .k-options {
   display: flex;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
 
 .k-option {
   flex: 1;
-  padding: 0.3rem 0.35rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 6px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-2);
+  min-height: 32px;
+  padding: 0 0.4rem;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-sm);
+  background: transparent;
+  color: var(--md-on-surface-variant);
   font-family: inherit;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 140ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-option:hover {
-  border-color: var(--vp-c-text-3);
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
+  background: color-mix(in srgb, var(--md-on-surface) 7%, transparent);
 }
 
 .k-option.active {
-  border-color: var(--fl-accent);
-  background: var(--fl-accent-soft);
-  color: var(--fl-accent-ink);
-  font-weight: 600;
+  border-color: transparent;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 
 .k-pop-note {
-  margin: 0.8rem 0 0;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
+  margin: 0.85rem 0 0;
+  color: var(--md-on-surface-variant);
+  font-size: 0.68rem;
   line-height: 1.5;
 }
 
@@ -1250,37 +1313,80 @@ onBeforeUnmount(() => {
 .k-main {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 0 clamp(1rem, 4vw, 2.5rem) 4rem;
+  padding: 0 clamp(1rem, 4vw, 2.5rem) 5rem;
 }
 
 .k-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 272px;
+  grid-template-columns: minmax(0, 1fr) 288px;
   gap: clamp(1.5rem, 5vw, 4rem);
   align-items: start;
-  padding: clamp(2.4rem, 6vw, 4rem) 0 1.8rem;
+  padding: clamp(1.75rem, 4vw, 3rem) 0 1.5rem;
 }
 
 .k-hero-copy {
   min-width: 0;
 }
 
+.k-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 32px;
+  padding: 0 0.9rem;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+
+.k-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--md-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--md-primary) 14%, transparent);
+}
+
+.k-title {
+  margin: 1.15rem 0 0;
+  color: var(--md-on-surface);
+  font-size: clamp(2.15rem, 4.6vw, 3.3rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+}
+
+.k-title span {
+  display: block;
+  color: var(--md-primary);
+  font-weight: 500;
+}
+
+.k-lead {
+  max-width: 54ch;
+  margin: 1.1rem 0 0;
+  color: var(--md-on-surface-variant);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* ------------------------------------------------------------ key card */
 .k-keys {
-  margin: 0.35rem 0 0;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
+  margin: 0.25rem 0 0;
+  padding: 1rem 1.1rem;
+  border-radius: var(--md-shape-xl);
+  background: var(--md-surface-container-low);
 }
 
 .k-keys-title {
-  margin: 0 0 0.5rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  margin: 0 0 0.55rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
 }
 
 .k-keys ul {
@@ -1290,127 +1396,78 @@ onBeforeUnmount(() => {
 }
 
 .k-keys li {
-  display: flex;
+  display: grid;
+  grid-template-columns: 4.9rem minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.3rem 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.72rem;
-}
-
-.k-keys li + li {
-  border-top: 1px dashed var(--vp-c-divider);
+  gap: 0.65rem;
+  padding: 0.35rem 0;
+  color: var(--md-on-surface-variant);
+  font-size: 0.76rem;
 }
 
 .k-keys-combo {
   display: inline-flex;
-  gap: 2px;
+  gap: 3px;
 }
 
 .k-keys kbd {
   display: inline-grid;
   place-items: center;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding: 0 0.24rem;
-  border: 1px solid var(--vp-c-border);
-  border-radius: 4px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-2);
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.3rem;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface);
   font-family: var(--vp-font-family-mono);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   line-height: 1;
 }
 
 .k-keys-foot {
-  margin: 0.6rem 0 0;
+  margin: 0.55rem 0 0;
   padding-top: 0.55rem;
-  border-top: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-3);
-  font-size: 0.64rem;
+  border-top: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+  font-size: 0.68rem;
   line-height: 1.55;
 }
 
 .k-keys-foot code {
-  padding: 0.02rem 0.22rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 3px;
-  background: var(--vp-c-bg-alt);
+  padding: 0.02rem 0.24rem;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-highest);
   font-family: var(--vp-font-family-mono);
   font-size: 0.95em;
-}
-
-.k-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0 0 1.1rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.66rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.k-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--fl-accent);
-  box-shadow: 0 0 0 3px var(--fl-accent-soft);
-}
-
-.k-title {
-  max-width: 18ch;
-  margin: 0;
-  color: var(--vp-c-text-1);
-  font-size: clamp(2.1rem, 4.6vw, 3.2rem);
-  font-weight: 700;
-  letter-spacing: -0.042em;
-  line-height: 1.05;
-}
-
-.k-title em {
-  display: block;
-  color: var(--fl-accent-ink);
-  font-family: ui-serif, Georgia, 'Times New Roman', serif;
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-
-.k-lead {
-  max-width: 56ch;
-  margin: 1.15rem 0 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.94rem;
-  line-height: 1.7;
 }
 
 /* --------------------------------------------------------------- search */
 .k-search {
   position: relative;
   z-index: 30;
-  margin-bottom: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(1.75rem, 4vw, 2.5rem);
 }
 
 .k-bar {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 6px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
-  box-shadow: var(--flessan-shadow-md);
-  transition: border-color 180ms ease, box-shadow 220ms var(--flessan-ease-out);
+  gap: 0.4rem;
+  padding: 7px;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-1);
+  transition: box-shadow var(--md-duration-medium) var(--md-ease-standard),
+    background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.k-bar:hover {
+  box-shadow: var(--md-elevation-2);
 }
 
 .k-bar:focus-within {
-  border-color: var(--fl-accent);
-  box-shadow: 0 0 0 3px var(--fl-accent-soft), var(--flessan-shadow-md);
+  background: var(--md-surface-container-highest);
+  box-shadow: var(--md-elevation-2), inset 0 0 0 2px var(--md-primary);
 }
 
 .k-engine-wrap {
@@ -1421,22 +1478,22 @@ onBeforeUnmount(() => {
 .k-engine {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  height: 2.6rem;
-  padding: 0 0.6rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: calc(var(--fl-r-md) - 5px);
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
+  gap: 0.45rem;
+  height: 48px;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
   font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 550;
+  font-size: 0.82rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-engine:hover {
-  border-color: var(--vp-c-text-3);
+  background: color-mix(in srgb, var(--md-secondary-container) 88%, var(--md-on-secondary-container));
 }
 
 .k-engine-dot {
@@ -1444,18 +1501,21 @@ onBeforeUnmount(() => {
   height: 8px;
   border-radius: 50%;
   flex: none;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
+}
+
+.k-engine-initial {
+  display: none;
 }
 
 .k-chevron {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
   fill: none;
-  stroke: var(--vp-c-text-3);
+  stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform 170ms var(--flessan-ease-out);
+  transition: transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .k-chevron.open {
@@ -1465,29 +1525,30 @@ onBeforeUnmount(() => {
 .k-engine-menu {
   left: 0;
   right: auto;
-  width: min(21rem, calc(100vw - 2rem));
-  padding: 5px;
+  width: min(22rem, calc(100vw - 2rem));
+  padding: 8px;
 }
 
 .k-engine-option {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.6rem;
   width: 100%;
-  padding: 0.42rem 0.5rem;
+  padding: 0.5rem 0.65rem;
   border: 0;
-  border-radius: calc(var(--fl-r-md) - 5px);
+  border-radius: var(--md-shape-full);
   background: transparent;
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background-color 120ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-engine-option:hover,
 .k-engine-option.active {
-  background: var(--vp-c-bg-alt);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 
 .k-engine-meta {
@@ -1498,25 +1559,29 @@ onBeforeUnmount(() => {
 }
 
 .k-engine-title {
-  font-size: 0.82rem;
-  font-weight: 550;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .k-engine-hint {
   overflow: hidden;
-  color: var(--vp-c-text-3);
-  font-size: 0.68rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.7rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.k-engine-option.active .k-engine-hint {
+  color: color-mix(in srgb, var(--md-on-secondary-container) 75%, transparent);
+}
+
 .k-check {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   margin-left: auto;
   fill: none;
-  stroke: var(--fl-accent-ink);
-  stroke-width: 2;
+  stroke: currentColor;
+  stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -1525,74 +1590,69 @@ onBeforeUnmount(() => {
   display: flex;
   flex: 1 1 auto;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   min-width: 0;
-  padding: 0 0.7rem;
+  padding: 0 0.4rem;
 }
 
 .k-search-icon {
   flex: none;
-  width: 17px;
-  height: 17px;
+  width: 19px;
+  height: 19px;
   fill: none;
-  stroke: var(--vp-c-text-3);
-  stroke-width: 1.7;
+  stroke: var(--md-on-surface-variant);
+  stroke-width: 2;
   stroke-linecap: round;
 }
 
 .k-input {
   width: 100%;
   min-width: 0;
-  height: 2.6rem;
+  height: 48px;
   border: 0;
   background: transparent;
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  letter-spacing: 0.15px;
   outline: none;
 }
 
 .k-input::placeholder {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   opacity: 1;
 }
 
 .k-kbd {
   flex: none;
-  padding: 0.1rem 0.3rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-3);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface-variant);
   font-family: var(--vp-font-family-mono);
-  font-size: 0.64rem;
-  line-height: 1.4;
+  font-size: 0.68rem;
 }
 
 .k-clear {
   display: grid;
   place-items: center;
   flex: none;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-3);
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface-variant);
   cursor: pointer;
 }
 
-.k-clear:hover {
-  color: var(--vp-c-text-1);
-}
-
 .k-clear svg {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 2.2;
   stroke-linecap: round;
 }
 
@@ -1600,34 +1660,36 @@ onBeforeUnmount(() => {
   display: inline-flex;
   flex: none;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
-  height: 2.6rem;
-  padding: 0 1rem;
+  height: 48px;
+  padding: 0 1.2rem;
   border: 0;
-  border-radius: calc(var(--fl-r-md) - 5px);
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
+  border-radius: var(--md-shape-full);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
   font-family: inherit;
-  font-size: 0.83rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 160ms ease, transform 160ms var(--flessan-ease-out);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 
 .k-submit:hover {
-  background: var(--fl-accent-hover);
+  background: color-mix(in srgb, var(--md-primary) 90%, var(--md-on-primary));
 }
 
 .k-submit:active {
-  transform: scale(0.98);
+  transform: scale(0.96);
 }
 
 .k-submit svg {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -1636,16 +1698,15 @@ onBeforeUnmount(() => {
 .k-palette {
   position: absolute;
   z-index: 35;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   left: 0;
   right: 0;
-  max-height: min(420px, 60vh);
+  max-height: min(440px, 62vh);
   overflow-y: auto;
-  padding: 5px;
-  border: 1px solid var(--vp-c-border);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-elv);
-  box-shadow: var(--flessan-shadow-lg);
+  padding: 8px;
+  border-radius: var(--md-shape-xl);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-4);
 }
 
 .k-palette-head {
@@ -1653,68 +1714,68 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   margin: 0;
-  padding: 0.4rem 0.55rem 0.35rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  padding: 0.4rem 0.7rem 0.35rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
 }
 
 .k-palette-count {
-  letter-spacing: 0;
-  text-transform: none;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.7rem;
+  opacity: 0.8;
 }
 
 .k-result {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.7rem;
   width: 100%;
-  padding: 0.42rem 0.5rem;
+  padding: 0.45rem 0.6rem;
   border: 0;
-  border-radius: calc(var(--fl-r-md) - 5px);
+  border-radius: var(--md-shape-full);
   background: transparent;
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
 }
 
 .k-result.active {
-  background: var(--vp-c-bg-alt);
-}
-
-.k-result.active .k-result-label {
-  color: var(--fl-accent-ink);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 
 .k-result-icon {
   display: grid;
   place-items: center;
   flex: none;
-  width: 26px;
-  height: 26px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 7px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface-variant);
+}
+
+.k-result.active .k-result-icon {
+  background: color-mix(in srgb, var(--md-on-secondary-container) 12%, transparent);
+  color: var(--md-on-secondary-container);
 }
 
 .k-result-icon svg {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .k-result-icon img {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
 }
 
 .k-result-body {
@@ -1727,110 +1788,138 @@ onBeforeUnmount(() => {
 
 .k-result-label {
   overflow: hidden;
-  font-size: 0.83rem;
+  font-size: 0.87rem;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .k-result-hint {
-  color: var(--vp-c-text-3);
-  font-size: 0.68rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.7rem;
+}
+
+.k-result.active .k-result-hint {
+  color: color-mix(in srgb, var(--md-on-secondary-container) 75%, transparent);
 }
 
 .k-enter {
   flex: none;
-  padding: 0.05rem 0.25rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
-  color: var(--vp-c-text-3);
+  padding: 0.05rem 0.35rem;
+  border-radius: var(--md-shape-xs);
+  background: color-mix(in srgb, currentColor 10%, transparent);
   font-family: var(--vp-font-family-mono);
-  font-size: 0.63rem;
+  font-size: 0.68rem;
 }
 
 .k-enter-icon {
   flex: none;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   fill: none;
-  stroke: var(--vp-c-text-3);
-  stroke-width: 1.8;
+  stroke: currentColor;
+  stroke-width: 2;
   stroke-linecap: round;
 }
 
 .k-palette-foot {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 0;
-  padding: 0.45rem 0.55rem 0.3rem;
-  border-top: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
+  gap: 0.8rem;
+  margin: 4px 0 0;
+  padding: 0.5rem 0.7rem 0.25rem;
+  border-top: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+  font-size: 0.68rem;
 }
 
 .k-palette-foot kbd,
 .k-foot kbd {
-  padding: 0.02rem 0.22rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 3px;
-  background: var(--vp-c-bg-alt);
-  font-family: inherit;
+  display: inline-block;
+  padding: 0.05rem 0.3rem;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-highest);
+  font-family: var(--vp-font-family-mono);
   font-size: 0.9em;
 }
 
+.k-palette-enter-active,
+.k-palette-leave-active {
+  transition: opacity var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring);
+}
+
+.k-palette-enter-from,
+.k-palette-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+}
+
+/* ---------------------------------------------------------------- chips */
 .k-history {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
-  margin-top: 0.6rem;
+  margin-top: 0.7rem;
+  padding-inline: 0.25rem;
 }
 
 .k-history-label {
   margin-right: 0.2rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
-.k-chip {
+.k-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
   max-width: 18rem;
   overflow: hidden;
-  padding: 0.22rem 0.55rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 999px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-2);
+  padding: 0 0.85rem;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-sm);
+  background: transparent;
+  color: var(--md-on-surface-variant);
   font-family: inherit;
-  font-size: 0.71rem;
+  font-size: 0.76rem;
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
-  transition: border-color 140ms ease, color 140ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard),
+    border-color var(--md-duration-short) var(--md-ease-standard);
 }
 
-.k-chip:hover {
-  border-color: var(--vp-c-text-3);
-  color: var(--vp-c-text-1);
+.k-chip-btn:hover {
+  color: var(--md-on-surface);
+  background: color-mix(in srgb, var(--md-on-surface) 7%, transparent);
 }
 
 .k-chip-ghost {
-  color: var(--vp-c-text-3);
   border-style: dashed;
 }
 
-/* -------------------------------------------------------------- sections */
-.k-section {
-  padding-top: 1.9rem;
-  border-top: 1px solid var(--vp-c-divider);
+.k-chip-icon {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
 }
 
-.k-section + .k-section {
+/* ------------------------------------------------------------- sections */
+.k-section {
   margin-top: 1.9rem;
+}
+
+.k-section:first-of-type {
+  margin-top: 0;
 }
 
 .k-section-head {
@@ -1838,239 +1927,214 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.8rem;
 }
 
-.k-section-head h2 {
+.k-section-head h3 {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   margin: 0;
-  color: var(--vp-c-text-1);
-  font-size: 0.95rem;
-  font-weight: 650;
-  letter-spacing: -0.015em;
+  color: var(--md-on-surface);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .k-count {
-  padding: 0.05rem 0.35rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 5px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-3);
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
   font-family: var(--vp-font-family-mono);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   font-weight: 500;
 }
 
 .k-text-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.22rem 0.5rem;
-  border: 1px solid transparent;
-  border-radius: 6px;
+  min-height: 32px;
+  padding: 0 0.8rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
   background: transparent;
-  color: var(--vp-c-text-3);
+  color: var(--md-primary);
   font-family: inherit;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
-  transition: color 140ms ease, background-color 140ms ease;
 }
 
 .k-text-btn:hover {
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg-alt);
-}
-
-.k-density-btn[aria-pressed='true'] {
-  color: var(--fl-accent-ink);
-}
-
-.k-density-btn svg {
-  width: 13px;
-  height: 13px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
+  background: var(--md-primary-container);
 }
 
 /* ------------------------------------------------------------- empty pin */
 .k-empty-pinned {
   display: flex;
   align-items: flex-start;
-  gap: 0.8rem;
-  max-width: 44rem;
-  padding: 1.1rem 1.15rem;
+  gap: 0.9rem;
+  max-width: 46rem;
   margin-top: 1.9rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-md);
-  background: var(--vp-c-bg-alt);
+  padding: 1.1rem 1.2rem;
+  border-radius: var(--md-shape-xl);
+  background: var(--md-surface-container-low);
 }
 
 .k-empty-icon {
   display: grid;
   place-items: center;
   flex: none;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--fl-accent-line);
-  border-radius: 8px;
-  background: var(--fl-accent-soft);
-  color: var(--fl-accent-ink);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
 }
 
 .k-empty-icon svg {
-  width: 15px;
-  height: 15px;
+  width: 19px;
+  height: 19px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.7;
   stroke-linejoin: round;
 }
 
 .k-empty-pinned p {
   margin: 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.8rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.85rem;
   line-height: 1.6;
 }
 
 .k-empty-pinned strong {
   display: block;
-  color: var(--vp-c-text-1);
-  font-weight: 600;
+  color: var(--md-on-surface);
+  font-weight: 500;
 }
 
 /* ----------------------------------------------------------------- cards */
 .k-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(224px, 1fr));
-  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.5rem;
 }
 
 .k-grid-pinned {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
 }
 
 .k-card {
   position: relative;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--fl-r-sm);
-  background: var(--vp-c-bg-elv);
+  display: flex;
+  align-items: center;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-low);
   transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    transform 180ms var(--flessan-ease-out),
-    box-shadow 200ms var(--flessan-ease-out);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-card:hover {
-  border-color: var(--vp-c-text-3);
-  transform: translateY(-1px);
-  box-shadow: var(--flessan-shadow-sm);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-1);
 }
 
-.k-card:has(.k-card-link:focus-visible) {
-  border-color: var(--fl-accent);
-  box-shadow: 0 0 0 2px var(--fl-accent-soft);
+.k-card:focus-within {
+  background: var(--md-surface-container-high);
+  box-shadow: 0 0 0 2px var(--md-primary);
+}
+
+.k-card-main {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1;
+  padding: 0.6rem 0.5rem 0.6rem 0.65rem;
 }
 
 .k-card-link {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.62rem 2rem 0.62rem 0.62rem;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+  flex: 1;
   color: inherit;
   text-decoration: none;
-  border-radius: var(--fl-r-sm);
-}
-
-.k-card-link:focus-visible {
-  outline: none;
 }
 
 .k-icon {
   display: grid;
   place-items: center;
   flex: none;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface-variant);
 }
 
 .k-icon img {
-  width: 17px;
-  height: 17px;
+  width: 19px;
+  height: 19px;
   object-fit: contain;
 }
 
 .k-icon-sm {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
 }
 
 .k-icon-sm img {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
 }
 
 .k-mono {
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   font-family: var(--vp-font-family-mono);
   font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.k-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.08rem;
-  min-width: 0;
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .k-card-name {
   overflow: hidden;
-  color: var(--vp-c-text-1);
-  font-size: 0.82rem;
-  font-weight: 550;
-  letter-spacing: -0.01em;
+  color: var(--md-on-surface);
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .k-card-host {
   overflow: hidden;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.63rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.7rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .k-star {
-  position: absolute;
-  top: 50%;
-  right: 0.4rem;
   display: grid;
   place-items: center;
-  width: 25px;
-  height: 25px;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin-right: 0.35rem;
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: 50%;
   background: transparent;
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   cursor: pointer;
   opacity: 0;
-  transform: translateY(-50%);
-  transition: opacity 140ms ease, color 140ms ease, background-color 140ms ease;
+  transition:
+    opacity var(--md-duration-short) var(--md-ease-standard),
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-card:hover .k-star,
@@ -2080,44 +2144,43 @@ onBeforeUnmount(() => {
 }
 
 .k-star:hover {
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
+  color: var(--md-on-surface);
 }
 
 .k-star.pinned {
-  color: var(--fl-accent);
+  color: var(--md-primary);
 }
 
 .k-star svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.5;
+  stroke-width: 1.6;
   stroke-linejoin: round;
 }
 
 .k-star.pinned svg {
-  fill: color-mix(in srgb, var(--fl-accent) 22%, transparent);
+  fill: color-mix(in srgb, var(--md-primary) 28%, transparent);
 }
 
-.compact .k-card-link {
+.compact .k-card-main {
   padding-block: 0.4rem;
 }
 
 .compact .k-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
+  width: 32px;
+  height: 32px;
 }
 
 .compact .k-icon img {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 .compact .k-card-name {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
 }
 
 .compact .k-card-host {
@@ -2135,19 +2198,18 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.3rem 0.6rem 0.3rem 0.32rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 999px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-2);
-  font-size: 0.74rem;
+  padding: 0.3rem 0.85rem 0.3rem 0.3rem;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface-variant);
+  font-size: 0.78rem;
   text-decoration: none;
-  transition: border-color 150ms ease, color 150ms ease;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .k-recent:hover {
-  border-color: var(--vp-c-text-3);
-  color: var(--vp-c-text-1);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface);
 }
 
 .k-recent-name {
@@ -2158,63 +2220,68 @@ onBeforeUnmount(() => {
 .k-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
-  margin: 0.2rem 0 1.15rem;
+  gap: 0.4rem;
+  margin: 0 0 1.15rem;
 }
 
 .k-tab {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.32rem 0.6rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 999px;
+  gap: 0.4rem;
+  min-height: 36px;
+  padding: 0 0.95rem;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-sm);
   background: transparent;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   font-family: inherit;
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 140ms ease;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard),
+    border-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 
 .k-tab:hover {
-  border-color: var(--vp-c-text-3);
-  color: var(--vp-c-text-1);
+  color: var(--md-on-surface);
+  background: color-mix(in srgb, var(--md-on-surface) 7%, transparent);
+}
+
+.k-tab:active {
+  transform: scale(0.97);
 }
 
 .k-tab.active {
-  border-color: var(--vp-c-text-1);
-  background: var(--vp-c-text-1);
-  color: var(--vp-c-bg);
+  border-color: transparent;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
 }
 
 .k-tab-count {
-  color: inherit;
   font-family: var(--vp-font-family-mono);
-  font-size: 0.62rem;
-  opacity: 0.65;
+  font-size: 0.68rem;
+  opacity: 0.75;
 }
 
 .k-group + .k-group {
-  margin-top: 1.35rem;
+  margin-top: 1.4rem;
 }
 
 .k-group-title {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  margin: 0 0 0.5rem;
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  margin: 0 0 0.55rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .k-group-title span {
-  font-weight: 400;
   opacity: 0.7;
 }
 
@@ -2225,12 +2292,11 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-top: 2.5rem;
+  margin-top: 2.6rem;
   padding-top: 1.2rem;
-  border-top: 1px solid var(--vp-c-divider);
-  color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.65rem;
+  border-top: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+  font-size: 0.7rem;
 }
 
 .k-foot p {
@@ -2238,36 +2304,66 @@ onBeforeUnmount(() => {
 }
 
 .k-foot a {
-  color: var(--vp-c-text-2);
+  color: var(--md-primary);
   text-decoration: none;
-  border-bottom: 1px solid var(--vp-c-divider);
 }
 
 .k-foot a:hover {
-  color: var(--fl-accent-ink);
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ fab */
+.k-fab {
+  position: fixed;
+  right: clamp(16px, 3vw, 28px);
+  bottom: clamp(16px, 3vw, 28px);
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  box-shadow: var(--md-elevation-3);
+  cursor: pointer;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-medium) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring);
+}
+
+.k-fab:hover {
+  box-shadow: var(--md-elevation-4);
+  transform: translateY(-2px);
+}
+
+.k-fab:active {
+  transform: scale(0.95);
+}
+
+.k-fab svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 
 /* ---------------------------------------------------------- transitions */
 .k-pop-enter-active,
 .k-pop-leave-active {
-  transition: opacity 130ms ease, transform 150ms var(--flessan-ease-out);
+  transition: opacity var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .k-pop-enter-from,
 .k-pop-leave-to {
   opacity: 0;
-  transform: translateY(-4px) scale(0.985);
-}
-
-.k-palette-enter-active,
-.k-palette-leave-active {
-  transition: opacity 130ms ease, transform 160ms var(--flessan-ease-out);
-}
-
-.k-palette-enter-from,
-.k-palette-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
+  transform: translateY(-6px) scale(0.95);
 }
 
 /* ------------------------------------------------------------ responsive */
@@ -2282,47 +2378,18 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (max-width: 860px) {
-  .k-clock {
-    display: none;
-  }
-
-  .k-brand-page,
-  .k-brand-sep {
-    display: none;
-  }
-
-  .k-btn-label {
-    display: none;
-  }
-
-  .k-icon-btn {
-    width: 32px;
-    padding: 0;
-  }
-}
-
 @media (max-width: 640px) {
-  .k-header-inner {
-    min-height: 56px;
+  .k-appbar-inner {
+    min-height: 60px;
     gap: 0.5rem;
   }
 
-  .k-back span {
-    display: none;
+  .k-appbar-title h1 {
+    font-size: 1.1rem;
   }
 
-  .k-back {
-    width: 32px;
-    justify-content: center;
-    padding: 0;
-    border: 1px solid var(--vp-c-border);
-    background: var(--vp-c-bg-elv);
-  }
-
-  .k-back svg {
-    width: 14px;
-    height: 14px;
+  .k-appbar-title p {
+    font-size: 0.66rem;
   }
 
   .k-engine-name {
@@ -2330,11 +2397,68 @@ onBeforeUnmount(() => {
   }
 
   .k-engine {
-    padding: 0 0.5rem;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .k-engine-initial {
+    display: inline;
+    font-family: var(--vp-font-family-mono);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .k-chevron {
+    display: none;
+  }
+
+  .k-engine-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .k-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -1rem;
+    padding: 0 1rem 0.2rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .k-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .k-tab {
+    flex: none;
+  }
+
+  .k-engine {
+    padding: 0 0.85rem;
+    height: 44px;
+  }
+
+  .k-bar {
+    padding: 6px;
+  }
+
+  .k-input,
+  .k-submit-row {
+    height: 44px;
+  }
+
+  .k-input {
+    height: 44px;
   }
 
   .k-submit {
-    padding: 0 0.7rem;
+    width: 44px;
+    height: 44px;
+    padding: 0;
   }
 
   .k-submit-label {
@@ -2346,7 +2470,7 @@ onBeforeUnmount(() => {
   }
 
   .k-lead {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
   }
 
   .k-grid {
@@ -2354,52 +2478,48 @@ onBeforeUnmount(() => {
     gap: 0.4rem;
   }
 
-  .k-card-link {
+  .k-card-main {
     gap: 0.5rem;
-    padding-right: 1.9rem;
-  }
-
-  .k-star {
-    opacity: 1;
-  }
-
-  .k-card-name {
-    font-size: 0.78rem;
-  }
-
-  .k-card-host {
-    font-size: 0.58rem;
+    padding: 0.5rem 0.25rem 0.5rem 0.5rem;
   }
 
   .k-icon {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .k-card-name {
+    font-size: 0.8rem;
+  }
+
+  .k-card-host {
+    font-size: 0.62rem;
+  }
+
+  .k-star {
+    width: 30px;
+    height: 30px;
+    margin-right: 0.2rem;
+    opacity: 1;
   }
 
   .k-palette {
-    max-height: 52vh;
+    max-height: 54vh;
   }
 
   .k-palette-foot {
     display: none;
   }
 
-  .k-section-head {
-    margin-bottom: 0.6rem;
-  }
-
   .k-foot {
-    font-size: 0.6rem;
+    padding-bottom: 4rem;
+    font-size: 0.64rem;
   }
 }
 
 @media (max-width: 420px) {
-  .k-brand-name {
-    font-size: 0.82rem;
-  }
-
   .k-title {
-    font-size: 1.9rem;
+    font-size: 2rem;
   }
 
   .k-grid {
@@ -2408,7 +2528,7 @@ onBeforeUnmount(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .k-live {
+  .k-chip-dot {
     animation: none;
   }
 }

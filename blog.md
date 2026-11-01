@@ -9,6 +9,7 @@ keywords:
 image: /images/flessan-banner.png
 imageAlt: Flessan personal website banner
 pageClass: wide-page
+outline: false
 ---
 
 <BlogDirectory></BlogDirectory>
