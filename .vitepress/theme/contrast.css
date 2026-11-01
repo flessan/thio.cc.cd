@@ -30,6 +30,33 @@
   --vp-c-text-1: #e7eee9;
   --vp-c-text-2: #b1beb5;
   --vp-c-divider: #354139;
+  --kerja-action-bg: #416b51;
+  --kerja-action-hover: #527f62;
+  --kerja-action-text: #f2f7f3;
+  --kerja-hero-bg: #365b46;
+  --kerja-hero-hover: #48745a;
+  --kerja-hero-text: #f1f7f2;
+}
+
+.launch-action,
+.hero-link.primary-link {
+  color: var(--kerja-action-text, #ffffff);
+}
+
+.launch-action {
+  background: var(--kerja-action-bg, var(--vp-c-brand-1));
+}
+
+.launch-action:hover {
+  background: var(--kerja-action-hover, var(--vp-c-brand-2));
+}
+
+.hero-link.primary-link {
+  background: var(--kerja-hero-bg, var(--vp-c-brand-1));
+}
+
+.hero-link.primary-link:hover {
+  background: var(--kerja-hero-hover, var(--vp-c-brand-2));
 }
 
 .vp-doc :where(button, a, input, select, textarea):focus-visible,
