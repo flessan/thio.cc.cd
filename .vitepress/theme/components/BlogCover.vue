@@ -35,8 +35,10 @@ withDefaults(defineProps<{
   width: 100%;
   margin: 1.25rem 0 3rem;
   overflow: hidden;
-  border-radius: 0.9rem;
+  border: 1px solid var(--flessan-card-border);
+  border-radius: 1.1rem;
   background: var(--vp-c-bg-soft);
+  box-shadow: var(--flessan-shadow-md);
 }
 
 .blog-cover-image {
@@ -51,7 +53,7 @@ withDefaults(defineProps<{
 }
 
 .blog-cover:hover .blog-cover-image {
-  transform: scale(1.025);
+  transform: scale(1.035);
 }
 
 .blog-cover-credit {

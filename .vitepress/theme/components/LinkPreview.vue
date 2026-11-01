@@ -65,17 +65,24 @@ onMounted(async () => {
   display: flex;
   align-items: stretch;
   gap: 12px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  padding: 10px 12px;
-  text-decoration: none;
-  transition: border-color 0.25s;
   min-width: 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-soft) 45%, transparent), transparent 60%);
+  text-decoration: none;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 420ms var(--flessan-ease-out),
+    transform 480ms var(--flessan-ease-out);
 }
 
 .lp:hover {
   text-decoration: none;
-  border-color: var(--vp-c-brand-1);
+  border-color: var(--flessan-accent-line);
+  box-shadow: var(--flessan-shadow-sm);
+  transform: translateY(-2px);
 }
 
 .lp-img {
@@ -83,9 +90,14 @@ onMounted(async () => {
   align-self: center;
   aspect-ratio: 3 / 2;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
   flex-shrink: 0;
   background: var(--vp-c-default-soft);
+  transition: transform 600ms var(--flessan-ease-out);
+}
+
+.lp:hover .lp-img {
+  transform: scale(1.03);
 }
 
 .lp-body {
@@ -97,7 +109,7 @@ onMounted(async () => {
 
 .lp-site {
   font-size: 0.72rem;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--vp-c-text-3);
   white-space: nowrap;
   overflow: hidden;
@@ -105,7 +117,13 @@ onMounted(async () => {
 }
 
 .lp-arrow {
+  display: inline-block;
   font-size: 0.7rem;
+  transition: transform 360ms var(--flessan-ease-out);
+}
+
+.lp:hover .lp-arrow {
+  transform: translate(2px, -2px);
 }
 
 .lp-title {
@@ -116,7 +134,7 @@ onMounted(async () => {
 }
 
 .lp:hover .lp-title {
-  color: var(--vp-c-brand-1);
+  color: var(--flessan-accent-ink);
 }
 
 .lp-desc {

@@ -37,7 +37,13 @@ async function copy() {
 </script>
 
 <template>
-  <button class="copy-btn" type="button" :title="`Copy: ${text}`" @click="copy">
+  <button
+    class="copy-btn"
+    :class="{ 'is-copied': copied }"
+    type="button"
+    :title="`Copy: ${text}`"
+    @click="copy"
+  >
     <span v-if="!copied">{{ label }}</span>
     <span v-else>Copied ✓</span>
   </button>
@@ -53,17 +59,29 @@ async function copy() {
   border-radius: 8px;
   padding: 0.15rem 0.7rem;
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 550;
   line-height: 1.7;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 200ms ease,
+    color 180ms ease,
+    background-color 200ms ease,
+    transform 360ms var(--flessan-ease-out);
   vertical-align: middle;
   margin-left: 0.4rem;
 }
 
 .copy-btn:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+  border-color: var(--flessan-accent-line);
+  background: var(--flessan-accent-soft);
+  color: var(--flessan-accent-ink);
+  transform: translateY(-1px);
+}
+
+.copy-btn.is-copied {
+  border-color: var(--flessan-accent-line);
+  background: var(--flessan-accent-soft);
+  color: var(--flessan-accent-ink);
 }
 
 .copy-btn:focus-visible {

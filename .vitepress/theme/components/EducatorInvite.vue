@@ -46,13 +46,16 @@ async function copyInvitation() {
 .educator-invite {
   margin: 2.5rem 0;
   padding: clamp(1.1rem, 3vw, 1.6rem);
-  border: 1px solid var(--vp-c-divider);
+  border: 1px solid var(--flessan-card-border);
   border-radius: 1rem;
-  background: var(--vp-c-bg-alt);
+  background:
+    linear-gradient(150deg, color-mix(in srgb, var(--vp-c-brand-soft) 55%, transparent), transparent 65%),
+    var(--vp-c-bg-alt);
+  box-shadow: var(--flessan-shadow-sm);
 }
 .eyebrow {
   margin: 0 0 0.55rem;
-  color: var(--vp-c-brand-1);
+  color: var(--flessan-accent-ink);
   font-size: 0.73rem;
   font-weight: 750;
   letter-spacing: 0.08em;
@@ -93,10 +96,13 @@ async function copyInvitation() {
   font-size: 0.82rem;
   font-weight: 650;
   cursor: pointer;
+  transition: border-color 200ms ease, color 180ms ease, background-color 200ms ease, transform 320ms var(--flessan-ease-out);
 }
 .invitation button:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+  border-color: var(--flessan-accent-line);
+  background: var(--flessan-accent-soft);
+  color: var(--flessan-accent-ink);
+  transform: translateY(-1px);
 }
 .invitation svg {
   fill: none;

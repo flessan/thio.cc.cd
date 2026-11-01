@@ -1,59 +1,63 @@
 /**
- * Customize default theme styling by overriding CSS variables:
- * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
+ * Flessan theme
+ * ---------------------------------------------------------------------------
+ * A calm, green-forward layer over the VitePress default theme.
+ *
+ * The palette is built in two parts:
+ *   1. VitePress tokens (`--vp-*`) so every built-in component inherits the look.
+ *   2. Flessan semantic tokens (`--flessan-*`) for the pieces we own: accent
+ *      fills, "on accent" text, surfaces and shadows.
+ *
+ * The important rule: an accent colour used for *text* is not the same token as
+ * an accent colour used for a *solid fill*. That keeps light-green fills paired
+ * with dark ink (and dark-green fills paired with white ink) in both themes.
+ *
+ * Docs: https://vitepress.dev/guide/extending-default-theme#customizing-css
  */
 
-/**
- * Colors
- *
- * Each colors have exact same color scale system with 3 levels of solid
- * colors with different brightness, and 1 soft color.
- * 
- * - `XXX-1`: The most solid color used mainly for colored text. It must
- *   satisfy the contrast ratio against when used on top of `XXX-soft`.
- *
- * - `XXX-2`: The color used mainly for hover state of the button.
- *
- * - `XXX-3`: The color for solid background, such as bg color of the button.
- *   It must satisfy the contrast ratio with pure white (#ffffff) text on
- *   top of it.
- *
- * - `XXX-soft`: The color used for subtle background such as custom container
- *   or badges. It must satisfy the contrast ratio when putting `XXX-1` colors
- *   on top of it.
- *
- *   The soft color must be semi transparent alpha channel. This is crucial
- *   because it allows adding multiple "soft" colors on top of each other
- *   to create a accent, such as when having inline code block inside
- *   custom containers.
- *
- * - `default`: The color used purely for subtle indication without any
- *   special meanings attched to it such as bg color for menu hover state.
- *
- * - `brand`: Used for primary brand colors, such as link text, button with
- *   brand theme, etc.
- *
- * - `tip`: Used to indicate useful information. The default theme uses the
- *   brand color for this by default.
- *
- * - `warning`: Used to indicate warning to the users. Used in custom
- *   container, badges, etc.
- *
- * - `danger`: Used to show error, or dangerous message to the users. Used
- *   in custom container, badges, etc.
- * -------------------------------------------------------------------------- */
+/* ==========================================================================
+   1. Design tokens — light
+   ========================================================================== */
 
 :root {
+  color-scheme: light;
+
+  /* Typography */
+  --vp-font-family-base: 'Inter', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular,
+    'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Surfaces */
+  --vp-c-bg: #f8faf7;
+  --vp-c-bg-alt: #f1f6f0;
+  --vp-c-bg-soft: #e9f1e9;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-mute: #e9f1e9;
+
+  /* Text */
+  --vp-c-text-1: #13221a;
+  --vp-c-text-2: #41554a;
+  --vp-c-text-3: #596b5f;
+
+  /* Lines */
+  --vp-c-divider: #dbe6dc;
+  --vp-c-border: #cfdccf;
+  --vp-c-gutter: #f1f5f0;
+
+  /* Brand scale: 1 = text, 2 = hovered text, 3 = solid fill */
+  --vp-c-brand-1: #1b6640;
+  --vp-c-brand-2: #164f31;
+  --vp-c-brand-3: #1b6640;
+  --vp-c-brand-soft: rgba(27, 102, 64, 0.1);
+
+  /* Default / neutral scale */
   --vp-c-default-1: var(--vp-c-gray-1);
   --vp-c-default-2: var(--vp-c-gray-2);
   --vp-c-default-3: var(--vp-c-gray-3);
   --vp-c-default-soft: var(--vp-c-gray-soft);
 
-  --vp-c-brand-1: #2f6845;
-  --vp-c-brand-2: #3f8056;
-  --vp-c-brand-3: #397b53;
-  --vp-c-brand-soft: rgba(126, 175, 144, 0.16);
-
+  /* Status colours */
   --vp-c-tip-1: var(--vp-c-brand-1);
   --vp-c-tip-2: var(--vp-c-brand-2);
   --vp-c-tip-3: var(--vp-c-brand-3);
@@ -68,76 +72,261 @@
   --vp-c-danger-2: var(--vp-c-red-2);
   --vp-c-danger-3: var(--vp-c-red-3);
   --vp-c-danger-soft: var(--vp-c-red-soft);
+
+  /* Flessan semantic tokens */
+  --flessan-accent-fill: #1b6640;
+  --flessan-accent-fill-hover: #14502f;
+  --flessan-accent-fill-active: #103f26;
+  --flessan-on-accent: #ffffff;
+  --flessan-accent-ink: #1a5f3c;
+  --flessan-accent-soft: rgba(27, 102, 64, 0.1);
+  --flessan-accent-line: rgba(27, 102, 64, 0.28);
+
+  --flessan-halo-a: rgba(126, 189, 148, 0.32);
+  --flessan-halo-b: rgba(120, 174, 214, 0.22);
+  --flessan-halo-c: rgba(244, 214, 145, 0.18);
+
+  --flessan-card: rgba(255, 255, 255, 0.72);
+  --flessan-card-border: rgba(24, 58, 37, 0.11);
+  --flessan-shadow-sm: 0 1px 2px rgba(18, 42, 27, 0.05),
+    0 8px 22px -16px rgba(18, 42, 27, 0.35);
+  --flessan-shadow-md: 0 2px 4px rgba(18, 42, 27, 0.05),
+    0 18px 40px -22px rgba(18, 42, 27, 0.38);
+  --flessan-shadow-lg: 0 4px 10px rgba(18, 42, 27, 0.05),
+    0 34px 70px -32px rgba(18, 42, 27, 0.42);
+
+  /* Radii */
+  --flessan-radius-sm: 10px;
+  --flessan-radius-md: 14px;
+  --flessan-radius-lg: 20px;
+  --flessan-radius-xl: 28px;
+
+  /* Motion */
+  --flessan-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --flessan-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --flessan-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Header */
+  --flessan-nav-glass: rgba(248, 250, 247, 0.82);
+  --flessan-nav-border: rgba(24, 58, 37, 0.12);
+  --flessan-nav-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 16px 44px -26px rgba(15, 38, 23, 0.55);
+
+  scroll-padding-top: calc(var(--vp-nav-height) + 48px);
 }
 
-/**
- * Component: Button
- * -------------------------------------------------------------------------- */
+/* ==========================================================================
+   2. Design tokens — dark
+   ========================================================================== */
+
+.dark {
+  color-scheme: dark;
+
+  --vp-c-bg: #0c1210;
+  --vp-c-bg-alt: #111a15;
+  --vp-c-bg-soft: #17231c;
+  --vp-c-bg-elv: #14201a;
+  --vp-c-bg-mute: #17231c;
+
+  --vp-c-text-1: #e9f2ec;
+  --vp-c-text-2: #b7c7bd;
+  --vp-c-text-3: #8fa397;
+
+  --vp-c-divider: #22332a;
+  --vp-c-border: #2a3d31;
+  --vp-c-gutter: #080d0b;
+
+  --vp-c-brand-1: #8fdeb0;
+  --vp-c-brand-2: #b4efcb;
+  --vp-c-brand-3: #2f8a58;
+  --vp-c-brand-soft: rgba(143, 222, 176, 0.13);
+
+  --flessan-accent-fill: #a9e7c1;
+  --flessan-accent-fill-hover: #c0f2d3;
+  --flessan-accent-fill-active: #d3f7e0;
+  --flessan-on-accent: #082014;
+  --flessan-accent-ink: #8fdeb0;
+  --flessan-accent-soft: rgba(143, 222, 176, 0.13);
+  --flessan-accent-line: rgba(143, 222, 176, 0.34);
+
+  --flessan-halo-a: rgba(64, 138, 91, 0.28);
+  --flessan-halo-b: rgba(48, 94, 128, 0.26);
+  --flessan-halo-c: rgba(150, 122, 58, 0.12);
+
+  --flessan-card: rgba(20, 32, 26, 0.66);
+  --flessan-card-border: rgba(196, 233, 208, 0.1);
+  --flessan-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 10px 26px -18px rgba(0, 0, 0, 0.85);
+  --flessan-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45),
+    0 24px 50px -26px rgba(0, 0, 0, 0.9);
+  --flessan-shadow-lg: 0 6px 14px rgba(0, 0, 0, 0.45),
+    0 40px 80px -36px rgba(0, 0, 0, 0.95);
+
+  --flessan-nav-glass: rgba(12, 18, 16, 0.8);
+  --flessan-nav-border: rgba(196, 233, 208, 0.12);
+  --flessan-nav-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 18px 50px -30px rgba(0, 0, 0, 0.95);
+}
+
+/* ==========================================================================
+   3. Base layer
+   ========================================================================== */
+
+html {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+  background-color: var(--vp-c-bg);
+  background-image:
+    radial-gradient(52rem 32rem at 8% -12%, var(--flessan-halo-a), transparent 62%),
+    radial-gradient(44rem 28rem at 96% 2%, var(--flessan-halo-b), transparent 58%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--vp-c-brand-1) 26%, transparent);
+  color: var(--vp-c-text-1);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, transparent)
+    transparent;
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vp-c-brand-1) 32%, transparent);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
+  background-clip: content-box;
+}
+
+/* ==========================================================================
+   4. Buttons
+   ========================================================================== */
 
 :root {
   --vp-button-brand-border: transparent;
-  --vp-button-brand-text: var(--vp-c-white);
-  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-text: var(--flessan-on-accent);
+  --vp-button-brand-bg: var(--flessan-accent-fill);
   --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-hover-text: var(--vp-c-white);
-  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-hover-text: var(--flessan-on-accent);
+  --vp-button-brand-hover-bg: var(--flessan-accent-fill-hover);
   --vp-button-brand-active-border: transparent;
-  --vp-button-brand-active-text: var(--vp-c-white);
-  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+  --vp-button-brand-active-text: var(--flessan-on-accent);
+  --vp-button-brand-active-bg: var(--flessan-accent-fill-active);
+
+  --vp-button-alt-border: var(--vp-c-border);
+  --vp-button-alt-text: var(--vp-c-text-1);
+  --vp-button-alt-bg: var(--vp-c-bg-elv);
+  --vp-button-alt-hover-border: var(--flessan-accent-ink);
+  --vp-button-alt-hover-text: var(--flessan-accent-ink);
+  --vp-button-alt-hover-bg: var(--vp-c-bg-soft);
+  --vp-button-alt-active-border: var(--flessan-accent-ink);
+  --vp-button-alt-active-text: var(--flessan-on-accent);
+  --vp-button-alt-active-bg: var(--flessan-accent-fill);
 }
 
-.dark {
-  --vp-c-bg: #121212;
-  --vp-c-brand-1: #a4d5b1;
-  --vp-c-brand-2: #8cc79c;
-  --vp-c-brand-3: #397b53;
-  --vp-c-brand-soft: rgba(126, 175, 144, 0.16);
+.VPButton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--flessan-radius-sm);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  transition:
+    color 200ms ease,
+    background-color 260ms ease,
+    border-color 260ms ease,
+    box-shadow 420ms var(--flessan-ease-out),
+    transform 420ms var(--flessan-ease-out);
 }
 
-/**
- * Component: Home
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-home-hero-name-color: #2f6845;
-  --vp-home-hero-name-background: none;
-  --vp-home-hero-image-background-image: none;
-  --vp-home-hero-image-filter: none;
+.VPButton.brand {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 12px 26px -16px color-mix(in srgb, var(--flessan-accent-fill) 85%, transparent);
 }
 
-@media (min-width: 640px) {
-  :root {
-    --vp-home-hero-image-filter: none;
-  }
+.VPButton.brand:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 18px 34px -16px color-mix(in srgb, var(--flessan-accent-fill) 80%, transparent);
 }
 
-@media (min-width: 960px) {
-  :root {
-    --vp-home-hero-image-filter: none;
-  }
+.VPButton.brand:active {
+  transform: translateY(0) scale(0.985);
 }
 
-/**
- * Component: Custom Block
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-custom-block-tip-border: transparent;
-  --vp-custom-block-tip-text: var(--vp-c-text-1);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
-  --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
+.VPButton.alt:hover {
+  transform: translateY(-1px);
 }
 
-/**
- * Component: Algolia
- * -------------------------------------------------------------------------- */
-
-.DocSearch {
-  --docsearch-primary-color: var(--vp-c-brand-1) !important;
+.VPButton.alt:active {
+  transform: translateY(0) scale(0.99);
 }
 
-.vp-doc h2 {
-  border-top: none;
+/* A soft sheen slides across primary buttons on hover. */
+.VPButton.brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.28) 48%,
+    transparent 66%
+  );
+  transform: translateX(-130%);
+  transition: transform 700ms var(--flessan-ease-out);
+  pointer-events: none;
+}
+
+.dark .VPButton.brand::after {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 48%,
+    transparent 66%
+  );
+}
+
+.VPButton.brand:hover::after {
+  transform: translateX(130%);
+}
+
+/* ==========================================================================
+   5. Header / navigation
+   ========================================================================== */
+
+.VPNavBar,
+.VPNavBar.top {
+  transition:
+    background-color 260ms ease,
+    border-color 260ms ease,
+    box-shadow 320ms var(--flessan-ease-out);
 }
 
 .VPNavBar:not(.has-sidebar):not(.top) .divider {
@@ -145,160 +334,135 @@
 }
 
 .VPLocalNav {
-  border-bottom: none;
-}
-
-/* TODO
-.outline-title {
-  visibility: hidden;
-}
-*/
-
-@media (max-width: 1280px) {
-  .VPLocalNav {
-    display: none;
-  }
-}
-
-@media (min-width: 1260px) {
-  .VPNavBarTitle .title {
-    display: flex;
-    align-items: center;
-    min-width: 44px;
-    color: transparent;
-  }
-
-  .VPNavBarTitle .title:before {
-    transform: none;
-    background: url(/images/flessan-avatar.png) no-repeat center;
-    background-size: cover;
-    content: '';
-    display: block;
-    flex: 0 0 44px;
-    height: 44px;
-    width: 44px;
-    margin-right: 0.5rem;
-    border-radius: 50%;
-  }
-}
-
-.VPNavBar.top {
-  .divider {
-    opacity: 0;
-  }
-}
-
-html {
-  overflow-y: scroll;
-}
-
-/* Small, consistent interaction polish without changing the site's identity. */
-:root {
-  --vp-button-brand-bg: var(--vp-c-brand-3);
-  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
-  --vp-button-brand-active-bg: var(--vp-c-brand-1);
-}
-
-.VPNavBar {
-  transition: background-color 180ms ease, border-color 180ms ease;
+  border-bottom: 1px solid transparent;
 }
 
 .VPNavBarMenuLink,
 .VPNavBarMenuGroup .button {
-  border-radius: 8px;
-  transition: color 160ms ease, background-color 160ms ease;
+  position: relative;
+  min-height: 36px;
+  padding-inline: 11px;
+  border-radius: 10px;
+  color: var(--vp-c-text-2);
+  font-size: 0.86rem;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  transition:
+    color 180ms ease,
+    background-color 220ms ease,
+    transform 420ms var(--flessan-ease-out);
 }
 
 .VPNavBarMenuLink:hover,
 .VPNavBarMenuGroup .button:hover {
+  color: var(--vp-c-text-1);
   background: var(--vp-c-bg-soft);
+  transform: translateY(-1px);
+}
+
+.VPNavBarMenuLink.active {
+  color: var(--flessan-accent-ink);
+  background: var(--flessan-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--flessan-accent-line);
+}
+
+.VPNavBarMenuLink::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transform: translate(-50%, 4px) scale(0.4);
+  transition:
+    opacity 240ms ease,
+    transform 420ms var(--flessan-ease-spring);
+}
+
+.VPNavBarMenuLink.active::after {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.VPNavBarMenuLink:hover::after {
+  opacity: 0.65;
+  transform: translate(-50%, 0) scale(0.8);
 }
 
 .VPNavBarSearch .DocSearch-Button,
 .VPNavBarSearch button {
-  border-radius: 10px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 200ms ease,
+    transform 420ms var(--flessan-ease-out),
+    box-shadow 320ms var(--flessan-ease-out);
 }
 
-.vp-doc h1 {
-  line-height: 1.16;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
+.VPNavBarSearch .DocSearch-Button:hover,
+.VPNavBarSearch button:hover {
+  border-color: var(--flessan-accent-line);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-1);
+  transform: translateY(-1px);
+  box-shadow: var(--flessan-shadow-sm);
 }
 
-.vp-doc h2 {
-  margin-top: 2.6rem;
-  padding-bottom: 0.55rem;
-  border-bottom: 1px solid var(--vp-c-divider);
-  letter-spacing: -0.02em;
+.VPSocialLink {
+  border-radius: 9px;
+  color: var(--vp-c-text-2);
+  transition:
+    color 180ms ease,
+    background-color 220ms ease,
+    transform 480ms var(--flessan-ease-spring);
 }
 
-.vp-doc a {
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: 1px;
+.VPSocialLink:hover {
+  color: var(--flessan-accent-ink);
+  background: var(--flessan-accent-soft);
+  transform: translateY(-2px) scale(1.04);
 }
 
-.vp-doc :where(button, a, input, select, textarea):focus-visible,
-.VPNavBar :where(button, a, input):focus-visible {
-  outline: 2px solid var(--vp-c-brand-1);
+/* Focus rings */
+.vp-doc :where(button, a, input, select, textarea, summary):focus-visible,
+.VPNavBar :where(button, a, input):focus-visible,
+.VPFooter :where(a, button):focus-visible {
+  outline: 2px solid var(--flessan-accent-ink);
   outline-offset: 3px;
+  border-radius: 6px;
 }
 
-.vp-doc img,
-.vp-doc video {
-  border-radius: 12px;
-}
+/* ==========================================================================
+   6. Desktop floating header
+   ========================================================================== */
 
-.vp-doc div[class*='language-'] {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-
-/* A deliberate floating header with reserved space for the page beneath it. */
-:root {
-  --flessan-nav-glass: rgba(249, 251, 249, 0.97);
-  --flessan-nav-border: rgba(45, 75, 55, 0.13);
-  --flessan-nav-shadow: 0 10px 34px rgba(20, 35, 25, 0.10);
-}
-
-.dark {
-  --flessan-nav-glass: rgba(24, 26, 25, 0.97);
-  --flessan-nav-border: rgba(255, 255, 255, 0.11);
-  --flessan-nav-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
-}
-
-/* Desktop: a centered glass bar, with the brand anchored left and navigation right. */
 @media (min-width: 960px) {
   .VPNavBar,
   .VPNavBar.top {
     position: fixed !important;
-    top: 14px !important;
+    top: 16px !important;
     left: 50% !important;
     right: auto !important;
-    transform: translateX(-50%);
-    width: min(1380px, calc(100vw - 48px)) !important;
+    width: min(1320px, calc(100vw - 48px)) !important;
     max-width: none !important;
-    height: 64px;
+    height: 62px;
     box-sizing: border-box;
     overflow: visible;
     border: 1px solid var(--flessan-nav-border);
     border-radius: 18px;
     background: var(--flessan-nav-glass) !important;
-    -webkit-backdrop-filter: blur(22px) saturate(150%);
-    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
     box-shadow: var(--flessan-nav-shadow);
-    transition: background-color 180ms ease, box-shadow 180ms ease;
+    transform: translateX(-50%);
+    animation: flessan-nav-arrive 760ms var(--flessan-ease-out) both;
   }
 
   .VPNavBar .container {
@@ -306,7 +470,7 @@ html {
     max-width: none !important;
     height: 100%;
     margin: 0;
-    padding-inline: clamp(18px, 2.2vw, 30px);
+    padding-inline: clamp(16px, 2vw, 26px);
     box-sizing: border-box;
   }
 
@@ -320,10 +484,15 @@ html {
     gap: 10px;
     min-width: 0;
     color: var(--vp-c-text-1) !important;
-    font-size: 1rem;
+    font-size: 0.98rem;
     font-weight: 750;
     letter-spacing: -0.035em;
     text-decoration: none;
+    transition: transform 480ms var(--flessan-ease-spring);
+  }
+
+  .VPNavBarTitle .title:hover {
+    transform: translateY(-1px) scale(1.012);
   }
 
   .VPNavBarTitle .title::before {
@@ -337,7 +506,17 @@ html {
     border: 2px solid var(--vp-c-bg);
     border-radius: 50%;
     background: url('/images/flessan-avatar.png') center / cover no-repeat;
-    box-shadow: 0 0 0 1px var(--flessan-nav-border);
+    box-shadow:
+      0 0 0 1px var(--flessan-nav-border),
+      0 6px 16px -10px rgba(18, 42, 27, 0.65);
+    transition: box-shadow 320ms ease;
+  }
+
+  .VPNavBarTitle .title:hover::before {
+    box-shadow:
+      0 0 0 1px var(--flessan-accent-line),
+      0 0 0 5px var(--flessan-accent-soft),
+      0 8px 20px -10px rgba(18, 42, 27, 0.55);
   }
 
   .VPNavBar .content {
@@ -355,48 +534,34 @@ html {
 
   .VPNavBarSearch {
     flex: 0 0 auto;
-    margin-left: 1.2rem;
+    margin-left: 1.1rem;
   }
 
   .VPNavBarSearch .DocSearch-Button,
   .VPNavBarSearch button {
     min-height: 38px;
     border: 1px solid var(--flessan-nav-border);
-    border-radius: 11px;
     background: var(--vp-c-bg-soft);
   }
 
   .VPNavBarMenu {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     margin-left: auto;
   }
 
-  .VPNavBarMenuLink,
-  .VPNavBarMenuGroup .button {
-    min-height: 38px;
-    padding-inline: 12px;
-    border-radius: 11px;
-    transition: background-color 160ms ease, color 160ms ease;
-  }
-
-  .VPNavBarMenuLink:hover,
-  .VPNavBarMenuGroup .button:hover {
-    background: var(--vp-c-bg-soft);
-  }
-
   .VPNavBar .social-links {
-    gap: 11px;
-    margin-left: 8px;
+    gap: 9px;
+    margin-left: 6px;
   }
 
   .VPNavBar .divider {
-    opacity: 0.45;
+    opacity: 0.4;
   }
 }
 
-/* Phones and tablets keep the familiar full-width header, never an off-screen pill. */
+/* Phones and tablets keep a full-width, sticky header. */
 @media (max-width: 959px) {
   .VPNavBar,
   .VPNavBar.top {
@@ -412,9 +577,10 @@ html {
     border-bottom: 1px solid var(--flessan-nav-border);
     border-radius: 0;
     background: var(--flessan-nav-glass) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(145%);
-    backdrop-filter: blur(18px) saturate(145%);
-    box-shadow: 0 5px 20px rgba(15, 25, 18, 0.09);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: 0 6px 24px -18px rgba(10, 26, 16, 0.7);
+    animation: flessan-mobile-nav-arrive 480ms var(--flessan-ease-out) both;
   }
 
   .VPNavBar .container {
@@ -423,37 +589,385 @@ html {
     padding-inline: 16px;
     box-sizing: border-box;
   }
-}
 
-.VPNavBarMenuLink,
-.VPNavBarMenuGroup .button {
-  border-radius: 10px;
-}
-
-.VPNavBar :where(button, a, input):focus-visible {
-  outline: 2px solid var(--vp-c-brand-1);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .VPNavBar,
-  .VPNavBarMenuLink,
-  .VPNavBarMenuGroup .button {
-    transition: none;
+  .VPNavBarMenuLink:hover,
+  .VPNavBarMenuGroup .button:hover {
+    transform: none;
   }
 }
 
+/* ==========================================================================
+   7. Content layout & typography
+   ========================================================================== */
 
-/* Motion system — smooth, purposeful, and based on real scroll position. */
-:root {
-  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --motion-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+.vp-doc {
+  color: var(--vp-c-text-1);
 }
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4 {
+  color: var(--vp-c-text-1);
+  text-wrap: balance;
+}
+
+.vp-doc h1 {
+  margin-bottom: 0.85rem;
+  font-size: clamp(1.95rem, 3.6vw, 2.65rem);
+  font-weight: 780;
+  letter-spacing: -0.042em;
+  line-height: 1.12;
+}
+
+.vp-doc h2 {
+  position: relative;
+  margin-top: 3rem;
+  padding-bottom: 0.6rem;
+  border-top: none;
+  border-bottom: 1px solid var(--vp-c-divider);
+  font-size: clamp(1.35rem, 2.3vw, 1.62rem);
+  font-weight: 720;
+  letter-spacing: -0.028em;
+  line-height: 1.3;
+}
+
+.vp-doc h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 56px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--flessan-accent-ink),
+    color-mix(in srgb, var(--flessan-accent-ink) 20%, transparent)
+  );
+}
+
+.vp-doc h3 {
+  margin-top: 2rem;
+  font-size: 1.18rem;
+  letter-spacing: -0.02em;
+}
+
+.vp-doc p,
+.vp-doc li {
+  color: var(--vp-c-text-2);
+  line-height: 1.78;
+}
+
+.vp-doc strong {
+  color: var(--vp-c-text-1);
+  font-weight: 650;
+}
+
+.vp-doc a {
+  color: var(--flessan-accent-ink);
+  font-weight: 500;
+  text-decoration-color: color-mix(
+    in srgb,
+    var(--flessan-accent-ink) 38%,
+    transparent
+  );
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition:
+    color 180ms ease,
+    text-decoration-color 220ms ease;
+}
+
+.vp-doc a:not(.header-anchor):hover {
+  color: var(--vp-c-brand-2);
+  text-decoration-color: currentColor;
+}
+
+.vp-doc .header-anchor {
+  color: var(--vp-c-text-3);
+}
+
+.vp-doc ul,
+.vp-doc ol {
+  padding-left: 1.35rem;
+}
+
+.vp-doc li::marker {
+  color: var(--flessan-accent-ink);
+}
+
+.vp-doc li + li {
+  margin-top: 0.35rem;
+}
+
+.vp-doc hr {
+  margin: 2.6rem 0;
+  border: 0;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.vp-doc blockquote {
+  margin: 1.6rem 0;
+  padding: 0.9rem 1.15rem;
+  border-left: 3px solid var(--flessan-accent-ink);
+  border-radius: 0 var(--flessan-radius-sm) var(--flessan-radius-sm) 0;
+  background: var(--flessan-accent-soft);
+  color: var(--vp-c-text-2);
+}
+
+.vp-doc blockquote > p {
+  color: var(--vp-c-text-2);
+  font-size: 0.95rem;
+}
+
+/* Inline code + code blocks */
+.vp-doc :not(pre) > code {
+  padding: 0.18em 0.42em;
+  border: 1px solid var(--flessan-card-border);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  color: var(--flessan-accent-ink);
+  font-size: 0.86em;
+  font-weight: 550;
+}
+
+.vp-doc div[class*='language-'] {
+  position: relative;
+  margin: 1.4rem 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--flessan-radius-md);
+  background: var(--vp-c-bg-alt);
+  box-shadow: var(--flessan-shadow-sm);
+  transition:
+    border-color 260ms ease,
+    box-shadow 360ms var(--flessan-ease-out),
+    transform 480ms var(--flessan-ease-out);
+}
+
+.vp-doc div[class*='language-']:hover {
+  border-color: var(--flessan-accent-line);
+  box-shadow: var(--flessan-shadow-md);
+}
+
+.vp-doc div[class*='language-'] > span.lang {
+  top: 10px;
+  right: 14px;
+  color: var(--vp-c-text-3);
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.vp-doc div[class*='language-'] > button.copy {
+  top: 8px;
+  right: 8px;
+  border-radius: 8px;
+}
+
+/* Tables */
+.vp-doc table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--flessan-radius-md);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+
+.vp-doc tr {
+  background: transparent;
+}
+
+.vp-doc tr:nth-child(2n) {
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 55%, transparent);
+}
+
+.vp-doc th {
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.vp-doc th,
+.vp-doc td {
+  border: 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 0.7rem 0.9rem;
+  text-align: left;
+}
+
+.vp-doc tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Media */
+.vp-doc img,
+.vp-doc video {
+  border-radius: var(--flessan-radius-md);
+}
+
+.vp-doc figure img {
+  box-shadow: var(--flessan-shadow-md);
+}
+
+/* Don't let wide content stretch the page on small screens. */
+.vp-doc {
+  overflow-wrap: break-word;
+}
+
+/* ==========================================================================
+   8. Custom blocks
+   ========================================================================== */
+
+:root {
+  --vp-custom-block-tip-border: var(--flessan-accent-line);
+  --vp-custom-block-tip-text: var(--vp-c-text-1);
+  --vp-custom-block-tip-bg: var(--flessan-accent-soft);
+  --vp-custom-block-tip-code-bg: color-mix(
+    in srgb,
+    var(--flessan-accent-ink) 14%,
+    transparent
+  );
+}
+
+.custom-block {
+  border-radius: var(--flessan-radius-md);
+  border-width: 1px;
+  border-left-width: 3px;
+  font-size: 0.92rem;
+}
+
+.custom-block .custom-block-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   9. Home page width + hero surface
+   ========================================================================== */
+
+.Layout.home-page .VPDoc .content-container,
+.Layout.home-page .VPDoc.has-aside .content-container {
+  max-width: 1024px;
+}
+
+/* Let the hero breathe wider than a reading column. */
+.Layout.home-page .VPDoc .content {
+  max-width: 1024px;
+  margin-inline: auto;
+}
+
+.Layout.home-page .VPDoc:not(.has-sidebar) .container {
+  max-width: 1140px;
+}
+
+.Layout.home-page .VPDoc .aside {
+  display: none;
+}
+
+.Layout.home-page .VPDoc {
+  padding-bottom: 56px;
+}
+
+.Layout.home-page .vp-doc > div > h2:first-of-type {
+  margin-top: 2.2rem;
+}
+
+/* Keep the prose readable inside the wider home canvas. */
+.Layout.home-page .vp-doc > div > :is(h2, h3, p, ul, ol, blockquote) {
+  max-width: 46rem;
+}
+
+@media (min-width: 768px) {
+  .Layout.home-page .VPDoc {
+    padding-top: 72px;
+  }
+}
+
+@media (max-width: 767px) {
+  .Layout.home-page .VPDoc {
+    padding-top: 56px;
+  }
+}
+
+/* The blog archive uses a wider canvas than a reading column. */
+.Layout.wide-page .VPDoc .content-container,
+.Layout.wide-page .VPDoc.has-aside .content-container,
+.Layout.wide-page .VPDoc .content {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
+.Layout.wide-page .VPDoc:not(.has-sidebar) .container {
+  max-width: 1140px;
+}
+
+.Layout.wide-page .VPDoc .aside {
+  display: none;
+}
+
+/* ==========================================================================
+   10. Footer
+   ========================================================================== */
+
+.VPFooter {
+  border-top: 1px solid var(--vp-c-divider);
+  background: transparent;
+}
+
+.VPFooter .message,
+.VPFooter .copyright {
+  color: var(--vp-c-text-3);
+  font-size: 0.8rem;
+}
+
+.VPFooter .copyright a,
+.VPFooter a {
+  color: var(--flessan-accent-ink);
+}
+
+/* ==========================================================================
+   11. Search dialog
+   ========================================================================== */
+
+.VPLocalSearchBox .shell {
+  border-color: var(--vp-c-border);
+  border-radius: var(--flessan-radius-lg);
+  background: var(--vp-c-bg-elv);
+  box-shadow: var(--flessan-shadow-lg);
+}
+
+.VPLocalSearchBox .search-bar {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--flessan-radius-sm);
+  background: var(--vp-c-bg-soft);
+}
+
+.VPLocalSearchBox .result {
+  border-radius: var(--flessan-radius-sm);
+}
+
+.VPLocalSearchBox .result.selected {
+  background: var(--flessan-accent-soft);
+}
+
+.DocSearch {
+  --docsearch-primary-color: var(--flessan-accent-ink) !important;
+}
+
+/* ==========================================================================
+   12. Motion utilities
+   ========================================================================== */
 
 @keyframes flessan-nav-arrive {
   from {
     opacity: 0;
-    transform: translate(-50%, -12px) scale(0.985);
+    transform: translate(-50%, -14px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -462,204 +976,57 @@ html {
 }
 
 @keyframes flessan-mobile-nav-arrive {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes flessan-cover-arrive {
   from {
     opacity: 0;
-    clip-path: inset(0 0 12% 0 round 18px);
-    transform: translateY(18px) scale(1.012);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    clip-path: inset(0 0 0 0 round 18px);
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-@keyframes flessan-focus-line {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-@media (min-width: 960px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    animation: flessan-nav-arrive 720ms var(--motion-ease-out) both;
+/* Gentle attention pulse for "live" dots. */
+@keyframes flessan-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--flessan-accent-ink) 45%, transparent);
+  }
+  60% {
+    box-shadow: 0 0 0 7px transparent;
   }
 }
 
-@media (max-width: 959px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    animation: flessan-mobile-nav-arrive 480ms var(--motion-ease-out) both;
+/* Keyframes used for the small decorative rings on the 404 page. */
+@keyframes flessan-float {
+  0%,
+  100% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(4px);
   }
 }
 
-html.motion-enabled .motion-reveal {
+/* Elements waiting for the reveal animation. Set by motion.ts only. */
+.motion-pending {
   opacity: 0;
-  transform: translateY(22px) scale(0.99);
-  filter: blur(4px);
-  transition:
-    opacity 720ms var(--motion-ease-out),
-    transform 720ms var(--motion-ease-out),
-    filter 720ms var(--motion-ease-out);
-  transition-delay: min(calc(var(--motion-index, 0) * 48ms), 240ms);
-  will-change: opacity, transform, filter;
+  will-change: opacity, transform;
 }
 
-html.motion-enabled .motion-reveal.is-visible {
-  opacity: 1;
-  transform: none;
-  filter: none;
+.motion-done {
   will-change: auto;
 }
 
-html.motion-enabled .vp-doc .blog-cover.motion-reveal {
-  transform: translateY(24px) scale(1.025);
-  clip-path: inset(0 0 10% 0 round 18px);
-  transition:
-    opacity 900ms var(--motion-ease-out),
-    transform 1100ms var(--motion-ease-out),
-    clip-path 1000ms var(--motion-ease-out);
-}
+/* ==========================================================================
+   13. Theme switching
+   ========================================================================== */
 
-html.motion-enabled .vp-doc .blog-cover.motion-reveal.is-visible {
-  transform: translateY(0) scale(1);
-  clip-path: inset(0 0 0 0 round 18px);
-}
-
-/* Text links get a directional underline rather than a generic colour flash. */
-.vp-doc a:not(.header-anchor) {
-  text-decoration-color: color-mix(in srgb, var(--vp-c-brand-1) 42%, transparent);
-  transition: color 180ms ease, text-decoration-color 180ms ease;
-}
-
-.vp-doc a:not(.header-anchor):hover {
-  text-decoration-color: var(--vp-c-brand-1);
-}
-
-/* Polished interactive surfaces. */
-.VPNavBarMenuLink,
-.VPNavBarMenuGroup .button,
-.VPNavBarSearch button,
-.VPSocialLink,
-.VPButton,
-.vp-doc .container,
-.vp-doc .link-preview {
-  transition:
-    color 220ms ease,
-    background-color 220ms ease,
-    border-color 260ms ease,
-    box-shadow 320ms var(--motion-ease-out),
-    transform 420ms var(--motion-ease-out);
-}
-
-.VPNavBarMenuLink:hover,
-.VPNavBarMenuGroup .button:hover {
-  transform: translateY(-1px);
-}
-
-.VPSocialLink:hover {
-  transform: translateY(-3px) scale(1.06);
-}
-
-.VPNavBarSearch button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 16px rgba(30, 55, 38, 0.10);
-}
-
-.vp-doc .container:hover,
-.vp-doc .link-preview:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(20, 35, 25, 0.10);
-}
-
-.vp-doc .container img,
-.vp-doc .blog-cover {
-  transition: transform 900ms var(--motion-ease-out), filter 700ms ease;
-}
-
-.vp-doc .container:hover img {
-  transform: scale(1.045);
-}
-
-.vp-doc div[class*='language-'] {
-  transition: border-color 240ms ease, box-shadow 320ms var(--motion-ease-out);
-}
-
-.vp-doc div[class*='language-']:hover {
-  border-color: var(--vp-c-brand-1);
-  box-shadow: 0 8px 24px rgba(20, 35, 25, 0.06);
-}
-
-/* Reveal active navigation with a small animated marker. */
-.VPNavBarMenuLink {
-  position: relative;
-}
-
-.VPNavBarMenuLink::after {
-  content: '';
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 5px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--vp-c-brand-1);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 360ms var(--motion-ease-out);
-}
-
-.VPNavBarMenuLink.active::after {
-  transform: scaleX(1);
-}
-
-.VPNavBarMenuLink:hover::after {
-  transform: scaleX(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  html.motion-enabled .motion-reveal,
-  html.motion-enabled .motion-reveal.is-visible {
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-    clip-path: none !important;
-  }
-
-  .vp-doc .container:hover,
-  .vp-doc .link-preview:hover,
-  .VPSocialLink:hover,
-  .VPNavBarMenuLink:hover,
-  .VPNavBarMenuGroup .button:hover {
-    transform: none !important;
-  }
-}
-
-
-/* Slow, cinematic dark/light transition: a soft reveal grows from the toggle. */
 :root {
   --theme-toggle-x: 88vw;
   --theme-toggle-y: 32px;
-  --theme-transition-duration: 2800ms;
+  --theme-transition-duration: 2400ms;
   --theme-transition-ease: cubic-bezier(0.65, 0, 0.35, 1);
-  color-scheme: light;
-}
-
-.dark {
-  color-scheme: dark;
 }
 
 html,
@@ -672,10 +1039,10 @@ body,
 .VPFooter,
 .VPSidebar {
   transition:
-    background-color 2200ms var(--theme-transition-ease),
-    color 1900ms var(--theme-transition-ease),
-    border-color 2000ms var(--theme-transition-ease),
-    box-shadow 2000ms var(--theme-transition-ease);
+    background-color 2000ms var(--theme-transition-ease),
+    color 1700ms var(--theme-transition-ease),
+    border-color 1800ms var(--theme-transition-ease),
+    box-shadow 1800ms var(--theme-transition-ease);
 }
 
 ::view-transition-group(root) {
@@ -684,12 +1051,14 @@ body,
 }
 
 ::view-transition-old(root) {
-  animation: flessan-theme-old var(--theme-transition-duration) var(--theme-transition-ease) both;
+  animation: flessan-theme-old var(--theme-transition-duration)
+    var(--theme-transition-ease) both;
   mix-blend-mode: normal;
 }
 
 ::view-transition-new(root) {
-  animation: flessan-theme-reveal var(--theme-transition-duration) var(--theme-transition-ease) both;
+  animation: flessan-theme-reveal var(--theme-transition-duration)
+    var(--theme-transition-ease) both;
   clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
   mix-blend-mode: normal;
 }
@@ -707,18 +1076,24 @@ body,
 }
 
 @keyframes flessan-theme-old {
-  0% { opacity: 1; }
-  55% { opacity: 0.985; }
-  100% { opacity: 0.96; }
+  0% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.985;
+  }
+  100% {
+    opacity: 0.96;
+  }
 }
 
 .VPSwitchAppearance {
   transform-origin: center;
   transition:
-    transform 1000ms var(--theme-transition-ease),
-    background-color 1600ms var(--theme-transition-ease),
-    border-color 1600ms var(--theme-transition-ease),
-    box-shadow 1600ms var(--theme-transition-ease);
+    transform 900ms var(--theme-transition-ease),
+    background-color 1500ms var(--theme-transition-ease),
+    border-color 1500ms var(--theme-transition-ease),
+    box-shadow 1500ms var(--theme-transition-ease);
 }
 
 .VPSwitchAppearance:hover {
@@ -730,7 +1105,7 @@ body,
 }
 
 .VPSwitchAppearance svg {
-  transition: transform 1300ms var(--theme-transition-ease);
+  transition: transform 1200ms var(--theme-transition-ease);
 }
 
 .VPSwitchAppearance:hover svg {
@@ -744,30 +1119,143 @@ html.theme-switching .VPFooter {
   transition-duration: var(--theme-transition-duration);
 }
 
+/* ==========================================================================
+   14. Back to top
+   ========================================================================== */
+
+.flessan-back-to-top {
+  position: fixed;
+  right: clamp(16px, 3vw, 34px);
+  bottom: clamp(16px, 3vw, 30px);
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--flessan-nav-border);
+  border-radius: 14px;
+  background: var(--flessan-nav-glass);
+  color: var(--vp-c-text-2);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: var(--flessan-shadow-md);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(14px) scale(0.85);
+  transition:
+    color 200ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 300ms var(--flessan-ease-out);
+}
+
+.flessan-back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.flessan-back-to-top:hover {
+  color: var(--flessan-accent-ink);
+  border-color: var(--flessan-accent-line);
+  background: var(--vp-c-bg-elv);
+}
+
+.flessan-back-to-top:hover svg {
+  transform: translateY(-2px);
+}
+
+.flessan-back-to-top svg {
+  width: 19px;
+  height: 19px;
+  transition: transform 360ms var(--flessan-ease-spring);
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+/* ==========================================================================
+   15. Responsive refinements
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .vp-doc h1 {
+    font-size: clamp(1.75rem, 7vw, 2.15rem);
+  }
+
+  .vp-doc h2 {
+    margin-top: 2.4rem;
+  }
+
+  .vp-doc p,
+  .vp-doc li {
+    line-height: 1.72;
+  }
+
+  .VPButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .vp-doc .custom-block {
+    margin: 1.6rem 0;
+  }
+}
+
+/* ==========================================================================
+   16. Reduced motion
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(root),
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .VPNavBar,
+  .VPNavBar.top {
     animation: none !important;
   }
 
-  html,
-  body,
-  #app,
-  .VPNavBar,
-  .VPContent,
-  .VPDoc,
-  .vp-doc,
-  .VPFooter,
-  .VPSidebar,
+  .VPNavBarMenuLink:hover,
+  .VPNavBarMenuGroup .button:hover,
+  .VPSocialLink:hover,
+  .VPButton.brand:hover,
+  .VPButton.alt:hover {
+    transform: none !important;
+  }
+
+  .VPButton.brand::after {
+    display: none;
+  }
+
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
   .VPSwitchAppearance,
   .VPSwitchAppearance svg {
+    animation: none !important;
     transition: none !important;
   }
 
-  .VPSwitchAppearance:hover,
-  .VPSwitchAppearance:active,
-  .VPSwitchAppearance:hover svg {
+  .motion-pending,
+  .motion-done {
+    opacity: 1 !important;
     transform: none !important;
+    will-change: auto;
   }
 }

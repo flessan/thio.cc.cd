@@ -8,6 +8,7 @@ keywords:
   - Indonesian internet culture
 image: /images/flessan-banner.png
 imageAlt: Flessan personal website banner
+pageClass: wide-page
 ---
 
 <BlogDirectory></BlogDirectory>

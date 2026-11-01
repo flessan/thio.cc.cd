@@ -358,7 +358,7 @@ onBeforeUnmount(() => {
                   :title="palette.name"
                   @click="choosePalette(palette.id)"
                 >
-                  <span class="palette-swatch" :style="{ backgroundColor: palette.swatch }">
+                  <span class="palette-swatch" :style="{ backgroundColor: palette.swatch, color: contrastColor(palette.swatch) }">
                     <svg v-if="paletteId === palette.id" viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>
                   </span>
                   <span>{{ palette.name }}</span>
@@ -804,6 +804,7 @@ onBeforeUnmount(() => {
   height: 27px;
   border-radius: 9px;
   color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
 .palette-swatch svg {

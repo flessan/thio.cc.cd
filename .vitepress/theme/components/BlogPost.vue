@@ -24,20 +24,21 @@ defineProps<{
   margin: 1.25rem 0;
   background-color: var(--vp-c-bg-alt);
   border: 1px solid var(--vp-c-divider);
-  border-radius: 0.85rem;
+  border-radius: 1rem;
   align-items: center;
   overflow: hidden;
+  box-shadow: var(--flessan-shadow-sm);
   transition:
-    border-color 280ms ease,
-    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 280ms ease,
-    box-shadow 520ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-color 260ms ease,
+    transform 520ms var(--flessan-ease-out),
+    background-color 260ms ease,
+    box-shadow 520ms var(--flessan-ease-out);
 }
 
 .container:hover {
-  border-color: var(--vp-c-brand-1);
+  border-color: var(--flessan-accent-line);
   transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(20, 35, 25, 0.10);
+  box-shadow: var(--flessan-shadow-md);
 }
 
 img,
@@ -64,8 +65,10 @@ img {
   justify-content: center;
   box-sizing: border-box;
   padding: 1.25rem;
-  background: var(--vp-c-brand-soft);
-  color: var(--vp-c-brand-1);
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--flessan-accent-ink) 14%, transparent), transparent 70%),
+    var(--vp-c-brand-soft);
+  color: var(--flessan-accent-ink);
   text-align: center;
   font-size: 0.78rem;
   font-weight: 750;

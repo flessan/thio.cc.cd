@@ -102,8 +102,10 @@ onUnmounted(() => {
 .reading-progress span {
   display: block;
   height: 100%;
-  background: var(--vp-c-brand-1);
-  transition: width 100ms linear;
+  border-radius: 0 2px 2px 0;
+  background: linear-gradient(90deg, var(--flessan-accent-ink), color-mix(in srgb, var(--flessan-accent-ink) 45%, #6aa9cc));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--flessan-accent-ink) 45%, transparent);
+  transition: width 120ms linear;
 }
 .share-actions {
   display: flex;
@@ -123,18 +125,29 @@ onUnmounted(() => {
   justify-content: center;
   gap: 0.4rem;
   min-height: 2rem;
-  padding: 0.4rem 0.65rem;
+  padding: 0.4rem 0.7rem;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 0.55rem;
+  border-radius: 0.6rem;
   background: var(--vp-c-bg-alt);
   color: var(--vp-c-text-1);
   font: inherit;
   font-size: 0.8rem;
+  font-weight: 550;
   cursor: pointer;
+  transition:
+    border-color 200ms ease,
+    color 180ms ease,
+    background-color 200ms ease,
+    transform 380ms var(--flessan-ease-out);
 }
 .share-actions button:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+  border-color: var(--flessan-accent-line);
+  background: var(--vp-c-bg);
+  color: var(--flessan-accent-ink);
+  transform: translateY(-1px);
+}
+.share-actions button:active {
+  transform: translateY(0) scale(0.98);
 }
 .share-actions svg {
   fill: none;
@@ -149,11 +162,15 @@ onUnmounted(() => {
   font-size: 0.78rem;
 }
 .post-tools {
-  margin: -1.45rem 0 2.3rem;
+  margin: 0 0 2.4rem;
 }
 @media (prefers-reduced-motion: reduce) {
   .reading-progress span {
     transition: none;
+  }
+  .share-actions button:hover,
+  .share-actions button:active {
+    transform: none;
   }
 }
 </style>
