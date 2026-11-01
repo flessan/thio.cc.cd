@@ -1,333 +1,351 @@
 /**
- * Flessan theme
+ * thio.cc.cd — editorial theme
  * ---------------------------------------------------------------------------
- * A calm, green-forward layer over the VitePress default theme.
+ * A quiet, typographic layer over VitePress: warm paper, near-black ink, one
+ * saturated accent, hairline rules and soft elevation. No gradients anywhere.
  *
- * The palette is built in two parts:
- *   1. VitePress tokens (`--vp-*`) so every built-in component inherits the look.
- *   2. Flessan semantic tokens (`--flessan-*`) for the pieces we own: accent
- *      fills, "on accent" text, surfaces and shadows.
- *
- * The important rule: an accent colour used for *text* is not the same token as
- * an accent colour used for a *solid fill*. That keeps light-green fills paired
- * with dark ink (and dark-green fills paired with white ink) in both themes.
- *
- * Docs: https://vitepress.dev/guide/extending-default-theme#customizing-css
+ *   1. tokens (light)  · 2. tokens (dark)  · 3. base  · 4. type  · 5. buttons
+ *   6. nav  · 7. sidebar  · 8. layout  · 9. code/tables  · 10. footer
+ *   11. search  · 12. theme switch  · 13. motion  · 14. utilities  · 15. a11y
  */
 
 /* ==========================================================================
-   1. Design tokens — light ("sunlit paper")
+   1. Design tokens — light
    ========================================================================== */
 
 :root {
   color-scheme: light;
 
-  /* Typography */
   --vp-font-family-base: 'Inter', ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   --vp-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular,
     'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
-  /* Playful primitives ---------------------------------------------------- */
-  --fl-ink: #1e1a14;
-  --fl-paper: #fff9ec;
-  --fl-paper-tint: #fff3d8;
-  --fl-dot: #ead9b4;
-  --fl-shadow: #1e1a14;
-  --fl-tape: #ffe066;
+  /* Primitives */
+  --fl-ink: #14161a;
+  --fl-paper: #f7f6f2;
+  --fl-paper-tint: #f1efe9;
+  --fl-line: #e4e1d8;
+  --fl-line-strong: #d3cfc4;
 
-  /* Accent: sunbeam by default. `--fl-accent` is a solid fill, `--fl-accent-ink`
-     is the same hue toned for text on paper, `--fl-on-accent` is text on fill. */
-  --fl-accent: #ffc93c;
-  --fl-accent-strong: #f7b800;
-  --fl-accent-soft: color-mix(in srgb, var(--fl-accent) 32%, transparent);
-  --fl-accent-ink: #7a4b00;
-  --fl-on-accent: #241a00;
+  /* Accent — cobalt by default */
+  --fl-accent: #2a48d8;
+  --fl-accent-hover: #1f3ab8;
+  --fl-accent-ink: #2340b8;
+  --fl-accent-soft: rgba(42, 72, 216, 0.09);
+  --fl-accent-line: rgba(42, 72, 216, 0.24);
+  --fl-on-accent: #ffffff;
 
-  /* VitePress surfaces ---------------------------------------------------- */
+  /* Surfaces */
   --vp-c-bg: var(--fl-paper);
   --vp-c-bg-alt: var(--fl-paper-tint);
-  --vp-c-bg-soft: #ffedbf;
+  --vp-c-bg-soft: #eae7df;
   --vp-c-bg-elv: #ffffff;
-  --vp-c-bg-mute: #ffedbf;
+  --vp-c-bg-mute: #eae7df;
 
-  /* VitePress text -------------------------------------------------------- */
+  /* Text */
   --vp-c-text-1: var(--fl-ink);
-  --vp-c-text-2: #4b4237;
-  --vp-c-text-3: #6f6455;
+  --vp-c-text-2: #4b4f57;
+  --vp-c-text-3: #6d727b;
 
-  /* VitePress lines ------------------------------------------------------- */
-  --vp-c-divider: #e7d8b6;
-  --vp-c-border: #d6c4a0;
-  --vp-c-gutter: #fff6e2;
+  /* Lines */
+  --vp-c-divider: var(--fl-line);
+  --vp-c-border: var(--fl-line-strong);
+  --vp-c-gutter: #f1efe9;
 
-  /* Brand scale ----------------------------------------------------------- */
+  /* Brand scale */
   --vp-c-brand-1: var(--fl-accent-ink);
-  --vp-c-brand-2: color-mix(in srgb, var(--fl-accent-ink) 82%, #000);
+  --vp-c-brand-2: var(--fl-accent-hover);
   --vp-c-brand-3: var(--fl-accent);
   --vp-c-brand-soft: var(--fl-accent-soft);
 
-  /* Status colours -------------------------------------------------------- */
+  /* Status */
   --vp-c-tip-1: var(--fl-accent-ink);
-  --vp-c-tip-2: color-mix(in srgb, var(--fl-accent-ink) 82%, #000);
+  --vp-c-tip-2: var(--fl-accent-hover);
   --vp-c-tip-3: var(--fl-accent);
   --vp-c-tip-soft: var(--fl-accent-soft);
 
-  --vp-c-warning-1: var(--vp-c-yellow-1);
-  --vp-c-warning-2: var(--vp-c-yellow-2);
-  --vp-c-warning-3: var(--vp-c-yellow-3);
-  --vp-c-warning-soft: var(--vp-c-yellow-soft);
+  --vp-c-warning-1: #8a5a00;
+  --vp-c-warning-2: #6f4900;
+  --vp-c-warning-3: #e0a020;
+  --vp-c-warning-soft: rgba(224, 160, 32, 0.12);
 
-  --vp-c-danger-1: var(--vp-c-red-1);
-  --vp-c-danger-2: var(--vp-c-red-2);
-  --vp-c-danger-3: var(--vp-c-red-3);
-  --vp-c-danger-soft: var(--vp-c-red-soft);
+  --vp-c-danger-1: #b02a37;
+  --vp-c-danger-2: #8f1f2b;
+  --vp-c-danger-3: #c0365f;
+  --vp-c-danger-soft: rgba(192, 54, 95, 0.1);
 
-  /* Flessan semantic tokens ---------------------------------------------- */
+  /* Flessan tokens kept for shared components */
   --flessan-accent-fill: var(--fl-accent);
-  --flessan-accent-fill-hover: var(--fl-accent-strong);
-  --flessan-accent-fill-active: color-mix(in srgb, var(--fl-accent) 78%, #000);
+  --flessan-accent-fill-hover: var(--fl-accent-hover);
+  --flessan-accent-fill-active: var(--fl-accent-hover);
   --flessan-on-accent: var(--fl-on-accent);
   --flessan-accent-ink: var(--fl-accent-ink);
   --flessan-accent-soft: var(--fl-accent-soft);
-  --flessan-accent-line: color-mix(in srgb, var(--fl-accent-ink) 34%, transparent);
+  --flessan-accent-line: var(--fl-accent-line);
+  --flessan-card: var(--vp-c-bg-elv);
+  --flessan-card-border: var(--vp-c-divider);
+  --flessan-shadow-sm: 0 1px 2px rgba(20, 22, 26, 0.05),
+    0 8px 24px -18px rgba(20, 22, 26, 0.25);
+  --flessan-shadow-md: 0 1px 2px rgba(20, 22, 26, 0.05),
+    0 18px 44px -26px rgba(20, 22, 26, 0.28);
+  --flessan-shadow-lg: 0 2px 6px rgba(20, 22, 26, 0.06),
+    0 32px 70px -34px rgba(20, 22, 26, 0.34);
 
-  --flessan-card: #ffffff;
-  --flessan-card-border: var(--fl-ink);
-  --flessan-shadow-sm: 3px 3px 0 var(--fl-shadow);
-  --flessan-shadow-md: 5px 5px 0 var(--fl-shadow);
-  --flessan-shadow-lg: 8px 8px 0 var(--fl-shadow);
+  --flessan-radius-sm: var(--fl-r-sm);
+  --flessan-radius-md: var(--fl-r-md);
+  --flessan-radius-lg: var(--fl-r-lg);
+  --flessan-radius-xl: var(--fl-r-xl);
 
-  /* Radii: adjustable from the playground. */
-  --flessan-radius-sm: var(--fl-r-sm, 10px);
-  --flessan-radius-md: var(--fl-r-md, 16px);
-  --flessan-radius-lg: var(--fl-r-lg, 22px);
-  --flessan-radius-xl: var(--fl-r-xl, 30px);
-  --fl-r-sm: 10px;
-  --fl-r-md: 16px;
-  --fl-r-lg: 22px;
-  --fl-r-xl: 30px;
-  --fl-border: 2px;
-
-  /* Motion */
-  --flessan-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --flessan-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
-  --flessan-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* Header */
-  --flessan-nav-glass: var(--fl-paper);
-  --flessan-nav-border: var(--fl-ink);
-  --flessan-nav-shadow: 4px 4px 0 var(--fl-ink);
-
-  scroll-padding-top: calc(var(--vp-nav-height) + 48px);
-}
-
-/* Paper tints ------------------------------------------------------------ */
-
-html[data-paper='snow'] {
-  --fl-paper: #f8f8f4;
-  --fl-paper-tint: #efefe7;
-  --fl-dot: #deded2;
-  --vp-c-bg-soft: #e8e8dd;
-  --vp-c-gutter: #f3f3ec;
-  --vp-c-divider: #e2e2d6;
-  --vp-c-border: #d0d0c2;
-}
-
-html[data-paper='peach'] {
-  --fl-paper: #fff5ee;
-  --fl-paper-tint: #ffe9db;
-  --fl-dot: #f0cdb7;
-  --vp-c-bg-soft: #ffe0cd;
-  --vp-c-gutter: #fff0e6;
-  --vp-c-divider: #f1d6c4;
-  --vp-c-border: #e3c1a9;
-}
-
-/* Corner presets --------------------------------------------------------- */
-
-html[data-corners='soft'] {
   --fl-r-sm: 8px;
   --fl-r-md: 12px;
   --fl-r-lg: 16px;
   --fl-r-xl: 20px;
+  --fl-border: 1px;
+
+  --flessan-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --flessan-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --flessan-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  /* Nav */
+  --vp-nav-height: 60px;
+  --vp-nav-bg-color: var(--vp-c-bg);
+  --flessan-nav-glass: var(--vp-c-bg);
+  --flessan-nav-border: var(--vp-c-divider);
+  --flessan-nav-shadow: none;
+
+  scroll-padding-top: calc(var(--vp-nav-height) + 32px);
+}
+
+/* Paper tints ------------------------------------------------------------- */
+
+html[data-paper='white'] {
+  --fl-paper: #fdfdfc;
+  --fl-paper-tint: #f6f6f4;
+  --vp-c-bg-soft: #efefec;
+  --vp-c-bg-mute: #efefec;
+  --vp-c-gutter: #f6f6f4;
+  --fl-line: #e8e7e2;
+  --fl-line-strong: #d8d6cf;
+}
+
+html[data-paper='sand'] {
+  --fl-paper: #f6f1e7;
+  --fl-paper-tint: #efe8da;
+  --vp-c-bg-soft: #e8dfcd;
+  --vp-c-bg-mute: #e8dfcd;
+  --vp-c-gutter: #efe8da;
+  --fl-line: #e3dac7;
+  --fl-line-strong: #d2c6ac;
+}
+
+/* Corner presets --------------------------------------------------------- */
+
+html[data-corners='round'] {
+  --fl-r-sm: 10px;
+  --fl-r-md: 14px;
+  --fl-r-lg: 18px;
+  --fl-r-xl: 24px;
 }
 
 html[data-corners='sharp'] {
   --fl-r-sm: 3px;
-  --fl-r-md: 5px;
-  --fl-r-lg: 7px;
-  --fl-r-xl: 10px;
+  --fl-r-md: 4px;
+  --fl-r-lg: 6px;
+  --fl-r-xl: 8px;
 }
 
 /* Accent presets (light) ------------------------------------------------- */
 
-html[data-accent='tangerine'] {
-  --fl-accent: #ff9a5c;
-  --fl-accent-strong: #ff8339;
-  --fl-accent-ink: #8a3a00;
-  --fl-on-accent: #2c1200;
+html[data-accent='emerald'] {
+  --fl-accent: #0f7a5a;
+  --fl-accent-hover: #0b6449;
+  --fl-accent-ink: #0b6b4f;
+  --fl-accent-soft: rgba(15, 122, 90, 0.09);
+  --fl-accent-line: rgba(15, 122, 90, 0.24);
+  --fl-on-accent: #ffffff;
 }
 
-html[data-accent='mint'] {
-  --fl-accent: #63dba2;
-  --fl-accent-strong: #43cf8f;
-  --fl-accent-ink: #0a5e3c;
-  --fl-on-accent: #062a1b;
+html[data-accent='amber'] {
+  --fl-accent: #e0a020;
+  --fl-accent-hover: #c88c15;
+  --fl-accent-ink: #7d5100;
+  --fl-accent-soft: rgba(224, 160, 32, 0.14);
+  --fl-accent-line: rgba(224, 160, 32, 0.32);
+  --fl-on-accent: #241a00;
 }
 
-html[data-accent='sky'] {
-  --fl-accent: #7fcaff;
-  --fl-accent-strong: #5cb9fb;
-  --fl-accent-ink: #0a5178;
-  --fl-on-accent: #062637;
+html[data-accent='rose'] {
+  --fl-accent: #c0365f;
+  --fl-accent-hover: #a52b50;
+  --fl-accent-ink: #a12a50;
+  --fl-accent-soft: rgba(192, 54, 95, 0.09);
+  --fl-accent-line: rgba(192, 54, 95, 0.24);
+  --fl-on-accent: #ffffff;
 }
 
-html[data-accent='bubblegum'] {
-  --fl-accent: #ffa3cf;
-  --fl-accent-strong: #ff85bf;
-  --fl-accent-ink: #961d54;
-  --fl-on-accent: #3a0a1f;
+html[data-accent='violet'] {
+  --fl-accent: #6a3fd1;
+  --fl-accent-hover: #5830b8;
+  --fl-accent-ink: #5b34b8;
+  --fl-accent-soft: rgba(106, 63, 209, 0.09);
+  --fl-accent-line: rgba(106, 63, 209, 0.24);
+  --fl-on-accent: #ffffff;
 }
 
-html[data-accent='lilac'] {
-  --fl-accent: #c4a8ff;
-  --fl-accent-strong: #b18bff;
-  --fl-accent-ink: #4f2a9e;
-  --fl-on-accent: #1f0f3d;
+html[data-accent='graphite'] {
+  --fl-accent: #2a2d33;
+  --fl-accent-hover: #14161a;
+  --fl-accent-ink: #24272c;
+  --fl-accent-soft: rgba(20, 22, 26, 0.07);
+  --fl-accent-line: rgba(20, 22, 26, 0.2);
+  --fl-on-accent: #ffffff;
 }
 
 /* ==========================================================================
-   2. Design tokens — dark ("midnight arcade")
+   2. Design tokens — dark
    ========================================================================== */
 
 .dark {
   color-scheme: dark;
 
-  --fl-ink: #fdf6e6;
-  --fl-paper: #171310;
-  --fl-paper-tint: #201a15;
-  --fl-dot: #34291f;
-  --fl-shadow: #000000;
-  --fl-tape: #ffd166;
+  --fl-ink: #ecebe6;
+  --fl-paper: #0e0f11;
+  --fl-paper-tint: #15171a;
+  --fl-line: #26292e;
+  --fl-line-strong: #343840;
 
-  --fl-accent: #ffc93c;
-  --fl-accent-strong: #ffd76a;
-  --fl-accent-ink: #ffd76a;
-  --fl-on-accent: #241a00;
+  --fl-accent: #7d90ff;
+  --fl-accent-hover: #93a3ff;
+  --fl-accent-ink: #a7b6ff;
+  --fl-accent-soft: rgba(125, 144, 255, 0.12);
+  --fl-accent-line: rgba(125, 144, 255, 0.3);
+  --fl-on-accent: #0b1020;
 
   --vp-c-bg: var(--fl-paper);
   --vp-c-bg-alt: var(--fl-paper-tint);
-  --vp-c-bg-soft: #2a221a;
-  --vp-c-bg-elv: #241d17;
-  --vp-c-bg-mute: #2a221a;
+  --vp-c-bg-soft: #1b1e22;
+  --vp-c-bg-elv: #17191d;
+  --vp-c-bg-mute: #1b1e22;
 
-  --vp-c-text-1: #fdf6e6;
-  --vp-c-text-2: #d8cbb8;
-  --vp-c-text-3: #a99a84;
+  --vp-c-text-1: #ecebe6;
+  --vp-c-text-2: #b4b7bd;
+  --vp-c-text-3: #8b9099;
 
-  --vp-c-divider: #3a2f24;
-  --vp-c-border: #4a3d2f;
-  --vp-c-gutter: #120f0c;
+  --vp-c-divider: var(--fl-line);
+  --vp-c-border: var(--fl-line-strong);
+  --vp-c-gutter: #0a0b0d;
 
   --vp-c-brand-1: var(--fl-accent-ink);
-  --vp-c-brand-2: #fff0b8;
+  --vp-c-brand-2: var(--fl-accent-hover);
   --vp-c-brand-3: var(--fl-accent);
   --vp-c-brand-soft: var(--fl-accent-soft);
 
-  --flessan-accent-fill: var(--fl-accent);
-  --flessan-accent-fill-hover: var(--fl-accent-strong);
-  --flessan-accent-fill-active: #ffe08c;
-  --flessan-on-accent: var(--fl-on-accent);
-  --flessan-accent-ink: var(--fl-accent-ink);
-  --flessan-accent-soft: var(--fl-accent-soft);
-  --flessan-accent-line: color-mix(in srgb, var(--fl-accent) 55%, transparent);
+  --vp-c-tip-1: var(--fl-accent-ink);
+  --vp-c-tip-2: var(--fl-accent-hover);
+  --vp-c-tip-3: var(--fl-accent);
+  --vp-c-tip-soft: var(--fl-accent-soft);
 
-  --flessan-card: #241d17;
-  --flessan-card-border: #3a2f24;
-  --flessan-shadow-sm: 3px 3px 0 var(--fl-shadow);
-  --flessan-shadow-md: 5px 5px 0 var(--fl-shadow);
-  --flessan-shadow-lg: 8px 8px 0 var(--fl-shadow);
+  --vp-c-warning-1: #f0bc4b;
+  --vp-c-warning-2: #ffd98a;
+  --vp-c-warning-3: #e0a020;
+  --vp-c-warning-soft: rgba(224, 160, 32, 0.14);
 
-  --flessan-nav-glass: var(--fl-paper);
-  --flessan-nav-border: #6a5a45;
-  --flessan-nav-shadow: 4px 4px 0 var(--fl-shadow);
+  --vp-c-danger-1: #f07096;
+  --vp-c-danger-2: #ff9db8;
+  --vp-c-danger-3: #c0365f;
+  --vp-c-danger-soft: rgba(192, 54, 95, 0.16);
+
+  --flessan-card: var(--vp-c-bg-elv);
+  --flessan-card-border: var(--vp-c-divider);
+  --flessan-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 10px 26px -18px rgba(0, 0, 0, 0.9);
+  --flessan-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45),
+    0 22px 50px -26px rgba(0, 0, 0, 0.95);
+  --flessan-shadow-lg: 0 4px 10px rgba(0, 0, 0, 0.5),
+    0 36px 80px -34px rgba(0, 0, 0, 1);
 }
 
-html.dark[data-paper='snow'] {
-  --fl-paper: #14161a;
-  --fl-paper-tint: #1b1e24;
-  --fl-dot: #2c313a;
-  --vp-c-bg-soft: #232830;
-  --vp-c-gutter: #0f1115;
-  --vp-c-divider: #2c313a;
-  --vp-c-border: #3b424e;
+html.dark[data-paper='white'] {
+  --fl-paper: #101315;
+  --fl-paper-tint: #171a1d;
+  --fl-line: #282c31;
+  --fl-line-strong: #383d45;
+  --vp-c-bg-soft: #1c2024;
+  --vp-c-gutter: #0b0d0f;
 }
 
-html.dark[data-paper='peach'] {
-  --fl-paper: #1a1210;
-  --fl-paper-tint: #241916;
-  --fl-dot: #3a2823;
-  --vp-c-bg-soft: #2e201b;
-  --vp-c-gutter: #150e0c;
-  --vp-c-divider: #3a2823;
-  --vp-c-border: #4a342c;
+html.dark[data-paper='sand'] {
+  --fl-paper: #12100d;
+  --fl-paper-tint: #191612;
+  --fl-line: #2b2721;
+  --fl-line-strong: #3b362e;
+  --vp-c-bg-soft: #211d18;
+  --vp-c-gutter: #0d0b09;
 }
 
-html.dark[data-accent='tangerine'] {
-  --fl-accent: #ff9a5c;
-  --fl-accent-strong: #ffb07d;
-  --fl-accent-ink: #ffb98f;
+html.dark[data-accent='emerald'] {
+  --fl-accent: #4fcaa0;
+  --fl-accent-hover: #6fdbb6;
+  --fl-accent-ink: #8fe4c4;
+  --fl-accent-soft: rgba(79, 202, 160, 0.12);
+  --fl-accent-line: rgba(79, 202, 160, 0.3);
+  --fl-on-accent: #04231a;
 }
 
-html.dark[data-accent='mint'] {
-  --fl-accent: #63dba2;
-  --fl-accent-strong: #8ce8bc;
-  --fl-accent-ink: #8ce8bc;
+html.dark[data-accent='amber'] {
+  --fl-accent: #f0bc4b;
+  --fl-accent-hover: #ffd071;
+  --fl-accent-ink: #ffd98a;
+  --fl-accent-soft: rgba(240, 188, 75, 0.13);
+  --fl-accent-line: rgba(240, 188, 75, 0.32);
+  --fl-on-accent: #241a00;
 }
 
-html.dark[data-accent='sky'] {
-  --fl-accent: #7fcaff;
-  --fl-accent-strong: #a4daff;
-  --fl-accent-ink: #a4daff;
+html.dark[data-accent='rose'] {
+  --fl-accent: #f07096;
+  --fl-accent-hover: #ff90b0;
+  --fl-accent-ink: #ff9db8;
+  --fl-accent-soft: rgba(240, 112, 150, 0.12);
+  --fl-accent-line: rgba(240, 112, 150, 0.3);
+  --fl-on-accent: #2a0713;
 }
 
-html.dark[data-accent='bubblegum'] {
-  --fl-accent: #ffa3cf;
-  --fl-accent-strong: #ffbedd;
-  --fl-accent-ink: #ffbedd;
+html.dark[data-accent='violet'] {
+  --fl-accent: #a98bff;
+  --fl-accent-hover: #bfa6ff;
+  --fl-accent-ink: #c3aeff;
+  --fl-accent-soft: rgba(169, 139, 255, 0.12);
+  --fl-accent-line: rgba(169, 139, 255, 0.3);
+  --fl-on-accent: #150a2e;
 }
 
-html.dark[data-accent='lilac'] {
-  --fl-accent: #c4a8ff;
-  --fl-accent-strong: #d7c3ff;
-  --fl-accent-ink: #d7c3ff;
+html.dark[data-accent='graphite'] {
+  --fl-accent: #e6e4de;
+  --fl-accent-hover: #f6f5f1;
+  --fl-accent-ink: #ecebe6;
+  --fl-accent-soft: rgba(236, 235, 230, 0.1);
+  --fl-accent-line: rgba(236, 235, 230, 0.26);
+  --fl-on-accent: #101214;
 }
 
 /* ==========================================================================
-   3. Base layer
+   3. Base
    ========================================================================== */
 
 html {
   overflow-y: scroll;
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   overflow-x: clip;
   background-color: var(--vp-c-bg);
-  /* Flat dot paper. An inline SVG keeps this free of any gradient. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Ccircle cx='3' cy='3' r='1.6' fill='%23ead9b4'/%3E%3C/svg%3E");
-  background-attachment: fixed;
-  background-repeat: repeat;
+  color: var(--vp-c-text-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-}
-
-.dark body {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Ccircle cx='3' cy='3' r='1.6' fill='%2334291f'/%3E%3C/svg%3E");
 }
 
 ::selection {
@@ -337,13 +355,12 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, transparent)
-    transparent;
+  scrollbar-color: color-mix(in srgb, var(--vp-c-text-3) 40%, transparent) transparent;
 }
 
 ::-webkit-scrollbar {
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -353,329 +370,27 @@ body {
 ::-webkit-scrollbar-thumb {
   border: 3px solid transparent;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--vp-c-brand-1) 32%, transparent);
+  background: color-mix(in srgb, var(--vp-c-text-3) 40%, transparent);
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
+  background: color-mix(in srgb, var(--vp-c-text-2) 60%, transparent);
   background-clip: content-box;
 }
 
-/* ==========================================================================
-   4. Buttons
-   ========================================================================== */
-
-:root {
-  --vp-button-brand-border: transparent;
-  --vp-button-brand-text: var(--flessan-on-accent);
-  --vp-button-brand-bg: var(--flessan-accent-fill);
-  --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-hover-text: var(--flessan-on-accent);
-  --vp-button-brand-hover-bg: var(--flessan-accent-fill-hover);
-  --vp-button-brand-active-border: transparent;
-  --vp-button-brand-active-text: var(--flessan-on-accent);
-  --vp-button-brand-active-bg: var(--flessan-accent-fill-active);
-
-  --vp-button-alt-border: var(--vp-c-border);
-  --vp-button-alt-text: var(--vp-c-text-1);
-  --vp-button-alt-bg: var(--vp-c-bg-elv);
-  --vp-button-alt-hover-border: var(--flessan-accent-ink);
-  --vp-button-alt-hover-text: var(--flessan-accent-ink);
-  --vp-button-alt-hover-bg: var(--vp-c-bg-soft);
-  --vp-button-alt-active-border: var(--flessan-accent-ink);
-  --vp-button-alt-active-text: var(--flessan-on-accent);
-  --vp-button-alt-active-bg: var(--flessan-accent-fill);
-}
-
-.VPButton {
-  position: relative;
-  border: var(--fl-border) solid var(--fl-ink);
-  border-radius: var(--flessan-radius-sm);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  box-shadow: var(--flessan-shadow-sm);
-  transition:
-    color 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 200ms var(--flessan-ease-out),
-    transform 200ms var(--flessan-ease-out);
-}
-
-.VPButton.brand {
-  background: var(--flessan-accent-fill);
-  color: var(--flessan-on-accent);
-}
-
-.VPButton.alt {
-  border-color: var(--fl-ink);
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
-}
-
-.VPButton:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--flessan-shadow-md);
-}
-
-.VPButton:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 var(--fl-shadow);
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
 }
 
 /* ==========================================================================
-   5. Header / navigation
-   ========================================================================== */
-
-.VPNavBar,
-.VPNavBar.top {
-  transition:
-    background-color 260ms ease,
-    border-color 260ms ease,
-    box-shadow 320ms var(--flessan-ease-out);
-}
-
-.VPNavBar:not(.has-sidebar):not(.top) .divider {
-  display: none;
-}
-
-.VPLocalNav {
-  border-bottom: 1px solid transparent;
-}
-
-.VPNavBarMenuLink,
-.VPNavBarMenuGroup .button {
-  position: relative;
-  min-height: 36px;
-  padding-inline: 11px;
-  border-radius: 10px;
-  color: var(--vp-c-text-2);
-  font-size: 0.86rem;
-  font-weight: 550;
-  letter-spacing: -0.01em;
-  transition:
-    color 180ms ease,
-    background-color 220ms ease,
-    transform 420ms var(--flessan-ease-out);
-}
-
-.VPNavBarMenuLink:hover,
-.VPNavBarMenuGroup .button:hover {
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg-soft);
-  transform: translateY(-1px);
-}
-
-.VPNavBarMenuLink.active {
-  color: var(--fl-on-accent);
-  background: var(--fl-accent);
-  box-shadow: inset 0 0 0 2px var(--fl-ink);
-}
-
-
-.VPNavBarSearch .DocSearch-Button,
-.VPNavBarSearch button {
-  border: 1px solid transparent;
-  border-radius: 11px;
-  background: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-2);
-  transition:
-    background-color 220ms ease,
-    border-color 220ms ease,
-    color 200ms ease,
-    transform 420ms var(--flessan-ease-out),
-    box-shadow 320ms var(--flessan-ease-out);
-}
-
-.VPNavBarSearch .DocSearch-Button:hover,
-.VPNavBarSearch button:hover {
-  border-color: var(--flessan-accent-line);
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
-  transform: translateY(-1px);
-  box-shadow: var(--flessan-shadow-sm);
-}
-
-.VPSocialLink {
-  border-radius: 9px;
-  color: var(--vp-c-text-2);
-  transition:
-    color 180ms ease,
-    background-color 220ms ease,
-    transform 480ms var(--flessan-ease-spring);
-}
-
-.VPSocialLink:hover {
-  color: var(--flessan-accent-ink);
-  background: var(--flessan-accent-soft);
-  transform: translateY(-2px) scale(1.04);
-}
-
-/* Focus rings */
-.vp-doc :where(button, a, input, select, textarea, summary):focus-visible,
-.VPNavBar :where(button, a, input):focus-visible,
-.VPFooter :where(a, button):focus-visible {
-  outline: 2px solid var(--flessan-accent-ink);
-  outline-offset: 3px;
-  border-radius: 6px;
-}
-
-/* ==========================================================================
-   6. Desktop floating header
-   ========================================================================== */
-
-@media (min-width: 960px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    position: fixed !important;
-    top: 16px !important;
-    left: 50% !important;
-    right: auto !important;
-    width: min(1320px, calc(100vw - 48px)) !important;
-    max-width: none !important;
-    height: 62px;
-    box-sizing: border-box;
-    overflow: visible;
-    border: 2px solid var(--fl-ink);
-    border-radius: 20px;
-    background: var(--vp-c-bg) !important;
-    box-shadow: 5px 5px 0 var(--fl-ink);
-    transform: translateX(-50%);
-    animation: flessan-nav-arrive 760ms var(--flessan-ease-out) both;
-  }
-
-  .VPNavBar .container {
-    width: 100%;
-    max-width: none !important;
-    height: 100%;
-    margin: 0;
-    padding-inline: clamp(16px, 2vw, 26px);
-    box-sizing: border-box;
-  }
-
-  .VPNavBarTitle {
-    flex: 0 0 auto;
-  }
-
-  .VPNavBarTitle .title {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-    color: var(--vp-c-text-1) !important;
-    font-size: 0.98rem;
-    font-weight: 750;
-    letter-spacing: -0.035em;
-    text-decoration: none;
-    transition: transform 480ms var(--flessan-ease-spring);
-  }
-
-  .VPNavBarTitle .title:hover {
-    transform: translateY(-1px) scale(1.012);
-  }
-
-  .VPNavBarTitle .title::before {
-    content: '';
-    display: block;
-    flex: 0 0 36px;
-    width: 36px;
-    height: 36px;
-    margin: 0;
-    transform: none;
-    border: 2px solid var(--vp-c-bg);
-    border-radius: 50%;
-    background: url('/images/flessan-avatar.png') center / cover no-repeat;
-    box-shadow:
-      0 0 0 1px var(--flessan-nav-border),
-      0 6px 16px -10px rgba(18, 42, 27, 0.65);
-    transition: box-shadow 320ms ease;
-  }
-
-  .VPNavBarTitle .title:hover::before {
-    box-shadow:
-      0 0 0 1px var(--flessan-accent-line),
-      0 0 0 5px var(--flessan-accent-soft),
-      0 8px 20px -10px rgba(18, 42, 27, 0.55);
-  }
-
-  .VPNavBar .content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .VPNavBar .content-body {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .VPNavBarSearch {
-    flex: 0 0 auto;
-    margin-left: 1.1rem;
-  }
-
-  .VPNavBarSearch .DocSearch-Button,
-  .VPNavBarSearch button {
-    min-height: 38px;
-    border: 1px solid var(--flessan-nav-border);
-    background: var(--vp-c-bg-soft);
-  }
-
-  .VPNavBarMenu {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin-left: auto;
-  }
-
-  .VPNavBar .social-links {
-    gap: 9px;
-    margin-left: 6px;
-  }
-
-  .VPNavBar .divider {
-    opacity: 0.4;
-  }
-}
-
-/* Phones and tablets keep a full-width, sticky header. */
-@media (max-width: 959px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: var(--vp-nav-height);
-    transform: none;
-    border: 0;
-    border-bottom: 2px solid var(--fl-ink);
-    border-radius: 0;
-    background: var(--vp-c-bg) !important;
-    box-shadow: 0 4px 0 var(--fl-ink);
-    animation: flessan-mobile-nav-arrive 480ms var(--flessan-ease-out) both;
-  }
-
-  .VPNavBar .container {
-    width: 100%;
-    max-width: none !important;
-    padding-inline: 16px;
-    box-sizing: border-box;
-  }
-
-  .VPNavBarMenuLink:hover,
-  .VPNavBarMenuGroup .button:hover {
-    transform: none;
-  }
-}
-
-/* ==========================================================================
-   7. Content layout & typography
+   4. Typography & prose
    ========================================================================== */
 
 .vp-doc {
@@ -691,72 +406,65 @@ body {
 }
 
 .vp-doc h1 {
-  margin-bottom: 0.85rem;
-  font-size: clamp(1.95rem, 3.6vw, 2.65rem);
-  font-weight: 780;
-  letter-spacing: -0.042em;
+  margin-bottom: 0.9rem;
+  font-size: clamp(1.9rem, 3.4vw, 2.55rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
   line-height: 1.12;
 }
 
 .vp-doc h2 {
   position: relative;
-  margin-top: 3rem;
-  padding-bottom: 0.6rem;
-  border-top: none;
-  border-bottom: 1px solid var(--vp-c-divider);
-  font-size: clamp(1.35rem, 2.3vw, 1.62rem);
-  font-weight: 720;
-  letter-spacing: -0.028em;
+  margin-top: 3.2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--vp-c-divider);
+  border-bottom: none;
+  font-size: clamp(1.3rem, 2.1vw, 1.5rem);
+  font-weight: 650;
+  letter-spacing: -0.022em;
   line-height: 1.3;
 }
 
-.vp-doc h2::after {
+.vp-doc h2::before {
   content: '';
   position: absolute;
+  top: -1px;
   left: 0;
-  bottom: -2px;
-  width: 54px;
-  height: 5px;
-  border-radius: 3px;
+  width: 34px;
+  height: 2px;
   background: var(--fl-accent);
-  box-shadow: 0 0 0 2px var(--fl-ink);
-  transform: rotate(-1.2deg);
 }
 
 .vp-doc h3 {
-  margin-top: 2rem;
-  font-size: 1.18rem;
-  letter-spacing: -0.02em;
+  margin-top: 2.1rem;
+  font-size: 1.12rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
 }
 
 .vp-doc p,
 .vp-doc li {
   color: var(--vp-c-text-2);
-  line-height: 1.78;
+  line-height: 1.75;
 }
 
 .vp-doc strong {
   color: var(--vp-c-text-1);
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .vp-doc a {
-  color: var(--flessan-accent-ink);
+  color: var(--fl-accent-ink);
   font-weight: 500;
-  text-decoration-color: color-mix(
-    in srgb,
-    var(--flessan-accent-ink) 38%,
-    transparent
-  );
+  text-decoration: underline;
+  text-decoration-color: var(--fl-accent-line);
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  transition:
-    color 180ms ease,
-    text-decoration-color 220ms ease;
+  text-underline-offset: 0.22em;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 
 .vp-doc a:not(.header-anchor):hover {
-  color: var(--vp-c-brand-2);
+  color: var(--fl-accent-hover);
   text-decoration-color: currentColor;
 }
 
@@ -766,29 +474,29 @@ body {
 
 .vp-doc ul,
 .vp-doc ol {
-  padding-left: 1.35rem;
+  padding-left: 1.3rem;
 }
 
 .vp-doc li::marker {
-  color: var(--flessan-accent-ink);
+  color: var(--fl-accent);
 }
 
 .vp-doc li + li {
-  margin-top: 0.35rem;
+  margin-top: 0.3rem;
 }
 
 .vp-doc hr {
-  margin: 2.6rem 0;
+  margin: 2.8rem 0;
   border: 0;
   border-top: 1px solid var(--vp-c-divider);
 }
 
 .vp-doc blockquote {
   margin: 1.6rem 0;
-  padding: 0.9rem 1.15rem;
-  border-left: 3px solid var(--flessan-accent-ink);
-  border-radius: 0 var(--flessan-radius-sm) var(--flessan-radius-sm) 0;
-  background: var(--flessan-accent-soft);
+  padding: 0.9rem 1.2rem;
+  border-left: 2px solid var(--fl-accent);
+  border-radius: 0 var(--fl-r-sm) var(--fl-r-sm) 0;
+  background: var(--vp-c-bg-alt);
   color: var(--vp-c-text-2);
 }
 
@@ -797,182 +505,243 @@ body {
   font-size: 0.95rem;
 }
 
-/* Inline code + code blocks */
-.vp-doc :not(pre) > code {
-  padding: 0.18em 0.42em;
-  border: 1px solid var(--flessan-card-border);
-  border-radius: 6px;
-  background: var(--vp-c-bg-soft);
-  color: var(--flessan-accent-ink);
-  font-size: 0.86em;
-  font-weight: 550;
-}
-
-.vp-doc div[class*='language-'] {
-  position: relative;
-  margin: 1.4rem 0;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--flessan-radius-md);
-  background: var(--vp-c-bg-alt);
-  box-shadow: var(--flessan-shadow-sm);
-  transition:
-    border-color 260ms ease,
-    box-shadow 360ms var(--flessan-ease-out),
-    transform 480ms var(--flessan-ease-out);
-}
-
-.vp-doc div[class*='language-']:hover {
-  border-color: var(--flessan-accent-line);
-  box-shadow: var(--flessan-shadow-md);
-}
-
-.vp-doc div[class*='language-'] > span.lang {
-  top: 10px;
-  right: 14px;
-  color: var(--vp-c-text-3);
-  font-size: 0.7rem;
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.vp-doc div[class*='language-'] > button.copy {
-  top: 8px;
-  right: 8px;
-  border-radius: 8px;
-}
-
-/* Tables */
-.vp-doc table {
-  width: 100%;
-  margin: 1.5rem 0;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: var(--flessan-radius-md);
-  border-collapse: separate;
-  border-spacing: 0;
-  overflow: hidden;
-}
-
-.vp-doc tr {
-  background: transparent;
-}
-
-.vp-doc tr:nth-child(2n) {
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 55%, transparent);
-}
-
-.vp-doc th {
-  background: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-1);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.vp-doc th,
-.vp-doc td {
-  border: 0;
-  border-bottom: 1px solid var(--vp-c-divider);
-  padding: 0.7rem 0.9rem;
-  text-align: left;
-}
-
-.vp-doc tr:last-child td {
-  border-bottom: 0;
-}
-
-/* Media */
-.vp-doc img,
-.vp-doc video {
-  border-radius: var(--flessan-radius-md);
-}
-
-.vp-doc figure img {
-  box-shadow: var(--flessan-shadow-md);
-}
-
-/* Don't let wide content stretch the page on small screens. */
-.vp-doc {
-  overflow-wrap: break-word;
+.vp-doc img {
+  border-radius: var(--fl-r-md);
 }
 
 /* ==========================================================================
-   8. Custom blocks
+   5. Buttons
    ========================================================================== */
 
 :root {
-  --vp-custom-block-tip-border: var(--flessan-accent-line);
-  --vp-custom-block-tip-text: var(--vp-c-text-1);
-  --vp-custom-block-tip-bg: var(--flessan-accent-soft);
-  --vp-custom-block-tip-code-bg: color-mix(
-    in srgb,
-    var(--flessan-accent-ink) 14%,
-    transparent
-  );
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--fl-on-accent);
+  --vp-button-brand-bg: var(--fl-accent);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--fl-on-accent);
+  --vp-button-brand-hover-bg: var(--fl-accent-hover);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--fl-on-accent);
+  --vp-button-brand-active-bg: var(--fl-accent-hover);
+
+  --vp-button-alt-border: var(--vp-c-border);
+  --vp-button-alt-text: var(--vp-c-text-1);
+  --vp-button-alt-bg: var(--vp-c-bg-elv);
+  --vp-button-alt-hover-border: var(--vp-c-text-3);
+  --vp-button-alt-hover-text: var(--vp-c-text-1);
+  --vp-button-alt-hover-bg: var(--vp-c-bg-alt);
+  --vp-button-alt-active-border: var(--vp-c-text-2);
+  --vp-button-alt-active-text: var(--vp-c-text-1);
+  --vp-button-alt-active-bg: var(--vp-c-bg-soft);
 }
 
-.custom-block {
-  border-radius: var(--flessan-radius-md);
+.VPButton {
+  border-radius: var(--fl-r-sm);
   border-width: 1px;
-  border-left-width: 3px;
-  font-size: 0.92rem;
+  padding: 0.55rem 1.05rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 200ms var(--flessan-ease-out),
+    transform 200ms var(--flessan-ease-out);
 }
 
-.custom-block .custom-block-title {
-  font-weight: 700;
-  letter-spacing: -0.01em;
+.VPButton.brand {
+  box-shadow: var(--flessan-shadow-sm);
+}
+
+.VPButton:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--flessan-shadow-sm);
+}
+
+.VPButton:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* ==========================================================================
-   9. Home page width + hero surface
+   6. Navigation
+   ========================================================================== */
+
+.VPNavBar,
+.VPNavBar.top,
+.VPNavBar:not(.has-sidebar):not(.top) {
+  background-color: var(--vp-c-bg) !important;
+  border-bottom: 1px solid var(--vp-c-divider);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: background-color 240ms ease, border-color 240ms ease;
+}
+
+.VPNavBar .divider {
+  display: none;
+}
+
+.VPNavBarTitle .title {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--vp-c-text-1) !important;
+  font-size: 0.94rem;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  text-decoration: none;
+}
+
+.VPNavBarTitle .title::before {
+  content: '';
+  display: block;
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  border-radius: 50%;
+  background: url('/images/flessan-avatar.png') center / cover no-repeat;
+  box-shadow: 0 0 0 1px var(--vp-c-divider);
+}
+
+.VPNavBarMenuLink,
+.VPNavBarMenuGroup .button {
+  position: relative;
+  min-height: 34px;
+  padding-inline: 10px;
+  border-radius: 6px;
+  color: var(--vp-c-text-2);
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.VPNavBarMenuLink:hover,
+.VPNavBarMenuGroup .button:hover {
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg-alt);
+}
+
+.VPNavBarMenuLink.active {
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+
+.VPNavBarMenuLink::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--fl-accent);
+  opacity: 0;
+  transform: translate(-50%, 2px);
+  transition: opacity 180ms ease, transform 220ms var(--flessan-ease-out);
+}
+
+.VPNavBarMenuLink.active::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.VPNavBarSearch .DocSearch-Button,
+.VPNavBarSearch button {
+  height: 34px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-2);
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.VPNavBarSearch .DocSearch-Button:hover,
+.VPNavBarSearch button:hover {
+  border-color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-1);
+}
+
+.VPSocialLink {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  color: var(--vp-c-text-3);
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.VPSocialLink:hover {
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg-alt);
+}
+
+/* Focus rings */
+.vp-doc :where(button, a, input, select, textarea, summary):focus-visible,
+.VPNavBar :where(button, a, input):focus-visible,
+.VPFooter :where(a, button):focus-visible {
+  outline: 2px solid var(--fl-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.VPNavBarHamburger {
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-elv);
+}
+
+/* ==========================================================================
+   7. Sidebar & aside
+   ========================================================================== */
+
+.VPSidebar {
+  background-color: var(--vp-c-bg);
+  border-right: 1px solid var(--vp-c-divider);
+}
+
+.VPSidebarItem .text {
+  font-size: 0.85rem;
+  color: var(--vp-c-text-2);
+}
+
+.VPSidebarItem.is-active > .item .text {
+  color: var(--fl-accent-ink);
+  font-weight: 600;
+}
+
+.VPDocAsideOutline .outline-title {
+  font-size: 0.7rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+.VPDocAsideOutline .outline-link {
+  font-size: 0.8rem;
+  color: var(--vp-c-text-3);
+}
+
+.VPDocAsideOutline .outline-link:hover,
+.VPDocAsideOutline .outline-link.active {
+  color: var(--fl-accent-ink);
+}
+
+/* ==========================================================================
+   8. Layout & widths
    ========================================================================== */
 
 .Layout.home-page .VPDoc .content-container,
-.Layout.home-page .VPDoc.has-aside .content-container {
-  max-width: 1024px;
-}
-
-/* Let the hero breathe wider than a reading column. */
 .Layout.home-page .VPDoc .content {
-  max-width: 1024px;
-  margin-inline: auto;
-}
-
-.Layout.home-page .VPDoc:not(.has-sidebar) .container {
-  max-width: 1140px;
+  max-width: 1120px;
 }
 
 .Layout.home-page .VPDoc .aside {
   display: none;
 }
 
-.Layout.home-page .VPDoc {
-  padding-bottom: 56px;
-}
-
-.Layout.home-page .vp-doc > div > h2:first-of-type {
-  margin-top: 2.2rem;
-}
-
-/* Keep the prose readable inside the wider home canvas. */
-.Layout.home-page .vp-doc > div > :is(h2, h3, p, ul, ol, blockquote) {
-  max-width: 46rem;
-}
-
-@media (min-width: 768px) {
-  .Layout.home-page .VPDoc {
-    padding-top: 72px;
-  }
-}
-
-@media (max-width: 767px) {
-  .Layout.home-page .VPDoc {
-    padding-top: 56px;
-  }
-}
-
-/* The blog archive uses a wider canvas than a reading column. */
-.Layout.wide-page .VPDoc .content-container,
 .Layout.wide-page .VPDoc.has-aside .content-container,
 .Layout.wide-page .VPDoc .content {
   max-width: 1040px;
@@ -987,6 +756,132 @@ body {
   display: none;
 }
 
+.VPDoc .content-container {
+  max-width: 720px;
+}
+
+/* The home prose sits in a calm column under the hero. */
+.Layout.home-page .vp-doc > div > h1,
+.Layout.home-page .vp-doc > div > h2,
+.Layout.home-page .vp-doc > div > h3,
+.Layout.home-page .vp-doc > div > p,
+.Layout.home-page .vp-doc > div > ul,
+.Layout.home-page .vp-doc > div > ol,
+.Layout.home-page .vp-doc > div > blockquote,
+.Layout.home-page .vp-doc > div > .container,
+.Layout.home-page .vp-doc > div > .custom-block,
+.Layout.home-page .vp-doc > div > .kerja-launch,
+.Layout.home-page .vp-doc > div > .blog-archive,
+.Layout.home-page .vp-doc > div > .gh-activity,
+.Layout.home-page .vp-doc > div > .tg,
+.Layout.home-page .vp-doc > div > .lu,
+.Layout.home-page .vp-doc > div > .my-activity,
+.Layout.home-page .vp-doc > div > .educator-invite,
+.Layout.home-page .vp-doc > div > .post-navigation {
+  max-width: 780px;
+}
+
+/* ==========================================================================
+   9. Code, tables, custom blocks
+   ========================================================================== */
+
+.vp-doc :not(pre) > code {
+  padding: 0.16em 0.4em;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 5px;
+  background: var(--vp-c-bg-alt);
+  color: var(--fl-accent-ink);
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.vp-doc div[class*='language-'] {
+  position: relative;
+  margin: 1.4rem 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-alt);
+  transition: border-color 200ms ease;
+}
+
+.vp-doc div[class*='language-']:hover {
+  border-color: var(--vp-c-border);
+}
+
+.vp-doc div[class*='language-'] > span.lang {
+  top: 9px;
+  right: 14px;
+  color: var(--vp-c-text-3);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vp-doc div[class*='language-'] > button.copy {
+  top: 7px;
+  right: 7px;
+  border-radius: 6px;
+}
+
+.vp-doc table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-md);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+
+.vp-doc th {
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.vp-doc th,
+.vp-doc td {
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.vp-doc tr:last-child td {
+  border-bottom: 0;
+}
+
+.vp-doc .custom-block {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-alt);
+  padding: 1rem 1.15rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.vp-doc .custom-block.tip {
+  border-color: var(--fl-accent-line);
+  background: var(--fl-accent-soft);
+}
+
+.vp-doc .custom-block.tip .custom-block-title {
+  color: var(--fl-accent-ink);
+}
+
+.vp-doc .custom-block.warning {
+  border-color: rgba(224, 160, 32, 0.35);
+}
+
+.vp-doc .custom-block.danger {
+  border-color: rgba(192, 54, 95, 0.3);
+}
+
+.vp-doc .custom-block p {
+  color: var(--vp-c-text-2);
+  font-size: 0.9rem;
+}
+
 /* ==========================================================================
    10. Footer
    ========================================================================== */
@@ -999,12 +894,16 @@ body {
 .VPFooter .message,
 .VPFooter .copyright {
   color: var(--vp-c-text-3);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .VPFooter .copyright a,
 .VPFooter a {
-  color: var(--flessan-accent-ink);
+  color: var(--vp-c-text-2);
+}
+
+.VPFooter a:hover {
+  color: var(--fl-accent-ink);
 }
 
 /* ==========================================================================
@@ -1012,96 +911,38 @@ body {
    ========================================================================== */
 
 .VPLocalSearchBox .shell {
-  border-color: var(--vp-c-border);
-  border-radius: var(--flessan-radius-lg);
+  border: 1px solid var(--vp-c-border);
+  border-radius: var(--fl-r-lg);
   background: var(--vp-c-bg-elv);
   box-shadow: var(--flessan-shadow-lg);
 }
 
 .VPLocalSearchBox .search-bar {
   border: 1px solid var(--vp-c-divider);
-  border-radius: var(--flessan-radius-sm);
-  background: var(--vp-c-bg-soft);
+  border-radius: var(--fl-r-sm);
+  background: var(--vp-c-bg-alt);
 }
 
 .VPLocalSearchBox .result {
-  border-radius: var(--flessan-radius-sm);
+  border-radius: var(--fl-r-sm);
 }
 
 .VPLocalSearchBox .result.selected {
-  background: var(--flessan-accent-soft);
+  background: var(--vp-c-bg-alt);
 }
 
 .DocSearch {
-  --docsearch-primary-color: var(--flessan-accent-ink) !important;
+  --docsearch-primary-color: var(--fl-accent-ink) !important;
 }
 
 /* ==========================================================================
-   12. Motion utilities
-   ========================================================================== */
-
-@keyframes flessan-nav-arrive {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -14px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-
-@keyframes flessan-mobile-nav-arrive {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Gentle attention pulse for "live" dots. */
-@keyframes flessan-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--flessan-accent-ink) 45%, transparent);
-  }
-  60% {
-    box-shadow: 0 0 0 7px transparent;
-  }
-}
-
-/* Keyframes used for the small decorative rings on the 404 page. */
-@keyframes flessan-float {
-  0%,
-  100% {
-    transform: translateY(-4px);
-  }
-  50% {
-    transform: translateY(4px);
-  }
-}
-
-/* Elements waiting for the reveal animation. Set by motion.ts only. */
-.motion-pending {
-  opacity: 0;
-  will-change: opacity, transform;
-}
-
-.motion-done {
-  will-change: auto;
-}
-
-/* ==========================================================================
-   13. Theme switching
+   12. Theme switching
    ========================================================================== */
 
 :root {
   --theme-toggle-x: 88vw;
   --theme-toggle-y: 32px;
-  --theme-transition-duration: 2400ms;
+  --theme-transition-duration: 720ms;
   --theme-transition-ease: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -1114,11 +955,9 @@ body,
 .vp-doc,
 .VPFooter,
 .VPSidebar {
-  transition:
-    background-color 2000ms var(--theme-transition-ease),
-    color 1700ms var(--theme-transition-ease),
-    border-color 1800ms var(--theme-transition-ease),
-    box-shadow 1800ms var(--theme-transition-ease);
+  transition: background-color 520ms var(--theme-transition-ease),
+    color 420ms var(--theme-transition-ease),
+    border-color 480ms var(--theme-transition-ease);
 }
 
 ::view-transition-group(root) {
@@ -1127,14 +966,12 @@ body,
 }
 
 ::view-transition-old(root) {
-  animation: flessan-theme-old var(--theme-transition-duration)
-    var(--theme-transition-ease) both;
+  animation: flessan-theme-old var(--theme-transition-duration) var(--theme-transition-ease) both;
   mix-blend-mode: normal;
 }
 
 ::view-transition-new(root) {
-  animation: flessan-theme-reveal var(--theme-transition-duration)
-    var(--theme-transition-ease) both;
+  animation: flessan-theme-reveal var(--theme-transition-duration) var(--theme-transition-ease) both;
   clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
   mix-blend-mode: normal;
 }
@@ -1143,11 +980,8 @@ body,
   0% {
     clip-path: circle(0 at var(--theme-toggle-x) var(--theme-toggle-y));
   }
-  45% {
-    clip-path: circle(48vmax at var(--theme-toggle-x) var(--theme-toggle-y));
-  }
   100% {
-    clip-path: circle(150vmax at var(--theme-toggle-x) var(--theme-toggle-y));
+    clip-path: circle(140vmax at var(--theme-toggle-x) var(--theme-toggle-y));
   }
 }
 
@@ -1155,37 +989,17 @@ body,
   0% {
     opacity: 1;
   }
-  55% {
-    opacity: 0.985;
-  }
   100% {
-    opacity: 0.96;
+    opacity: 0.94;
   }
 }
 
 .VPSwitchAppearance {
-  transform-origin: center;
-  transition:
-    transform 900ms var(--theme-transition-ease),
-    background-color 1500ms var(--theme-transition-ease),
-    border-color 1500ms var(--theme-transition-ease),
-    box-shadow 1500ms var(--theme-transition-ease);
+  transition: transform 240ms var(--flessan-ease-out), background-color 480ms ease;
 }
 
 .VPSwitchAppearance:hover {
-  transform: rotate(-7deg) scale(1.06);
-}
-
-.VPSwitchAppearance:active {
-  transform: rotate(7deg) scale(0.94);
-}
-
-.VPSwitchAppearance svg {
-  transition: transform 1200ms var(--theme-transition-ease);
-}
-
-.VPSwitchAppearance:hover svg {
-  transform: rotate(28deg);
+  transform: rotate(-4deg);
 }
 
 html.theme-switching .VPNavBar,
@@ -1196,80 +1010,119 @@ html.theme-switching .VPFooter {
 }
 
 /* ==========================================================================
-   14. Back to top
+   13. Motion helpers
+   ========================================================================== */
+
+@keyframes flessan-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.motion-pending {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.motion-done {
+  will-change: auto;
+}
+
+/* ==========================================================================
+   14. Utilities owned by the theme
    ========================================================================== */
 
 .flessan-back-to-top {
   position: fixed;
-  right: clamp(16px, 3vw, 34px);
-  bottom: calc(clamp(16px, 3vw, 30px) + 56px);
+  right: clamp(16px, 3vw, 30px);
+  bottom: calc(clamp(16px, 3vw, 26px) + 46px);
   z-index: 45;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   padding: 0;
-  border: 2px solid var(--fl-ink);
-  border-radius: 14px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 10px;
   background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
+  color: var(--vp-c-text-2);
   box-shadow: var(--flessan-shadow-sm);
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(14px) scale(0.85);
+  transform: translateY(8px);
   transition:
-    color 200ms ease,
-    border-color 220ms ease,
-    background-color 220ms ease,
-    box-shadow 300ms var(--flessan-ease-out);
+    opacity 200ms ease,
+    transform 220ms var(--flessan-ease-out),
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
 }
 
 .flessan-back-to-top.is-visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
 .flessan-back-to-top:hover {
-  color: var(--fl-on-accent);
-  border-color: var(--fl-ink);
-  background: var(--fl-accent);
-  transform: translate(-2px, -2px);
-  box-shadow: var(--flessan-shadow-md);
-}
-
-.flessan-back-to-top:hover svg {
-  transform: translateY(-2px);
+  color: var(--vp-c-text-1);
+  border-color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-alt);
 }
 
 .flessan-back-to-top svg {
-  width: 19px;
-  height: 19px;
-  transition: transform 360ms var(--flessan-ease-spring);
+  width: 17px;
+  height: 17px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1.8;
+  stroke-width: 1.7;
+}
+
+html[data-motion='off'] *,
+html[data-motion='off'] *::before,
+html[data-motion='off'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-density='compact'] .vp-doc p,
+html[data-density='compact'] .vp-doc li {
+  line-height: 1.6;
+}
+
+html[data-density='compact'] .vp-doc > div > h2 {
+  margin-top: 2.3rem;
+}
+
+html[data-density='compact'] .vp-doc > div > * + * {
+  margin-top: 0.8rem;
 }
 
 /* ==========================================================================
-   15. Responsive refinements
+   15. Responsive & accessibility
    ========================================================================== */
 
 @media (max-width: 767px) {
   .vp-doc h1 {
-    font-size: clamp(1.75rem, 7vw, 2.15rem);
+    font-size: clamp(1.7rem, 6.5vw, 2.1rem);
   }
 
   .vp-doc h2 {
-    margin-top: 2.4rem;
+    margin-top: 2.5rem;
   }
 
   .vp-doc p,
   .vp-doc li {
-    line-height: 1.72;
+    line-height: 1.7;
   }
 
   .VPButton {
@@ -1277,16 +1130,6 @@ html.theme-switching .VPFooter {
     justify-content: center;
   }
 }
-
-@media (min-width: 768px) {
-  .vp-doc .custom-block {
-    margin: 1.6rem 0;
-  }
-}
-
-/* ==========================================================================
-   16. Reduced motion
-   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -1302,28 +1145,10 @@ html.theme-switching .VPFooter {
     scroll-behavior: auto !important;
   }
 
-  .VPNavBar,
-  .VPNavBar.top {
-    animation: none !important;
-  }
-
-  .VPNavBarMenuLink:hover,
-  .VPNavBarMenuGroup .button:hover,
-  .VPSocialLink:hover,
-  .VPButton.brand:hover,
-  .VPButton.alt:hover {
-    transform: none !important;
-  }
-
-  .VPButton.brand::after {
-    display: none;
-  }
-
   ::view-transition-group(root),
   ::view-transition-old(root),
   ::view-transition-new(root),
-  .VPSwitchAppearance,
-  .VPSwitchAppearance svg {
+  .VPSwitchAppearance {
     animation: none !important;
     transition: none !important;
   }
@@ -1333,84 +1158,5 @@ html.theme-switching .VPFooter {
     opacity: 1 !important;
     transform: none !important;
     will-change: auto;
-  }
-}
-
-
-/* ==========================================================================
-   17. Playful layer — stickers, tape, confetti, playground
-   ========================================================================== */
-
-/* Small floating confetti used on celebratory actions. */
-.fl-confetti-piece {
-  position: fixed;
-  z-index: 999;
-  width: 8px;
-  height: 8px;
-  border: 1.5px solid var(--fl-ink);
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-/* Motion level from the playground. */
-html[data-motion='calm'] .hero-spark,
-html[data-motion='calm'] .hero-dot {
-  animation: none !important;
-}
-
-html[data-motion='off'] *,
-html[data-motion='off'] *::before,
-html[data-motion='off'] *::after {
-  animation-duration: 0.001ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.001ms !important;
-  scroll-behavior: auto !important;
-}
-
-/* Density from the playground. */
-html[data-density='compact'] {
-  --vp-line-height: 1.6;
-}
-
-html[data-density='compact'] .vp-doc p,
-html[data-density='compact'] .vp-doc li {
-  line-height: 1.6;
-}
-
-html[data-density='compact'] .vp-doc > div > h2 {
-  margin-top: 2.1rem;
-}
-
-html[data-density='compact'] .vp-doc > div > * + * {
-  margin-top: 0.85rem;
-}
-
-html[data-density='compact'] .hero-lead {
-  max-width: 40ch;
-}
-
-/* Focus rings for the interactive widgets we own. */
-.search-dock :where(button, input):focus-visible,
-.pg-panel :where(button, input):focus-visible,
-.pg-trigger:focus-visible {
-  outline: 3px solid var(--fl-accent-ink);
-  outline-offset: 2px;
-}
-
-
-/* Nav controls should feel like one family on phones. */
-@media (max-width: 959px) {
-  .VPNavBarHamburger {
-    margin-left: 4px;
-    border: 1px solid var(--vp-c-border);
-    border-radius: 10px;
-    background: var(--vp-c-bg-soft);
-  }
-}
-
-@media (max-width: 720px) {
-  .pg-section + .pg-section {
-    margin-top: 0.8rem;
-    padding-top: 0.7rem;
   }
 }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { animate, stagger } from 'animejs'
 import { blogPosts } from '../../blog-posts'
 
 const search = ref('')
 const selectedCategory = ref('all')
+const failed = ref(new Set<string>())
 const resultsRoot = ref<HTMLElement | null>(null)
 
 const categories = computed(() => [...new Set(blogPosts.map((post) => post.category))])
@@ -28,6 +29,28 @@ function formatDate(post: (typeof blogPosts)[number]) {
     day: 'numeric'
   })
 }
+
+function markFailed(src: string) {
+  failed.value = new Set(failed.value).add(src)
+}
+
+/** Catch images that failed before hydration could attach the error handler. */
+function sweepImages() {
+  const broken = new Set(failed.value)
+  document.querySelectorAll<HTMLImageElement>('.featured-image img, .card-image img').forEach((img) => {
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) {
+      broken.add(img.getAttribute('src') as string)
+    }
+  })
+  if (broken.size !== failed.value.size) failed.value = broken
+}
+
+onMounted(() => {
+  sweepImages()
+  window.addEventListener('load', sweepImages)
+})
+
+watch(selectedCategory, () => nextTick(sweepImages))
 
 function clearFilters() {
   search.value = ''
@@ -146,7 +169,19 @@ watch(selectedCategory, async () => {
       <div v-if="featuredPost" ref="resultsRoot" class="article-results">
         <article class="featured-card">
           <a class="featured-image" :href="'/blog/' + featuredPost.slug" tabindex="-1" aria-hidden="true">
-            <img :src="featuredPost.image" :alt="featuredPost.imageAlt" loading="eager" fetchpriority="high" decoding="async" />
+            <img
+              v-if="!failed.has(featuredPost.image)"
+              :src="featuredPost.image"
+              :alt="featuredPost.imageAlt"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              @error="markFailed(featuredPost.image)"
+            />
+            <span v-else class="cover-fallback cover-fallback-lg">
+              <span class="cover-kicker">{{ featuredPost.category }}</span>
+              <span class="cover-title">{{ featuredPost.title }}</span>
+            </span>
           </a>
           <div class="featured-body">
             <div class="article-meta">
@@ -166,7 +201,17 @@ watch(selectedCategory, async () => {
         <div v-if="remainingPosts.length" class="article-grid">
           <article v-for="post in remainingPosts" :key="post.slug" class="article-card">
             <a class="card-image" :href="'/blog/' + post.slug" tabindex="-1" aria-hidden="true">
-              <img :src="post.image" :alt="post.imageAlt" loading="lazy" decoding="async" />
+              <img
+                v-if="!failed.has(post.image)"
+                :src="post.image"
+                :alt="post.imageAlt"
+                loading="lazy"
+                decoding="async"
+                @error="markFailed(post.image)"
+              />
+              <span v-else class="cover-fallback">
+                <span class="cover-kicker">{{ post.category }}</span>
+              </span>
             </a>
             <div class="card-body">
               <div class="article-meta">
@@ -203,8 +248,8 @@ watch(selectedCategory, async () => {
 
 <style scoped>
 .blog-archive { --archive-border: var(--vp-c-divider); --archive-panel: var(--vp-c-bg-alt); margin: 0 auto; width: 100%; max-width: 100%; }
-.archive-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(13rem, 0.72fr); gap: clamp(1rem, 3vw, 2.4rem); align-items: stretch; margin: 0 0 3rem; padding: clamp(1.15rem, 3vw, 2rem); overflow: hidden; border: 1px solid var(--flessan-card-border); border-radius: 1.35rem; background: var(--archive-panel); border-width: 2px; border-color: var(--fl-ink); box-shadow: var(--flessan-shadow-md); }
-.archive-hero::before { content: ''; position: absolute; top: -5rem; right: -3.5rem; width: 14rem; height: 14rem; border: 2px solid var(--fl-ink); border-radius: 50%; background: color-mix(in srgb, var(--fl-accent) 42%, var(--archive-panel)); pointer-events: none; }
+.archive-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(13rem, 0.72fr); gap: clamp(1rem, 3vw, 2.4rem); align-items: stretch; margin: 0 0 3rem; padding: clamp(1.15rem, 3vw, 2rem); overflow: hidden; border: 1px solid var(--flessan-card-border); border-radius: var(--fl-r-lg); background: var(--archive-panel); box-shadow: none; }
+.archive-hero::before { content: ''; position: absolute; top: -5rem; right: -3.5rem; width: 14rem; height: 14rem; display: none; }
 .hero-copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-width: 0; padding: 0.4rem 0; }
 .eyebrow { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.8rem; color: var(--vp-c-brand-1); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.12em; line-height: 1.4; }
 .eyebrow-dot, .note-status span { display: inline-block; width: 0.48rem; height: 0.48rem; border-radius: 50%; background: var(--vp-c-brand-1); }
@@ -296,6 +341,45 @@ watch(selectedCategory, async () => {
 .archive-footer a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 3px; }
+.cover-fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  width: 100%;
+  height: 100%;
+  padding: 0.9rem;
+  background: var(--fl-accent-soft);
+  color: var(--fl-accent-ink);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.cover-fallback-lg {
+  padding: 1.2rem;
+  font-size: 0.68rem;
+}
+
+.cover-kicker {
+  display: inline-block;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--fl-accent-line);
+  align-self: flex-start;
+}
+
+.cover-title {
+  color: var(--vp-c-text-1);
+  font-family: var(--vp-font-family-base);
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  text-transform: none;
+}
+
 @media (max-width: 1040px) { .article-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .archive-hero { grid-template-columns: minmax(0, 1.3fr) minmax(12rem, 0.7fr); } .featured-image, .featured-image img { min-height: 18rem; } }
 @media (max-width: 720px) { .archive-hero { grid-template-columns: 1fr; margin-bottom: 2.2rem; } .category-select { display: flex; } .category-chips { display: none; } .hero-note { padding: 1rem; } .note-number { font-size: 3.3rem; } .section-heading { align-items: flex-start; flex-direction: column; gap: 0.35rem; } .archive-controls { grid-template-columns: 1fr; } .featured-card { grid-template-columns: 1fr; } .featured-image, .featured-image img { min-height: 0; height: auto; aspect-ratio: 16 / 8; } .featured-body { min-height: 18rem; } }
 @media (max-width: 520px) { .article-grid { grid-template-columns: 1fr; } .hero-copy h1 { font-size: clamp(2rem, 10vw, 3rem); } .hero-links { width: 100%; } .hero-link { flex: 1 1 auto; } .article-grid { gap: 0.8rem; } .card-image { aspect-ratio: 16 / 8; } .card-body { padding: 0.95rem; } .featured-body { min-height: 0; } }

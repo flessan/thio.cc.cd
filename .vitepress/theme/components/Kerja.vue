@@ -1,1349 +1,2415 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+/**
+ * /kerja — the personal workspace.
+ * Shares the site's design tokens, settings store and search engines so the
+ * workspace feels like a room in the same house, not a separate island.
+ */
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import shortcutData from 'virtual:kerja-shortcuts'
+import {
+  ACCENTS,
+  DENSITIES,
+  ENGINES,
+  ENGINE_PREFIXES,
+  PAPERS,
+  applySettings,
+  bootCustomization,
+  settings,
+  type Engine
+} from '../customize'
+import { motionLevel, pop } from '../effects'
+import { animate, stagger } from 'animejs'
 
-type Shortcut = {
-  name: string
-  url: string
-  icon: string
-  category: string
-}
+type Shortcut = { name: string; url: string; icon: string; category: string }
+type Mode = 'system' | 'light' | 'dark'
+type Kind = 'web' | 'shortcut' | 'page' | 'action' | 'history'
 
-type ColorMode = 'system' | 'light' | 'dark'
-type Palette = {
+interface Item {
   id: string
-  name: string
-  swatch: string
-  light: Record<string, string>
-  dark: Record<string, string>
+  kind: Kind
+  label: string
+  hint?: string
+  url?: string
+  path?: string
+  term?: string
+  category?: string
+  icon?: string
+  initial?: string
+  engine?: Engine
+  action?: () => void
 }
 
 const shortcuts = shortcutData as Shortcut[]
-const colorModes: ColorMode[] = ['system', 'light', 'dark']
-const query = ref('')
-const activeCategory = ref('Semua')
-const searchInput = ref<HTMLInputElement | null>(null)
-const failedIcons = ref(new Set<string>())
-const themeSettingsOpen = ref(false)
-const colorMode = ref<ColorMode>('system')
-const paletteId = ref('forest')
-const customAccent = ref('#2f704d')
-const systemPrefersDark = ref(false)
-const settingsReady = ref(false)
+const PIN_KEY = 'kerja-pins-v1'
+const RECENT_KEY = 'kerja-recent-v1'
+const HISTORY_KEY = 'kerja-searches-v1'
+const MAX_RECENT = 6
+const MAX_HISTORY = 8
 
-const palettes: Palette[] = [
-  {
-    id: 'forest', name: 'Evergreen', swatch: '#39734f',
-    light: { bg: '#f4f6f2', surface: '#ffffff', text: '#202820', muted: '#727d72', border: '#e1e7df', accent: '#2f704d', hover: '#3f8056', soft: '#e4f0e6', contrast: '#ffffff' },
-    dark: { bg: '#171b18', surface: '#202621', text: '#edf2ed', muted: '#a0ada1', border: '#303a32', accent: '#8bc99e', hover: '#a3d9b1', soft: '#283e2e', contrast: '#142118' }
-  },
-  {
-    id: 'ocean', name: 'Ocean', swatch: '#276b8a',
-    light: { bg: '#f2f6f8', surface: '#ffffff', text: '#1e2930', muted: '#6f7d84', border: '#dfe8ec', accent: '#276b8a', hover: '#1f5a75', soft: '#e0eef5', contrast: '#ffffff' },
-    dark: { bg: '#151c20', surface: '#1e292f', text: '#edf4f6', muted: '#a0b0b7', border: '#303e45', accent: '#83c5df', hover: '#a1d5e8', soft: '#243b45', contrast: '#102229' }
-  },
-  {
-    id: 'rose', name: 'Rose', swatch: '#9d4750',
-    light: { bg: '#faf4f3', surface: '#ffffff', text: '#2b2222', muted: '#827272', border: '#eee1df', accent: '#9d4750', hover: '#843842', soft: '#f7e4e5', contrast: '#ffffff' },
-    dark: { bg: '#201719', surface: '#2b2022', text: '#f6eeee', muted: '#b9a5a7', border: '#433034', accent: '#e8a0a8', hover: '#f0b5bb', soft: '#44282e', contrast: '#2b1519' }
-  },
-  {
-    id: 'amber', name: 'Amber', swatch: '#926516',
-    light: { bg: '#f8f5ee', surface: '#ffffff', text: '#2d281e', muted: '#817966', border: '#eae3d5', accent: '#926516', hover: '#7c5410', soft: '#f5ebd1', contrast: '#ffffff' },
-    dark: { bg: '#1f1b13', surface: '#2a251b', text: '#f4efe2', muted: '#b3a98f', border: '#403827', accent: '#e6bf72', hover: '#f0ce8e', soft: '#40331d', contrast: '#2c2110' }
-  },
-  {
-    id: 'slate', name: 'Slate', swatch: '#535f75',
-    light: { bg: '#f3f4f6', surface: '#ffffff', text: '#22262d', muted: '#737b89', border: '#e0e3e9', accent: '#535f75', hover: '#414b5f', soft: '#e7eaf0', contrast: '#ffffff' },
-    dark: { bg: '#191c22', surface: '#232730', text: '#eef0f5', muted: '#a5adbb', border: '#353a47', accent: '#aab8d5', hover: '#c2cce2', soft: '#2d3545', contrast: '#1a2030' }
-  }
+const themeOptions: Array<{ id: Mode; label: string }> = [
+  { id: 'light', label: 'Light' },
+  { id: 'dark', label: 'Dark' },
+  { id: 'system', label: 'Auto' }
 ]
 
-const categories = computed(() => [
-  'Semua',
-  ...new Set(shortcuts.map((shortcut) => shortcut.category))
-])
+/* ------------------------------------------------------------------ state */
 
-const filteredShortcuts = computed(() => {
-  const term = query.value.trim().toLowerCase()
+const query = ref('')
+const palette = ref(false)
+const active = ref(0)
+const engineMenu = ref(false)
+const lookOpen = ref(false)
+const activeCategory = ref('All')
+const input = ref<HTMLInputElement | null>(null)
+const bar = ref<HTMLElement | null>(null)
+const engineWrap = ref<HTMLElement | null>(null)
+const lookWrap = ref<HTMLElement | null>(null)
+const root = ref<HTMLElement | null>(null)
+const failed = ref(new Set<string>())
+const mode = ref<Mode>('system')
+const isDark = ref(false)
+const clock = ref('--:--')
 
-  return shortcuts.filter((shortcut) => {
-    const matchesCategory =
-      activeCategory.value === 'Semua' ||
-      shortcut.category === activeCategory.value
-    const searchable = (shortcut.name + ' ' + shortcut.category + ' ' + shortcut.url).toLowerCase()
-    return matchesCategory && (!term || searchable.includes(term))
-  })
-})
+const pins = ref<string[]>(readList(PIN_KEY))
+const recent = ref<string[]>(readList(RECENT_KEY))
+const history = ref<string[]>(readList(HISTORY_KEY))
 
-const groupedShortcuts = computed(() => {
-  const groups = new Map<string, Shortcut[]>()
-
-  for (const shortcut of filteredShortcuts.value) {
-    const group = groups.get(shortcut.category) ?? []
-    group.push(shortcut)
-    groups.set(shortcut.category, group)
-  }
-
-  return [...groups.entries()].map(([category, items]) => ({ category, items }))
-})
-
-const resolvedMode = computed(() => {
-  if (colorMode.value === 'system') return systemPrefersDark.value ? 'dark' : 'light'
-  return colorMode.value
-})
-
-const selectedPalette = computed(() => {
-  const palette = palettes.find((item) => item.id === paletteId.value) ?? palettes[0]
-  if (paletteId.value !== 'custom') return palette
-
-  const lightAccent = customAccent.value
-  const darkAccent = mixHex(customAccent.value, '#ffffff', 0.3)
-  return {
-    ...palette,
-    swatch: customAccent.value,
-    light: { ...palette.light, accent: lightAccent, hover: mixHex(lightAccent, '#000000', 0.12), soft: mixHex(lightAccent, '#ffffff', 0.88), contrast: contrastColor(lightAccent) },
-    dark: { ...palette.dark, accent: darkAccent, hover: mixHex(darkAccent, '#ffffff', 0.13), soft: mixHex(darkAccent, palette.dark.bg, 0.82), contrast: contrastColor(darkAccent) }
-  }
-})
-
-const themeVariables = computed(() => {
-  const tones = resolvedMode.value === 'dark' ? selectedPalette.value.dark : selectedPalette.value.light
-  return {
-    '--workspace-bg': tones.bg,
-    '--workspace-surface': tones.surface,
-    '--workspace-text': tones.text,
-    '--workspace-muted': tones.muted,
-    '--workspace-border': tones.border,
-    '--workspace-accent': tones.accent,
-    '--workspace-accent-hover': tones.hover,
-    '--workspace-accent-soft': tones.soft,
-    '--workspace-accent-contrast': tones.contrast
-  }
-})
-
-function mixHex(color: string, other: string, amount: number) {
-  const parse = (hex: string) => {
-    const normalized = hex.replace('#', '')
-    return [0, 2, 4].map((index) => parseInt(normalized.slice(index, index + 2), 16))
-  }
-  const a = parse(color)
-  const b = parse(other)
-  return '#' + a.map((value, index) => Math.round(value * (1 - amount) + b[index] * amount).toString(16).padStart(2, '0')).join('')
-}
-
-function contrastColor(hex: string) {
-  const normalized = hex.replace('#', '')
-  const channels = [0, 2, 4].map((index) => parseInt(normalized.slice(index, index + 2), 16) / 255)
-  const linear = channels.map((channel) => channel <= 0.04045 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4))
-  const luminance = 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
-  return luminance > 0.43 ? '#172019' : '#ffffff'
-}
-
-function saveSettings() {
-  if (!settingsReady.value) return
+function readList(key: string): string[] {
+  if (typeof window === 'undefined') return []
   try {
-    localStorage.setItem('kerja-settings-v1', JSON.stringify({
-      colorMode: colorMode.value,
-      paletteId: paletteId.value,
-      customAccent: customAccent.value
-    }))
+    const parsed = JSON.parse(window.localStorage.getItem(key) ?? '[]')
+    return Array.isArray(parsed) ? parsed.filter((v): v is string => typeof v === 'string') : []
   } catch {
-    // Private browsing or storage restrictions should not disable theming.
+    return []
   }
 }
 
-function chooseMode(mode: ColorMode) {
-  colorMode.value = mode
-}
-
-function choosePalette(id: string) {
-  paletteId.value = id
-}
-
-function setCustomAccent(event: Event) {
-  const target = event.target
-  if (!(target instanceof HTMLInputElement) || !/^#[0-9a-fA-F]{6}$/.test(target.value)) return
-  customAccent.value = target.value
-  paletteId.value = 'custom'
-}
-
-function searchGoogle() {
-  const term = query.value.trim()
-  if (!term) {
-    searchInput.value?.focus()
-    return
-  }
-
-  window.location.href =
-    'https://www.google.com/search?client=firefox-b-d&q=' + encodeURIComponent(term)
-}
-
-function focusSearch() {
-  searchInput.value?.focus()
-  searchInput.value?.select()
-}
-
-function handleOutsideClick(event: MouseEvent) {
-  const target = event.target
-  if (target instanceof Element && !target.closest('.theme-menu')) {
-    themeSettingsOpen.value = false
+function writeList(key: string, value: string[]) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } catch {
+    /* private mode */
   }
 }
 
-function handleShortcutKeys(event: KeyboardEvent) {
-  const target = event.target
-  const isTyping =
-    target instanceof HTMLElement &&
-    (target.isContentEditable ||
-      ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+const engine = computed<Engine>(
+  () => ENGINES.find((item) => item.id === settings.value.engine) ?? ENGINES[0]
+)
 
-  if (event.key === 'Escape') {
-    themeSettingsOpen.value = false
-    if (document.activeElement === searchInput.value) {
-      query.value = ''
-      searchInput.value?.blur()
-    }
-  } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-    event.preventDefault()
-    focusSearch()
-  } else if (event.key === '/' && !isTyping) {
-    event.preventDefault()
-    focusSearch()
+const byUrl = computed(() => new Map(shortcuts.map((item) => [item.url, item])))
+const pinnedItems = computed(() =>
+  pins.value.map((url) => byUrl.value.get(url)).filter((item): item is Shortcut => Boolean(item))
+)
+const recentItems = computed(() =>
+  recent.value.map((url) => byUrl.value.get(url)).filter((item): item is Shortcut => Boolean(item))
+)
+
+const categories = computed(() => {
+  const map = new Map<string, number>()
+  shortcuts.forEach((item) => map.set(item.category, (map.get(item.category) ?? 0) + 1))
+  return [
+    { name: 'All', count: shortcuts.length },
+    ...[...map.entries()].map(([name, count]) => ({ name, count }))
+  ]
+})
+
+const groups = computed(() => {
+  const list =
+    activeCategory.value === 'All'
+      ? [...new Set(shortcuts.map((item) => item.category))]
+      : [activeCategory.value]
+  return list.map((name) => ({
+    name,
+    count: shortcuts.filter((item) => item.category === name).length,
+    items: shortcuts.filter((item) => item.category === name)
+  }))
+})
+
+const desktop = computed(() => settings.value.density === 'compact')
+
+/* -------------------------------------------------------------- utilities */
+
+function hostOf(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
   }
 }
 
 function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part.charAt(0))
-    .join('')
-    .toUpperCase()
+  const words = name.replace(/[^\p{L}\p{N} ]/gu, '').trim().split(/\s+/)
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return `${words[0][0]}${words[1][0]}`.toUpperCase()
 }
 
-function hostname(link: string) {
+function markFailed(url: string) {
+  failed.value = new Set(failed.value).add(url)
+}
+
+function rememberRecent(url: string) {
+  recent.value = [url, ...recent.value.filter((item) => item !== url)].slice(0, MAX_RECENT)
+  writeList(RECENT_KEY, recent.value)
+}
+
+function rememberSearch(term: string) {
+  const clean = term.trim()
+  if (!clean) return
+  history.value = [clean, ...history.value.filter((item) => item !== clean)].slice(0, MAX_HISTORY)
+  writeList(HISTORY_KEY, history.value)
+}
+
+function togglePin(url: string) {
+  pins.value = pins.value.includes(url)
+    ? pins.value.filter((item) => item !== url)
+    : [url, ...pins.value]
+  writeList(PIN_KEY, pins.value)
+}
+
+function clearRecent() {
+  recent.value = []
+  writeList(RECENT_KEY, recent.value)
+}
+
+function selectEngine(id: Engine['id'], event?: Event) {
+  applySettings({ engine: id })
+  engineMenu.value = false
+  if (event) pop(event.currentTarget as HTMLElement)
+  nextTick(() => input.value?.focus())
+}
+
+function toggleDensity() {
+  applySettings({ density: desktop.value ? 'cozy' : 'compact' })
+}
+
+function pickMode(next: Mode) {
+  mode.value = next
+  applyMode()
+}
+
+function applyMode() {
+  if (typeof window === 'undefined') return
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  const dark = mode.value === 'dark' || (mode.value === 'system' && prefersDark)
+  isDark.value = dark
+  document.documentElement.classList.toggle('dark', dark)
   try {
-    return new URL(link).hostname.replace(/^www\./, '')
+    window.localStorage.setItem(
+      'vitepress-theme-appearance',
+      mode.value === 'system' ? 'auto' : mode.value
+    )
   } catch {
-    return link
+    /* private mode */
   }
 }
 
-let systemThemeQuery: MediaQueryList | undefined
-function updateSystemTheme(event?: MediaQueryListEvent) {
-  systemPrefersDark.value = event?.matches ?? systemThemeQuery?.matches ?? false
+function cycleTheme() {
+  pickMode(isDark.value ? 'light' : 'dark')
 }
 
-onMounted(() => {
-  systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)')
-  updateSystemTheme()
-  systemThemeQuery.addEventListener('change', updateSystemTheme)
-  document.addEventListener('click', handleOutsideClick)
-  window.addEventListener('keydown', handleShortcutKeys)
+/* ------------------------------------------------------------ web search */
 
-  try {
-    const stored = localStorage.getItem('kerja-settings-v1')
-    if (stored) {
-      const parsed = JSON.parse(stored) as {
-        colorMode?: ColorMode
-        paletteId?: string
-        customAccent?: string
-      }
-      if (['system', 'light', 'dark'].includes(parsed.colorMode ?? '')) {
-        colorMode.value = parsed.colorMode!
-      }
-      if ([...palettes.map((palette) => palette.id), 'custom'].includes(parsed.paletteId ?? '')) {
-        paletteId.value = parsed.paletteId!
-      }
-      if (typeof parsed.customAccent === 'string' && /^#[0-9a-fA-F]{6}$/.test(parsed.customAccent)) {
-        customAccent.value = parsed.customAccent
-      }
-    }
-  } catch {
-    // Invalid or unavailable saved settings fall back to defaults.
+function bang(value: string): { engine: Engine; rest: string } | null {
+  const match = value.match(/^\s*!(\w+)\s+(.+)$/)
+  if (!match) return null
+  const id = ENGINE_PREFIXES[match[1].toLowerCase()]
+  if (!id) return null
+  const found = ENGINES.find((item) => item.id === id)
+  return found ? { engine: found, rest: match[2].trim() } : null
+}
+
+const resolved = computed(() => bang(query.value))
+
+function openWeb(term: string, target: Engine = engine.value) {
+  const raw = term.trim()
+  if (!raw) return
+  const parsed = bang(raw)
+  const selected = parsed?.engine ?? target
+  const real = parsed?.rest ?? raw
+  if (!real) return
+  if (selected.id !== settings.value.engine) applySettings({ engine: selected.id })
+  rememberSearch(real)
+  window.open(`${selected.url}${encodeURIComponent(real)}`, '_blank', 'noopener')
+  palette.value = false
+}
+
+function openShortcut(url: string) {
+  rememberRecent(url)
+  window.open(url, '_blank', 'noopener')
+  palette.value = false
+}
+
+/* -------------------------------------------------------- command palette */
+
+const pages = [
+  { label: 'Home', path: '/', hint: 'thio.cc.cd' },
+  { label: 'Blog', path: '/blog', hint: 'field notes' },
+  { label: 'Projects', path: '/projects', hint: 'things I built' },
+  { label: 'GDIPS', path: '/gdips', hint: 'community server' },
+  { label: 'About', path: '/about', hint: 'the long version' },
+  { label: 'Support', path: '/support', hint: 'keep it running' }
+]
+
+const items = computed<Item[]>(() => {
+  const raw = query.value.trim()
+  const q = raw.toLowerCase()
+  const list: Item[] = []
+
+  if (q) {
+    const target = resolved.value?.engine ?? engine.value
+    const term = resolved.value?.rest ?? raw
+    list.push({
+      id: 'web',
+      kind: 'web',
+      label: `Search ${target.name} for “${term}”`,
+      hint: resolved.value ? `!bang · ${target.name}` : target.hint,
+      term,
+      engine: target
+    })
   }
 
-  settingsReady.value = true
+  const matches = shortcuts.filter((item) =>
+    !q ? pins.value.includes(item.url) : `${item.name} ${item.category} ${hostOf(item.url)}`.toLowerCase().includes(q)
+  )
+  matches.slice(0, q ? 6 : 4).forEach((item) =>
+    list.push({
+      id: `shortcut:${item.url}`,
+      kind: 'shortcut',
+      label: item.name,
+      hint: item.category,
+      url: item.url,
+      icon: item.icon,
+      initial: initials(item.name),
+      category: item.category
+    })
+  )
+
+  if (!q) {
+    history.value.slice(0, 3).forEach((term) =>
+      list.push({
+        id: `history:${term}`,
+        kind: 'history',
+        label: term,
+        hint: 'recent search',
+        term
+      })
+    )
+  }
+
+  pages
+    .filter((page) => !q || `${page.label} ${page.hint}`.toLowerCase().includes(q))
+    .slice(0, q ? 3 : 4)
+    .forEach((page) =>
+      list.push({
+        id: `page:${page.path}`,
+        kind: 'page',
+        label: page.label,
+        hint: page.hint,
+        path: page.path
+      })
+    )
+
+  const actions: Array<{ id: string; label: string; hint: string; run: () => void }> = [
+    { id: 'theme', label: isDark.value ? 'Switch to light theme' : 'Switch to dark theme', hint: 'appearance', run: cycleTheme },
+    { id: 'density', label: desktop.value ? 'Comfortable grid' : 'Compact grid', hint: 'layout', run: toggleDensity },
+    { id: 'engine', label: 'Change search engine', hint: engine.value.name, run: () => { palette.value = false; engineMenu.value = true } }
+  ]
+
+  actions
+    .filter((action) => !q || action.label.toLowerCase().includes(q))
+    .forEach((action) =>
+      list.push({ id: `action:${action.id}`, kind: 'action', label: action.label, hint: action.hint, action: action.run })
+    )
+
+  return list
 })
 
-watch([colorMode, paletteId, customAccent], saveSettings)
+watch(items, () => {
+  active.value = 0
+})
+
+function run(item: Item) {
+  if (item.kind === 'web') openWeb(item.term ?? query.value, item.engine)
+  else if (item.kind === 'shortcut' && item.url) openShortcut(item.url)
+  else if (item.kind === 'history' && item.term) openWeb(item.term)
+  else if (item.kind === 'page' && item.path) window.location.assign(item.path)
+  else if (item.kind === 'action') item.action?.()
+}
+
+function submit() {
+  if (!query.value.trim()) {
+    focusSearch()
+    return
+  }
+  if (palette.value && items.value[active.value]) run(items.value[active.value])
+  else openWeb(query.value)
+}
+
+/* ---------------------------------------------------------------- keyboard */
+
+function focusSearch() {
+  palette.value = true
+  nextTick(() => input.value?.focus())
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault()
+    focusSearch()
+    return
+  }
+  const typing = isTyping(event.target)
+  if (event.key === '/' && !typing) {
+    event.preventDefault()
+    focusSearch()
+    return
+  }
+  if (event.key === 'Escape') {
+    if (engineMenu.value || lookOpen.value) {
+      engineMenu.value = false
+      lookOpen.value = false
+      return
+    }
+    if (palette.value) {
+      palette.value = false
+      input.value?.blur()
+    }
+  }
+}
+
+function isTyping(target: EventTarget | null) {
+  const el = target as HTMLElement | null
+  return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)
+}
+
+function onInputKeydown(event: KeyboardEvent) {
+  if (event.key === 'ArrowDown') {
+    event.preventDefault()
+    palette.value = true
+    active.value = Math.min(active.value + 1, items.value.length - 1)
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault()
+    active.value = Math.max(active.value - 1, 0)
+  } else if (event.key === 'Enter') {
+    event.preventDefault()
+    submit()
+  } else if (event.key === 'Tab') {
+    palette.value = false
+  }
+}
+
+function onDocumentPointer(event: PointerEvent) {
+  const node = event.target as Node
+  if (engineMenu.value && engineWrap.value && !engineWrap.value.contains(node)) engineMenu.value = false
+  if (lookOpen.value && lookWrap.value && !lookWrap.value.contains(node)) lookOpen.value = false
+}
+
+/* ------------------------------------------------------------------- clock */
+
+let clockTimer: number | undefined
+function tick() {
+  try {
+    clock.value = new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Makassar'
+    }).format(new Date())
+  } catch {
+    clock.value = new Date().toTimeString().slice(0, 5)
+  }
+}
+
+/* -------------------------------------------------------------- lifecycle */
+
+watch(palette, (value) => {
+  if (value) active.value = 0
+})
+
+function sweepIcons() {
+  const broken = new Set(failed.value)
+  root.value?.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) {
+      broken.add(img.getAttribute('src') as string)
+    }
+  })
+  if (broken.size !== failed.value.size) failed.value = broken
+}
+
+onMounted(async () => {
+  bootCustomization()
+  tick()
+  clockTimer = window.setInterval(tick, 20000)
+
+  try {
+    const stored = window.localStorage.getItem('vitepress-theme-appearance')
+    if (stored === 'dark' || stored === 'light') mode.value = stored
+  } catch {
+    /* private mode */
+  }
+  applyMode()
+
+  document.addEventListener('keydown', onKeydown)
+  document.addEventListener('pointerdown', onDocumentPointer)
+  nextTick(sweepIcons)
+  window.setTimeout(sweepIcons, 1200)
+
+  if (motionLevel() === 'off' || !root.value) return
+  await nextTick()
+  animate(root.value.querySelectorAll('[data-anim]'), {
+    opacity: [0, 1],
+    y: [14, 0],
+    duration: 620,
+    delay: stagger(55, { start: 60 }),
+    ease: 'outQuint'
+  })
+})
 
 onBeforeUnmount(() => {
-  systemThemeQuery?.removeEventListener('change', updateSystemTheme)
-  document.removeEventListener('click', handleOutsideClick)
-  window.removeEventListener('keydown', handleShortcutKeys)
+  if (clockTimer) window.clearInterval(clockTimer)
+  document.removeEventListener('keydown', onKeydown)
+  document.removeEventListener('pointerdown', onDocumentPointer)
 })
 </script>
 
 <template>
-  <div class="kerja-shell" :data-mode="resolvedMode" :style="themeVariables">
-    <header class="workspace-header">
-      <a class="brand" href="/" aria-label="Back to thio.cc.cd">
-        <span class="brand-mark">f.</span>
-        <span>flessan</span>
-      </a>
-      <span class="workspace-label">PERSONAL WORKSPACE</span>
+  <div ref="root" class="kerja" :class="{ 'is-compact': desktop }">
+    <header class="k-header">
+      <div class="k-header-inner">
+        <a class="k-brand" href="/" aria-label="Back to thio.cc.cd">
+          <img src="/images/flessan-avatar.png" alt="" width="26" height="26" />
+          <span class="k-brand-name">thio.cc.cd</span>
+          <span class="k-brand-sep" aria-hidden="true">/</span>
+          <span class="k-brand-page">Workspace</span>
+        </a>
 
-      <div class="header-actions">
-        <div class="theme-menu">
+        <p class="k-clock" data-anim>
+          <span class="k-live" aria-hidden="true"></span>
+          Banjarmasin · <span class="k-clock-time">{{ clock }}</span> WITA
+        </p>
+
+        <div class="k-actions">
+          <div ref="lookWrap" class="k-pop-wrap">
+            <button
+              type="button"
+              class="k-icon-btn k-look-btn"
+              :aria-expanded="lookOpen"
+              aria-haspopup="dialog"
+              @click="lookOpen = !lookOpen"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+                <circle cx="16" cy="7" r="2.2" />
+                <circle cx="10" cy="17" r="2.2" />
+              </svg>
+              <span class="k-btn-label">Look</span>
+            </button>
+
+            <Transition name="k-pop">
+              <div v-if="lookOpen" class="k-pop k-look" role="dialog" aria-label="Appearance">
+                <div class="k-pop-group">
+                  <span class="k-pop-label">Accent</span>
+                  <div class="k-swatches">
+                    <button
+                      v-for="accent in ACCENTS"
+                      :key="accent.id"
+                      type="button"
+                      class="k-swatch"
+                      :class="{ active: settings.accent === accent.id }"
+                      :style="{ '--swatch': accent.swatch }"
+                      :aria-label="accent.label"
+                      :aria-pressed="settings.accent === accent.id"
+                      @click="applySettings({ accent: accent.id })"
+                    />
+                  </div>
+                </div>
+
+                <div class="k-pop-group">
+                  <span class="k-pop-label">Surface</span>
+                  <div class="k-options">
+                    <button
+                      v-for="paper in PAPERS"
+                      :key="paper.id"
+                      type="button"
+                      class="k-option"
+                      :class="{ active: settings.paper === paper.id }"
+                      @click="applySettings({ paper: paper.id })"
+                    >
+                      {{ paper.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="k-pop-group">
+                  <span class="k-pop-label">Theme</span>
+                  <div class="k-options">
+                    <button
+                      v-for="option in themeOptions"
+                      :key="option.id"
+                      type="button"
+                      class="k-option"
+                      :class="{ active: mode === option.id }"
+                      @click="pickMode(option.id)"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="k-pop-group">
+                  <span class="k-pop-label">Grid</span>
+                  <div class="k-options">
+                    <button
+                      v-for="density in DENSITIES"
+                      :key="density.id"
+                      type="button"
+                      class="k-option"
+                      :class="{ active: settings.density === density.id }"
+                      @click="applySettings({ density: density.id })"
+                    >
+                      {{ density.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <p class="k-pop-note">Saved with the rest of the site’s settings.</p>
+              </div>
+            </Transition>
+          </div>
+
           <button
-            class="theme-button"
             type="button"
-            :aria-expanded="themeSettingsOpen"
-            aria-controls="kerja-theme-panel"
-            @click.stop="themeSettingsOpen = !themeSettingsOpen"
+            class="k-icon-btn"
+            :aria-label="isDark ? 'Switch to light theme' : 'Switch to dark theme'"
+            @click="cycleTheme"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3a9 9 0 1 0 9 9c0-.55-.45-1-1-1h-2.2a1.8 1.8 0 0 1-1.45-2.87A2.1 2.1 0 0 0 14.65 5H12" />
-              <circle cx="7.5" cy="10" r="1" />
-              <circle cx="10" cy="6.5" r="1" />
-              <circle cx="7.5" cy="14" r="1" />
+            <svg v-if="isDark" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4" />
             </svg>
-            <span>Theme</span>
-            <span class="theme-dot" :style="{ backgroundColor: selectedPalette.swatch }"></span>
+            <svg v-else viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
+            </svg>
           </button>
 
-          <section
-            v-if="themeSettingsOpen"
-            id="kerja-theme-panel"
-            class="theme-panel"
-            aria-label="Theme settings"
-            @click.stop
-          >
-            <div class="theme-panel-heading">
-              <div>
-                <p class="eyebrow">PERSONALIZE</p>
-                <h2>Make it yours</h2>
-              </div>
-              <button class="panel-close" type="button" aria-label="Close theme settings" @click="themeSettingsOpen = false">×</button>
-            </div>
-
-            <div class="theme-setting">
-              <div class="setting-label">
-                <strong>Appearance</strong>
-                <span>Choose how the workspace looks</span>
-              </div>
-              <div class="mode-options" role="group" aria-label="Color mode">
-                <button
-                  v-for="mode in colorModes"
-                  :key="mode"
-                  type="button"
-                  :class="{ selected: colorMode === mode }"
-                  :aria-pressed="colorMode === mode"
-                  @click="chooseMode(mode)"
-                >
-                  <svg v-if="mode === 'system'" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                  <svg v-else-if="mode === 'light'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
-                  <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z"/></svg>
-                  {{ mode === 'system' ? 'System' : mode === 'light' ? 'Light' : 'Dark' }}
-                </button>
-              </div>
-            </div>
-
-            <div class="theme-setting">
-              <div class="setting-label">
-                <strong>Color theme</strong>
-                <span>Five ready-made palettes</span>
-              </div>
-              <div class="palette-grid" role="group" aria-label="Color theme">
-                <button
-                  v-for="palette in palettes"
-                  :key="palette.id"
-                  type="button"
-                  class="palette-option"
-                  :class="{ selected: paletteId === palette.id }"
-                  :aria-label="palette.name + ' theme'"
-                  :aria-pressed="paletteId === palette.id"
-                  :title="palette.name"
-                  @click="choosePalette(palette.id)"
-                >
-                  <span class="palette-swatch" :style="{ backgroundColor: palette.swatch, color: contrastColor(palette.swatch) }">
-                    <svg v-if="paletteId === palette.id" viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>
-                  </span>
-                  <span>{{ palette.name }}</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="custom-accent-row">
-              <label for="kerja-custom-accent">
-                <strong>Custom accent</strong>
-                <span>Pick your own color</span>
-              </label>
-              <div class="custom-accent-control">
-                <input id="kerja-custom-accent" type="color" :value="customAccent" aria-label="Custom accent color" @input="setCustomAccent" />
-                <code>{{ customAccent.toUpperCase() }}</code>
-              </div>
-            </div>
-
-            <p class="theme-saved-note">Settings are saved on this device.</p>
-          </section>
+          <a class="k-back" href="/">
+            <span>Back to site</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg>
+          </a>
         </div>
-
-        <a class="site-link" href="/">thio.cc.cd <span aria-hidden="true">↗</span></a>
       </div>
     </header>
 
-    <main class="workspace-main">
-      <section class="hero" aria-labelledby="workspace-title">
-        <p class="eyebrow">YOUR EVERYDAY START PAGE</p>
-        <h1 id="workspace-title">What are we working on?</h1>
-        <p class="hero-description">Search the web or jump straight into something.</p>
+    <main class="k-main">
+      <section class="k-hero" data-anim>
+        <div class="k-hero-copy">
+          <p class="k-kicker">
+            <span class="k-dot" aria-hidden="true"></span>
+            Personal workspace · {{ shortcuts.length }} shortcuts · {{ categories.length - 1 }} categories
+          </p>
+          <h1 class="k-title">
+            Everything I use,
+            <em>one keystroke away.</em>
+          </h1>
+          <p class="k-lead">
+            Search the web, jump straight to a pinned tool, or browse the library
+            below. Pins, recent visits and your engine are remembered on this device.
+          </p>
+        </div>
 
-        <form class="search-form" role="search" @submit.prevent="searchGoogle">
-          <button class="search-submit" type="submit" aria-label="Search Google">
+        <aside class="k-keys" aria-label="Keyboard shortcuts">
+          <p class="k-keys-title">Keyboard</p>
+          <ul>
+            <li><span class="k-keys-combo"><kbd>/</kbd></span><span>focus the search bar</span></li>
+            <li><span class="k-keys-combo"><kbd>⌘</kbd><kbd>K</kbd></span><span>open the command palette</span></li>
+            <li><span class="k-keys-combo"><kbd>↑</kbd><kbd>↓</kbd></span><span>move through results</span></li>
+            <li><span class="k-keys-combo"><kbd>↵</kbd></span><span>open the selected item</span></li>
+            <li><span class="k-keys-combo"><kbd>esc</kbd></span><span>close a panel</span></li>
+          </ul>
+          <p class="k-keys-foot">Try <code>!gh</code>, <code>!yt</code> or <code>!w</code> before a query.</p>
+        </aside>
+      </section>
+
+      <div ref="bar" class="k-search" data-anim>
+        <form class="k-bar" role="search" @submit.prevent="submit">
+          <div ref="engineWrap" class="k-engine-wrap">
+            <button
+              type="button"
+              class="k-engine"
+              :aria-expanded="engineMenu"
+              aria-haspopup="listbox"
+              :aria-label="`Search engine: ${engine.name}. Change engine`"
+              @click="engineMenu = !engineMenu"
+            >
+              <span class="k-engine-dot" :style="{ background: engine.color }" aria-hidden="true"></span>
+              <span class="k-engine-name">{{ engine.name }}</span>
+              <svg class="k-chevron" :class="{ open: engineMenu }" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 10l5 5 5-5" />
+              </svg>
+            </button>
+
+            <Transition name="k-pop">
+              <div v-if="engineMenu" class="k-pop k-engine-menu" role="listbox" aria-label="Search engines">
+                <button
+                  v-for="item in ENGINES"
+                  :key="item.id"
+                  type="button"
+                  class="k-engine-option"
+                  :class="{ active: item.id === engine.id }"
+                  role="option"
+                  :aria-selected="item.id === engine.id"
+                  @click="selectEngine(item.id, $event)"
+                >
+                  <span class="k-engine-dot" :style="{ background: item.color }" aria-hidden="true"></span>
+                  <span class="k-engine-meta">
+                    <span class="k-engine-title">{{ item.name }}</span>
+                    <span class="k-engine-hint">{{ item.hint }}</span>
+                  </span>
+                  <svg v-if="item.id === engine.id" class="k-check" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              </div>
+            </Transition>
+          </div>
+
+          <div class="k-field">
+            <svg class="k-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="M16 16l4 4" />
+            </svg>
+            <input
+              ref="input"
+              v-model="query"
+              class="k-input"
+              type="text"
+              role="combobox"
+              autocomplete="off"
+              spellcheck="false"
+              aria-autocomplete="list"
+              aria-controls="k-palette"
+              :aria-expanded="palette"
+              :placeholder="`Search ${engine.name}, or type a command`"
+              aria-label="Search the web or the workspace"
+              @focus="palette = true"
+              @keydown="onInputKeydown"
+            />
+            <kbd v-if="!query" class="k-kbd">⌘K</kbd>
+            <button
+              v-else
+              type="button"
+              class="k-clear"
+              aria-label="Clear search"
+              @click="query = ''; input?.focus()"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            </button>
+          </div>
+
+          <button type="submit" class="k-submit">
+            <span class="k-submit-label">Search</span>
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="10.8" cy="10.8" r="6.8" />
-              <path d="m16 16 4.2 4.2" />
+              <path d="M5 12h13M12.5 6.5L19 12l-6.5 5.5" />
             </svg>
           </button>
-          <input
-            ref="searchInput"
-            v-model="query"
-            type="search"
-            name="q"
-            autocomplete="off"
-            autocapitalize="off"
-            spellcheck="false"
-            aria-label="Search Google or filter shortcuts"
-            placeholder="Search Google or filter shortcuts..."
-          />
-          <button class="enter-key" type="submit" aria-label="Submit search">Enter ↵</button>
         </form>
 
-        <div class="search-notes">
-          <span><kbd>/</kbd> or <kbd>Ctrl K</kbd> to focus</span>
-          <span>Enter searches Google</span>
+        <Transition name="k-palette">
+          <div v-if="palette" id="k-palette" class="k-palette" role="listbox" aria-label="Command palette">
+            <p class="k-palette-head">
+              <span>{{ query ? 'Results' : 'Commands' }}</span>
+              <span class="k-palette-count">{{ items.length }}</span>
+            </p>
+            <button
+              v-for="(item, index) in items"
+              :key="item.id"
+              type="button"
+              class="k-result"
+              :class="{ active: index === active }"
+              role="option"
+              :aria-selected="index === active"
+              @mouseenter="active = index"
+              @mousedown.prevent
+              @click="run(item)"
+            >
+              <span class="k-result-icon">
+                <svg v-if="item.kind === 'web'" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="6.5" />
+                  <path d="M16 16l4 4" />
+                </svg>
+                <svg v-else-if="item.kind === 'page'" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 4h7l4 4v12H7z" />
+                  <path d="M14 4v4h4" />
+                </svg>
+                <svg v-else-if="item.kind === 'action'" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+                  <circle cx="16" cy="7" r="2.2" />
+                  <circle cx="10" cy="17" r="2.2" />
+                </svg>
+                <svg v-else-if="item.kind === 'history'" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8" />
+                  <path d="M12 8v4l3 2" />
+                </svg>
+                <img
+                  v-else-if="item.icon && !failed.has(item.icon)"
+                  :src="item.icon"
+                  alt=""
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                  @error="markFailed(item.icon!)"
+                />
+                <span v-else class="k-mono">{{ item.initial }}</span>
+              </span>
+              <span class="k-result-body">
+                <span class="k-result-label">{{ item.label }}</span>
+                <span v-if="item.hint" class="k-result-hint">{{ item.hint }}</span>
+              </span>
+              <span v-if="item.kind === 'web'" class="k-enter">↵</span>
+              <svg v-else-if="item.kind === 'shortcut'" class="k-enter-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </button>
+            <p class="k-palette-foot">
+              <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+              <span><kbd>↵</kbd> open</span>
+              <span><kbd>esc</kbd> close</span>
+            </p>
+          </div>
+        </Transition>
+
+        <div v-if="history.length && !palette" class="k-history">
+          <span class="k-history-label">Recent searches</span>
+          <button
+            v-for="term in history.slice(0, 5)"
+            :key="term"
+            type="button"
+            class="k-chip"
+            @click="openWeb(term)"
+          >
+            {{ term }}
+          </button>
+          <button type="button" class="k-chip k-chip-ghost" @click="history = []; writeList(HISTORY_KEY, [])">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <section v-if="pinnedItems.length" class="k-section" data-anim>
+        <header class="k-section-head">
+          <h2>
+            Pinned
+            <span class="k-count">{{ pinnedItems.length }}</span>
+          </h2>
+        </header>
+        <div class="k-grid k-grid-pinned" :class="{ compact: desktop }">
+          <article v-for="item in pinnedItems" :key="item.url" class="k-card">
+            <a class="k-card-link" :href="item.url" target="_blank" rel="noopener" @click="rememberRecent(item.url)">
+              <span class="k-icon">
+                <img
+                  v-if="!failed.has(item.icon)"
+                  :src="item.icon"
+                  alt=""
+                  width="20"
+                  height="20"
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                  @error="markFailed(item.icon)"
+                />
+                <span v-else class="k-mono">{{ initials(item.name) }}</span>
+              </span>
+              <span class="k-card-body">
+                <span class="k-card-name">{{ item.name }}</span>
+                <span class="k-card-host">{{ hostOf(item.url) }}</span>
+              </span>
+            </a>
+            <button
+              type="button"
+              class="k-star"
+              aria-label="Unpin shortcut"
+              :aria-pressed="true"
+              @click="togglePin(item.url)"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3.8l2.5 5.4 5.9.7-4.4 4.1 1.2 5.9-5.2-2.9-5.2 2.9 1.2-5.9L3.6 9.9l5.9-.7z" />
+              </svg>
+            </button>
+          </article>
         </div>
       </section>
 
-      <section class="shortcuts-section" aria-labelledby="shortcuts-title">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">ALL IN ONE PLACE</p>
-            <h2 id="shortcuts-title">Quick access</h2>
-          </div>
-          <span class="shortcut-count">{{ filteredShortcuts.length }} links</span>
-        </div>
+      <section v-else class="k-section k-empty-pinned" data-anim>
+        <span class="k-empty-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3.8l2.5 5.4 5.9.7-4.4 4.1 1.2 5.9-5.2-2.9-5.2 2.9 1.2-5.9L3.6 9.9l5.9-.7z" />
+          </svg>
+        </span>
+        <p><strong>Pin the tools you open every day.</strong> Star any shortcut and it will sit right here.</p>
+      </section>
 
-        <nav class="category-tabs" aria-label="Filter shortcut categories">
+      <section v-if="recentItems.length" class="k-section" data-anim>
+        <header class="k-section-head">
+          <h2>
+            Recently opened
+            <span class="k-count">{{ recentItems.length }}</span>
+          </h2>
+          <button type="button" class="k-text-btn" @click="clearRecent()">Clear</button>
+        </header>
+        <div class="k-recents">
+          <a
+            v-for="item in recentItems"
+            :key="item.url"
+            class="k-recent"
+            :href="item.url"
+            target="_blank"
+            rel="noopener"
+            @click="rememberRecent(item.url)"
+          >
+            <span class="k-icon k-icon-sm">
+              <img
+                v-if="!failed.has(item.icon)"
+                :src="item.icon"
+                alt=""
+                width="16"
+                height="16"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+                @error="markFailed(item.icon)"
+              />
+              <span v-else class="k-mono">{{ initials(item.name) }}</span>
+            </span>
+            <span class="k-recent-name">{{ item.name }}</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="k-section" data-anim>
+        <header class="k-section-head">
+          <h2>
+            Library
+            <span class="k-count">{{ shortcuts.length }}</span>
+          </h2>
+          <button
+            type="button"
+            class="k-text-btn k-density-btn"
+            :aria-pressed="desktop"
+            @click="toggleDensity"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="4" width="6" height="6" rx="1.2" />
+              <rect x="14" y="4" width="6" height="6" rx="1.2" />
+              <rect x="4" y="14" width="6" height="6" rx="1.2" />
+              <rect x="14" y="14" width="6" height="6" rx="1.2" />
+            </svg>
+            {{ desktop ? 'Compact' : 'Comfortable' }}
+          </button>
+        </header>
+
+        <div class="k-tabs" role="tablist" aria-label="Shortcut categories">
           <button
             v-for="category in categories"
-            :key="category"
+            :key="category.name"
             type="button"
-            :class="{ active: activeCategory === category }"
-            :aria-pressed="activeCategory === category"
-            @click="activeCategory = category"
+            role="tab"
+            class="k-tab"
+            :class="{ active: activeCategory === category.name }"
+            :aria-selected="activeCategory === category.name"
+            @click="activeCategory = category.name"
           >
-            {{ category }}
+            {{ category.name }}
+            <span class="k-tab-count">{{ category.count }}</span>
           </button>
-        </nav>
-
-        <div v-if="groupedShortcuts.length" class="shortcut-groups">
-          <section
-            v-for="group in groupedShortcuts"
-            :key="group.category"
-            class="shortcut-group"
-            :aria-label="group.category"
-          >
-            <h3>{{ group.category }}</h3>
-            <div class="shortcut-grid">
-              <a
-                v-for="shortcut in group.items"
-                :key="shortcut.name"
-                class="shortcut-card"
-                :href="shortcut.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                :aria-label="shortcut.name + ' (opens in a new tab)'"
-              >
-                <span class="shortcut-icon" aria-hidden="true">
-                  <img
-                    v-if="!failedIcons.has(shortcut.name)"
-                    :src="shortcut.icon"
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    @error="failedIcons.add(shortcut.name)"
-                  />
-                  <span v-else class="icon-fallback">{{ initials(shortcut.name) }}</span>
-                </span>
-                <span class="shortcut-copy">
-                  <span class="shortcut-name">{{ shortcut.name }}</span>
-                  <span class="shortcut-host">{{ hostname(shortcut.url) }}</span>
-                </span>
-                <span class="shortcut-arrow" aria-hidden="true">↗</span>
-              </a>
-            </div>
-          </section>
         </div>
 
-        <div v-else class="empty-state">
-          <span class="empty-mark">?</span>
-          <strong>No shortcuts found</strong>
-          <span>Try a different keyword or select another category.</span>
-          <button type="button" @click="query = ''; activeCategory = 'Semua'">Clear filters</button>
+        <div class="k-groups">
+          <div v-for="group in groups" :key="group.name" class="k-group">
+            <p v-if="activeCategory === 'All'" class="k-group-title">
+              {{ group.name }}
+              <span>{{ group.count }}</span>
+            </p>
+            <div class="k-grid" :class="{ compact: desktop }">
+              <article v-for="item in group.items" :key="item.url" class="k-card">
+                <a
+                  class="k-card-link"
+                  :href="item.url"
+                  target="_blank"
+                  rel="noopener"
+                  @click="rememberRecent(item.url)"
+                >
+                  <span class="k-icon">
+                    <img
+                      v-if="!failed.has(item.icon)"
+                      :src="item.icon"
+                      alt=""
+                      width="20"
+                      height="20"
+                      loading="lazy"
+                      referrerpolicy="no-referrer"
+                      @error="markFailed(item.icon)"
+                    />
+                    <span v-else class="k-mono">{{ initials(item.name) }}</span>
+                  </span>
+                  <span class="k-card-body">
+                    <span class="k-card-name">{{ item.name }}</span>
+                    <span class="k-card-host">{{ hostOf(item.url) }}</span>
+                  </span>
+                </a>
+                <button
+                  type="button"
+                  class="k-star"
+                  :class="{ pinned: pins.includes(item.url) }"
+                  :aria-label="pins.includes(item.url) ? 'Unpin shortcut' : 'Pin shortcut'"
+                  :aria-pressed="pins.includes(item.url)"
+                  @click="togglePin(item.url)"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3.8l2.5 5.4 5.9.7-4.4 4.1 1.2 5.9-5.2-2.9-5.2 2.9 1.2-5.9L3.6 9.9l5.9-.7z" />
+                  </svg>
+                </button>
+              </article>
+            </div>
+          </div>
         </div>
       </section>
-    </main>
 
-    <footer class="workspace-footer">
-      <span>Made for the way you work.</span>
-      <a
-        href="https://github.com/flessan/thio.cc.cd/edit/main/data/kerja.md"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Edit shortcuts on GitHub <span aria-hidden="true">↗</span>
-      </a>
-    </footer>
+      <footer class="k-foot">
+        <p>
+          {{ shortcuts.length }} shortcuts ·
+          <a href="https://github.com/flessan/thio.cc.cd/blob/main/data/kerja.md" target="_blank" rel="noopener">
+            sourced from data/kerja.md
+          </a>
+        </p>
+        <p class="k-foot-keys">
+          <kbd>/</kbd> to search · <kbd>⌘K</kbd> for the palette · <kbd>esc</kbd> to close
+        </p>
+      </footer>
+    </main>
   </div>
 </template>
 
 <style scoped>
-:global(html),
-:global(body),
-:global(#app) {
-  min-height: 100%;
-  margin: 0;
-}
-
-.kerja-shell {
-  --workspace-bg: #f4f6f2;
-  --workspace-surface: #ffffff;
-  --workspace-text: #202820;
-  --workspace-muted: #727d72;
-  --workspace-border: #e1e7df;
-  --workspace-accent: #2f704d;
-  --workspace-accent-hover: #3f8056;
-  --workspace-accent-soft: #e4f0e6;
-  --workspace-accent-contrast: #ffffff;
-  box-sizing: border-box;
+.kerja {
   min-height: 100vh;
-  min-height: 100dvh;
-  padding: 24px clamp(16px, 4.2vw, 64px) 22px;
-  display: flex;
-  flex-direction: column;
-  background: var(--workspace-bg);
-  color: var(--workspace-text);
-  color-scheme: light;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  transition: background-color 180ms ease, color 180ms ease;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
 }
 
-.kerja-shell[data-mode="dark"] {
-  color-scheme: dark;
+/* --------------------------------------------------------------- header */
+.k-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
 }
 
-.workspace-header,
-.workspace-footer {
+.k-header-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  width: 100%;
-  max-width: 1320px;
-  margin-inline: auto;
+  gap: 1rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
+  min-height: 62px;
 }
 
-.brand,
-.site-link,
-.workspace-footer a {
-  color: inherit;
+.k-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--vp-c-text-1);
+  font-size: 0.9rem;
+  font-weight: 650;
+  letter-spacing: -0.025em;
   text-decoration: none;
 }
 
-.brand {
+.k-brand img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--vp-c-divider);
+}
+
+.k-brand-sep {
+  color: var(--vp-c-text-3);
+  font-weight: 400;
+}
+
+.k-brand-page {
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+}
+
+.k-clock {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  font-size: 15px;
-  font-weight: 750;
-  letter-spacing: -0.035em;
-}
-
-.brand-mark {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-  border-radius: 11px;
-  background: var(--workspace-accent);
-  color: var(--workspace-accent-contrast);
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.08em;
-}
-
-.workspace-label,
-.eyebrow {
-  color: var(--workspace-muted);
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 0.15em;
-}
-
-.site-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--workspace-muted);
-  font-size: 12px;
-  font-weight: 600;
+  gap: 0.35rem;
+  margin: 0 0 0 auto;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
   white-space: nowrap;
 }
 
-.site-link:hover,
-.workspace-footer a:hover {
-  color: var(--workspace-accent);
+.k-live {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--fl-accent);
+  animation: k-pulse 3.4s ease-in-out infinite;
 }
 
-.header-actions {
+@keyframes k-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.k-clock-time {
+  color: var(--vp-c-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.k-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 0.4rem;
+  margin-left: auto;
 }
 
-.theme-menu {
-  position: relative;
+.k-clock + .k-actions {
+  margin-left: 0;
 }
 
-.theme-button {
+.k-icon-btn {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  min-height: 38px;
-  padding: 0 12px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 12px;
-  background: var(--workspace-surface);
-  color: var(--workspace-text);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 650;
-  cursor: pointer;
-  transition: border-color 140ms ease, background-color 140ms ease;
-}
-
-.theme-button:hover,
-.theme-button[aria-expanded="true"] {
-  border-color: var(--workspace-accent);
-}
-
-.theme-button svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.theme-dot {
-  width: 12px;
-  height: 12px;
-  border: 2px solid var(--workspace-surface);
-  outline: 1px solid var(--workspace-border);
-  border-radius: 50%;
-}
-
-.theme-panel {
-  position: absolute;
-  z-index: 50;
-  top: calc(100% + 10px);
-  right: 0;
-  width: min(340px, calc(100vw - 32px));
-  padding: 19px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 18px;
-  background: var(--workspace-surface);
-  color: var(--workspace-text);
-  box-shadow: 0 18px 50px rgb(18 28 20 / 17%);
-  text-align: left;
-  animation: panel-enter 140ms ease-out;
-}
-
-@keyframes panel-enter {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.theme-panel-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 21px;
-}
-
-.theme-panel-heading .eyebrow {
-  margin: 0 0 5px;
-  font-size: 9px;
-}
-
-.theme-panel-heading h2 {
-  margin: 0;
-  font-size: 19px;
-  letter-spacing: -0.04em;
-}
-
-.panel-close {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 9px;
-  background: transparent;
-  color: var(--workspace-muted);
-  font: inherit;
-  font-size: 22px;
-  cursor: pointer;
-}
-
-.theme-setting {
-  display: grid;
-  gap: 11px;
-  padding: 15px 0;
-  border-top: 1px solid var(--workspace-border);
-}
-
-.setting-label,
-.custom-accent-row label {
-  display: grid;
-  gap: 4px;
-}
-
-.setting-label strong,
-.custom-accent-row strong {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.setting-label span,
-.custom-accent-row label span {
-  color: var(--workspace-muted);
-  font-size: 11px;
-}
-
-.mode-options {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.mode-options button {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-width: 0;
-  padding: 9px 5px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 10px;
-  background: var(--workspace-bg);
-  color: var(--workspace-muted);
-  font: inherit;
-  font-size: 11px;
+  gap: 0.35rem;
+  height: 32px;
+  padding: 0 0.55rem;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-2);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-.mode-options button.selected {
-  border-color: var(--workspace-accent);
-  background: var(--workspace-accent-soft);
-  color: var(--workspace-accent);
-  font-weight: 700;
+.k-icon-btn:hover {
+  border-color: var(--vp-c-text-3);
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg-alt);
 }
 
-.mode-options svg {
+.k-icon-btn svg {
   width: 15px;
   height: 15px;
-  flex: 0 0 auto;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.7;
+  stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.palette-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 7px;
-}
-
-.palette-option {
-  display: grid;
-  justify-items: center;
-  gap: 7px;
-  min-width: 0;
-  padding: 5px 2px 6px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--workspace-muted);
-  font: inherit;
-  font-size: 10px;
-  cursor: pointer;
-}
-
-.palette-option:hover,
-.palette-option.selected {
-  border-color: var(--workspace-border);
-  background: var(--workspace-bg);
-  color: var(--workspace-text);
-}
-
-.palette-swatch {
-  display: grid;
-  place-items: center;
-  width: 27px;
-  height: 27px;
-  border-radius: 9px;
-  color: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-}
-
-.palette-swatch svg {
-  width: 17px;
-  height: 17px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.custom-accent-row {
-  display: flex;
+.k-back {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 15px;
-  border-top: 1px solid var(--workspace-border);
-}
-
-.custom-accent-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.custom-accent-control input {
-  width: 34px;
+  gap: 0.3rem;
   height: 32px;
-  padding: 2px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 9px;
-  background: var(--workspace-bg);
-  cursor: pointer;
+  padding: 0 0.6rem;
+  border-radius: 8px;
+  color: var(--vp-c-text-2);
+  font-size: 0.76rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 150ms ease, background-color 150ms ease;
 }
 
-.custom-accent-control code {
-  color: var(--workspace-muted);
-  font-size: 10px;
+.k-back:hover {
+  color: var(--fl-accent-ink);
+  background: var(--vp-c-bg-alt);
 }
 
-.theme-saved-note {
-  margin: 15px 0 0;
-  color: var(--workspace-muted);
-  font-size: 10px;
-}
-
-.workspace-main {
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-  flex: 1;
-}
-
-.hero {
-  padding: clamp(55px, 8vh, 92px) 0 53px;
-  text-align: center;
-}
-
-.eyebrow {
-  margin: 0 0 15px;
-}
-
-.hero h1 {
-  margin: 0;
-  font-size: clamp(30px, 4.5vw, 52px);
-  line-height: 1.12;
-  letter-spacing: -0.055em;
-  font-weight: 760;
-}
-
-.hero-description {
-  margin: 15px 0 28px;
-  color: var(--workspace-muted);
-  font-size: 14px;
-}
-
-.search-form {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: min(100%, 700px);
-  min-height: 62px;
-  margin: 0 auto;
-  padding: 8px 10px 8px 18px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 18px;
-  background: var(--workspace-surface);
-  box-shadow: 0 8px 24px rgb(28 52 34 / 4%);
-  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 180ms ease;
-}
-
-.search-form:focus-within {
-  border-color: var(--workspace-accent);
-  box-shadow: 0 0 0 3px var(--workspace-accent-soft);
-}
-
-.search-submit {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 26px;
-  height: 30px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--workspace-muted);
-  cursor: pointer;
-}
-
-.search-submit svg {
-  width: 21px;
-  height: 21px;
+.k-back svg {
+  width: 12px;
+  height: 12px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
 }
 
-.search-form input {
-  min-width: 0;
-  flex: 1;
-  padding: 11px 0;
+.k-pop-wrap {
+  position: relative;
+}
+
+/* ------------------------------------------------------------------ pop */
+.k-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 50;
+  border: 1px solid var(--vp-c-border);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-elv);
+  box-shadow: var(--flessan-shadow-lg);
+}
+
+.k-look {
+  width: 262px;
+  padding: 0.85rem;
+}
+
+.k-pop-group + .k-pop-group {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.k-pop-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.k-swatches {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.k-swatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
   border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--workspace-text);
-  font: inherit;
-  font-size: 14px;
-}
-
-.search-form input::placeholder {
-  color: var(--workspace-muted);
-  opacity: 0.8;
-}
-
-.search-form input::-webkit-search-cancel-button {
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
   cursor: pointer;
+  transition: transform 170ms var(--flessan-ease-out), box-shadow 170ms ease;
 }
 
-.enter-key {
-  flex: 0 0 auto;
-  padding: 8px 10px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 9px;
-  background: var(--workspace-bg);
-  color: var(--workspace-muted);
-  font-size: 11px;
+.k-swatch:hover {
+  transform: scale(1.08);
+}
+
+.k-swatch.active {
+  box-shadow: 0 0 0 2px var(--vp-c-bg-elv), 0 0 0 3.5px var(--swatch);
+}
+
+.k-options {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.k-option {
+  flex: 1;
+  padding: 0.3rem 0.35rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-2);
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 140ms ease;
 }
 
-.enter-key:hover {
-  color: var(--workspace-text);
+.k-option:hover {
+  border-color: var(--vp-c-text-3);
+  color: var(--vp-c-text-1);
 }
 
-.search-notes {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 13px;
-  color: var(--workspace-muted);
-  font-size: 11px;
+.k-option.active {
+  border-color: var(--fl-accent);
+  background: var(--fl-accent-soft);
+  color: var(--fl-accent-ink);
+  font-weight: 600;
 }
 
-kbd {
-  padding: 2px 5px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 5px;
-  background: var(--workspace-surface);
-  color: var(--workspace-muted);
-  font: inherit;
-  font-size: 10px;
+.k-pop-note {
+  margin: 0.8rem 0 0;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+  line-height: 1.5;
 }
 
-.shortcuts-section {
-  padding-bottom: 42px;
+/* ----------------------------------------------------------------- main */
+.k-main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2.5rem) 4rem;
 }
 
-.section-heading {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 20px;
+.k-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 272px;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: start;
+  padding: clamp(2.4rem, 6vw, 4rem) 0 1.8rem;
 }
 
-.section-heading .eyebrow {
-  margin-bottom: 7px;
-  font-size: 9px;
+.k-hero-copy {
+  min-width: 0;
 }
 
-.section-heading h2 {
+.k-keys {
+  margin: 0.35rem 0 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-elv);
+}
+
+.k-keys-title {
+  margin: 0 0 0.5rem;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.k-keys ul {
   margin: 0;
-  font-size: 23px;
-  line-height: 1.2;
-  letter-spacing: -0.04em;
+  padding: 0;
+  list-style: none;
 }
 
-.shortcut-count {
-  padding-bottom: 3px;
-  color: var(--workspace-muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.category-tabs {
+.k-keys li {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 28px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.3rem 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.72rem;
 }
 
-.category-tabs button {
-  padding: 8px 13px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--workspace-muted);
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+.k-keys li + li {
+  border-top: 1px dashed var(--vp-c-divider);
 }
 
-.category-tabs button:hover {
-  border-color: var(--workspace-accent);
-  color: var(--workspace-text);
+.k-keys-combo {
+  display: inline-flex;
+  gap: 2px;
 }
 
-.category-tabs button.active {
-  border-color: var(--workspace-accent);
-  background: var(--workspace-accent);
-  color: var(--workspace-accent-contrast);
+.k-keys kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.24rem;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 4px;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  line-height: 1;
 }
 
-.shortcut-groups {
-  display: grid;
-  gap: 27px;
+.k-keys-foot {
+  margin: 0.6rem 0 0;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-3);
+  font-size: 0.64rem;
+  line-height: 1.55;
 }
 
-.shortcut-group h3 {
-  margin: 0 0 12px;
-  color: var(--workspace-muted);
-  font-size: 12px;
+.k-keys-foot code {
+  padding: 0.02rem 0.22rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 3px;
+  background: var(--vp-c-bg-alt);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.95em;
+}
+
+.k-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.1rem;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.k-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--fl-accent);
+  box-shadow: 0 0 0 3px var(--fl-accent-soft);
+}
+
+.k-title {
+  max-width: 18ch;
+  margin: 0;
+  color: var(--vp-c-text-1);
+  font-size: clamp(2.1rem, 4.6vw, 3.2rem);
   font-weight: 700;
-  letter-spacing: 0.015em;
+  letter-spacing: -0.042em;
+  line-height: 1.05;
 }
 
-.shortcut-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+.k-title em {
+  display: block;
+  color: var(--fl-accent-ink);
+  font-family: ui-serif, Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.03em;
 }
 
-.shortcut-card {
+.k-lead {
+  max-width: 56ch;
+  margin: 1.15rem 0 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.94rem;
+  line-height: 1.7;
+}
+
+/* --------------------------------------------------------------- search */
+.k-search {
+  position: relative;
+  z-index: 30;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.k-bar {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  padding: 6px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-elv);
+  box-shadow: var(--flessan-shadow-md);
+  transition: border-color 180ms ease, box-shadow 220ms var(--flessan-ease-out);
+}
+
+.k-bar:focus-within {
+  border-color: var(--fl-accent);
+  box-shadow: 0 0 0 3px var(--fl-accent-soft), var(--flessan-shadow-md);
+}
+
+.k-engine-wrap {
+  position: relative;
+  flex: none;
+}
+
+.k-engine {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.6rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: calc(var(--fl-r-md) - 5px);
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-1);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.k-engine:hover {
+  border-color: var(--vp-c-text-3);
+}
+
+.k-engine-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06) inset;
+}
+
+.k-chevron {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: var(--vp-c-text-3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 170ms var(--flessan-ease-out);
+}
+
+.k-chevron.open {
+  transform: rotate(180deg);
+}
+
+.k-engine-menu {
+  left: 0;
+  right: auto;
+  width: min(21rem, calc(100vw - 2rem));
+  padding: 5px;
+}
+
+.k-engine-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.42rem 0.5rem;
+  border: 0;
+  border-radius: calc(var(--fl-r-md) - 5px);
+  background: transparent;
+  color: var(--vp-c-text-1);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.k-engine-option:hover,
+.k-engine-option.active {
+  background: var(--vp-c-bg-alt);
+}
+
+.k-engine-meta {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
-  min-height: 76px;
-  box-sizing: border-box;
-  padding: 13px 14px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 15px;
-  background: var(--workspace-surface);
-  color: var(--workspace-text);
-  text-decoration: none;
-  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease, background-color 180ms ease;
+  gap: 0.05rem;
 }
 
-.shortcut-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--workspace-accent);
-  box-shadow: 0 7px 18px rgb(28 52 34 / 6%);
+.k-engine-title {
+  font-size: 0.82rem;
+  font-weight: 550;
 }
 
-.shortcut-card:focus-visible,
-.category-tabs button:focus-visible,
-.theme-button:focus-visible,
-.panel-close:focus-visible {
-  outline: 3px solid var(--workspace-accent-soft);
-  outline-offset: 2px;
-}
-
-.shortcut-icon {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 39px;
-  height: 39px;
+.k-engine-hint {
   overflow: hidden;
-  border: 1px solid var(--workspace-border);
-  border-radius: 12px;
-  background: var(--workspace-bg);
-}
-
-.shortcut-icon img {
-  display: block;
-  width: 23px;
-  height: 23px;
-  object-fit: contain;
-}
-
-.icon-fallback {
-  color: var(--workspace-accent);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.shortcut-copy {
-  display: grid;
-  min-width: 0;
-  gap: 5px;
-}
-
-.shortcut-name {
-  overflow: hidden;
-  font-size: 12px;
-  font-weight: 690;
+  color: var(--vp-c-text-3);
+  font-size: 0.68rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.shortcut-host {
-  overflow: hidden;
-  color: var(--workspace-muted);
-  font-size: 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.shortcut-arrow {
+.k-check {
+  width: 15px;
+  height: 15px;
   margin-left: auto;
-  align-self: flex-start;
-  color: var(--workspace-muted);
-  font-size: 13px;
-  opacity: 0;
-  transition: opacity 150ms ease;
+  fill: none;
+  stroke: var(--fl-accent-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.shortcut-card:hover .shortcut-arrow,
-.shortcut-card:focus-visible .shortcut-arrow {
+.k-field {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0 0.7rem;
+}
+
+.k-search-icon {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: var(--vp-c-text-3);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.k-input {
+  width: 100%;
+  min-width: 0;
+  height: 2.6rem;
+  border: 0;
+  background: transparent;
+  color: var(--vp-c-text-1);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.k-input::placeholder {
+  color: var(--vp-c-text-3);
   opacity: 1;
 }
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 9px;
-  padding: 45px 16px;
-  border: 1px dashed var(--workspace-border);
-  border-radius: 16px;
-  color: var(--workspace-muted);
-  text-align: center;
-  font-size: 12px;
+.k-kbd {
+  flex: none;
+  padding: 0.1rem 0.3rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.64rem;
+  line-height: 1.4;
 }
 
-.empty-state strong {
-  color: var(--workspace-text);
-  font-size: 14px;
-}
-
-.empty-mark {
+.k-clear {
   display: grid;
-  width: 36px;
-  height: 36px;
   place-items: center;
-  margin-bottom: 4px;
-  border-radius: 12px;
-  background: var(--workspace-accent-soft);
-  color: var(--workspace-accent);
-  font-weight: 800;
-}
-
-.empty-state button {
-  margin-top: 7px;
-  padding: 7px 11px;
-  border: 1px solid var(--workspace-border);
-  border-radius: 8px;
-  background: var(--workspace-surface);
-  color: var(--workspace-text);
-  font: inherit;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-3);
   cursor: pointer;
 }
 
-.workspace-footer {
-  padding-top: 20px;
-  border-top: 1px solid var(--workspace-border);
-  color: var(--workspace-muted);
-  font-size: 11px;
+.k-clear:hover {
+  color: var(--vp-c-text-1);
 }
 
-.workspace-footer a {
+.k-clear svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.k-submit {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2.6rem;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: calc(var(--fl-r-md) - 5px);
+  background: var(--fl-accent);
+  color: var(--fl-on-accent);
+  font-family: inherit;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms var(--flessan-ease-out);
+}
+
+.k-submit:hover {
+  background: var(--fl-accent-hover);
+}
+
+.k-submit:active {
+  transform: scale(0.98);
+}
+
+.k-submit svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* -------------------------------------------------------------- palette */
+.k-palette {
+  position: absolute;
+  z-index: 35;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(420px, 60vh);
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid var(--vp-c-border);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-elv);
+  box-shadow: var(--flessan-shadow-lg);
+}
+
+.k-palette-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.4rem 0.55rem 0.35rem;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.k-palette-count {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.k-result {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.42rem 0.5rem;
+  border: 0;
+  border-radius: calc(var(--fl-r-md) - 5px);
+  background: transparent;
+  color: var(--vp-c-text-1);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.k-result.active {
+  background: var(--vp-c-bg-alt);
+}
+
+.k-result.active .k-result-label {
+  color: var(--fl-accent-ink);
+}
+
+.k-result-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 7px;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-2);
+}
+
+.k-result-icon svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.k-result-icon img {
+  width: 15px;
+  height: 15px;
+}
+
+.k-result-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.k-result-label {
+  overflow: hidden;
+  font-size: 0.83rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-result-hint {
+  color: var(--vp-c-text-3);
+  font-size: 0.68rem;
+}
+
+.k-enter {
+  flex: none;
+  padding: 0.05rem 0.25rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.63rem;
+}
+
+.k-enter-icon {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: var(--vp-c-text-3);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.k-palette-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.45rem 0.55rem 0.3rem;
+  border-top: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+}
+
+.k-palette-foot kbd,
+.k-foot kbd {
+  padding: 0.02rem 0.22rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 3px;
+  background: var(--vp-c-bg-alt);
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+.k-history {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.6rem;
+}
+
+.k-history-label {
+  margin-right: 0.2rem;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.k-chip {
+  max-width: 18rem;
+  overflow: hidden;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-2);
+  font-family: inherit;
+  font-size: 0.71rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 140ms ease, color 140ms ease;
+}
+
+.k-chip:hover {
+  border-color: var(--vp-c-text-3);
+  color: var(--vp-c-text-1);
+}
+
+.k-chip-ghost {
+  color: var(--vp-c-text-3);
+  border-style: dashed;
+}
+
+/* -------------------------------------------------------------- sections */
+.k-section {
+  padding-top: 1.9rem;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.k-section + .k-section {
+  margin-top: 1.9rem;
+}
+
+.k-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.k-section-head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--vp-c-text-1);
+  font-size: 0.95rem;
   font-weight: 650;
+  letter-spacing: -0.015em;
 }
 
-@media (max-width: 780px) {
-  .workspace-label {
+.k-count {
+  padding: 0.05rem 0.35rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 5px;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+}
+
+.k-text-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vp-c-text-3);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.k-text-btn:hover {
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg-alt);
+}
+
+.k-density-btn[aria-pressed='true'] {
+  color: var(--fl-accent-ink);
+}
+
+.k-density-btn svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+/* ------------------------------------------------------------- empty pin */
+.k-empty-pinned {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  max-width: 44rem;
+  padding: 1.1rem 1.15rem;
+  margin-top: 1.9rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-alt);
+}
+
+.k-empty-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--fl-accent-line);
+  border-radius: 8px;
+  background: var(--fl-accent-soft);
+  color: var(--fl-accent-ink);
+}
+
+.k-empty-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.k-empty-pinned p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.k-empty-pinned strong {
+  display: block;
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------------- cards */
+.k-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(224px, 1fr));
+  gap: 0.55rem;
+}
+
+.k-grid-pinned {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.k-card {
+  position: relative;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-sm);
+  background: var(--vp-c-bg-elv);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 180ms var(--flessan-ease-out),
+    box-shadow 200ms var(--flessan-ease-out);
+}
+
+.k-card:hover {
+  border-color: var(--vp-c-text-3);
+  transform: translateY(-1px);
+  box-shadow: var(--flessan-shadow-sm);
+}
+
+.k-card:has(.k-card-link:focus-visible) {
+  border-color: var(--fl-accent);
+  box-shadow: 0 0 0 2px var(--fl-accent-soft);
+}
+
+.k-card-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.62rem 2rem 0.62rem 0.62rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--fl-r-sm);
+}
+
+.k-card-link:focus-visible {
+  outline: none;
+}
+
+.k-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-2);
+}
+
+.k-icon img {
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+}
+
+.k-icon-sm {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+.k-icon-sm img {
+  width: 13px;
+  height: 13px;
+}
+
+.k-mono {
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.k-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  min-width: 0;
+}
+
+.k-card-name {
+  overflow: hidden;
+  color: var(--vp-c-text-1);
+  font-size: 0.82rem;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-card-host {
+  overflow: hidden;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.63rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-star {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vp-c-text-3);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 140ms ease, color 140ms ease, background-color 140ms ease;
+}
+
+.k-card:hover .k-star,
+.k-star:focus-visible,
+.k-star.pinned {
+  opacity: 1;
+}
+
+.k-star:hover {
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-1);
+}
+
+.k-star.pinned {
+  color: var(--fl-accent);
+}
+
+.k-star svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.k-star.pinned svg {
+  fill: color-mix(in srgb, var(--fl-accent) 22%, transparent);
+}
+
+.compact .k-card-link {
+  padding-block: 0.4rem;
+}
+
+.compact .k-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+}
+
+.compact .k-icon img {
+  width: 14px;
+  height: 14px;
+}
+
+.compact .k-card-name {
+  font-size: 0.78rem;
+}
+
+.compact .k-card-host {
+  display: none;
+}
+
+/* -------------------------------------------------------------- recents */
+.k-recents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.k-recent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.6rem 0.3rem 0.32rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-2);
+  font-size: 0.74rem;
+  text-decoration: none;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.k-recent:hover {
+  border-color: var(--vp-c-text-3);
+  color: var(--vp-c-text-1);
+}
+
+.k-recent-name {
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------- tabs */
+.k-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.2rem 0 1.15rem;
+}
+
+.k-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.6rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.k-tab:hover {
+  border-color: var(--vp-c-text-3);
+  color: var(--vp-c-text-1);
+}
+
+.k-tab.active {
+  border-color: var(--vp-c-text-1);
+  background: var(--vp-c-text-1);
+  color: var(--vp-c-bg);
+}
+
+.k-tab-count {
+  color: inherit;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  opacity: 0.65;
+}
+
+.k-group + .k-group {
+  margin-top: 1.35rem;
+}
+
+.k-group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.5rem;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.k-group-title span {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+/* ----------------------------------------------------------------- foot */
+.k-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 2.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.65rem;
+}
+
+.k-foot p {
+  margin: 0;
+}
+
+.k-foot a {
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.k-foot a:hover {
+  color: var(--fl-accent-ink);
+}
+
+/* ---------------------------------------------------------- transitions */
+.k-pop-enter-active,
+.k-pop-leave-active {
+  transition: opacity 130ms ease, transform 150ms var(--flessan-ease-out);
+}
+
+.k-pop-enter-from,
+.k-pop-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.985);
+}
+
+.k-palette-enter-active,
+.k-palette-leave-active {
+  transition: opacity 130ms ease, transform 160ms var(--flessan-ease-out);
+}
+
+.k-palette-enter-from,
+.k-palette-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* ------------------------------------------------------------ responsive */
+@media (max-width: 980px) {
+  .k-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .k-keys {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .k-clock {
     display: none;
   }
 
-  .workspace-header {
-    flex-wrap: wrap;
+  .k-brand-page,
+  .k-brand-sep {
+    display: none;
   }
 
-  .header-actions {
-    gap: 10px;
+  .k-btn-label {
+    display: none;
   }
 
-  .hero {
-    padding-top: 58px;
-    padding-bottom: 45px;
-  }
-
-  .shortcut-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .k-icon-btn {
+    width: 32px;
+    padding: 0;
   }
 }
 
-@media (max-width: 520px) {
-  .kerja-shell {
-    padding: 18px 14px 16px;
+@media (max-width: 640px) {
+  .k-header-inner {
+    min-height: 56px;
+    gap: 0.5rem;
   }
 
-  .workspace-header {
-    align-items: flex-start;
-    gap: 12px;
+  .k-back span {
+    display: none;
   }
 
-  .header-actions {
-    align-items: flex-end;
-    flex-direction: column-reverse;
-    gap: 9px;
+  .k-back {
+    width: 32px;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--vp-c-border);
+    background: var(--vp-c-bg-elv);
   }
 
-  .site-link {
-    font-size: 11px;
+  .k-back svg {
+    width: 14px;
+    height: 14px;
   }
 
-  .theme-button {
-    min-height: 36px;
+  .k-engine-name {
+    display: none;
   }
 
-  .theme-panel {
-    right: -1px;
-    padding: 16px;
+  .k-engine {
+    padding: 0 0.5rem;
   }
 
-  .hero {
-    padding-top: 52px;
+  .k-submit {
+    padding: 0 0.7rem;
   }
 
-  .hero h1 {
-    max-width: 340px;
-    margin-inline: auto;
-    font-size: clamp(28px, 9vw, 38px);
+  .k-submit-label {
+    display: none;
   }
 
-  .hero-description {
-    max-width: 290px;
-    margin-inline: auto;
-    margin-top: 13px;
-    margin-bottom: 23px;
-    font-size: 13px;
+  .k-kbd {
+    display: none;
   }
 
-  .search-form {
-    min-height: 58px;
-    gap: 8px;
-    padding-left: 12px;
-    border-radius: 15px;
+  .k-lead {
+    font-size: 0.88rem;
   }
 
-  .search-form input {
-    font-size: 13px;
+  .k-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
   }
 
-  .enter-key {
-    padding: 7px 8px;
-    font-size: 10px;
+  .k-card-link {
+    gap: 0.5rem;
+    padding-right: 1.9rem;
   }
 
-  .search-notes {
-    flex-wrap: wrap;
-    gap: 8px 13px;
-    font-size: 10px;
-  }
-
-  .section-heading h2 {
-    font-size: 21px;
-  }
-
-  .category-tabs {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 3px;
-    scrollbar-width: thin;
-  }
-
-  .category-tabs button {
-    flex: 0 0 auto;
-  }
-
-  .shortcut-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-  }
-
-  .shortcut-card {
-    min-height: 68px;
-  }
-
-  .shortcut-arrow {
+  .k-star {
     opacity: 1;
   }
 
-  .workspace-footer {
-    align-items: flex-start;
-    font-size: 10px;
+  .k-card-name {
+    font-size: 0.78rem;
+  }
+
+  .k-card-host {
+    font-size: 0.58rem;
+  }
+
+  .k-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .k-palette {
+    max-height: 52vh;
+  }
+
+  .k-palette-foot {
+    display: none;
+  }
+
+  .k-section-head {
+    margin-bottom: 0.6rem;
+  }
+
+  .k-foot {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .k-brand-name {
+    font-size: 0.82rem;
+  }
+
+  .k-title {
+    font-size: 1.9rem;
+  }
+
+  .k-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kerja-shell,
-  .search-form,
-  .category-tabs button,
-  .shortcut-card,
-  .shortcut-arrow,
-  .theme-panel {
-    transition: none;
+  .k-live {
     animation: none;
-  }
-
-  .shortcut-card:hover {
-    transform: none;
   }
 }
 </style>

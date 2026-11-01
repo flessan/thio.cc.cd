@@ -1177,4 +1177,103 @@ onUnmounted(() => {
 @media (prefers-reduced-motion: reduce) {
   .my-activity *, .my-activity *::before, .my-activity *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* ---------------------------------------------------------------------------
+   Theme bridge: the Discord widget keeps its structure but borrows the site's
+   palette, radii and typography so it reads as part of the page.
+   --------------------------------------------------------------------------- */
+.my-activity,
+.my-activity.is-light-theme {
+  --discord-bg: var(--vp-c-bg-alt);
+  --discord-panel: var(--vp-c-bg-elv);
+  --discord-card: var(--vp-c-bg-alt);
+  --discord-card-hover: var(--vp-c-bg-soft);
+  --discord-border: var(--vp-c-divider);
+  --discord-border-strong: var(--vp-c-border);
+  --discord-text: var(--vp-c-text-1);
+  --discord-text-soft: var(--vp-c-text-2);
+  --discord-muted: var(--vp-c-text-3);
+  --discord-label: var(--vp-c-text-3);
+  --discord-blue: var(--fl-accent);
+  --discord-blue-dark: var(--fl-accent-hover);
+  --discord-blue-hover: var(--fl-accent-ink);
+  --discord-link: var(--fl-accent-ink);
+  --discord-white: var(--fl-on-accent);
+  --discord-profile-banner: var(--fl-accent-soft);
+  --discord-banner-decoration-border: var(--fl-accent-line);
+  --discord-banner-decoration-fill: var(--fl-accent-soft);
+  --discord-icon-accent: var(--fl-accent-ink);
+  --discord-subtle-divider: var(--vp-c-divider);
+  --discord-menu-shadow: var(--flessan-shadow-md);
+  --discord-soft-shadow: rgba(20, 22, 26, 0.06);
+  --discord-avatar-ring: var(--vp-c-divider);
+
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-md);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-2);
+  box-shadow: none;
+  color-scheme: normal;
+}
+
+.my-activity .activity-heading h2 {
+  color: var(--vp-c-text-1);
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+  font-weight: 650;
+  letter-spacing: -0.028em;
+}
+
+.my-activity .heading-kicker {
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.my-activity .heading-kicker i {
+  color: var(--fl-accent-ink);
+}
+
+.my-activity .join-server,
+.my-activity .guild-join-link {
+  border-color: transparent !important;
+  background: var(--fl-accent) !important;
+  color: var(--fl-on-accent) !important;
+  box-shadow: none !important;
+}
+
+.my-activity .join-server:hover,
+.my-activity .guild-join-link:hover {
+  background: var(--fl-accent-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: none !important;
+}
+
+.my-activity .activity-pane,
+.my-activity .guild-card {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-sm);
+  background: var(--vp-c-bg-alt);
+}
+
+.my-activity .activity-card,
+.my-activity .activity-api-error {
+  border-color: var(--vp-c-divider);
+  border-radius: var(--fl-r-sm);
+  background: var(--vp-c-bg-elv);
+}
+
+.my-activity .activity-card:hover {
+  background: var(--vp-c-bg-elv);
+  border-color: var(--vp-c-border);
+}
+
+.my-activity .channel-pill,
+.my-activity .activity-more-button,
+.my-activity .activity-retry-button {
+  border-color: var(--vp-c-divider);
+  background: var(--vp-c-bg-elv);
+  border-radius: 6px;
+}
 </style>

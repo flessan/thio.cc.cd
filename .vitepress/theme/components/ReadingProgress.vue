@@ -102,7 +102,6 @@ onUnmounted(() => {
   position: absolute;
   inset: 0;
   background: var(--fl-accent);
-  border-bottom: 2px solid var(--fl-ink);
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
@@ -113,9 +112,10 @@ onUnmounted(() => {
   width: 10px;
   height: 10px;
   margin-left: -5px;
-  border: 2px solid var(--fl-ink);
+  border: 1px solid var(--vp-c-bg);
   border-radius: 50%;
-  background: var(--vp-c-bg-elv);
+  background: var(--fl-accent);
+  box-shadow: 0 0 0 1px var(--fl-accent);
   transition: left 120ms linear;
 }
 </style>

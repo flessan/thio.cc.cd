@@ -4,11 +4,11 @@ import {
   ACCENTS,
   CORNERS,
   DENSITIES,
+  ENGINES,
   MOTIONS,
   PAPERS,
   applySettings,
   bootCustomization,
-  randomizeSettings,
   resetSettings,
   settings,
   type AccentId,
@@ -18,15 +18,20 @@ import {
   type PaperId
 } from '../customize'
 import { animate, stagger } from 'animejs'
-import { confetti, motionLevel, pop } from '../effects'
+import { motionLevel, pop } from '../effects'
 import SearchDock from './SearchDock.vue'
 
-type Tab = 'style' | 'search' | 'keys'
+type Tab = 'style' | 'find' | 'keys'
+
+const tabs: Array<{ id: Tab; label: string }> = [
+  { id: 'style', label: 'Style' },
+  { id: 'find', label: 'Search' },
+  { id: 'keys', label: 'Keys' }
+]
 
 const open = ref(false)
 const tab = ref<Tab>('style')
 const panel = ref<HTMLElement | null>(null)
-const trigger = ref<HTMLButtonElement | null>(null)
 let lastFocus: HTMLElement | null = null
 
 function isTyping(target: EventTarget | null) {
@@ -40,10 +45,13 @@ function isTyping(target: EventTarget | null) {
   )
 }
 
-function show() {
-  if (open.value) return
+function show(next: Tab = 'style') {
+  if (open.value) {
+    tab.value = next
+    return
+  }
   lastFocus = document.activeElement as HTMLElement | null
-  tab.value = 'style'
+  tab.value = next
   open.value = true
 }
 
@@ -77,12 +85,6 @@ function pickDensity(id: DensityId) {
   applySettings({ density: id })
 }
 
-function surprise(event: MouseEvent) {
-  randomizeSettings()
-  confetti(event.clientX, event.clientY, 26)
-  pop(panel.value?.querySelector('.pg-surprise') ?? null)
-}
-
 function reset() {
   resetSettings()
 }
@@ -94,7 +96,8 @@ function onKeydown(event: KeyboardEvent) {
     return
   }
   if (isTyping(event.target)) return
-  const shortcut = (event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'p'
+  const shortcut =
+    (event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLowerCase() === 'p'
   if (shortcut) {
     event.preventDefault()
     toggle()
@@ -102,8 +105,7 @@ function onKeydown(event: KeyboardEvent) {
   }
   if (event.key === '?' && !event.metaKey && !event.ctrlKey && !event.altKey) {
     event.preventDefault()
-    show()
-    tab.value = 'keys'
+    show('keys')
   }
 }
 
@@ -114,17 +116,16 @@ watch(open, async (value) => {
   if (motionLevel() === 'off') return
   animate(panel.value, {
     opacity: [0, 1],
-    y: [18, 0],
-    scale: [0.96, 1],
-    rotate: [1.2, 0],
-    duration: 420,
-    ease: 'outBack(1.6)'
+    y: [14, 0],
+    scale: [0.98, 1],
+    duration: 340,
+    ease: 'outQuint'
   })
   animate(panel.value.querySelectorAll('.pg-section'), {
     opacity: [0, 1],
-    y: [10, 0],
-    duration: 340,
-    delay: stagger(50, { start: 90 }),
+    y: [8, 0],
+    duration: 300,
+    delay: stagger(45, { start: 70 }),
     ease: 'outQuint'
   })
 })
@@ -142,25 +143,19 @@ onUnmounted(() => {
 <template>
   <div class="pg-root">
     <button
-      ref="trigger"
       class="pg-trigger"
       type="button"
       :aria-expanded="open"
       aria-controls="flessan-playground"
-      aria-label="Open the playground"
+      aria-label="Customize this site"
+      title="Customize this site (⌘⇧P)"
       @click="toggle"
     >
-      <span class="pg-trigger-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="9" />
-          <circle cx="8.6" cy="9.6" r="1.2" />
-          <circle cx="14.4" cy="8.2" r="1.2" />
-          <circle cx="16.4" cy="13.6" r="1.2" />
-          <circle cx="9.2" cy="14.8" r="1.2" />
-          <path d="M12 21a3 3 0 0 0 0-6h-1.2" />
-        </svg>
-      </span>
-      <span class="pg-trigger-label">Playground</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+        <circle cx="16" cy="7" r="2.2" />
+        <circle cx="10" cy="17" r="2.2" />
+      </svg>
     </button>
 
     <aside
@@ -170,47 +165,31 @@ onUnmounted(() => {
       class="pg-panel"
       role="dialog"
       aria-modal="false"
-      aria-label="Site playground"
+      aria-label="Site customization"
     >
       <header class="pg-head">
-        <div>
-          <p class="pg-kicker">make it yours</p>
-          <h2>Playground</h2>
+        <div class="pg-title">
+          <h2>Customize</h2>
+          <p>Saved on this device</p>
         </div>
-        <button class="pg-close" type="button" aria-label="Close playground" @click="hide">
+        <button class="pg-close" type="button" aria-label="Close" @click="hide">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
       </header>
 
-      <div class="pg-tabs" role="tablist" aria-label="Playground sections">
+      <div class="pg-tabs" role="tablist" aria-label="Customization sections">
         <button
+          v-for="item in tabs"
+          :key="item.id"
           type="button"
           role="tab"
-          :aria-selected="tab === 'style'"
-          :class="{ active: tab === 'style' }"
-          @click="tab = 'style'"
+          :aria-selected="tab === item.id"
+          :class="{ active: tab === item.id }"
+          @click="tab = item.id"
         >
-          Style
-        </button>
-        <button
-          type="button"
-          role="tab"
-          :aria-selected="tab === 'search'"
-          :class="{ active: tab === 'search' }"
-          @click="tab = 'search'"
-        >
-          Search
-        </button>
-        <button
-          type="button"
-          role="tab"
-          :aria-selected="tab === 'keys'"
-          :class="{ active: tab === 'keys' }"
-          @click="tab = 'keys'"
-        >
-          Keys
+          {{ item.label }}
         </button>
       </div>
 
@@ -218,8 +197,8 @@ onUnmounted(() => {
         <template v-if="tab === 'style'">
           <section class="pg-section">
             <div class="pg-label">
-              <h3>Accent</h3>
-              <span>{{ settings.accent }}</span>
+              <span>Accent</span>
+              <span class="pg-value">{{ settings.accent }}</span>
             </div>
             <div class="pg-swatches" role="radiogroup" aria-label="Accent colour">
               <button
@@ -231,22 +210,19 @@ onUnmounted(() => {
                 :class="{ active: settings.accent === accent.id }"
                 :aria-checked="settings.accent === accent.id"
                 :aria-label="accent.label"
-                :style="{ background: accent.swatch }"
+                :title="accent.label"
+                :style="{ '--swatch': accent.swatch }"
                 @click="pickAccent(accent.id, $event)"
-              >
-                <svg v-if="settings.accent === accent.id" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M5 12.5l4.2 4.2L19 7" />
-                </svg>
-              </button>
+              />
             </div>
           </section>
 
           <section class="pg-section">
             <div class="pg-label">
-              <h3>Paper</h3>
-              <span>{{ settings.paper }}</span>
+              <span>Surface</span>
+              <span class="pg-value">{{ settings.paper }}</span>
             </div>
-            <div class="pg-row" role="radiogroup" aria-label="Paper tint">
+            <div class="pg-row" role="radiogroup" aria-label="Surface tint">
               <button
                 v-for="paper in PAPERS"
                 :key="paper.id"
@@ -268,10 +244,7 @@ onUnmounted(() => {
           </section>
 
           <section class="pg-section">
-            <div class="pg-label">
-              <h3>Corners</h3>
-              <span>{{ settings.corners }}</span>
-            </div>
+            <div class="pg-label"><span>Corners</span></div>
             <div class="pg-row" role="radiogroup" aria-label="Corner style">
               <button
                 v-for="corner in CORNERS"
@@ -289,10 +262,7 @@ onUnmounted(() => {
           </section>
 
           <section class="pg-section">
-            <div class="pg-label">
-              <h3>Motion</h3>
-              <span>{{ settings.motion }}</span>
-            </div>
+            <div class="pg-label"><span>Motion</span></div>
             <div class="pg-row" role="radiogroup" aria-label="Motion level">
               <button
                 v-for="motion in MOTIONS"
@@ -311,10 +281,7 @@ onUnmounted(() => {
           </section>
 
           <section class="pg-section">
-            <div class="pg-label">
-              <h3>Density</h3>
-              <span>{{ settings.density }}</span>
-            </div>
+            <div class="pg-label"><span>Density</span></div>
             <div class="pg-row" role="radiogroup" aria-label="Reading density">
               <button
                 v-for="density in DENSITIES"
@@ -331,73 +298,79 @@ onUnmounted(() => {
             </div>
           </section>
 
-          <section class="pg-section pg-actions">
-            <button class="pg-surprise" type="button" @click="surprise">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z" />
-                <path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" />
-              </svg>
-              Surprise me
-            </button>
-            <button class="pg-reset" type="button" @click="reset">Reset</button>
-          </section>
+          <footer class="pg-foot">
+            <button class="pg-reset" type="button" @click="reset">Reset defaults</button>
+            <span class="pg-foot-hint">⌘⇧P toggles this panel</span>
+          </footer>
         </template>
 
-        <template v-else-if="tab === 'search'">
-          <section class="pg-section pg-search-section">
-            <SearchDock compact heading="Quick search" />
+        <template v-else-if="tab === 'find'">
+          <section class="pg-section">
+            <SearchDock compact heading="Default engine" />
+          </section>
+          <section class="pg-section">
+            <div class="pg-label"><span>Also available</span></div>
+            <ul class="pg-engines">
+              <li v-for="engine in ENGINES.slice(1)" :key="engine.id">
+                <span class="pg-engine-dot" :style="{ background: engine.color }" aria-hidden="true"></span>
+                <span class="pg-engine-name">{{ engine.name }}</span>
+                <span class="pg-engine-hint">{{ engine.hint }}</span>
+              </li>
+            </ul>
           </section>
           <p class="pg-note">
-            Your engine choice is saved on this device and is also used by the
-            search bar on the home page.
+            The same choice powers the home search bar and the workspace at
+            <a href="/kerja">/kerja</a>.
           </p>
         </template>
 
         <template v-else>
           <section class="pg-section">
-            <div class="pg-label"><h3>Keyboard</h3></div>
+            <div class="pg-label"><span>Keyboard</span></div>
             <ul class="pg-keys">
               <li>
-                <span><kbd>⌘</kbd><kbd>K</kbd> or <kbd>/</kbd></span>
+                <span class="pg-keys-combo"><kbd>⌘</kbd><kbd>K</kbd><em>or</em><kbd>/</kbd></span>
                 <span>search this site</span>
               </li>
               <li>
-                <span><kbd>?</kbd></span>
-                <span>open these shortcuts</span>
+                <span class="pg-keys-combo"><kbd>?</kbd></span>
+                <span>this shortcut sheet</span>
               </li>
               <li>
-                <span><kbd>⌘</kbd><kbd>⇧</kbd><kbd>P</kbd></span>
-                <span>open the playground</span>
+                <span class="pg-keys-combo"><kbd>⌘</kbd><kbd>⇧</kbd><kbd>P</kbd></span>
+                <span>open customization</span>
               </li>
               <li>
-                <span><kbd>esc</kbd></span>
+                <span class="pg-keys-combo"><kbd>esc</kbd></span>
                 <span>close a panel</span>
               </li>
             </ul>
           </section>
           <section class="pg-section">
-            <div class="pg-label"><h3>Search shorthand</h3></div>
+            <div class="pg-label"><span>Bang shortcuts</span></div>
+            <ul class="pg-bangs">
+              <li v-for="[prefix, id] in Object.entries({
+                g: 'google',
+                d: 'duckduckgo',
+                b: 'brave',
+                sp: 'startpage',
+                k: 'kagi',
+                yt: 'youtube',
+                gh: 'github',
+                w: 'wikipedia',
+                npm: 'npm'
+              })" :key="prefix">
+                <code>!{{ prefix }}</code>
+                <span>{{ id }}</span>
+              </li>
+            </ul>
             <p class="pg-note">
-              Start a query with an engine prefix to jump straight there:
-              <code>!ddg</code>, <code>!gh</code>, <code>!yt</code>,
-              <code>!k</code>, <code>!w</code>, <code>!npm</code>.
-            </p>
-          </section>
-          <section class="pg-section">
-            <div class="pg-label"><h3>Little things</h3></div>
-            <p class="pg-note">
-              Drag the “say hi!” sticker on the home page. Change accent, paper,
-              corners, motion and density here — it all persists. Press
-              <kbd>?</kbd> any time.
+              Type <code>!gh vite</code> in any search bar to open GitHub
+              directly.
             </p>
           </section>
         </template>
       </div>
-
-      <footer class="pg-foot">
-        <span class="pg-foot-dot" aria-hidden="true"></span>
-        Saved on this device · no account, no tracking
-      </footer>
     </aside>
   </div>
 </template>
@@ -410,68 +383,56 @@ onUnmounted(() => {
 
 .pg-trigger {
   position: fixed;
-  right: clamp(16px, 3vw, 34px);
-  bottom: clamp(16px, 3vw, 30px);
-  z-index: 61;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  height: 44px;
-  padding: 0 0.85rem;
-  border: 2px solid var(--fl-ink);
-  border-radius: 14px;
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  right: clamp(14px, 2.2vw, 24px);
+  bottom: clamp(14px, 2.2vw, 22px);
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  padding: 0;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 10px;
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-2);
+  box-shadow: var(--flessan-shadow-sm);
   cursor: pointer;
-  box-shadow: 3px 3px 0 var(--fl-ink);
   transition:
-    transform 160ms var(--flessan-ease-out),
-    box-shadow 160ms var(--flessan-ease-out);
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 200ms var(--flessan-ease-out);
 }
 
 .pg-trigger:hover {
-  transform: translate(-2px, -2px) rotate(-2deg);
-  box-shadow: 5px 5px 0 var(--fl-ink);
+  color: var(--vp-c-text-1);
+  border-color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-alt);
+  transform: translateY(-1px);
 }
 
-.pg-trigger:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 var(--fl-ink);
-}
-
-.pg-trigger-icon {
-  display: grid;
-  place-items: center;
-}
-
-.pg-trigger-icon svg {
-  width: 19px;
-  height: 19px;
+.pg-trigger svg {
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.7;
+  stroke-width: 1.6;
   stroke-linecap: round;
 }
 
-.panel,
 .pg-panel {
   position: fixed;
-  right: clamp(16px, 3vw, 34px);
-  bottom: calc(clamp(16px, 3vw, 30px) + 58px);
-  z-index: 63;
+  right: clamp(14px, 2.2vw, 24px);
+  bottom: calc(clamp(14px, 2.2vw, 22px) + 48px);
+  z-index: 61;
   display: flex;
   flex-direction: column;
-  width: min(23rem, calc(100vw - 32px));
-  max-height: min(78vh, 44rem);
-  border: 2px solid var(--fl-ink);
-  border-radius: var(--flessan-radius-lg);
-  background: var(--vp-c-bg);
-  box-shadow: 8px 8px 0 var(--fl-ink);
+  width: min(336px, calc(100vw - 28px));
+  max-height: min(620px, calc(100vh - 120px));
   overflow: hidden;
+  border: 1px solid var(--vp-c-border);
+  border-radius: var(--fl-r-lg);
+  background: var(--vp-c-bg-elv);
+  box-shadow: var(--flessan-shadow-lg);
 }
 
 .pg-head {
@@ -479,160 +440,150 @@ onUnmounted(() => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.9rem 1rem 0.7rem;
-  border-bottom: 2px dashed var(--vp-c-border);
-  background: var(--vp-c-bg-alt);
+  padding: 0.95rem 1rem 0.75rem;
 }
 
-.pg-kicker {
+.pg-title h2 {
   margin: 0;
-  color: var(--fl-accent-ink);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  color: var(--vp-c-text-1);
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-.pg-head h2 {
-  margin: 0.1rem 0 0;
-  font-size: 1.2rem;
-  font-weight: 850;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  color: var(--vp-c-text-1);
+.pg-title p {
+  margin: 0.15rem 0 0;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.02em;
 }
 
 .pg-close {
   display: grid;
   place-items: center;
-  flex: 0 0 auto;
-  width: 2rem;
-  height: 2rem;
-  border: 2px solid var(--fl-ink);
-  border-radius: 8px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vp-c-text-3);
   cursor: pointer;
-  box-shadow: 2px 2px 0 var(--fl-ink);
+  transition: background-color 140ms ease, color 140ms ease;
 }
 
 .pg-close:hover {
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-1);
 }
 
 .pg-close svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.2;
+  stroke-width: 1.8;
   stroke-linecap: round;
 }
 
 .pg-tabs {
-  display: flex;
-  gap: 0.35rem;
-  padding: 0.6rem 1rem;
-  border-bottom: 2px solid var(--vp-c-divider);
-}
-
-.pg-tabs button {
-  flex: 1 1 0;
-  min-height: 1.9rem;
-  padding: 0.2rem 0.5rem;
-  border: 2px solid transparent;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--vp-c-text-2);
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 140ms ease, border-color 140ms ease;
-}
-
-.pg-tabs button:hover {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin: 0 1rem;
+  padding: 3px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
   background: var(--vp-c-bg-alt);
 }
 
+.pg-tabs button {
+  padding: 0.32rem 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vp-c-text-3);
+  font-family: inherit;
+  font-size: 0.73rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, box-shadow 140ms ease;
+}
+
+.pg-tabs button:hover {
+  color: var(--vp-c-text-1);
+}
+
 .pg-tabs button.active {
-  border-color: var(--fl-ink);
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
-  box-shadow: 2px 2px 0 var(--fl-ink);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-1);
+  box-shadow: 0 1px 2px rgba(16, 18, 22, 0.08);
 }
 
 .pg-body {
-  flex: 1 1 auto;
-  padding: 0.9rem 1rem 1rem;
   overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
+  padding: 0.85rem 1rem 1rem;
 }
 
-.pg-section + .pg-section {
-  margin-top: 1rem;
-  padding-top: 0.9rem;
-  border-top: 1.5px dashed var(--vp-c-divider);
+.pg-section {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.pg-section:first-child {
+  border-top: 0;
 }
 
 .pg-label {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.45rem;
-}
-
-.pg-label h3 {
-  margin: 0;
-  font-size: 0.78rem;
-  font-weight: 800;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  color: var(--vp-c-text-2);
+  font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--vp-c-text-1);
 }
 
-.pg-label span {
+.pg-value {
   color: var(--vp-c-text-3);
   font-family: var(--vp-font-family-mono);
   font-size: 0.62rem;
+  font-weight: 400;
   letter-spacing: 0.04em;
-  text-transform: lowercase;
+  text-transform: uppercase;
 }
 
 .pg-swatches {
   display: flex;
-  gap: 0.45rem;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .pg-swatch {
   position: relative;
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 26px;
+  height: 26px;
   padding: 0;
-  border: 2px solid var(--fl-ink);
-  border-radius: 10px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
   cursor: pointer;
-  box-shadow: 2px 2px 0 var(--fl-ink);
-  transition: transform 160ms var(--flessan-ease-out);
+  transition: transform 180ms var(--flessan-ease-out), box-shadow 180ms ease;
 }
 
 .pg-swatch:hover {
-  transform: translate(-2px, -2px) rotate(-4deg);
+  transform: scale(1.08);
 }
 
-.pg-swatch svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: #1e1a14;
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.pg-swatch.active {
+  box-shadow:
+    0 0 0 2px var(--vp-c-bg-elv),
+    0 0 0 3.5px var(--swatch);
 }
 
 .pg-row {
@@ -645,94 +596,73 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  min-height: 1.95rem;
-  padding: 0.18rem 0.6rem;
-  border: 2px solid var(--vp-c-border);
-  border-radius: 999px;
-  background: var(--vp-c-bg-elv);
+  padding: 0.32rem 0.6rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-alt);
   color: var(--vp-c-text-2);
-  font: inherit;
-  font-size: 0.74rem;
-  font-weight: 650;
+  font-family: inherit;
+  font-size: 0.73rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: border-color 140ms ease, background-color 140ms ease;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 
 .pg-pill:hover {
-  border-color: var(--fl-ink);
+  border-color: var(--vp-c-text-3);
   color: var(--vp-c-text-1);
 }
 
 .pg-pill.active {
-  border-color: var(--fl-ink);
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
-  box-shadow: 2px 2px 0 var(--fl-ink);
+  border-color: var(--fl-accent);
+  background: var(--fl-accent-soft);
+  color: var(--fl-accent-ink);
+  font-weight: 600;
 }
 
 .pg-paper-dot {
-  width: 0.8rem;
-  height: 0.8rem;
-  border: 1.5px solid var(--fl-ink);
-  border-radius: 3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14) inset;
 }
 
-.pg-actions {
+.pg-foot {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.pg-surprise,
-.pg-reset {
-  min-width: 0;
-  padding: 0 0.85rem;
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  flex: 1 1 0;
-  min-height: 2.4rem;
-  border: 2px solid var(--fl-ink);
-  border-radius: 10px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--fl-ink);
-  transition: transform 140ms var(--flessan-ease-out), box-shadow 140ms var(--flessan-ease-out);
-}
-
-.pg-surprise {
-  background: var(--fl-accent);
-  color: var(--fl-on-accent);
-}
-
-.pg-surprise svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linejoin: round;
-}
-
-.pg-surprise:hover,
-.pg-reset:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 var(--fl-ink);
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--vp-c-divider);
 }
 
 .pg-reset {
-  flex: 0 0 auto;
-  font-weight: 700;
+  padding: 0.32rem 0.55rem;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.pg-reset:hover {
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-1);
+}
+
+.pg-foot-hint {
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.61rem;
 }
 
 .pg-keys {
-  display: grid;
-  gap: 0.4rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -742,88 +672,126 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.6rem;
-  font-size: 0.74rem;
+  gap: 1rem;
+  padding: 0.32rem 0;
   color: var(--vp-c-text-2);
+  font-size: 0.73rem;
 }
 
-.pg-keys li > span:last-child {
-  text-align: right;
+.pg-keys li + li {
+  border-top: 1px dashed var(--vp-c-divider);
+}
+
+.pg-keys-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.pg-keys-combo em {
+  padding: 0 2px;
+  color: var(--vp-c-text-3);
+  font-size: 0.63rem;
+  font-style: normal;
 }
 
 .pg-keys kbd,
-.pg-note kbd {
-  display: inline-block;
-  min-width: 1.25rem;
-  margin-right: 0.12rem;
-  padding: 0.02rem 0.28rem;
-  border: 1.5px solid var(--vp-c-border);
-  border-bottom-width: 3px;
-  border-radius: 5px;
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.68rem;
-  text-align: center;
-}
-
-.pg-note {
-  margin: 0.5rem 0 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.75rem;
-  line-height: 1.55;
-}
-
+.pg-bangs code,
 .pg-note code {
-  padding: 0.04rem 0.26rem;
-  border: 1.5px solid var(--vp-c-border);
+  padding: 0.08rem 0.3rem;
+  border: 1px solid var(--vp-c-divider);
   border-radius: 4px;
-  background: var(--vp-c-bg-elv);
-  font-size: 0.7rem;
-  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.66rem;
 }
 
-.pg-search-section {
+.pg-bangs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.3rem;
   margin: 0;
   padding: 0;
+  list-style: none;
+}
+
+.pg-bangs li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0;
+  color: var(--vp-c-text-3);
+  font-size: 0.64rem;
+}
+
+.pg-bangs li + li {
   border-top: 0;
 }
 
-.pg-foot {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 1rem;
-  border-top: 2px dashed var(--vp-c-border);
-  background: var(--vp-c-bg-alt);
+.pg-note {
+  margin: 0.6rem 0 0;
   color: var(--vp-c-text-3);
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.04em;
+  font-size: 0.71rem;
+  line-height: 1.6;
 }
 
-.pg-foot-dot {
+.pg-note a {
+  color: var(--fl-accent-ink);
+}
+
+.pg-engines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pg-engines li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.26rem 0;
+  font-size: 0.72rem;
+}
+
+.pg-engines li + li {
+  border-top: 1px dashed var(--vp-c-divider);
+}
+
+.pg-engine-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2fbe7b;
-  border: 1.5px solid var(--fl-ink);
+  flex: none;
 }
 
-@media (max-width: 720px) {
-  .pg-trigger {
-    padding: 0 0.6rem;
-  }
+.pg-engine-name {
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+}
 
-  .pg-trigger-label {
-    display: none;
-  }
+.pg-engine-hint {
+  margin-left: auto;
+  overflow: hidden;
+  max-width: 12rem;
+  color: var(--vp-c-text-3);
+  font-size: 0.66rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
+@media (max-width: 560px) {
   .pg-panel {
-    left: 16px;
-    right: 16px;
+    left: 10px;
+    right: 10px;
+    bottom: 58px;
     width: auto;
     max-height: 76vh;
+  }
+
+  .pg-trigger {
+    right: 12px;
+    bottom: 12px;
   }
 }
 </style>

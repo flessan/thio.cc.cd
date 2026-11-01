@@ -46,18 +46,16 @@ async function copyInvitation() {
 .educator-invite {
   margin: 2.5rem 0;
   padding: clamp(1.1rem, 3vw, 1.6rem);
-  border: 1px solid var(--flessan-card-border);
-  border-radius: 1rem;
-  border-width: 2px;
-  border-color: var(--fl-ink);
+  border: 1px solid var(--fl-accent-line);
+  border-radius: var(--fl-r-md);
   background: var(--vp-c-bg-alt);
   box-shadow: var(--flessan-shadow-sm);
 }
 .eyebrow {
   margin: 0 0 0.55rem;
-  color: var(--flessan-accent-ink);
-  font-size: 0.73rem;
-  font-weight: 750;
+  color: var(--fl-accent-ink);
+  font-size: 0.68rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
 }
 .educator-invite h2 {

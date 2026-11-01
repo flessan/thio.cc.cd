@@ -67,9 +67,9 @@ onMounted(async () => {
   gap: 12px;
   min-width: 0;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
+  border-radius: var(--fl-r-sm);
   padding: 10px 12px;
-  background: var(--vp-c-bg-alt); border-width: 2px; border-color: var(--fl-ink);
+  background: var(--vp-c-bg-alt);
   text-decoration: none;
   transition:
     border-color 220ms ease,
@@ -80,7 +80,7 @@ onMounted(async () => {
 
 .lp:hover {
   text-decoration: none;
-  border-color: var(--flessan-accent-line);
+  border-color: var(--fl-accent-line);
   box-shadow: var(--flessan-shadow-sm);
   transform: translateY(-2px);
 }

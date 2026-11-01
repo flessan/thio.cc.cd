@@ -1,6 +1,6 @@
 ---
 title: Kerja
-description: Flessan's personal browser start page for search and everyday shortcuts.
+description: Flessan's command-palette workspace for web search, pinned shortcuts and everyday tools.
 layout: false
 head:
   - - meta

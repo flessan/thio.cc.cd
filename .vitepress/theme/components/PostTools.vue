@@ -104,7 +104,6 @@ onUnmounted(() => {
   height: 100%;
   border-radius: 0 2px 2px 0;
   background: var(--flessan-accent-fill);
-  border-right: 2px solid var(--fl-ink);
   box-shadow: none;
   transition: width 120ms linear;
 }

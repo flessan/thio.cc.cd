@@ -8,8 +8,8 @@
  */
 import { ref } from 'vue'
 
-export type AccentId = 'sunbeam' | 'tangerine' | 'mint' | 'sky' | 'bubblegum' | 'lilac'
-export type PaperId = 'cream' | 'snow' | 'peach'
+export type AccentId = 'cobalt' | 'emerald' | 'amber' | 'rose' | 'violet' | 'graphite'
+export type PaperId = 'paper' | 'white' | 'sand'
 export type CornerId = 'round' | 'soft' | 'sharp'
 export type MotionId = 'playful' | 'calm' | 'off'
 export type DensityId = 'cozy' | 'compact'
@@ -45,18 +45,18 @@ export interface Engine {
 }
 
 export const ACCENTS: Array<{ id: AccentId; label: string; swatch: string }> = [
-  { id: 'sunbeam', label: 'Sunbeam', swatch: '#ffc93c' },
-  { id: 'tangerine', label: 'Tangerine', swatch: '#ff9a5c' },
-  { id: 'mint', label: 'Mint', swatch: '#63dba2' },
-  { id: 'sky', label: 'Sky', swatch: '#7fcaff' },
-  { id: 'bubblegum', label: 'Bubblegum', swatch: '#ffa3cf' },
-  { id: 'lilac', label: 'Lilac', swatch: '#c4a8ff' }
+  { id: 'cobalt', label: 'Cobalt', swatch: '#2a48d8' },
+  { id: 'emerald', label: 'Emerald', swatch: '#0f7a5a' },
+  { id: 'amber', label: 'Amber', swatch: '#e0a020' },
+  { id: 'rose', label: 'Rose', swatch: '#c0365f' },
+  { id: 'violet', label: 'Violet', swatch: '#6a3fd1' },
+  { id: 'graphite', label: 'Graphite', swatch: '#2a2d33' }
 ]
 
 export const PAPERS: Array<{ id: PaperId; label: string; swatch: string }> = [
-  { id: 'cream', label: 'Cream', swatch: '#fff9ec' },
-  { id: 'snow', label: 'Snow', swatch: '#f8f8f4' },
-  { id: 'peach', label: 'Peach', swatch: '#fff5ee' }
+  { id: 'paper', label: 'Paper', swatch: '#f7f6f2' },
+  { id: 'white', label: 'White', swatch: '#ffffff' },
+  { id: 'sand', label: 'Sand', swatch: '#f6f1e7' }
 ]
 
 export const CORNERS: Array<{ id: CornerId; label: string }> = [
@@ -66,9 +66,9 @@ export const CORNERS: Array<{ id: CornerId; label: string }> = [
 ]
 
 export const MOTIONS: Array<{ id: MotionId; label: string; note: string }> = [
-  { id: 'playful', label: 'Playful', note: 'everything moves' },
+  { id: 'playful', label: 'Full', note: 'all choreography' },
   { id: 'calm', label: 'Calm', note: 'no ambient loops' },
-  { id: 'off', label: 'Still', note: 'no animation at all' }
+  { id: 'off', label: 'None', note: 'no animation at all' }
 ]
 
 export const DENSITIES: Array<{ id: DensityId; label: string }> = [
@@ -176,28 +176,28 @@ export const ENGINE_MAP: Record<EngineId, Engine> = Object.fromEntries(
 
 /** Single-letter prefixes that switch engine as you type (`!ddg anime`). */
 export const ENGINE_PREFIXES: Record<string, EngineId> = {
-  '!g': 'google',
-  '!google': 'google',
-  '!d': 'duckduckgo',
-  '!ddg': 'duckduckgo',
-  '!b': 'brave',
-  '!sp': 'startpage',
-  '!k': 'kagi',
-  '!bing': 'bing',
-  '!yt': 'youtube',
-  '!youtube': 'youtube',
-  '!gh': 'github',
-  '!w': 'wikipedia',
-  '!wiki': 'wikipedia',
-  '!npm': 'npm'
+  'g': 'google',
+  'google': 'google',
+  'd': 'duckduckgo',
+  'ddg': 'duckduckgo',
+  'b': 'brave',
+  'sp': 'startpage',
+  'k': 'kagi',
+  'bing': 'bing',
+  'yt': 'youtube',
+  'youtube': 'youtube',
+  'gh': 'github',
+  'w': 'wikipedia',
+  'wiki': 'wikipedia',
+  'npm': 'npm'
 }
 
 const STORAGE_KEY = 'flessan-playground-v1'
 
 export const DEFAULT_SETTINGS: Settings = {
-  accent: 'sunbeam',
-  paper: 'cream',
-  corners: 'round',
+  accent: 'cobalt',
+  paper: 'paper',
+  corners: 'soft',
   motion: 'playful',
   density: 'cozy',
   engine: 'duckduckgo'
@@ -267,18 +267,6 @@ export function applySettings(next: Partial<Settings>, persist = true) {
 
 export function resetSettings() {
   applySettings({ ...DEFAULT_SETTINGS })
-}
-
-export function randomizeSettings() {
-  const pick = <T extends { id: string }>(list: T[], current: string): T =>
-    list.filter((item) => item.id !== current)[
-      Math.floor(Math.random() * (list.length - 1))
-    ]
-  const accent = pick(ACCENTS, settings.value.accent).id as AccentId
-  const paper = pick(PAPERS, settings.value.paper).id as PaperId
-  const corners = pick(CORNERS, settings.value.corners).id as CornerId
-  applySettings({ accent, paper, corners })
-  return { accent, paper, corners }
 }
 
 /** Paint saved choices as soon as the module loads (client only). */
