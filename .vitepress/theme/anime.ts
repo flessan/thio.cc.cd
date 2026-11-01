@@ -1,6 +1,7 @@
 type AnimeModule = {
   animate: (targets: string | Element | NodeListOf<Element>, params: Record<string, unknown>) => unknown
   stagger: (value: number, options?: Record<string, unknown>) => unknown
+  onScroll?: (options?: Record<string, unknown>) => unknown
 }
 
 const animeUrl = 'https://cdn.jsdelivr.net/npm/animejs@4.5.0/+esm'
@@ -36,6 +37,13 @@ function animateWorkspace(anime: AnimeModule) {
   anime.animate(root.querySelectorAll<HTMLElement>("[class*='category'], .kerja-theme-panel"), {
     opacity: [0, 1], translateX: [-18, 0], delay: anime.stagger(70), duration: 650, ease: 'out(3)'
   })
+
+  if (anime.onScroll) {
+    anime.animate(root.querySelectorAll<HTMLElement>('.workspace-title, .kerja-hero'), {
+      translateY: [0, -34], opacity: [1, .76],
+      autoplay: anime.onScroll({ target: root, sync: true })
+    })
+  }
 }
 
 function installWorkspaceHover(anime: AnimeModule) {
