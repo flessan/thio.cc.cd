@@ -17,7 +17,7 @@ import {
   settings,
   type Engine
 } from '../customize'
-import { motionLevel, pop } from '../effects'
+import { motionLevel, motionProfile, pop } from '../effects'
 import { animate, stagger } from 'animejs'
 
 type Shortcut = { name: string; url: string; icon: string; category: string }
@@ -62,6 +62,7 @@ const lookOpen = ref(false)
 const activeCategory = ref('All')
 const input = ref<HTMLInputElement | null>(null)
 const root = ref<HTMLElement | null>(null)
+const searchWrap = ref<HTMLElement | null>(null)
 const engineWrap = ref<HTMLElement | null>(null)
 const lookWrap = ref<HTMLElement | null>(null)
 const resultsRoot = ref<HTMLElement | null>(null)
@@ -392,6 +393,15 @@ function focusSearch() {
   nextTick(() => input.value?.focus())
 }
 
+/**
+ * The palette is a click-driven popover: it opens when the visitor clicks the
+ * search bar, and closes again on the next click outside of it.
+ */
+function openPalette() {
+  if (!palette.value) palette.value = true
+  if (document.activeElement !== input.value) input.value?.focus()
+}
+
 function onKeydown(event: KeyboardEvent) {
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
     event.preventDefault()
@@ -441,6 +451,11 @@ function onDocumentPointer(event: PointerEvent) {
   const node = event.target as Node
   if (engineMenu.value && engineWrap.value && !engineWrap.value.contains(node)) engineMenu.value = false
   if (lookOpen.value && lookWrap.value && !lookWrap.value.contains(node)) lookOpen.value = false
+  // Any click outside the search area dismisses the command palette.
+  if (palette.value && searchWrap.value && !searchWrap.value.contains(node)) {
+    palette.value = false
+    if (document.activeElement === input.value) input.value?.blur()
+  }
 }
 
 /* ------------------------------------------------------------- grid FLIP */
@@ -455,6 +470,7 @@ function captureCards() {
 
 function playFlip(previous: Map<string, DOMRect>) {
   if (motionLevel() === 'off' || !resultsRoot.value) return
+  const profile = motionProfile()
   let order = 0
   resultsRoot.value.querySelectorAll<HTMLElement>('.k-card').forEach((card) => {
     const before = previous.get(card.dataset.key ?? '')
@@ -463,8 +479,9 @@ function playFlip(previous: Map<string, DOMRect>) {
       animate(card, {
         opacity: [0, 1],
         scale: [0.9, 1],
-        duration: 460,
-        delay: order++ * 22,
+        rotate: profile.expressive ? [-2, 0] : 0,
+        duration: Math.round(460 * profile.duration),
+        delay: Math.round(order++ * 22 * profile.delay),
         ease: 'outBack(1.6)'
       })
       return
@@ -475,7 +492,7 @@ function playFlip(previous: Map<string, DOMRect>) {
     animate(card, {
       translateX: [dx, 0],
       translateY: [dy, 0],
-      duration: 560,
+      duration: Math.round(560 * profile.duration),
       ease: 'outQuint'
     })
   })
@@ -506,8 +523,29 @@ function tick() {
 
 /* -------------------------------------------------------------- lifecycle */
 
-watch(palette, (value) => {
-  if (value) active.value = 0
+watch(palette, async (value) => {
+  if (!value) return
+  active.value = 0
+  const profile = motionProfile()
+  if (!profile.expressive || !root.value) return
+  await nextTick()
+  const results = root.value.querySelectorAll<HTMLElement>('.k-result')
+  if (!results.length) return
+  animate(results, {
+    opacity: [0, 1],
+    y: [10, 0],
+    scale: [0.98, 1],
+    duration: 380,
+    delay: stagger(Math.round(26 * profile.delay), { start: 30 }),
+    ease: 'outQuint',
+    onComplete: () => {
+      results.forEach((item) => {
+        item.style.removeProperty('opacity')
+        item.style.removeProperty('translate')
+        item.style.removeProperty('scale')
+      })
+    }
+  })
 })
 
 let narrowQuery: MediaQueryList | undefined
@@ -541,21 +579,32 @@ onMounted(async () => {
 
   if (motionLevel() === 'off' || !root.value) return
   await nextTick()
+  const profile = motionProfile()
   const intro = root.value.querySelectorAll<HTMLElement>('[data-anim]')
   animate(intro, {
     opacity: [0, 1],
-    y: [18, 0],
-    duration: 640,
-    delay: stagger(60, { start: 60 }),
+    y: [Math.round(18 * profile.travel), 0],
+    duration: Math.round(640 * profile.duration),
+    delay: stagger(Math.round(60 * profile.delay), { start: 60 }),
     ease: 'outQuint'
   })
   const cards = root.value.querySelectorAll<HTMLElement>('.k-card')
   animate(cards, {
     opacity: [0, 1],
+    y: [Math.round(10 * profile.travel), 0],
     scale: [0.92, 1],
-    duration: 520,
-    delay: stagger(18, { start: 260 }),
-    ease: 'outBack(1.4)'
+    rotate: profile.expressive ? [-1.2, 0] : 0,
+    duration: Math.round(520 * profile.duration),
+    delay: stagger(Math.round(18 * profile.delay), { start: 260 }),
+    ease: 'outBack(1.4)',
+    onComplete: () => {
+      cards.forEach((card) => {
+        card.style.removeProperty('opacity')
+        card.style.removeProperty('translate')
+        card.style.removeProperty('scale')
+        card.style.removeProperty('rotate')
+      })
+    }
   })
 })
 
@@ -723,7 +772,7 @@ onBeforeUnmount(() => {
         </aside>
       </section>
 
-      <div class="k-search" data-anim>
+      <div ref="searchWrap" class="k-search" data-anim>
         <form class="k-bar" role="search" @submit.prevent="submit">
           <div ref="engineWrap" class="k-engine-wrap">
             <button
@@ -767,7 +816,7 @@ onBeforeUnmount(() => {
             </Transition>
           </div>
 
-          <div class="k-field">
+          <div class="k-field" @click="openPalette">
             <svg class="k-search-icon" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="11" cy="11" r="6.5" />
               <path d="M16 16l4 4" />
@@ -785,7 +834,8 @@ onBeforeUnmount(() => {
               :aria-expanded="palette"
               :placeholder="narrow ? 'Search the web' : `Search ${engine.name}, or type a command`"
               aria-label="Search the web or the workspace"
-              @focus="palette = true"
+              @click="openPalette"
+              @input="palette = true"
               @keydown="onInputKeydown"
             />
             <kbd v-if="!query" class="k-kbd">⌘K</kbd>
@@ -1098,6 +1148,7 @@ onBeforeUnmount(() => {
       ref="fab"
       type="button"
       class="k-fab"
+      :class="{ 'is-palette-open': palette }"
       aria-label="Open the command palette"
       @click="pop(fab ?? undefined); focusSearch()"
     >
@@ -2338,6 +2389,16 @@ onBeforeUnmount(() => {
 .k-fab:hover {
   box-shadow: var(--md-elevation-4);
   transform: translateY(-2px);
+}
+
+/* On narrow screens the palette reaches the FAB, so it steps aside — the M3
+   sheet takes over the surface while the palette is open. */
+@media (max-width: 860px) {
+  .k-fab.is-palette-open {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(16px) scale(0.9);
+  }
 }
 
 .k-fab:active {

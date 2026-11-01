@@ -19,23 +19,55 @@ export function motionLevel(): 'playful' | 'calm' | 'off' {
   return level === 'calm' || level === 'off' ? level : 'playful'
 }
 
+/**
+ * Timing knobs for the current motion level.
+ *
+ * Expressive ("playful") is deliberately slower than standard: longer
+ * durations, longer delays, more travel and a little extra scale, which is
+ * what makes the M3 Expressive choreography readable instead of twitchy.
+ */
+export interface MotionProfile {
+  level: 'playful' | 'calm' | 'off'
+  expressive: boolean
+  /** multiply anime.js durations */
+  duration: number
+  /** multiply delays and stagger steps */
+  delay: number
+  /** multiply vertical travel and scale deltas */
+  travel: number
+}
+
+export function motionProfile(): MotionProfile {
+  const level = motionLevel()
+  const expressive = level === 'playful'
+  return {
+    level,
+    expressive,
+    duration: expressive ? 1.7 : 1,
+    delay: expressive ? 1.45 : 1,
+    travel: expressive ? 1.45 : 1
+  }
+}
+
 /** Material state layer: a springy acknowledgement for a tapped control. */
 export function pop(element: Element | null | undefined) {
-  if (!element || motionLevel() === 'off') return
+  const profile = motionProfile()
+  if (!element || profile.level === 'off') return
   animate(element, {
-    scale: [0.86, 1],
-    rotate: [2.5, 0],
-    duration: 560,
+    scale: profile.expressive ? [0.82, 1] : [0.86, 1],
+    rotate: profile.expressive ? [3.4, 0] : [2.5, 0],
+    duration: 560 * profile.duration,
     ease: 'outBack(2.4)'
   })
 }
 
 /** A short overshoot used when a chip, card or button is selected. */
 export function bounce(element: Element | null | undefined) {
-  if (!element || motionLevel() === 'off') return
+  const profile = motionProfile()
+  if (!element || profile.level === 'off') return
   animate(element, {
-    scale: [1, 1.08, 1],
-    duration: 420,
+    scale: profile.expressive ? [1, 1.11, 1] : [1, 1.08, 1],
+    duration: 420 * profile.duration,
     ease: 'inOutQuad'
   })
 }
@@ -63,8 +95,9 @@ export function installRipple() {
       if (now - last < 30) return
       last = now
 
+      const profile = motionProfile()
       const rect = target.getBoundingClientRect()
-      const size = Math.max(rect.width, rect.height) * 1.9
+      const size = Math.max(rect.width, rect.height) * (profile.expressive ? 2.2 : 1.9)
       const ripple = document.createElement('span')
       ripple.className = 'md-ripple'
       ripple.setAttribute('aria-hidden', 'true')
@@ -76,8 +109,8 @@ export function installRipple() {
 
       animate(ripple, {
         scale: [0, 1],
-        opacity: [0.22, 0],
-        duration: 620,
+        opacity: [profile.expressive ? 0.26 : 0.22, 0],
+        duration: 620 * profile.duration,
         ease: 'outQuad',
         onComplete: () => ripple.remove()
       })

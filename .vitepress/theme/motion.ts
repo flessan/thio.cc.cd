@@ -28,6 +28,7 @@ import {
 } from 'animejs'
 import type { Router } from 'vitepress'
 import { whenHydrated } from './hydration'
+import { motionProfile } from './effects'
 
 const REVEAL_SELECTOR = [
   '.vp-doc > div > h1',
@@ -99,6 +100,8 @@ const TICKER_PHRASES = [
 function startTicker(hero: HTMLElement) {
   const element = hero.querySelector<HTMLElement>('[data-ticker]')
   if (!element || reducedMotion() || motionOff()) return
+  const profile = motionProfile()
+  const scrambleDuration = Math.round(900 * profile.duration)
   let index = 0
   tickerTimer = window.setInterval(() => {
     index = (index + 1) % TICKER_PHRASES.length
@@ -107,15 +110,15 @@ function startTicker(hero: HTMLElement) {
         innerHTML: scrambleText({
           text: TICKER_PHRASES[index],
           chars: 'a-z0-9!?',
-          perturbation: 8
+          perturbation: profile.expressive ? 6 : 8
         }),
-        duration: 900,
+        duration: scrambleDuration,
         ease: 'linear'
       })
     } catch {
       element.textContent = TICKER_PHRASES[index]
     }
-  }, 3600)
+  }, 3600 + scrambleDuration)
 }
 
 /** Put an element back into its stylesheet state (used by the safety net). */
@@ -183,6 +186,7 @@ function teardown() {
  * an animation API partway through. Anything already on screen is restored.
  */
 function armVisibilityFallback() {
+  // Expressive entrances are deliberately longer, so the rescue net waits too.
   window.setTimeout(() => {
     document
       .querySelectorAll<HTMLElement>('[data-motion-target]')
@@ -193,7 +197,7 @@ function armVisibilityFallback() {
           restoreElement(element)
         }
       })
-  }, 2600)
+  }, Math.round(2600 * motionProfile().duration))
 }
 
 /** Draw-in helper that also handles browsers without a path length. */
@@ -219,6 +223,12 @@ function mark(...elements: Array<HTMLElement | null>) {
  * choreographed timeline instead of scattered effects.
  */
 function animateHero(hero: HTMLElement) {
+  const profile = motionProfile()
+  // Expressive mode gets slower, longer travel — standard keeps today's pace.
+  const D = (value: number) => Math.round(value * profile.duration)
+  const T = (value: number) => Math.round(value * profile.delay)
+  const V = (value: number) => Math.round(value * profile.travel)
+
   const chip = hero.querySelector<HTMLElement>('.hero-chip')
   const chipText = hero.querySelector<HTMLElement>('.hero-chip-text')
   const lines = Array.from(hero.querySelectorAll<HTMLElement>('.hero-line'))
@@ -228,6 +238,7 @@ function animateHero(hero: HTMLElement) {
   const meta = hero.querySelector<HTMLElement>('.hero-meta')
   const stats = Array.from(hero.querySelectorAll<HTMLElement>('.hero-stat'))
   const art = hero.querySelector<HTMLElement>('.hero-art')
+  const figure = hero.querySelector<HTMLElement>('.hero-figure')
   const badge = hero.querySelector<HTMLElement>('.hero-badge')
   const search = hero.querySelector<HTMLElement>('.hero-search')
   const shapes = Array.from(hero.querySelectorAll<HTMLElement>('[data-hero-shape]'))
@@ -255,7 +266,7 @@ function animateHero(hero: HTMLElement) {
       splitters.push(splitter)
       words = splitter.words as HTMLElement[]
       utils.set(subtitle, { opacity: 1 })
-      utils.set(words, { opacity: 0, y: '0.6em', scale: 0.94 })
+      utils.set(words, { opacity: 0, y: `${0.6 * profile.travel}em`, scale: 0.94 })
     } catch {
       subtitle.style.opacity = '1'
     }
@@ -272,15 +283,27 @@ function animateHero(hero: HTMLElement) {
   if (chip) {
     timeline.add(
       chip,
-      { opacity: [0, 1], y: [16, 0], scale: [0.9, 1], duration: 640, ease: 'outBack(1.7)' },
+      {
+        opacity: [0, 1],
+        y: [V(16), 0],
+        scale: [0.9, 1],
+        duration: D(640),
+        ease: 'outBack(1.7)'
+      },
       0
     )
   }
   if (lines[0]) {
     timeline.add(
       lines[0],
-      { opacity: [0, 1], y: [40, 0], scale: [0.96, 1], duration: 920, ease: 'outExpo' },
-      90
+      {
+        opacity: [0, 1],
+        y: [V(40), 0],
+        scale: [0.96, 1],
+        duration: D(920),
+        ease: 'outExpo'
+      },
+      T(90)
     )
   }
   if (words.length) {
@@ -288,48 +311,48 @@ function animateHero(hero: HTMLElement) {
       words,
       {
         opacity: [0, 1],
-        y: ['0.6em', 0],
+        y: [`${0.6 * profile.travel}em`, 0],
         scale: [0.94, 1],
-        duration: 760,
-        delay: stagger(26)
+        duration: D(760),
+        delay: stagger(Math.round(26 * profile.delay))
       },
-      300
+      T(300)
     )
   }
   if (lead) {
-    timeline.add(lead, { opacity: [0, 1], y: [20, 0], duration: 760 }, 460)
+    timeline.add(lead, { opacity: [0, 1], y: [V(20), 0], duration: D(760) }, T(460))
   }
   if (actions.length) {
     timeline.add(
       actions,
       {
         opacity: [0, 1],
-        y: [18, 0],
+        y: [V(18), 0],
         scale: [0.92, 1],
-        duration: 720,
-        delay: stagger(80),
+        duration: D(720),
+        delay: stagger(Math.round(80 * profile.delay)),
         ease: 'outBack(1.5)',
         onComplete: () => releaseTransforms(actions)
       },
-      520
+      T(520)
     )
   }
   if (meta) {
-    timeline.add(meta, { opacity: [0, 1], y: [12, 0], duration: 620 }, 640)
+    timeline.add(meta, { opacity: [0, 1], y: [V(12), 0], duration: D(620) }, T(640))
   }
   if (art) {
     timeline.add(
       art,
       {
         opacity: [0, 1],
-        y: [44, 0],
+        y: [V(44), 0],
         scale: [0.9, 1],
-        rotate: [-3.5, 0],
-        duration: 1180,
+        rotate: [-3.5 * profile.travel, 0],
+        duration: D(1180),
         ease: 'outBack(1.25)',
         onComplete: () => releaseTransforms([art])
       },
-      160
+      T(160)
     )
   }
   if (shapes.length) {
@@ -339,26 +362,39 @@ function animateHero(hero: HTMLElement) {
         opacity: [0, 1],
         scale: [0.6, 1],
         rotate: [-18, 0],
-        duration: 1000,
-        delay: stagger(120),
+        duration: D(1000),
+        delay: stagger(Math.round(120 * profile.delay)),
         ease: 'outBack(1.5)',
         onComplete: () => releaseTransforms(shapes)
       },
-      120
+      T(120)
     )
   }
   if (badge) {
     timeline.add(
       badge,
-      { opacity: [0, 1], y: [14, 0], scale: [0.9, 1], duration: 700, ease: 'outBack(1.6)' },
-      760
+      {
+        opacity: [0, 1],
+        y: [V(14), 0],
+        scale: [0.9, 1],
+        duration: D(700),
+        ease: 'outBack(1.6)'
+      },
+      T(760)
     )
   }
   if (stats.length) {
     timeline.add(
       stats,
-      { opacity: [0, 1], y: [18, 0], duration: 640, delay: stagger(70) },
-      720
+      {
+        opacity: [0, 1],
+        y: [V(18), 0],
+        scale: [0.97, 1],
+        duration: D(640),
+        delay: stagger(Math.round(70 * profile.delay)),
+        onComplete: () => releaseTransforms(stats)
+      },
+      T(720)
     )
   }
   if (search) {
@@ -366,12 +402,12 @@ function animateHero(hero: HTMLElement) {
       search,
       {
         opacity: [0, 1],
-        y: [26, 0],
+        y: [V(26), 0],
         scale: [0.97, 1],
-        duration: 900,
+        duration: D(900),
         onComplete: () => releaseTransforms([search])
       },
-      860
+      T(860)
     )
   }
 
@@ -384,8 +420,8 @@ function animateHero(hero: HTMLElement) {
           cursor: true,
           perturbation: 10
         }),
-        duration: 1100,
-        delay: 180,
+        duration: D(1100),
+        delay: T(180),
         ease: 'linear'
       })
     } catch {
@@ -401,8 +437,8 @@ function animateHero(hero: HTMLElement) {
     element.textContent = '0'
     animate(counter, {
       value,
-      duration: 1500,
-      delay: 780,
+      duration: D(1500),
+      delay: T(780),
       ease: 'outExpo',
       onUpdate: () => {
         element.textContent = String(Math.round(counter.value))
@@ -422,20 +458,37 @@ function animateHero(hero: HTMLElement) {
           '58% 42% 38% 62% / 55% 39% 61% 45%',
           '42% 58% 63% 37% / 41% 44% 56% 59%'
         ],
-        duration: 9000 + index * 1600,
+        duration: Math.round(
+          (9000 + index * 1600) * (profile.expressive ? 1.7 : 1)
+        ),
         loop: true,
         ease: 'inOutSine',
-        delay: 900 + index * 220
+        delay: T(900 + index * 220)
       })
       animate(shape, {
         rotate: index % 2 === 0 ? [0, 24] : [0, -20],
-        scale: [1, 1.04],
-        duration: 6400 + index * 900,
+        scale: [1, profile.expressive ? 1.06 : 1.04],
+        duration: Math.round(
+          (6400 + index * 900) * (profile.expressive ? 1.7 : 1)
+        ),
         loop: true,
         alternate: true,
         ease: 'inOutSine',
-        delay: 1000 + index * 260
+        delay: T(1000 + index * 260)
       })
+      if (profile.expressive) {
+        // Extra layer: the blobs drift up and down like slow lava. The
+        // draggable blob owns its own translate, so it is left alone.
+        if (shape.classList.contains('hero-shape-a')) return
+        animate(shape, {
+          y: [-(6 + index * 5), 6 + index * 5],
+          duration: Math.round((5200 + index * 900) * profile.duration),
+          loop: true,
+          alternate: true,
+          ease: 'inOutSine',
+          delay: T(1800 + index * 300)
+        })
+      }
     } catch {
       /* ambient motion is a bonus */
     }
@@ -444,7 +497,7 @@ function animateHero(hero: HTMLElement) {
   // Scroll-linked drift on the art panel, without fighting the entrance.
   if (art) {
     animate(art, {
-      y: ['0%', '7%'],
+      y: ['0%', profile.expressive ? '11%' : '7%'],
       ease: 'linear',
       autoplay: onScroll({
         target: hero,
@@ -453,6 +506,42 @@ function animateHero(hero: HTMLElement) {
         sync: 0.35
       })
     })
+  }
+
+  // Expressive gets a second, quieter layer of ambient motion on the art.
+  if (profile.expressive && figure) {
+    try {
+      animate(figure, {
+        scale: [1, 1.035],
+        duration: 9600,
+        loop: true,
+        alternate: true,
+        ease: 'inOutSine',
+        delay: 2400
+      })
+      if (badge) {
+        animate(badge, {
+          y: [-4, 4],
+          rotate: [-1.4, 1.4],
+          duration: 5600,
+          loop: true,
+          alternate: true,
+          ease: 'inOutSine',
+          delay: 2600
+        })
+      }
+      if (search) {
+        // A single soft settle after the entrance, not a loop.
+        animate(search, {
+          scale: [1, 1.008, 1],
+          duration: 1200,
+          delay: 2800,
+          ease: 'inOutQuad'
+        })
+      }
+    } catch {
+      /* ambient motion is a bonus */
+    }
   }
 
   // Expressive: one draggable shape on precise pointers.
@@ -479,6 +568,10 @@ const motionLevelPlayful = () =>
 
 /** Reveal direct children of the markdown body as they enter the viewport. */
 function revealContent(hero: HTMLElement | null) {
+  const profile = motionProfile()
+  const duration = Math.round(780 * profile.duration)
+  const travel = Math.round(18 * profile.travel)
+
   const candidates = Array.from(
     document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR)
   ).filter((element) => !hero?.contains(element) && !element.dataset.motionSeen)
@@ -498,23 +591,30 @@ function revealContent(hero: HTMLElement | null) {
   })
 
   if (inView.length) {
-    utils.set(inView, { opacity: 0, y: 18 })
+    utils.set(inView, {
+      opacity: 0,
+      y: travel,
+      scale: profile.expressive ? 0.985 : 1
+    })
     animate(inView, {
       opacity: 1,
       y: 0,
-      duration: 780,
-      delay: stagger(48, { start: 80 }),
+      scale: 1,
+      duration,
+      delay: stagger(Math.round(48 * profile.delay), {
+        start: Math.round(80 * profile.delay)
+      }),
       ease: 'outQuint',
       onComplete: () => releaseTransforms(inView)
     })
   }
 
   below.forEach((element) => {
-    utils.set(element, { opacity: 0, y: 24 })
+    utils.set(element, { opacity: 0, y: Math.round(24 * profile.travel) })
     animate(element, {
       opacity: 1,
       y: 0,
-      duration: 780,
+      duration,
       ease: 'outQuint',
       onComplete: () => releaseTransforms([element]),
       autoplay: onScroll({
@@ -554,12 +654,13 @@ function watchLateContent() {
       element.dataset.motionSeen = 'true'
       element.dataset.motionTarget = 'true'
     })
-    utils.set(fresh, { opacity: 0, y: 18 })
+    const profile = motionProfile()
+    utils.set(fresh, { opacity: 0, y: Math.round(18 * profile.travel) })
     animate(fresh, {
       opacity: 1,
       y: 0,
-      duration: 700,
-      delay: stagger(40),
+      duration: Math.round(700 * profile.duration),
+      delay: stagger(Math.round(40 * profile.delay)),
       ease: 'outQuint',
       onComplete: () => releaseTransforms(fresh)
     })
@@ -650,12 +751,14 @@ export function installMotion(router?: Router) {
     }
     if (next.pathname === window.location.pathname) return
 
+    const profile = motionProfile()
     const from = window.location.pathname
     routeAnimation?.revert()
     routeAnimation = animate('.vp-doc', {
       opacity: [1, 0],
-      y: [0, -8],
-      duration: 190,
+      y: [0, -8 * profile.travel],
+      scale: profile.expressive ? [1, 0.985] : 1,
+      duration: Math.round(190 * profile.duration),
       ease: 'inQuad'
     })
     await routeAnimation.then()
@@ -673,7 +776,29 @@ export function installMotion(router?: Router) {
 
   router.onAfterRouteChanged = () => {
     window.requestAnimationFrame(() =>
-      window.requestAnimationFrame(runPageMotion)
+      window.requestAnimationFrame(() => {
+        runPageMotion()
+        const profile = motionProfile()
+        if (!profile.expressive || reducedMotion()) return
+        const shell =
+          document.querySelector<HTMLElement>('#VPContent') ??
+          document.querySelector<HTMLElement>('.VPContent')
+        if (!shell) return
+        try {
+          animate(shell, {
+            opacity: [0.4, 1],
+            y: [12, 0],
+            duration: 560,
+            ease: 'outQuint',
+            onComplete: () => {
+              shell.style.removeProperty('opacity')
+              shell.style.removeProperty('translate')
+            }
+          })
+        } catch {
+          /* the entrance is decoration only */
+        }
+      })
     )
   }
 }

@@ -186,6 +186,20 @@
   scroll-padding-top: calc(var(--vp-nav-height) + 28px);
 }
 
+/* Motion levels scale every CSS transition in the system. Expressive is
+   deliberately unhurried; standard tightens it up. */
+html[data-motion='playful'] {
+  --md-duration-short: 240ms;
+  --md-duration-medium: 440ms;
+  --md-duration-long: 760ms;
+}
+
+html[data-motion='calm'] {
+  --md-duration-short: 150ms;
+  --md-duration-medium: 260ms;
+  --md-duration-long: 420ms;
+}
+
 /* Dynamic colour seeds ----------------------------------------------------- */
 
 html[data-accent='cobalt'] {

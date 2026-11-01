@@ -18,7 +18,7 @@ import {
   type PaperId
 } from '../customize'
 import { animate, stagger } from 'animejs'
-import { motionLevel, pop } from '../effects'
+import { motionLevel, motionProfile, pop } from '../effects'
 import SearchDock from './SearchDock.vue'
 
 type Tab = 'style' | 'find' | 'keys'
@@ -117,23 +117,43 @@ watch(open, async (value) => {
   await nextTick()
   if (!panel.value) return
   if (motionLevel() === 'off') return
+  const profile = motionProfile()
+  const D = (value: number) => Math.round(value * profile.duration)
+  const T = (value: number) => Math.round(value * profile.delay)
+
   if (scrim.value) {
-    animate(scrim.value, { opacity: [0, 1], duration: 300, ease: 'outQuad' })
+    animate(scrim.value, { opacity: [0, 1], duration: D(300), ease: 'outQuad' })
   }
   animate(panel.value, {
     opacity: [0, 1],
-    y: [48, 0],
+    y: [Math.round(48 * profile.travel), 0],
     scale: [0.94, 1],
-    duration: 560,
+    duration: D(560),
     ease: 'outBack(1.35)'
   })
   animate(panel.value.querySelectorAll('.pg-section'), {
     opacity: [0, 1],
-    y: [14, 0],
-    duration: 420,
-    delay: stagger(48, { start: 120 }),
+    y: [Math.round(14 * profile.travel), 0],
+    duration: D(420),
+    delay: stagger(Math.round(48 * profile.delay), { start: T(120) }),
     ease: 'outQuint'
   })
+  if (profile.expressive) {
+    animate(panel.value.querySelectorAll('.pg-tabs button'), {
+      opacity: [0, 1],
+      y: [-8, 0],
+      duration: 420,
+      delay: stagger(60, { start: 120 }),
+      ease: 'outQuint'
+    })
+    animate(panel.value.querySelectorAll('.pg-swatch'), {
+      scale: [0.6, 1],
+      rotate: [-12, 0],
+      duration: 620,
+      delay: stagger(45, { start: 260 }),
+      ease: 'outBack(1.8)'
+    })
+  }
 })
 
 onMounted(() => {
