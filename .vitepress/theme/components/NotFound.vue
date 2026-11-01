@@ -59,11 +59,7 @@ function openSearch() {
 .nf-code {
   font-size: 4rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--flessan-accent-ink), color-mix(in srgb, var(--flessan-accent-ink) 45%, #6aa9cc));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: var(--flessan-accent-ink);
   margin: 0;
   line-height: 1;
 }

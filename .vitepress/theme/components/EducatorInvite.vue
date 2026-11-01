@@ -48,9 +48,9 @@ async function copyInvitation() {
   padding: clamp(1.1rem, 3vw, 1.6rem);
   border: 1px solid var(--flessan-card-border);
   border-radius: 1rem;
-  background:
-    linear-gradient(150deg, color-mix(in srgb, var(--vp-c-brand-soft) 55%, transparent), transparent 65%),
-    var(--vp-c-bg-alt);
+  border-width: 2px;
+  border-color: var(--fl-ink);
+  background: var(--vp-c-bg-alt);
   box-shadow: var(--flessan-shadow-sm);
 }
 .eyebrow {

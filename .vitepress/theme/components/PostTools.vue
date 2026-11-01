@@ -103,8 +103,9 @@ onUnmounted(() => {
   display: block;
   height: 100%;
   border-radius: 0 2px 2px 0;
-  background: linear-gradient(90deg, var(--flessan-accent-ink), color-mix(in srgb, var(--flessan-accent-ink) 45%, #6aa9cc));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--flessan-accent-ink) 45%, transparent);
+  background: var(--flessan-accent-fill);
+  border-right: 2px solid var(--fl-ink);
+  box-shadow: none;
   transition: width 120ms linear;
 }
 .share-actions {

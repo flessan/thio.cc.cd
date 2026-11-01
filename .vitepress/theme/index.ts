@@ -18,6 +18,8 @@ import LinkPreview from './components/LinkPreview.vue'
 import NotFound from './components/NotFound.vue'
 import BackToTop from './components/BackToTop.vue'
 import HomeHero from './components/HomeHero.vue'
+import Playground from './components/Playground.vue'
+import ReadingProgress from './components/ReadingProgress.vue'
 import { installLightbox } from './lightbox'
 import BlogCover from './components/BlogCover.vue'
 import BlogPost from './components/BlogPost.vue'
@@ -113,7 +115,7 @@ export default {
     return h(DefaultTheme.Layout, null, {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
       'not-found': () => h(NotFound),
-      'layout-bottom': () => h(BackToTop)
+      'layout-bottom': () => [h(ReadingProgress), h(BackToTop), h(Playground)]
     })
   },
   enhanceApp({ app, router }) {

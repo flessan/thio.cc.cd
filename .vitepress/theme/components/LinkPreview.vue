@@ -69,7 +69,7 @@ onMounted(async () => {
   border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
   padding: 10px 12px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-soft) 45%, transparent), transparent 60%);
+  background: var(--vp-c-bg-alt); border-width: 2px; border-color: var(--fl-ink);
   text-decoration: none;
   transition:
     border-color 220ms ease,

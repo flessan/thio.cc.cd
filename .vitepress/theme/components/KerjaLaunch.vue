@@ -24,9 +24,9 @@
   padding: 20px;
   border: 1px solid var(--flessan-card-border);
   border-radius: 18px;
-  background:
-    linear-gradient(120deg, color-mix(in srgb, var(--vp-c-brand-soft) 62%, transparent), transparent 62%),
-    var(--vp-c-bg-soft);
+  border-width: 2px;
+  border-color: var(--fl-ink);
+  background: var(--vp-c-bg-soft);
   color: var(--vp-c-text-1);
   text-decoration: none;
   box-shadow: var(--flessan-shadow-sm);

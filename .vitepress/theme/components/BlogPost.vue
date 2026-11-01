@@ -65,9 +65,8 @@ img {
   justify-content: center;
   box-sizing: border-box;
   padding: 1.25rem;
-  background:
-    linear-gradient(160deg, color-mix(in srgb, var(--flessan-accent-ink) 14%, transparent), transparent 70%),
-    var(--vp-c-brand-soft);
+  border: 2px solid var(--fl-ink);
+  background: color-mix(in srgb, var(--fl-accent) 26%, var(--vp-c-bg));
   color: var(--flessan-accent-ink);
   text-align: center;
   font-size: 0.78rem;

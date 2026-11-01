@@ -203,8 +203,8 @@ watch(selectedCategory, async () => {
 
 <style scoped>
 .blog-archive { --archive-border: var(--vp-c-divider); --archive-panel: var(--vp-c-bg-alt); margin: 0 auto; width: 100%; max-width: 100%; }
-.archive-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(13rem, 0.72fr); gap: clamp(1rem, 3vw, 2.4rem); align-items: stretch; margin: 0 0 3rem; padding: clamp(1.15rem, 3vw, 2rem); overflow: hidden; border: 1px solid var(--flessan-card-border); border-radius: 1.35rem; background: linear-gradient(135deg, color-mix(in srgb, var(--vp-c-brand-soft) 55%, var(--archive-panel)), var(--archive-panel) 58%); box-shadow: var(--flessan-shadow-sm); }
-.archive-hero::before { content: ''; position: absolute; top: -6rem; right: -4rem; width: 18rem; height: 18rem; border-radius: 50%; background: radial-gradient(circle, var(--flessan-halo-a), transparent 68%); pointer-events: none; }
+.archive-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(13rem, 0.72fr); gap: clamp(1rem, 3vw, 2.4rem); align-items: stretch; margin: 0 0 3rem; padding: clamp(1.15rem, 3vw, 2rem); overflow: hidden; border: 1px solid var(--flessan-card-border); border-radius: 1.35rem; background: var(--archive-panel); border-width: 2px; border-color: var(--fl-ink); box-shadow: var(--flessan-shadow-md); }
+.archive-hero::before { content: ''; position: absolute; top: -5rem; right: -3.5rem; width: 14rem; height: 14rem; border: 2px solid var(--fl-ink); border-radius: 50%; background: color-mix(in srgb, var(--fl-accent) 42%, var(--archive-panel)); pointer-events: none; }
 .hero-copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-width: 0; padding: 0.4rem 0; }
 .eyebrow { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.8rem; color: var(--vp-c-brand-1); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.12em; line-height: 1.4; }
 .eyebrow-dot, .note-status span { display: inline-block; width: 0.48rem; height: 0.48rem; border-radius: 50%; background: var(--vp-c-brand-1); }
@@ -222,7 +222,7 @@ watch(selectedCategory, async () => {
 .note-topline { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.55rem; color: var(--vp-c-text-3); font-size: 0.65rem; font-weight: 750; letter-spacing: 0.08em; }
 .note-status { display: inline-flex; align-items: center; gap: 0.35rem; }
 .note-status span { width: 0.38rem; height: 0.38rem; }
-.note-number { margin: 1.15rem 0 0; background: linear-gradient(150deg, var(--vp-c-text-1), color-mix(in srgb, var(--vp-c-text-1) 55%, var(--flessan-accent-ink))); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-size: clamp(3.5rem, 7vw, 5.6rem); font-weight: 800; letter-spacing: -0.075em; line-height: 1; font-variant-numeric: tabular-nums; }
+.note-number { margin: 1.15rem 0 0; color: var(--vp-c-text-1); font-size: clamp(3.5rem, 7vw, 5.6rem); font-weight: 800; letter-spacing: -0.075em; line-height: 1; font-variant-numeric: tabular-nums; }
 .note-caption { margin: 0.25rem 0 0; color: var(--vp-c-text-2); font-size: 0.88rem; }
 .note-divider { height: 1px; margin: 1.15rem 0; background: var(--archive-border); }
 .note-copy { margin: 0; color: var(--vp-c-text-2); font-size: 0.9rem; line-height: 1.7; }

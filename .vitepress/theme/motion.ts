@@ -27,6 +27,7 @@ import {
   type Scope
 } from 'animejs'
 import type { Router } from 'vitepress'
+import { whenHydrated } from './hydration'
 
 const REVEAL_SELECTOR = [
   '.vp-doc > div > h1',
@@ -64,6 +65,9 @@ const INTRO_SELECTORS = [
   '.hero-support',
   '.hero-stat',
   '.hero-frame',
+  '.hero-clock',
+  '.hero-ticker',
+  '.hero-search',
   '[data-hero-sticker]'
 ].join(',')
 
@@ -72,11 +76,48 @@ let mutationObserver: MutationObserver | null = null
 let routeAnimation: JSAnimation | null = null
 let routeGuard: number | undefined
 let splitters: Array<{ revert: () => void }> = []
+let tickerTimer: number | undefined
 let installed = false
 
 const reducedMotion = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/** "Still" from the playground turns the whole layer off. */
+const motionOff = () =>
+  typeof document !== 'undefined' &&
+  document.documentElement.dataset.motion === 'off'
+
+const TICKER_PHRASES = [
+  'shipping small, useful tools',
+  'reading other people\u2019s source code',
+  'tuning the GDIPS server',
+  'making the web a little calmer',
+  'probably writing a build script'
+]
+
+/** Rotate the hero "right now" line with a scramble, anime.js style. */
+function startTicker(hero: HTMLElement) {
+  const element = hero.querySelector<HTMLElement>('[data-ticker]')
+  if (!element || reducedMotion() || motionOff()) return
+  let index = 0
+  tickerTimer = window.setInterval(() => {
+    index = (index + 1) % TICKER_PHRASES.length
+    try {
+      animate(element, {
+        innerHTML: scrambleText({
+          text: TICKER_PHRASES[index],
+          chars: 'a-z0-9!?',
+          perturbation: 8
+        }),
+        duration: 900,
+        ease: 'linear'
+      })
+    } catch {
+      element.textContent = TICKER_PHRASES[index]
+    }
+  }, 3600)
+}
 
 /** Put an element back into its stylesheet state (used by the safety net). */
 function restoreElement(element: HTMLElement) {
@@ -109,6 +150,10 @@ function teardown() {
   if (routeGuard) {
     window.clearTimeout(routeGuard)
     routeGuard = undefined
+  }
+  if (tickerTimer) {
+    window.clearInterval(tickerTimer)
+    tickerTimer = undefined
   }
   try {
     routeAnimation?.revert()
@@ -187,13 +232,19 @@ function animateHero(hero: HTMLElement) {
   const stats = Array.from(hero.querySelectorAll<HTMLElement>('.hero-stat'))
   const frame = hero.querySelector<HTMLElement>('.hero-frame')
   const sticker = hero.querySelector<HTMLElement>('[data-hero-sticker]')
+  const clock = hero.querySelector<HTMLElement>('.hero-clock')
+  const ticker = hero.querySelector<HTMLElement>('.hero-ticker')
+  const dock = hero.querySelector<HTMLElement>('.hero-search')
 
   const introTargets = [
     eyebrow,
+    clock,
     ...lines,
     lead,
     ...actions,
     ...stats,
+    ticker,
+    dock,
     frame,
     sticker
   ].filter((element): element is HTMLElement => Boolean(element))
@@ -219,6 +270,13 @@ function animateHero(hero: HTMLElement) {
 
   if (eyebrow) {
     timeline.add(eyebrow, { opacity: [0, 1], y: [10, 0], duration: 620 }, 0)
+  }
+  if (clock) {
+    timeline.add(
+      clock,
+      { opacity: [0, 1], y: [10, 0], rotate: [-4, 0], duration: 620 },
+      120
+    )
   }
   if (lines[0]) {
     timeline.add(lines[0], { opacity: [0, 1], y: [26, 0], duration: 900 }, 90)
@@ -266,11 +324,27 @@ function animateHero(hero: HTMLElement) {
       {
         opacity: [0, 1],
         y: [26, 0],
-        rotate: [-1.6, -0.6],
+        rotate: [-3.4, -1.6],
         duration: 1100,
         onComplete: () => releaseTransforms([frame])
       },
       220
+    )
+  }
+  if (ticker) {
+    timeline.add(ticker, { opacity: [0, 1], y: [10, 0], duration: 620 }, 980)
+  }
+  if (dock) {
+    timeline.add(
+      dock,
+      {
+        opacity: [0, 1],
+        y: [22, 0],
+        scale: [0.985, 1],
+        duration: 900,
+        onComplete: () => releaseTransforms([dock])
+      },
+      1040
     )
   }
 
@@ -463,7 +537,7 @@ function watchLateContent() {
 function runPageMotion() {
   teardown()
 
-  if (reducedMotion()) {
+  if (reducedMotion() || motionOff()) {
     showEverything()
     return
   }
@@ -475,6 +549,7 @@ function runPageMotion() {
     if (hero) {
       try {
         animateHero(hero)
+        startTicker(hero)
       } catch {
         hero
           .querySelectorAll<HTMLElement>(INTRO_SELECTORS)
@@ -495,8 +570,14 @@ export function installMotion(router?: Router) {
   if (typeof window === 'undefined' || installed) return
   installed = true
 
+  // Wait for hydration before touching the server-rendered DOM, otherwise Vue
+  // reports a hydration mismatch on the hero.
   const start = () =>
-    window.requestAnimationFrame(() => window.requestAnimationFrame(runPageMotion))
+    whenHydrated(() =>
+      window.requestAnimationFrame(() =>
+        window.requestAnimationFrame(runPageMotion)
+      )
+    )
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true })
   } else {
@@ -511,6 +592,15 @@ export function installMotion(router?: Router) {
     } else {
       runPageMotion()
     }
+  })
+
+  // The playground can switch motion between playful / calm / still.
+  let lastMotion = document.documentElement.dataset.motion ?? 'playful'
+  window.addEventListener('flessan:settings', () => {
+    const next = document.documentElement.dataset.motion ?? 'playful'
+    if (next === lastMotion) return
+    lastMotion = next
+    runPageMotion()
   })
 
   if (!router) return

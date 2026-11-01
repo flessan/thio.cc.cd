@@ -16,7 +16,7 @@
  */
 
 /* ==========================================================================
-   1. Design tokens — light
+   1. Design tokens — light ("sunlit paper")
    ========================================================================== */
 
 :root {
@@ -28,40 +28,50 @@
   --vp-font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular,
     'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
-  /* Surfaces */
-  --vp-c-bg: #f8faf7;
-  --vp-c-bg-alt: #f1f6f0;
-  --vp-c-bg-soft: #e9f1e9;
+  /* Playful primitives ---------------------------------------------------- */
+  --fl-ink: #1e1a14;
+  --fl-paper: #fff9ec;
+  --fl-paper-tint: #fff3d8;
+  --fl-dot: #ead9b4;
+  --fl-shadow: #1e1a14;
+  --fl-tape: #ffe066;
+
+  /* Accent: sunbeam by default. `--fl-accent` is a solid fill, `--fl-accent-ink`
+     is the same hue toned for text on paper, `--fl-on-accent` is text on fill. */
+  --fl-accent: #ffc93c;
+  --fl-accent-strong: #f7b800;
+  --fl-accent-soft: color-mix(in srgb, var(--fl-accent) 32%, transparent);
+  --fl-accent-ink: #7a4b00;
+  --fl-on-accent: #241a00;
+
+  /* VitePress surfaces ---------------------------------------------------- */
+  --vp-c-bg: var(--fl-paper);
+  --vp-c-bg-alt: var(--fl-paper-tint);
+  --vp-c-bg-soft: #ffedbf;
   --vp-c-bg-elv: #ffffff;
-  --vp-c-bg-mute: #e9f1e9;
+  --vp-c-bg-mute: #ffedbf;
 
-  /* Text */
-  --vp-c-text-1: #13221a;
-  --vp-c-text-2: #41554a;
-  --vp-c-text-3: #596b5f;
+  /* VitePress text -------------------------------------------------------- */
+  --vp-c-text-1: var(--fl-ink);
+  --vp-c-text-2: #4b4237;
+  --vp-c-text-3: #6f6455;
 
-  /* Lines */
-  --vp-c-divider: #dbe6dc;
-  --vp-c-border: #cfdccf;
-  --vp-c-gutter: #f1f5f0;
+  /* VitePress lines ------------------------------------------------------- */
+  --vp-c-divider: #e7d8b6;
+  --vp-c-border: #d6c4a0;
+  --vp-c-gutter: #fff6e2;
 
-  /* Brand scale: 1 = text, 2 = hovered text, 3 = solid fill */
-  --vp-c-brand-1: #1b6640;
-  --vp-c-brand-2: #164f31;
-  --vp-c-brand-3: #1b6640;
-  --vp-c-brand-soft: rgba(27, 102, 64, 0.1);
+  /* Brand scale ----------------------------------------------------------- */
+  --vp-c-brand-1: var(--fl-accent-ink);
+  --vp-c-brand-2: color-mix(in srgb, var(--fl-accent-ink) 82%, #000);
+  --vp-c-brand-3: var(--fl-accent);
+  --vp-c-brand-soft: var(--fl-accent-soft);
 
-  /* Default / neutral scale */
-  --vp-c-default-1: var(--vp-c-gray-1);
-  --vp-c-default-2: var(--vp-c-gray-2);
-  --vp-c-default-3: var(--vp-c-gray-3);
-  --vp-c-default-soft: var(--vp-c-gray-soft);
-
-  /* Status colours */
-  --vp-c-tip-1: var(--vp-c-brand-1);
-  --vp-c-tip-2: var(--vp-c-brand-2);
-  --vp-c-tip-3: var(--vp-c-brand-3);
-  --vp-c-tip-soft: var(--vp-c-brand-soft);
+  /* Status colours -------------------------------------------------------- */
+  --vp-c-tip-1: var(--fl-accent-ink);
+  --vp-c-tip-2: color-mix(in srgb, var(--fl-accent-ink) 82%, #000);
+  --vp-c-tip-3: var(--fl-accent);
+  --vp-c-tip-soft: var(--fl-accent-soft);
 
   --vp-c-warning-1: var(--vp-c-yellow-1);
   --vp-c-warning-2: var(--vp-c-yellow-2);
@@ -73,33 +83,31 @@
   --vp-c-danger-3: var(--vp-c-red-3);
   --vp-c-danger-soft: var(--vp-c-red-soft);
 
-  /* Flessan semantic tokens */
-  --flessan-accent-fill: #1b6640;
-  --flessan-accent-fill-hover: #14502f;
-  --flessan-accent-fill-active: #103f26;
-  --flessan-on-accent: #ffffff;
-  --flessan-accent-ink: #1a5f3c;
-  --flessan-accent-soft: rgba(27, 102, 64, 0.1);
-  --flessan-accent-line: rgba(27, 102, 64, 0.28);
+  /* Flessan semantic tokens ---------------------------------------------- */
+  --flessan-accent-fill: var(--fl-accent);
+  --flessan-accent-fill-hover: var(--fl-accent-strong);
+  --flessan-accent-fill-active: color-mix(in srgb, var(--fl-accent) 78%, #000);
+  --flessan-on-accent: var(--fl-on-accent);
+  --flessan-accent-ink: var(--fl-accent-ink);
+  --flessan-accent-soft: var(--fl-accent-soft);
+  --flessan-accent-line: color-mix(in srgb, var(--fl-accent-ink) 34%, transparent);
 
-  --flessan-halo-a: rgba(126, 189, 148, 0.32);
-  --flessan-halo-b: rgba(120, 174, 214, 0.22);
-  --flessan-halo-c: rgba(244, 214, 145, 0.18);
+  --flessan-card: #ffffff;
+  --flessan-card-border: var(--fl-ink);
+  --flessan-shadow-sm: 3px 3px 0 var(--fl-shadow);
+  --flessan-shadow-md: 5px 5px 0 var(--fl-shadow);
+  --flessan-shadow-lg: 8px 8px 0 var(--fl-shadow);
 
-  --flessan-card: rgba(255, 255, 255, 0.72);
-  --flessan-card-border: rgba(24, 58, 37, 0.11);
-  --flessan-shadow-sm: 0 1px 2px rgba(18, 42, 27, 0.05),
-    0 8px 22px -16px rgba(18, 42, 27, 0.35);
-  --flessan-shadow-md: 0 2px 4px rgba(18, 42, 27, 0.05),
-    0 18px 40px -22px rgba(18, 42, 27, 0.38);
-  --flessan-shadow-lg: 0 4px 10px rgba(18, 42, 27, 0.05),
-    0 34px 70px -32px rgba(18, 42, 27, 0.42);
-
-  /* Radii */
-  --flessan-radius-sm: 10px;
-  --flessan-radius-md: 14px;
-  --flessan-radius-lg: 20px;
-  --flessan-radius-xl: 28px;
+  /* Radii: adjustable from the playground. */
+  --flessan-radius-sm: var(--fl-r-sm, 10px);
+  --flessan-radius-md: var(--fl-r-md, 16px);
+  --flessan-radius-lg: var(--fl-r-lg, 22px);
+  --flessan-radius-xl: var(--fl-r-xl, 30px);
+  --fl-r-sm: 10px;
+  --fl-r-md: 16px;
+  --fl-r-lg: 22px;
+  --fl-r-xl: 30px;
+  --fl-border: 2px;
 
   /* Motion */
   --flessan-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -107,65 +115,193 @@
   --flessan-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Header */
-  --flessan-nav-glass: rgba(248, 250, 247, 0.82);
-  --flessan-nav-border: rgba(24, 58, 37, 0.12);
-  --flessan-nav-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 16px 44px -26px rgba(15, 38, 23, 0.55);
+  --flessan-nav-glass: var(--fl-paper);
+  --flessan-nav-border: var(--fl-ink);
+  --flessan-nav-shadow: 4px 4px 0 var(--fl-ink);
 
   scroll-padding-top: calc(var(--vp-nav-height) + 48px);
 }
 
+/* Paper tints ------------------------------------------------------------ */
+
+html[data-paper='snow'] {
+  --fl-paper: #f8f8f4;
+  --fl-paper-tint: #efefe7;
+  --fl-dot: #deded2;
+  --vp-c-bg-soft: #e8e8dd;
+  --vp-c-gutter: #f3f3ec;
+  --vp-c-divider: #e2e2d6;
+  --vp-c-border: #d0d0c2;
+}
+
+html[data-paper='peach'] {
+  --fl-paper: #fff5ee;
+  --fl-paper-tint: #ffe9db;
+  --fl-dot: #f0cdb7;
+  --vp-c-bg-soft: #ffe0cd;
+  --vp-c-gutter: #fff0e6;
+  --vp-c-divider: #f1d6c4;
+  --vp-c-border: #e3c1a9;
+}
+
+/* Corner presets --------------------------------------------------------- */
+
+html[data-corners='soft'] {
+  --fl-r-sm: 8px;
+  --fl-r-md: 12px;
+  --fl-r-lg: 16px;
+  --fl-r-xl: 20px;
+}
+
+html[data-corners='sharp'] {
+  --fl-r-sm: 3px;
+  --fl-r-md: 5px;
+  --fl-r-lg: 7px;
+  --fl-r-xl: 10px;
+}
+
+/* Accent presets (light) ------------------------------------------------- */
+
+html[data-accent='tangerine'] {
+  --fl-accent: #ff9a5c;
+  --fl-accent-strong: #ff8339;
+  --fl-accent-ink: #8a3a00;
+  --fl-on-accent: #2c1200;
+}
+
+html[data-accent='mint'] {
+  --fl-accent: #63dba2;
+  --fl-accent-strong: #43cf8f;
+  --fl-accent-ink: #0a5e3c;
+  --fl-on-accent: #062a1b;
+}
+
+html[data-accent='sky'] {
+  --fl-accent: #7fcaff;
+  --fl-accent-strong: #5cb9fb;
+  --fl-accent-ink: #0a5178;
+  --fl-on-accent: #062637;
+}
+
+html[data-accent='bubblegum'] {
+  --fl-accent: #ffa3cf;
+  --fl-accent-strong: #ff85bf;
+  --fl-accent-ink: #961d54;
+  --fl-on-accent: #3a0a1f;
+}
+
+html[data-accent='lilac'] {
+  --fl-accent: #c4a8ff;
+  --fl-accent-strong: #b18bff;
+  --fl-accent-ink: #4f2a9e;
+  --fl-on-accent: #1f0f3d;
+}
+
 /* ==========================================================================
-   2. Design tokens — dark
+   2. Design tokens — dark ("midnight arcade")
    ========================================================================== */
 
 .dark {
   color-scheme: dark;
 
-  --vp-c-bg: #0c1210;
-  --vp-c-bg-alt: #111a15;
-  --vp-c-bg-soft: #17231c;
-  --vp-c-bg-elv: #14201a;
-  --vp-c-bg-mute: #17231c;
+  --fl-ink: #fdf6e6;
+  --fl-paper: #171310;
+  --fl-paper-tint: #201a15;
+  --fl-dot: #34291f;
+  --fl-shadow: #000000;
+  --fl-tape: #ffd166;
 
-  --vp-c-text-1: #e9f2ec;
-  --vp-c-text-2: #b7c7bd;
-  --vp-c-text-3: #8fa397;
+  --fl-accent: #ffc93c;
+  --fl-accent-strong: #ffd76a;
+  --fl-accent-ink: #ffd76a;
+  --fl-on-accent: #241a00;
 
-  --vp-c-divider: #22332a;
-  --vp-c-border: #2a3d31;
-  --vp-c-gutter: #080d0b;
+  --vp-c-bg: var(--fl-paper);
+  --vp-c-bg-alt: var(--fl-paper-tint);
+  --vp-c-bg-soft: #2a221a;
+  --vp-c-bg-elv: #241d17;
+  --vp-c-bg-mute: #2a221a;
 
-  --vp-c-brand-1: #8fdeb0;
-  --vp-c-brand-2: #b4efcb;
-  --vp-c-brand-3: #2f8a58;
-  --vp-c-brand-soft: rgba(143, 222, 176, 0.13);
+  --vp-c-text-1: #fdf6e6;
+  --vp-c-text-2: #d8cbb8;
+  --vp-c-text-3: #a99a84;
 
-  --flessan-accent-fill: #a9e7c1;
-  --flessan-accent-fill-hover: #c0f2d3;
-  --flessan-accent-fill-active: #d3f7e0;
-  --flessan-on-accent: #082014;
-  --flessan-accent-ink: #8fdeb0;
-  --flessan-accent-soft: rgba(143, 222, 176, 0.13);
-  --flessan-accent-line: rgba(143, 222, 176, 0.34);
+  --vp-c-divider: #3a2f24;
+  --vp-c-border: #4a3d2f;
+  --vp-c-gutter: #120f0c;
 
-  --flessan-halo-a: rgba(64, 138, 91, 0.28);
-  --flessan-halo-b: rgba(48, 94, 128, 0.26);
-  --flessan-halo-c: rgba(150, 122, 58, 0.12);
+  --vp-c-brand-1: var(--fl-accent-ink);
+  --vp-c-brand-2: #fff0b8;
+  --vp-c-brand-3: var(--fl-accent);
+  --vp-c-brand-soft: var(--fl-accent-soft);
 
-  --flessan-card: rgba(20, 32, 26, 0.66);
-  --flessan-card-border: rgba(196, 233, 208, 0.1);
-  --flessan-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4),
-    0 10px 26px -18px rgba(0, 0, 0, 0.85);
-  --flessan-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45),
-    0 24px 50px -26px rgba(0, 0, 0, 0.9);
-  --flessan-shadow-lg: 0 6px 14px rgba(0, 0, 0, 0.45),
-    0 40px 80px -36px rgba(0, 0, 0, 0.95);
+  --flessan-accent-fill: var(--fl-accent);
+  --flessan-accent-fill-hover: var(--fl-accent-strong);
+  --flessan-accent-fill-active: #ffe08c;
+  --flessan-on-accent: var(--fl-on-accent);
+  --flessan-accent-ink: var(--fl-accent-ink);
+  --flessan-accent-soft: var(--fl-accent-soft);
+  --flessan-accent-line: color-mix(in srgb, var(--fl-accent) 55%, transparent);
 
-  --flessan-nav-glass: rgba(12, 18, 16, 0.8);
-  --flessan-nav-border: rgba(196, 233, 208, 0.12);
-  --flessan-nav-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-    0 18px 50px -30px rgba(0, 0, 0, 0.95);
+  --flessan-card: #241d17;
+  --flessan-card-border: #3a2f24;
+  --flessan-shadow-sm: 3px 3px 0 var(--fl-shadow);
+  --flessan-shadow-md: 5px 5px 0 var(--fl-shadow);
+  --flessan-shadow-lg: 8px 8px 0 var(--fl-shadow);
+
+  --flessan-nav-glass: var(--fl-paper);
+  --flessan-nav-border: #6a5a45;
+  --flessan-nav-shadow: 4px 4px 0 var(--fl-shadow);
+}
+
+html.dark[data-paper='snow'] {
+  --fl-paper: #14161a;
+  --fl-paper-tint: #1b1e24;
+  --fl-dot: #2c313a;
+  --vp-c-bg-soft: #232830;
+  --vp-c-gutter: #0f1115;
+  --vp-c-divider: #2c313a;
+  --vp-c-border: #3b424e;
+}
+
+html.dark[data-paper='peach'] {
+  --fl-paper: #1a1210;
+  --fl-paper-tint: #241916;
+  --fl-dot: #3a2823;
+  --vp-c-bg-soft: #2e201b;
+  --vp-c-gutter: #150e0c;
+  --vp-c-divider: #3a2823;
+  --vp-c-border: #4a342c;
+}
+
+html.dark[data-accent='tangerine'] {
+  --fl-accent: #ff9a5c;
+  --fl-accent-strong: #ffb07d;
+  --fl-accent-ink: #ffb98f;
+}
+
+html.dark[data-accent='mint'] {
+  --fl-accent: #63dba2;
+  --fl-accent-strong: #8ce8bc;
+  --fl-accent-ink: #8ce8bc;
+}
+
+html.dark[data-accent='sky'] {
+  --fl-accent: #7fcaff;
+  --fl-accent-strong: #a4daff;
+  --fl-accent-ink: #a4daff;
+}
+
+html.dark[data-accent='bubblegum'] {
+  --fl-accent: #ffa3cf;
+  --fl-accent-strong: #ffbedd;
+  --fl-accent-ink: #ffbedd;
+}
+
+html.dark[data-accent='lilac'] {
+  --fl-accent: #c4a8ff;
+  --fl-accent-strong: #d7c3ff;
+  --fl-accent-ink: #d7c3ff;
 }
 
 /* ==========================================================================
@@ -181,19 +317,22 @@ html {
 body {
   overflow-x: clip;
   background-color: var(--vp-c-bg);
-  background-image:
-    radial-gradient(52rem 32rem at 8% -12%, var(--flessan-halo-a), transparent 62%),
-    radial-gradient(44rem 28rem at 96% 2%, var(--flessan-halo-b), transparent 58%);
+  /* Flat dot paper. An inline SVG keeps this free of any gradient. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Ccircle cx='3' cy='3' r='1.6' fill='%23ead9b4'/%3E%3C/svg%3E");
   background-attachment: fixed;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
+.dark body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Ccircle cx='3' cy='3' r='1.6' fill='%2334291f'/%3E%3C/svg%3E");
+}
+
 ::selection {
-  background: color-mix(in srgb, var(--vp-c-brand-1) 26%, transparent);
-  color: var(--vp-c-text-1);
+  background: var(--fl-accent);
+  color: var(--fl-on-accent);
 }
 
 * {
@@ -251,70 +390,38 @@ body {
 
 .VPButton {
   position: relative;
-  overflow: hidden;
+  border: var(--fl-border) solid var(--fl-ink);
   border-radius: var(--flessan-radius-sm);
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: -0.01em;
+  box-shadow: var(--flessan-shadow-sm);
   transition:
-    color 200ms ease,
-    background-color 260ms ease,
-    border-color 260ms ease,
-    box-shadow 420ms var(--flessan-ease-out),
-    transform 420ms var(--flessan-ease-out);
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 200ms var(--flessan-ease-out),
+    transform 200ms var(--flessan-ease-out);
 }
 
 .VPButton.brand {
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18) inset,
-    0 12px 26px -16px color-mix(in srgb, var(--flessan-accent-fill) 85%, transparent);
+  background: var(--flessan-accent-fill);
+  color: var(--flessan-on-accent);
 }
 
-.VPButton.brand:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.2) inset,
-    0 18px 34px -16px color-mix(in srgb, var(--flessan-accent-fill) 80%, transparent);
+.VPButton.alt {
+  border-color: var(--fl-ink);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-1);
 }
 
-.VPButton.brand:active {
-  transform: translateY(0) scale(0.985);
+.VPButton:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--flessan-shadow-md);
 }
 
-.VPButton.alt:hover {
-  transform: translateY(-1px);
-}
-
-.VPButton.alt:active {
-  transform: translateY(0) scale(0.99);
-}
-
-/* A soft sheen slides across primary buttons on hover. */
-.VPButton.brand::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.28) 48%,
-    transparent 66%
-  );
-  transform: translateX(-130%);
-  transition: transform 700ms var(--flessan-ease-out);
-  pointer-events: none;
-}
-
-.dark .VPButton.brand::after {
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.55) 48%,
-    transparent 66%
-  );
-}
-
-.VPButton.brand:hover::after {
-  transform: translateX(130%);
+.VPButton:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--fl-shadow);
 }
 
 /* ==========================================================================
@@ -361,36 +468,11 @@ body {
 }
 
 .VPNavBarMenuLink.active {
-  color: var(--flessan-accent-ink);
-  background: var(--flessan-accent-soft);
-  box-shadow: inset 0 0 0 1px var(--flessan-accent-line);
+  color: var(--fl-on-accent);
+  background: var(--fl-accent);
+  box-shadow: inset 0 0 0 2px var(--fl-ink);
 }
 
-.VPNavBarMenuLink::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 4px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0;
-  transform: translate(-50%, 4px) scale(0.4);
-  transition:
-    opacity 240ms ease,
-    transform 420ms var(--flessan-ease-spring);
-}
-
-.VPNavBarMenuLink.active::after {
-  opacity: 1;
-  transform: translate(-50%, 0) scale(1);
-}
-
-.VPNavBarMenuLink:hover::after {
-  opacity: 0.65;
-  transform: translate(-50%, 0) scale(0.8);
-}
 
 .VPNavBarSearch .DocSearch-Button,
 .VPNavBarSearch button {
@@ -455,12 +537,10 @@ body {
     height: 62px;
     box-sizing: border-box;
     overflow: visible;
-    border: 1px solid var(--flessan-nav-border);
-    border-radius: 18px;
-    background: var(--flessan-nav-glass) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    backdrop-filter: blur(20px) saturate(160%);
-    box-shadow: var(--flessan-nav-shadow);
+    border: 2px solid var(--fl-ink);
+    border-radius: 20px;
+    background: var(--vp-c-bg) !important;
+    box-shadow: 5px 5px 0 var(--fl-ink);
     transform: translateX(-50%);
     animation: flessan-nav-arrive 760ms var(--flessan-ease-out) both;
   }
@@ -574,12 +654,10 @@ body {
     height: var(--vp-nav-height);
     transform: none;
     border: 0;
-    border-bottom: 1px solid var(--flessan-nav-border);
+    border-bottom: 2px solid var(--fl-ink);
     border-radius: 0;
-    background: var(--flessan-nav-glass) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    backdrop-filter: blur(18px) saturate(150%);
-    box-shadow: 0 6px 24px -18px rgba(10, 26, 16, 0.7);
+    background: var(--vp-c-bg) !important;
+    box-shadow: 0 4px 0 var(--fl-ink);
     animation: flessan-mobile-nav-arrive 480ms var(--flessan-ease-out) both;
   }
 
@@ -636,15 +714,13 @@ body {
   content: '';
   position: absolute;
   left: 0;
-  bottom: -1px;
-  width: 56px;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--flessan-accent-ink),
-    color-mix(in srgb, var(--flessan-accent-ink) 20%, transparent)
-  );
+  bottom: -2px;
+  width: 54px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--fl-accent);
+  box-shadow: 0 0 0 2px var(--fl-ink);
+  transform: rotate(-1.2deg);
 }
 
 .vp-doc h3 {
@@ -1126,20 +1202,18 @@ html.theme-switching .VPFooter {
 .flessan-back-to-top {
   position: fixed;
   right: clamp(16px, 3vw, 34px);
-  bottom: clamp(16px, 3vw, 30px);
+  bottom: calc(clamp(16px, 3vw, 30px) + 56px);
   z-index: 45;
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid var(--flessan-nav-border);
+  border: 2px solid var(--fl-ink);
   border-radius: 14px;
-  background: var(--flessan-nav-glass);
-  color: var(--vp-c-text-2);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  backdrop-filter: blur(16px) saturate(160%);
-  box-shadow: var(--flessan-shadow-md);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-1);
+  box-shadow: var(--flessan-shadow-sm);
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
@@ -1158,9 +1232,11 @@ html.theme-switching .VPFooter {
 }
 
 .flessan-back-to-top:hover {
-  color: var(--flessan-accent-ink);
-  border-color: var(--flessan-accent-line);
-  background: var(--vp-c-bg-elv);
+  color: var(--fl-on-accent);
+  border-color: var(--fl-ink);
+  background: var(--fl-accent);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--flessan-shadow-md);
 }
 
 .flessan-back-to-top:hover svg {
@@ -1257,5 +1333,84 @@ html.theme-switching .VPFooter {
     opacity: 1 !important;
     transform: none !important;
     will-change: auto;
+  }
+}
+
+
+/* ==========================================================================
+   17. Playful layer — stickers, tape, confetti, playground
+   ========================================================================== */
+
+/* Small floating confetti used on celebratory actions. */
+.fl-confetti-piece {
+  position: fixed;
+  z-index: 999;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--fl-ink);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Motion level from the playground. */
+html[data-motion='calm'] .hero-spark,
+html[data-motion='calm'] .hero-dot {
+  animation: none !important;
+}
+
+html[data-motion='off'] *,
+html[data-motion='off'] *::before,
+html[data-motion='off'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Density from the playground. */
+html[data-density='compact'] {
+  --vp-line-height: 1.6;
+}
+
+html[data-density='compact'] .vp-doc p,
+html[data-density='compact'] .vp-doc li {
+  line-height: 1.6;
+}
+
+html[data-density='compact'] .vp-doc > div > h2 {
+  margin-top: 2.1rem;
+}
+
+html[data-density='compact'] .vp-doc > div > * + * {
+  margin-top: 0.85rem;
+}
+
+html[data-density='compact'] .hero-lead {
+  max-width: 40ch;
+}
+
+/* Focus rings for the interactive widgets we own. */
+.search-dock :where(button, input):focus-visible,
+.pg-panel :where(button, input):focus-visible,
+.pg-trigger:focus-visible {
+  outline: 3px solid var(--fl-accent-ink);
+  outline-offset: 2px;
+}
+
+
+/* Nav controls should feel like one family on phones. */
+@media (max-width: 959px) {
+  .VPNavBarHamburger {
+    margin-left: 4px;
+    border: 1px solid var(--vp-c-border);
+    border-radius: 10px;
+    background: var(--vp-c-bg-soft);
+  }
+}
+
+@media (max-width: 720px) {
+  .pg-section + .pg-section {
+    margin-top: 0.8rem;
+    padding-top: 0.7rem;
   }
 }
