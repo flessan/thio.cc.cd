@@ -1,9 +1,10 @@
-// https://vitepress.dev/guide/custom-theme
+// https://github.com/flessan/thio.cc.cd
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
 import './contrast.css'
+import './workspace.css'
 import { installAnimeMotion } from './anime'
 
 import CopyButton from './components/CopyButton.vue'
@@ -44,17 +45,13 @@ let replayingThemeToggle = false
 function installThemeTransition() {
   if (typeof window === 'undefined' || themeTransitionInstalled) return
   themeTransitionInstalled = true
-
-  type TransitionDocument = Document & {
-    startViewTransition?: (callback: () => void) => { finished: Promise<void> }
-  }
+  type TransitionDocument = Document & { startViewTransition?: (callback: () => void) => { finished: Promise<void> } }
   const transitionDocument = document as TransitionDocument
   const cleanUp = () => {
     document.documentElement.classList.remove('theme-switching')
     document.documentElement.style.removeProperty('--theme-toggle-x')
     document.documentElement.style.removeProperty('--theme-toggle-y')
   }
-
   document.addEventListener('click', (event: MouseEvent) => {
     if (replayingThemeToggle || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     if (typeof transitionDocument.startViewTransition !== 'function') return
@@ -62,21 +59,15 @@ function installThemeTransition() {
     if (!(target instanceof Element)) return
     const toggle = target.closest<HTMLElement>('.VPSwitchAppearance')
     if (!toggle) return
-    event.preventDefault()
-    event.stopImmediatePropagation()
-    document.documentElement.style.setProperty('--theme-toggle-x', `${event.clientX || window.innerWidth * 0.88}px`)
+    event.preventDefault(); event.stopImmediatePropagation()
+    document.documentElement.style.setProperty('--theme-toggle-x', `${event.clientX || window.innerWidth * .88}px`)
     document.documentElement.style.setProperty('--theme-toggle-y', `${event.clientY || 32}px`)
     document.documentElement.classList.add('theme-switching')
     try {
-      const transition = transitionDocument.startViewTransition(() => {
-        replayingThemeToggle = true
-        try { toggle.click() } finally { replayingThemeToggle = false }
-      })
+      const transition = transitionDocument.startViewTransition(() => { replayingThemeToggle = true; try { toggle.click() } finally { replayingThemeToggle = false } })
       void transition.finished.then(cleanUp, cleanUp)
     } catch {
-      cleanUp()
-      replayingThemeToggle = true
-      try { toggle.click() } finally { replayingThemeToggle = false }
+      cleanUp(); replayingThemeToggle = true; try { toggle.click() } finally { replayingThemeToggle = false }
     }
   }, true)
 }
@@ -88,68 +79,30 @@ function installMotion() {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
   if (prefersReducedMotion.matches || !('IntersectionObserver' in window)) return
   const selector = ['.vp-doc > div > h1','.vp-doc > div > h2','.vp-doc > div > h3','.vp-doc > div > p','.vp-doc > div > ul','.vp-doc > div > ol','.vp-doc > div > blockquote','.vp-doc > div > pre','.vp-doc > div > div[class*="language-"]','.vp-doc .container','.vp-doc .blog-cover','.vp-doc .VPButton','.vp-doc .link-preview','.vp-doc .repo-explorer','.vp-doc .telegram-feed','.vp-doc .my-activity'].join(',')
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting) { (entry.target as HTMLElement).classList.add('is-visible'); observer.unobserve(entry.target) }
-    }
-  }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' })
+  const observer = new IntersectionObserver((entries) => { for (const entry of entries) if (entry.isIntersecting) { (entry.target as HTMLElement).classList.add('is-visible'); observer.unobserve(entry.target) } }, { threshold: .08, rootMargin: '0px 0px -6% 0px' })
   const scan = () => {
-    if (prefersReducedMotion.matches) {
-      document.documentElement.classList.remove('motion-enabled')
-      document.querySelectorAll('.motion-reveal').forEach((node) => { node.classList.add('is-visible'); observer.unobserve(node) })
-      return
-    }
-    Array.from(document.querySelectorAll<HTMLElement>(selector)).filter((element) => !element.classList.contains('motion-reveal')).forEach((element, index) => {
-      element.classList.add('motion-reveal')
-      element.style.setProperty('--motion-index', String(index % 6))
-      observer.observe(element)
-    })
+    if (prefersReducedMotion.matches) { document.documentElement.classList.remove('motion-enabled'); document.querySelectorAll('.motion-reveal').forEach((node) => { node.classList.add('is-visible'); observer.unobserve(node) }); return }
+    Array.from(document.querySelectorAll<HTMLElement>(selector)).filter((element) => !element.classList.contains('motion-reveal')).forEach((element, index) => { element.classList.add('motion-reveal'); element.style.setProperty('--motion-index', String(index % 6)); observer.observe(element) })
     document.documentElement.classList.add('motion-enabled')
   }
   const mutationObserver = new MutationObserver(() => window.requestAnimationFrame(scan))
   const start = () => { scan(); mutationObserver.observe(document.body, { childList: true, subtree: true }) }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true })
-  else start()
-  prefersReducedMotion.addEventListener('change', (event) => {
-    if (event.matches) {
-      document.documentElement.classList.remove('motion-enabled')
-      document.querySelectorAll('.motion-reveal').forEach((node) => { node.classList.add('is-visible'); observer.unobserve(node) })
-    } else scan()
-  })
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start()
+  prefersReducedMotion.addEventListener('change', (event) => { if (event.matches) { document.documentElement.classList.remove('motion-enabled'); document.querySelectorAll('.motion-reveal').forEach((node) => { node.classList.add('is-visible'); observer.unobserve(node) }) } else scan() })
 }
 
 export default {
   extends: DefaultTheme,
   Layout: () => h(DefaultTheme.Layout, null, { 'not-found': () => h(NotFound) }),
   enhanceApp({ app }) {
-    app.component('CopyButton', CopyButton)
-    app.component('PostMeta', PostMeta)
-    app.component('PostNav', PostNav)
-    app.component('RepoExplorer', RepoExplorer)
-    app.component('GithubActivity', GithubActivity)
-    app.component('TelegramFeed', TelegramFeed)
-    app.component('LatestUpdate', LatestUpdate)
-    app.component('LinkPreview', LinkPreview)
-    app.component('BlogCover', BlogCover)
-    app.component('BlogPost', BlogPost)
-    app.component('BlogDirectory', BlogDirectory)
-    app.component('PostTools', PostTools)
-    app.component('EducatorInvite', EducatorInvite)
-    app.component('YouTubeVideo', YouTubeVideo)
-    app.component('LanyardActivity', LanyardActivity)
-    app.component('Kerja', Kerja)
-    app.component('KerjaLaunch', KerjaLaunch)
-    installLightbox()
-    installMotion()
-    installAnimeMotion()
-    installThemeTransition()
+    app.component('CopyButton', CopyButton); app.component('PostMeta', PostMeta); app.component('PostNav', PostNav); app.component('RepoExplorer', RepoExplorer); app.component('GithubActivity', GithubActivity); app.component('TelegramFeed', TelegramFeed); app.component('LatestUpdate', LatestUpdate); app.component('LinkPreview', LinkPreview); app.component('BlogCover', BlogCover); app.component('BlogPost', BlogPost); app.component('BlogDirectory', BlogDirectory); app.component('PostTools', PostTools); app.component('EducatorInvite', EducatorInvite); app.component('YouTubeVideo', YouTubeVideo); app.component('LanyardActivity', LanyardActivity); app.component('Kerja', Kerja); app.component('KerjaLaunch', KerjaLaunch)
+    installLightbox(); installMotion(); installAnimeMotion(); installThemeTransition()
     if (typeof window !== 'undefined' && !hotkeyBound) {
       hotkeyBound = true
-      window.addEventListener('keydown', (e) => {
-        const t = e.target as HTMLElement | null
-        const typing = !!t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)
-        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSearch() }
-        else if (e.key === '/' && !typing) { e.preventDefault(); openSearch() }
+      window.addEventListener('keydown', (event) => {
+        const target = event.target as HTMLElement | null
+        const typing = !!target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || !!target?.isContentEditable
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch() } else if (event.key === '/' && !typing) { event.preventDefault(); openSearch() }
       })
     }
   }
