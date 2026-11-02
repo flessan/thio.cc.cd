@@ -1,6 +1,6 @@
 ---
 title: About
-description: M. Thio Saputra - known online as Flessan. Self-taught web developer & automation engineer from Banjarmasin, Indonesia.
+description: "M. Thio Saputra - known online as Flessan. Self-taught web developer and automation engineer from Banjarmasin, Indonesia: the story, the beliefs, and the toolbox."
 ---
 
 # About

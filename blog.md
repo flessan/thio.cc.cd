@@ -6,7 +6,7 @@ keywords:
   - software development projects
   - developer notes
   - Indonesian internet culture
-image: /images/flessan-banner.png
+image: /images/flessan-banner.jpg
 imageAlt: Flessan personal website banner
 pageClass: wide-page
 outline: false

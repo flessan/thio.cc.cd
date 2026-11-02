@@ -4,7 +4,7 @@ author:
   name: M. Thio Saputra
 date: "2026-08-24"
 description: "Why Flessan keeps multiple small websites for different projects, how each site serves a purpose, and what building them teaches along the way."
-image: /images/covers/internet-of-thio.png
+image: /images/covers/internet-of-thio.jpg
 imageAlt: "Cover artwork representing the collection of small websites in the Flessan ecosystem"
 inLanguage: "id"
 keywords:
@@ -15,7 +15,7 @@ keywords:
   - "personal websites"
 ---
 
-<BlogCover src="/images/covers/internet-of-thio.png" alt="Cover for the collection of small websites in the Flessan ecosystem" />
+<BlogCover src="/images/covers/internet-of-thio.webp" alt="Cover for the collection of small websites in the Flessan ecosystem" />
 
 # Many small sites
 

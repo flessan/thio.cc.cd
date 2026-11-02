@@ -1,6 +1,6 @@
 ---
 title: Ecosystem
-description: The other places I keep online - every link verified against my public profiles.
+description: "Every other place Flessan keeps online - sites, repositories, socials, and side projects - each link checked against a public profile before it ships."
 ---
 
 # Ecosystem

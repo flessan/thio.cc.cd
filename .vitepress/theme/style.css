@@ -1355,6 +1355,14 @@ html.theme-switching .VPFooter {
   /* Only a compositor hint: never hide content from CSS, because a reverted or
      interrupted animation must always leave the page readable. */
   will-change: opacity, transform;
+  /* While a scripted entrance owns this element, its hover transitions must not
+     re-interpolate every frame the timeline writes. */
+  transition: none !important;
+}
+
+/* Same contract for component-level JS animations (sheets, grids, swatches). */
+.js-animating {
+  transition: none !important;
 }
 
 .motion-done {

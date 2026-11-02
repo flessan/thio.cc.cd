@@ -1,6 +1,6 @@
 ---
 title: Kerja
-description: Flessan's command-palette workspace for web search, pinned shortcuts and everyday tools.
+description: "Kerja is Flessan's command-palette workspace: web search, pinned shortcuts, and the everyday tools he actually uses, all on one keyboard-first page."
 layout: false
 head:
   - - meta

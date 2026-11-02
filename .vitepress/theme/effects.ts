@@ -49,6 +49,21 @@ export function motionProfile(): MotionProfile {
   }
 }
 
+/**
+ * CSS transitions and a JS-driven transform on the same element fight each
+ * other: every frame the animation writes, the browser starts a new transition
+ * towards it. Freeze the element's transitions for the duration of the scripted
+ * animation so it moves at exactly the speed the timeline intends.
+ */
+export function freezeTransitions(elements: Iterable<Element>, duration = 1200) {
+  const list = Array.from(elements)
+  if (!list.length) return
+  list.forEach((element) => element.classList.add('js-animating'))
+  window.setTimeout(() => {
+    list.forEach((element) => element.classList.remove('js-animating'))
+  }, duration)
+}
+
 /** Material state layer: a springy acknowledgement for a tapped control. */
 export function pop(element: Element | null | undefined) {
   const profile = motionProfile()

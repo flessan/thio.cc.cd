@@ -1,6 +1,6 @@
 ---
 title: Support
-description: Support my open-source work and the GDIPS community.
+description: "Support my open-source work - sponsor the servers that keep GDIPS online or back the small free tools I ship. Every rupiah goes straight to hosting."
 ---
 
 # Support

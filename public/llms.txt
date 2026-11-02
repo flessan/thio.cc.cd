@@ -1,0 +1,42 @@
+# Flessan - thio.cc.cd
+
+> Personal site of M. Thio Saputra ("Flessan"), a self-taught web developer and
+> automation engineer from Banjarmasin, South Kalimantan, Indonesia. He builds
+> web software, Linux configuration, automation tooling, and runs GDIPS, a
+> community-run Geometry Dash private server.
+
+Canonical host: https://thio.cc.cd
+Author: M. Thio Saputra (Flessan) - https://thio.cc.cd/about
+Languages: English (primary), Indonesian (some posts)
+License: MIT for code; posts are (c) M. Thio Saputra unless stated otherwise
+
+## Main pages
+- [Home](https://thio.cc.cd/): introduction, search, latest writing
+- [About](https://thio.cc.cd/about): who he is, beliefs, toolbox, fun facts
+- [Blog](https://thio.cc.cd/blog): every field note, newest first
+- [Projects](https://thio.cc.cd/projects): shipped software, forks, experiments
+- [Now](https://thio.cc.cd/now): what he is building and learning right now
+- [Timeline](https://thio.cc.cd/timeline): dated milestones verified against public records
+- [Ecosystem](https://thio.cc.cd/ecosystem): every other place he keeps online
+- [GDIPS](https://thio.cc.cd/gdips): the Geometry Dash Indonesia private server
+- [Support](https://thio.cc.cd/support): ways to support the open-source work
+
+## Writing (selected)
+- [hello, internet: meet Flessan](https://thio.cc.cd/blog/hello-internet)
+- [GDIPS, reborn](https://thio.cc.cd/blog/gdips-reborn)
+- [slate-de](https://thio.cc.cd/blog/slate-de)
+- [Telegraph Cloud](https://thio.cc.cd/blog/telegraph-cloud)
+- [Kontekstual](https://thio.cc.cd/blog/kontekstual-language)
+
+## Feeds and machine-readable data
+- [RSS](https://thio.cc.cd/feed.xml)
+- [JSON Feed](https://thio.cc.cd/feed.json)
+- [Sitemap](https://thio.cc.cd/sitemap.xml)
+- [Kerja shortcuts JSON](https://thio.cc.cd/kerja-shortcuts.json)
+
+## Elsewhere
+- GitHub: https://github.com/flessan
+- X: https://x.com/thio2009_
+- Instagram: https://www.instagram.com/flethio
+- Telegram channel: https://t.me/chfless
+- Discord (GDIPS): https://discord.gg/BT8muKw3pX

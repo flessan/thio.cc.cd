@@ -4,7 +4,7 @@ author:
   name: M. Thio Saputra
 date: "2026-09-08"
 description: "Meet Thio Saputra, known as Flessan: a student developer in Banjarmasin building web apps, community tools, Linux experiments, and personal websites."
-image: /images/covers/hello-internet.png
+image: /images/covers/hello-internet.jpg
 imageAlt: "Cover artwork for the hello internet introduction"
 inLanguage: "en"
 keywords:
@@ -15,7 +15,7 @@ keywords:
   - "personal website"
 ---
 
-<BlogCover src="/images/covers/hello-internet.png" alt="Cover for hello, internet" />
+<BlogCover src="/images/covers/hello-internet.webp" alt="Cover for hello, internet" />
 
 # hello, internet
 

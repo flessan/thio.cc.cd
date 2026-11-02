@@ -1,6 +1,6 @@
 ---
 title: Now
-description: What Flessan is building, learning, and listening to right now.
+description: "A living snapshot of what Flessan is building, learning, listening to, and reading right now - updated whenever the week actually changes."
 ---
 
 # Now

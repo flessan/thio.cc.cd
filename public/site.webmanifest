@@ -1,0 +1,51 @@
+{
+  "name": "Flessan - thio.cc.cd",
+  "short_name": "Flessan",
+  "description": "Flessan (M. Thio Saputra) - web developer and automation engineer from Banjarmasin, Indonesia. Projects, writing, and communities.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fdf7ff",
+  "theme_color": "#6750a4",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["personal", "developer", "blog"],
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Blog",
+      "url": "/blog",
+      "description": "Field notes and dev writing"
+    },
+    {
+      "name": "Kerja workspace",
+      "url": "/kerja",
+      "description": "Command-palette workspace"
+    },
+    {
+      "name": "Projects",
+      "url": "/projects",
+      "description": "Everything I have shipped"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { animate, stagger } from 'animejs'
+import { freezeTransitions } from '../effects'
 import { blogPosts } from '../../blog-posts'
 
 const search = ref('')
@@ -66,10 +67,10 @@ watch(selectedCategory, async () => {
     resultsRoot.value?.querySelectorAll<HTMLElement>('.featured-card, .article-card') ?? []
   )
   if (!cards.length) return
+  freezeTransitions(cards, 1100)
   animate(cards, {
     opacity: [0, 1],
     y: [14, 0],
-    scale: [0.985, 1],
     duration: 520,
     delay: stagger(45),
     ease: 'outQuint',

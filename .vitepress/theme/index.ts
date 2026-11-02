@@ -48,6 +48,30 @@ function openSearch() {
 let hotkeyBound = false
 let themeTransitionInstalled = false
 let replayingThemeToggle = false
+let themeColorInstalled = false
+
+/**
+ * Keep the browser chrome in sync with the appearance. VitePress can only emit
+ * one `theme-color` meta (they dedupe by name), so the dark value is applied
+ * here whenever the `dark` class flips.
+ */
+function installThemeColor() {
+  if (typeof window === 'undefined' || themeColorInstalled) return
+  themeColorInstalled = true
+
+  const sync = () => {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    if (!meta) return
+    meta.content = document.documentElement.classList.contains('dark') ? '#141218' : '#fdf7ff'
+  }
+
+  sync()
+  new MutationObserver(sync).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  })
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', sync)
+}
 
 /**
  * Intercept the VitePress appearance switch and replay its normal click inside
@@ -141,6 +165,9 @@ export default {
 
     // click any content image to view it full-size
     installLightbox()
+
+    // browser chrome colour follows the active theme
+    installThemeColor()
 
     // anime.js-driven page reveals, hero choreography and page transitions
     installMotion(router)

@@ -18,7 +18,7 @@ import {
   type PaperId
 } from '../customize'
 import { animate, stagger } from 'animejs'
-import { motionLevel, motionProfile, pop } from '../effects'
+import { freezeTransitions, motionLevel, motionProfile, pop } from '../effects'
 import SearchDock from './SearchDock.vue'
 
 type Tab = 'style' | 'find' | 'keys'
@@ -32,7 +32,6 @@ const tabs: Array<{ id: Tab; label: string }> = [
 const open = ref(false)
 const tab = ref<Tab>('style')
 const panel = ref<HTMLElement | null>(null)
-const scrim = ref<HTMLElement | null>(null)
 const fab = ref<HTMLButtonElement | null>(null)
 let lastFocus: HTMLElement | null = null
 
@@ -117,44 +116,55 @@ watch(open, async (value) => {
   await nextTick()
   if (!panel.value) return
   if (motionLevel() === 'off') return
+
   const profile = motionProfile()
   const D = (value: number) => Math.round(value * profile.duration)
   const T = (value: number) => Math.round(value * profile.delay)
 
-  if (scrim.value) {
-    animate(scrim.value, { opacity: [0, 1], duration: D(300), ease: 'outQuad' })
-  }
-  animate(panel.value, {
-    opacity: [0, 1],
-    y: [Math.round(48 * profile.travel), 0],
-    scale: [0.94, 1],
-    duration: D(560),
-    ease: 'outBack(1.35)'
-  })
-  animate(panel.value.querySelectorAll('.pg-section'), {
-    opacity: [0, 1],
-    y: [Math.round(14 * profile.travel), 0],
-    duration: D(420),
-    delay: stagger(Math.round(48 * profile.delay), { start: T(120) }),
-    ease: 'outQuint'
-  })
-  if (profile.expressive) {
-    animate(panel.value.querySelectorAll('.pg-tabs button'), {
+  // The sheet itself is handled by its Vue <Transition> (one owner, no double
+  // animation). The contents get a staggered entrance that starts once the
+  // sheet has landed, with their hover transitions frozen so nothing fights
+  // the timeline.
+  const sections = Array.from(panel.value.querySelectorAll<HTMLElement>('.pg-section'))
+  const tabs = Array.from(panel.value.querySelectorAll<HTMLElement>('.pg-tabs button'))
+  const swatches = Array.from(panel.value.querySelectorAll<HTMLElement>('.pg-swatch'))
+  const animated = [...sections, ...tabs, ...swatches]
+  freezeTransitions(animated, D(1600))
+
+  const start = profile.expressive ? T(280) : 140
+
+  if (sections.length) {
+    animate(sections, {
       opacity: [0, 1],
-      y: [-8, 0],
-      duration: 420,
-      delay: stagger(60, { start: 120 }),
+      y: [Math.round(12 * profile.travel), 0],
+      duration: D(420),
+      delay: stagger(Math.round(40 * profile.delay), { start }),
       ease: 'outQuint'
     })
-    animate(panel.value.querySelectorAll('.pg-swatch'), {
-      scale: [0.6, 1],
-      rotate: [-12, 0],
-      duration: 620,
-      delay: stagger(45, { start: 260 }),
-      ease: 'outBack(1.8)'
-    })
+  }
+
+  if (profile.expressive) {
+    if (tabs.length) {
+      animate(tabs, {
+        opacity: [0, 1],
+        y: [-8, 0],
+        duration: D(360),
+        delay: stagger(Math.round(45 * profile.delay), { start }),
+        ease: 'outQuint'
+      })
+    }
+    if (swatches.length) {
+      animate(swatches, {
+        scale: [0.75, 1],
+        opacity: [0, 1],
+        duration: D(420),
+        delay: stagger(Math.round(35 * profile.delay), { start: start + T(120) }),
+        ease: 'outBack(1.8)'
+      })
+    }
   }
 })
+
 
 onMounted(() => {
   bootCustomization()
@@ -169,7 +179,7 @@ onUnmounted(() => {
 <template>
   <div class="pg-root">
     <Transition name="pg-scrim">
-      <div v-if="open" ref="scrim" class="pg-scrim" @click="hide" />
+      <div v-if="open" class="pg-scrim" @click="hide" />
     </Transition>
 
     <button
@@ -501,8 +511,6 @@ onUnmounted(() => {
   inset: 0;
   z-index: 61;
   background: var(--md-scrim);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
 }
 
 .pg-scrim-enter-active,
@@ -533,8 +541,9 @@ onUnmounted(() => {
 
 .pg-sheet-enter-active,
 .pg-sheet-leave-active {
+  will-change: transform, opacity;
   transition: opacity var(--md-duration-short) var(--md-ease-standard),
-    transform var(--md-duration-medium) var(--md-ease-emphasized-decel);
+    transform var(--md-duration-long) var(--md-ease-emphasized-decel);
 }
 
 .pg-sheet-enter-from,

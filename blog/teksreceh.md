@@ -4,7 +4,7 @@ author:
   name: M. Thio Saputra
 date: "2026-09-01"
 description: "teksreceh is an Indonesian internet text generator for alay, UwU, Rimsvek, binary text, and other playful ways of typing online."
-image: /images/covers/teksreceh.png
+image: /images/covers/teksreceh.jpg
 imageAlt: "Cover artwork for teksreceh, a collection of Indonesian internet text styles"
 inLanguage: "id"
 keywords:
@@ -15,7 +15,7 @@ keywords:
   - "text transformer"
 ---
 
-<BlogCover src="/images/covers/teksreceh.png" alt="Cover for teksreceh, a collection of Indonesian internet text styles" />
+<BlogCover src="/images/covers/teksreceh.webp" alt="Cover for teksreceh, a collection of Indonesian internet text styles" />
 
 # teksreceh: a museum of +62 typing
 

@@ -310,7 +310,6 @@ function animateHero(hero: HTMLElement) {
   const meta = hero.querySelector<HTMLElement>('.hero-meta')
   const stats = Array.from(hero.querySelectorAll<HTMLElement>('.hero-stat'))
   const art = hero.querySelector<HTMLElement>('.hero-art')
-  const figure = hero.querySelector<HTMLElement>('.hero-figure')
   const badge = hero.querySelector<HTMLElement>('.hero-badge')
   const search = hero.querySelector<HTMLElement>('.hero-search')
   const shapes = Array.from(hero.querySelectorAll<HTMLElement>('[data-hero-shape]'))
@@ -567,18 +566,10 @@ function animateHero(hero: HTMLElement) {
   }
 
   // Expressive gets a second, quieter layer of ambient motion on the art.
-  if (profile.expressive && figure) {
+  // The frame itself is owned by CSS now (the pointer tilt plus a slow
+  // `scale` keyframe), because anime would overwrite the tilt transform.
+  if (profile.expressive) {
     try {
-      ambient.push(
-        animate(figure, {
-          scale: [1, 1.03],
-          duration: 9600,
-          loop: true,
-          alternate: true,
-          ease: 'inOutSine',
-          delay: 2400
-        })
-      )
       if (badge) {
         ambient.push(
           animate(badge, {
