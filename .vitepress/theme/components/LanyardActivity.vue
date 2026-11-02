@@ -701,7 +701,7 @@ onUnmounted(() => {
                 <p>{{ spotify.artist || 'Unknown artist' }}</p>
                 <div class="activity-progress-line">
                   <span>{{ elapsedTime }}</span>
-                  <div class="activity-progress"><i :style="{ width: songProgress + '%' }"></i></div>
+                  <div class="activity-progress"><i :style="{ transform: `scaleX(${songProgress / 100})` }"></i></div>
                   <span>{{ totalTime }}</span>
                 </div>
               </div>
@@ -1065,7 +1065,7 @@ onUnmounted(() => {
 .activity-track-info p { margin: 0; color: var(--discord-text-soft); font-size: .75rem; line-height: 1.4; overflow-wrap: anywhere; }
 .activity-progress-line { display: flex; align-items: center; gap: .5rem; margin-top: .55rem; color: var(--discord-text-soft); font-size: .68rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .activity-progress { height: 3px; flex: 1; min-width: 20px; overflow: hidden; border-radius: 99px; background: var(--discord-border-strong); }
-.activity-progress i { display: block; height: 100%; border-radius: inherit; background: var(--discord-text); transition: width 800ms linear; }
+.activity-progress i { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--discord-text); transform-origin: 0 50%; transition: transform 800ms linear; }
 .activity-card-open { align-self: flex-start; color: var(--discord-muted); font-size: .72rem; }
 .activity-card-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: .5rem; margin-top: .7rem; padding-top: .55rem; border-top: 1px solid var(--discord-subtle-divider); }
 .text-action { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem 0; border: 0; background: transparent; color: var(--discord-label); font: inherit; font-size: .67rem; cursor: pointer; text-decoration: none !important; transition: color 180ms ease; }
@@ -1176,5 +1176,188 @@ onUnmounted(() => {
 }
 @media (prefers-reduced-motion: reduce) {
   .my-activity *, .my-activity *::before, .my-activity *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* ---------------------------------------------------------------------------
+   Theme bridge: the Discord widget keeps its structure but borrows the site's
+   palette, radii and typography so it reads as part of the page.
+   --------------------------------------------------------------------------- */
+.my-activity,
+.my-activity.is-light-theme {
+  --discord-bg: var(--md-surface-container-low);
+  --discord-panel: var(--md-surface-container);
+  --discord-card: var(--md-surface-container-high);
+  --discord-card-hover: var(--md-surface-container-highest);
+  --discord-border: var(--md-outline-variant);
+  --discord-border-strong: var(--md-outline);
+  --discord-text: var(--md-on-surface);
+  --discord-text-soft: var(--md-on-surface-variant);
+  --discord-muted: var(--md-on-surface-variant);
+  --discord-label: var(--md-on-surface-variant);
+  --discord-blue: var(--md-primary);
+  --discord-blue-dark: var(--md-primary);
+  --discord-blue-hover: var(--md-primary);
+  --discord-link: var(--md-primary);
+  --discord-white: var(--md-on-primary);
+  --discord-profile-banner: var(--md-primary-container);
+  --discord-banner-decoration-border: color-mix(in srgb, var(--md-on-primary-container) 9%, transparent);
+  --discord-banner-decoration-fill: color-mix(in srgb, var(--md-on-primary-container) 5%, transparent);
+  --discord-icon-accent: var(--md-primary);
+  --discord-subtle-divider: var(--md-outline-variant);
+  --discord-menu-shadow: var(--md-elevation-3);
+  --discord-soft-shadow: transparent;
+  --discord-avatar-ring: var(--md-outline-variant);
+
+  border: 0;
+  border-radius: var(--md-shape-2xl);
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface-variant);
+  box-shadow: none;
+  color-scheme: normal;
+}
+
+.my-activity .join-server,
+.my-activity .message-button {
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-primary);
+  color: var(--md-on-primary) !important;
+  font-weight: 500;
+}
+
+.my-activity .join-server:hover,
+.my-activity .message-button:hover {
+  background: color-mix(in srgb, var(--md-primary) 88%, var(--md-on-primary));
+  box-shadow: var(--md-elevation-1);
+}
+
+.my-activity .copy-server,
+.my-activity .activity-retry-button,
+.my-activity .guild-join-link {
+  border-radius: var(--md-shape-full);
+}
+
+.my-activity .profile-banner {
+  border-radius: var(--md-shape-lg);
+}
+
+.my-activity .activity-api-error,
+.my-activity .reveal-card {
+  border: 0;
+  background: var(--md-surface-container-high);
+}
+
+.my-activity .activity-api-error {
+  padding: 1rem 1.05rem;
+  border-radius: var(--md-shape-lg);
+}
+
+.my-activity .reveal-card {
+  border-radius: var(--md-shape-lg);
+}
+
+.my-activity .activity-api-error-icon {
+  border-radius: 50%;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.my-activity .activity-retry-button {
+  border: 0;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.my-activity .activity-retry-button:hover {
+  border: 0;
+  background: color-mix(in srgb, var(--md-secondary-container) 80%, var(--md-on-secondary-container));
+}
+
+.my-activity .copy-server {
+  border: 0;
+  background: var(--md-surface-container-high);
+}
+
+.my-activity .copy-server:hover {
+  border: 0;
+  background: var(--md-surface-container-highest);
+  color: var(--md-primary);
+}
+
+.my-activity .guild-tag,
+.my-activity .activity-platform-pill,
+.my-activity .profile-custom-status {
+  border: 0;
+  background: var(--md-surface-container-high);
+}
+
+.my-activity .guild-divider {
+  background: var(--md-outline-variant);
+}
+
+.my-activity .activity-heading h2 {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.my-activity .activity-heading h2 {
+  color: var(--vp-c-text-1);
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+  font-weight: 650;
+  letter-spacing: -0.028em;
+}
+
+.my-activity .heading-kicker {
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.my-activity .heading-kicker i {
+  color: var(--fl-accent-ink);
+}
+
+.my-activity .join-server,
+.my-activity .guild-join-link {
+  border-color: transparent !important;
+  background: var(--fl-accent) !important;
+  color: var(--fl-on-accent) !important;
+  box-shadow: none !important;
+}
+
+.my-activity .join-server:hover,
+.my-activity .guild-join-link:hover {
+  background: var(--fl-accent-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: none !important;
+}
+
+.my-activity .activity-pane,
+.my-activity .guild-card {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: var(--fl-r-sm);
+  background: var(--vp-c-bg-alt);
+}
+
+.my-activity .activity-card,
+.my-activity .activity-api-error {
+  border-color: var(--vp-c-divider);
+  border-radius: var(--fl-r-sm);
+  background: var(--vp-c-bg-elv);
+}
+
+.my-activity .activity-card:hover {
+  background: var(--vp-c-bg-elv);
+  border-color: var(--vp-c-border);
+}
+
+.my-activity .channel-pill,
+.my-activity .activity-more-button,
+.my-activity .activity-retry-button {
+  border-color: var(--vp-c-divider);
+  background: var(--vp-c-bg-elv);
+  border-radius: 6px;
 }
 </style>

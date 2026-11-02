@@ -1,13 +1,32 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
+
 defineProps<{
   image?: string
   category?: string
 }>()
+
+const broken = ref(false)
+const root = ref<HTMLElement | null>(null)
+
+// The browser may fail the image before hydration attaches @error, so sweep
+// once the component is alive and fall back to the typographic cover.
+onMounted(() => {
+  const img = root.value?.querySelector('img')
+  if (img && img.complete && img.naturalWidth === 0) broken.value = true
+})
 </script>
 
 <template>
-  <article class="container" :class="{ 'has-image': image }">
-    <img v-if="image" :src="image" loading="lazy" decoding="async" alt="" />
+  <article ref="root" class="container" :class="{ 'has-image': image && !broken }">
+    <img
+      v-if="image && !broken"
+      :src="image"
+      loading="lazy"
+      decoding="async"
+      alt=""
+      @error="broken = true"
+    />
     <div v-else class="category-cover" aria-hidden="true">
       <span>{{ category || 'BUILD NOTES' }}</span>
     </div>
@@ -22,30 +41,31 @@ defineProps<{
   display: flex;
   gap: 1.5rem;
   margin: 1.25rem 0;
-  background-color: var(--vp-c-bg-alt);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 0.85rem;
+  background-color: var(--md-surface-container-low);
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-xl);
   align-items: center;
   overflow: hidden;
+  box-shadow: none;
   transition:
-    border-color 280ms ease,
-    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 280ms ease,
-    box-shadow 520ms cubic-bezier(0.16, 1, 0.3, 1);
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
 .container:hover {
-  border-color: var(--vp-c-brand-1);
-  transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(20, 35, 25, 0.10);
+  border-color: transparent;
+  background-color: var(--md-surface-container-high);
+  transform: translateY(-2px);
+  box-shadow: var(--md-elevation-1);
 }
 
 img,
 .category-cover {
-  flex: 0 0 30%;
-  width: 30%;
-  min-height: 10rem;
-  height: 10rem;
+  flex: 0 0 26%;
+  width: 26%;
+  min-height: 7.5rem;
+  height: 7.5rem;
   object-fit: cover;
 }
 
@@ -64,12 +84,13 @@ img {
   justify-content: center;
   box-sizing: border-box;
   padding: 1.25rem;
-  background: var(--vp-c-brand-soft);
-  color: var(--vp-c-brand-1);
+  border: 0;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
   text-align: center;
-  font-size: 0.78rem;
-  font-weight: 750;
-  letter-spacing: 0.09em;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   line-height: 1.5;
   text-transform: uppercase;
 }

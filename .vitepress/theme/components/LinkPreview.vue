@@ -65,17 +65,23 @@ onMounted(async () => {
   display: flex;
   align-items: stretch;
   gap: 12px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  padding: 10px 12px;
-  text-decoration: none;
-  transition: border-color 0.25s;
   min-width: 0;
+  border: 0;
+  border-radius: var(--md-shape-xl);
+  padding: 12px;
+  background: var(--md-surface-container-low);
+  text-decoration: none;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring);
 }
 
 .lp:hover {
   text-decoration: none;
-  border-color: var(--vp-c-brand-1);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-1);
+  transform: translateY(-2px);
 }
 
 .lp-img {
@@ -83,46 +89,57 @@ onMounted(async () => {
   align-self: center;
   aspect-ratio: 3 / 2;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: var(--md-shape-md);
   flex-shrink: 0;
-  background: var(--vp-c-default-soft);
+  background: var(--md-surface-container-highest);
+  transition: transform var(--md-duration-long) var(--md-ease-spring);
+}
+
+.lp:hover .lp-img {
+  transform: scale(1.03);
 }
 
 .lp-body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
+  padding: 2px 4px 2px 0;
 }
 
 .lp-site {
-  font-size: 0.72rem;
-  font-weight: 400;
-  color: var(--vp-c-text-3);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+  letter-spacing: 0.3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .lp-arrow {
+  display: inline-block;
   font-size: 0.7rem;
+  transition: transform var(--md-duration-medium) var(--md-ease-spring);
+}
+
+.lp:hover .lp-arrow {
+  transform: translate(2px, -2px);
 }
 
 .lp-title {
   font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--vp-c-text-1);
+  font-weight: 500;
+  color: var(--md-primary);
   overflow-wrap: anywhere;
-}
-
-.lp:hover .lp-title {
-  color: var(--vp-c-brand-1);
+  line-height: 1.45;
 }
 
 .lp-desc {
   font-size: 0.8rem;
   font-weight: 400;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
+  line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

@@ -155,7 +155,7 @@ onMounted(load)
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--vp-c-divider);
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .gh-activity-item {
@@ -165,23 +165,23 @@ onMounted(load)
   align-items: baseline;
   gap: 0.4rem 1rem;
   padding: 0.55rem 0;
-  border-bottom: 1px solid var(--vp-c-divider);
+  border-bottom: 1px solid var(--md-outline-variant);
 }
 
 .gh-activity-text {
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   font-size: 0.92rem;
   overflow-wrap: anywhere;
 }
 
 .gh-activity-when {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.8rem;
   white-space: nowrap;
 }
 
 .gh-activity-note {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.8rem;
   margin: 0.6rem 0 0;
 }

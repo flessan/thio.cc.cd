@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      animejs:
+        specifier: ^4.5.0
+        version: 4.5.0
       vitepress:
         specifier: 1.5.0
         version: 1.5.0(@algolia/client-search@5.49.1)(postcss@8.5.8)(search-insights@2.17.3)
@@ -567,6 +570,17 @@ packages:
   algoliasearch@5.49.1:
     resolution: {integrity: sha512-X3Pp2aRQhg4xUC6PQtkubn5NpRKuUPQ9FPDQlx36SmpFwwH2N0/tw4c+NXV3nw3PsgeUs+BuWGP0gjz3TvENLQ==}
     engines: {node: '>= 14.0.0'}
+
+  animejs@4.5.0:
+    resolution: {integrity: sha512-NQimYX+lz8WaXonGS9zVVoviCIAjONeJayxacUditaivYLqyXgGjFKjuyl0aUUhFKm5MriX9ty1TGovNzoJQWA==}
+    peerDependencies:
+      '@types/three': '>=0.150.0'
+      three: '>=0.150.0'
+    peerDependenciesMeta:
+      '@types/three':
+        optional: true
+      three:
+        optional: true
 
   birpc@2.9.0:
     resolution: {integrity: sha512-KrayHS5pBi69Xi9JmvoqrIgYGDkD6mcSe/i6YKi3w5kekCLzrX4+nawcXqrj2tIp50Kw/mT/s3p+GVK0A0sKxw==}
@@ -1314,6 +1328,8 @@ snapshots:
       '@algolia/requester-browser-xhr': 5.49.1
       '@algolia/requester-fetch': 5.49.1
       '@algolia/requester-node-http': 5.49.1
+
+  animejs@4.5.0: {}
 
   birpc@2.9.0: {}
 

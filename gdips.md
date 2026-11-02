@@ -1,10 +1,10 @@
 ---
 title: GDIPS
-description: Open-Source Community Driven Geometry Dash Private Server. Not the biggest. Not the fanciest. But built with heart.
-image: /images/covers/gdips-campfire.png
+description: "GDIPS is an open-source, community-driven Geometry Dash private server. Not the biggest, not the fanciest - but built with heart by Indonesian players."
+image: /images/covers/gdips-campfire.jpg
 ---
 
-<BlogCover src="/images/covers/gdips-campfire.webp" />
+<BlogCover src="/images/covers/gdips-campfire.webp" alt="Cover artwork for GDIPS, the Geometry Dash Indonesia private server" />
 
 # GDIPS
 

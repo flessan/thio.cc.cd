@@ -1,6 +1,6 @@
 ---
 title: Projects
-description: Web software, Linux configuration, automation, tools, experiments, and public repositories.
+description: "Everything Flessan has shipped - web apps, Linux configuration, automation tooling, Geometry Dash projects, forks, and public repositories on GitHub."
 ---
 
 # Projects

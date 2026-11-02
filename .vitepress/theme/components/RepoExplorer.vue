@@ -195,13 +195,27 @@ onMounted(load)
 
 .re-input,
 .re-select {
-  border: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-1);
-  border-radius: 8px;
-  padding: 0.4rem 0.65rem;
+  min-height: 44px;
+  border: 0;
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface);
+  border-radius: var(--md-shape-full);
+  padding: 0.4rem 1rem;
   font-size: 0.88rem;
   font-family: inherit;
+  outline: none;
+  transition: box-shadow var(--md-duration-short) var(--md-ease-standard),
+    background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.re-input:focus,
+.re-select:focus {
+  background: var(--md-surface-container-highest);
+  box-shadow: inset 0 0 0 2px var(--md-primary);
+}
+
+.re-input::placeholder {
+  color: var(--md-on-surface-variant);
 }
 
 .re-input {
@@ -214,25 +228,26 @@ onMounted(load)
 }
 
 .re-refresh {
-  border: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-2);
-  border-radius: 8px;
-  padding: 0.4rem 0.85rem;
+  min-height: 44px;
+  border: 0;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  border-radius: var(--md-shape-full);
+  padding: 0 1.1rem;
   font-size: 0.85rem;
+  font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .re-refresh:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+  background: color-mix(in srgb, var(--md-secondary-container) 82%, var(--md-on-secondary-container));
 }
 
 .re-count,
 .re-note {
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.82rem;
   margin: 0 0 0.9rem;
 }
@@ -241,12 +256,12 @@ onMounted(load)
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--vp-c-divider);
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .re-item {
   padding: 0.85rem 0;
-  border-bottom: 1px solid var(--vp-c-divider);
+  border-bottom: 1px solid var(--md-outline-variant);
 }
 
 .re-item-head {
@@ -258,15 +273,15 @@ onMounted(load)
 }
 
 .re-name {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.98rem;
-  color: var(--vp-c-brand-1);
+  color: var(--md-primary);
   overflow-wrap: anywhere;
 }
 
 .re-home {
   font-size: 0.8rem;
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   margin-left: auto;
 }
 
@@ -276,16 +291,17 @@ onMounted(load)
 
 .re-badge {
   font-size: 0.7rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 999px;
-  padding: 0 0.5rem;
-  color: var(--vp-c-text-3);
-  line-height: 1.6;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  padding: 0 0.6rem;
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  line-height: 1.7;
 }
 
 .re-desc {
   margin: 0.25rem 0 0;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   font-size: 0.9rem;
   overflow-wrap: anywhere;
 }
@@ -295,7 +311,7 @@ onMounted(load)
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem 1rem;
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.8rem;
 }
 </style>

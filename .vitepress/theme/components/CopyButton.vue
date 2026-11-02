@@ -37,7 +37,13 @@ async function copy() {
 </script>
 
 <template>
-  <button class="copy-btn" type="button" :title="`Copy: ${text}`" @click="copy">
+  <button
+    class="copy-btn"
+    :class="{ 'is-copied': copied }"
+    type="button"
+    :title="`Copy: ${text}`"
+    @click="copy"
+  >
     <span v-if="!copied">{{ label }}</span>
     <span v-else>Copied ✓</span>
   </button>
@@ -47,27 +53,42 @@ async function copy() {
 .copy-btn {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg);
-  color: var(--vp-c-text-2);
-  border-radius: 8px;
-  padding: 0.15rem 0.7rem;
-  font-size: 0.82rem;
+  gap: 0.3rem;
+  min-height: 22px;
+  margin-left: 0.35rem;
+  padding: 0 0.6rem;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  font-family: inherit;
+  font-size: 0.71rem;
   font-weight: 500;
-  line-height: 1.7;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  line-height: 1.4;
   vertical-align: middle;
-  margin-left: 0.4rem;
+  cursor: pointer;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 
 .copy-btn:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+  background: color-mix(in srgb, var(--md-secondary-container) 82%, var(--md-on-secondary-container));
+  transform: translateY(-1px);
+}
+
+.copy-btn:active {
+  transform: scale(0.96);
+}
+
+.copy-btn.is-copied {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
 }
 
 .copy-btn:focus-visible {
-  outline: 2px solid var(--vp-c-brand-1);
+  outline: 2px solid var(--md-primary);
   outline-offset: 2px;
 }
 </style>

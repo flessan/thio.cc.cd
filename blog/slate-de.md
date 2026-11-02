@@ -4,7 +4,7 @@ author:
   name: M. Thio Saputra
 date: "2026-09-04"
 description: "slate-de is an early Rust and Wayland desktop environment experiment that explores terminal-first, keyboard-driven workspaces built around panes."
-image: /images/covers/slate-de.png
+image: /images/covers/slate-de.jpg
 imageAlt: "Cover artwork for the slate-de terminal-focused desktop experiment"
 inLanguage: "en"
 keywords:
@@ -15,7 +15,7 @@ keywords:
   - "Linux development"
 ---
 
-<BlogCover src="/images/covers/slate-de.png" alt="Cover for the slate-de desktop environment experiment" />
+<BlogCover src="/images/covers/slate-de.webp" alt="Cover for the slate-de desktop environment experiment" />
 
 # the command line is your d3sktop
 

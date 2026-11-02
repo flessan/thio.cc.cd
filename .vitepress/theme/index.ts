@@ -1,10 +1,12 @@
 // https://vitepress.dev/guide/custom-theme
-// Minimal layer over the default VitePress theme: the look stays 100% stock,
-// we only add the custom not-found page, shared components, and a search hotkey.
+// A small layer over the default VitePress theme: shared components, motion,
+// the custom 404 page, and the theme-switch view transition.
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
+import { installMotion } from './motion'
+import { installRipple } from './effects'
 
 import CopyButton from './components/CopyButton.vue'
 import PostMeta from './components/PostMeta.vue'
@@ -15,6 +17,10 @@ import TelegramFeed from './components/TelegramFeed.vue'
 import LatestUpdate from './components/LatestUpdate.vue'
 import LinkPreview from './components/LinkPreview.vue'
 import NotFound from './components/NotFound.vue'
+import BackToTop from './components/BackToTop.vue'
+import HomeHero from './components/HomeHero.vue'
+import Playground from './components/Playground.vue'
+import ReadingProgress from './components/ReadingProgress.vue'
 import { installLightbox } from './lightbox'
 import BlogCover from './components/BlogCover.vue'
 import BlogPost from './components/BlogPost.vue'
@@ -42,6 +48,30 @@ function openSearch() {
 let hotkeyBound = false
 let themeTransitionInstalled = false
 let replayingThemeToggle = false
+let themeColorInstalled = false
+
+/**
+ * Keep the browser chrome in sync with the appearance. VitePress can only emit
+ * one `theme-color` meta (they dedupe by name), so the dark value is applied
+ * here whenever the `dark` class flips.
+ */
+function installThemeColor() {
+  if (typeof window === 'undefined' || themeColorInstalled) return
+  themeColorInstalled = true
+
+  const sync = () => {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    if (!meta) return
+    meta.content = document.documentElement.classList.contains('dark') ? '#141218' : '#fdf7ff'
+  }
+
+  sync()
+  new MutationObserver(sync).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  })
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', sync)
+}
 
 /**
  * Intercept the VitePress appearance switch and replay its normal click inside
@@ -103,111 +133,17 @@ function installThemeTransition() {
     }
   }, true)
 }
-let motionInstalled = false
-
-/**
- * Add subtle entrance animations to article content as it enters the viewport.
- * Uses one observer for the whole site, and fails open when motion APIs are
- * unavailable or the visitor prefers reduced motion.
- */
-function installMotion() {
-  if (typeof window === 'undefined' || motionInstalled) return
-  motionInstalled = true
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-  if (prefersReducedMotion.matches || !('IntersectionObserver' in window)) return
-
-  const selector = [
-    '.vp-doc > div > h1',
-    '.vp-doc > div > h2',
-    '.vp-doc > div > h3',
-    '.vp-doc > div > p',
-    '.vp-doc > div > ul',
-    '.vp-doc > div > ol',
-    '.vp-doc > div > blockquote',
-    '.vp-doc > div > pre',
-    '.vp-doc > div > div[class*="language-"]',
-    '.vp-doc .container',
-    '.vp-doc .blog-cover',
-    '.vp-doc .VPButton',
-    '.vp-doc .link-preview',
-    '.vp-doc .repo-explorer',
-    '.vp-doc .telegram-feed',
-    '.vp-doc .my-activity'
-  ].join(',')
-
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting) continue
-      const element = entry.target as HTMLElement
-      element.classList.add('is-visible')
-      observer.unobserve(element)
-    }
-  }, {
-    threshold: 0.08,
-    rootMargin: '0px 0px -6% 0px'
-  })
-
-  const scan = () => {
-    if (prefersReducedMotion.matches) {
-      document.documentElement.classList.remove('motion-enabled')
-      document.querySelectorAll('.motion-reveal').forEach((node) => {
-        node.classList.add('is-visible')
-        observer.unobserve(node)
-      })
-      return
-    }
-
-    const elements = Array.from(document.querySelectorAll<HTMLElement>(selector))
-      .filter((element) => !element.classList.contains('motion-reveal'))
-
-    elements.forEach((element, index) => {
-      element.classList.add('motion-reveal')
-      element.style.setProperty('--motion-index', String(index % 6))
-      observer.observe(element)
-    })
-
-    document.documentElement.classList.add('motion-enabled')
-  }
-
-  // One observer handles initial page content and VitePress client-side navigation.
-  const mutationObserver = new MutationObserver(() => {
-    window.requestAnimationFrame(scan)
-  })
-
-  const start = () => {
-    scan()
-    mutationObserver.observe(document.body, { childList: true, subtree: true })
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true })
-  } else {
-    start()
-  }
-
-  prefersReducedMotion.addEventListener('change', (event) => {
-    if (event.matches) {
-      document.documentElement.classList.remove('motion-enabled')
-      document.querySelectorAll('.motion-reveal').forEach((node) => {
-        node.classList.add('is-visible')
-        observer.unobserve(node)
-      })
-    } else {
-      scan()
-    }
-  })
-}
 
 export default {
   extends: DefaultTheme,
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
-      'not-found': () => h(NotFound)
+      'not-found': () => h(NotFound),
+      'layout-bottom': () => [h(ReadingProgress), h(BackToTop), h(Playground)]
     })
   },
-  enhanceApp({ app }) {
+  enhanceApp({ app, router }) {
     app.component('CopyButton', CopyButton)
     app.component('PostMeta', PostMeta)
     app.component('PostNav', PostNav)
@@ -225,12 +161,19 @@ export default {
     app.component('LanyardActivity', LanyardActivity)
     app.component('Kerja', Kerja)
     app.component('KerjaLaunch', KerjaLaunch)
+    app.component('HomeHero', HomeHero)
 
-    // click any content image to view it full-size (styles injected in JS,
-    // so style.css keeps its original bytes)
+    // click any content image to view it full-size
     installLightbox()
-    installMotion()
-    installThemeTransition()
+
+    // browser chrome colour follows the active theme
+    installThemeColor()
+
+    // anime.js-driven page reveals, hero choreography and page transitions
+    installMotion(router)
+
+    // Material state layer: ink ripples on every interactive surface
+    installRipple()
 
     // Ctrl K / Cmd K (or "/" outside inputs) opens search, anywhere on the site
     if (typeof window !== 'undefined' && !hotkeyBound) {
@@ -252,5 +195,7 @@ export default {
         }
       })
     }
+
+    installThemeTransition()
   }
 } satisfies Theme

@@ -9,3 +9,9 @@ node_modules
 # wrangler local state
 .wrangler/
 /dev
+
+# local QA artifacts
+/.tmp-ui
+/shots11
+/shots12
+/shots13

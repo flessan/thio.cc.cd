@@ -1,9 +1,12 @@
 ---
-title: Home
-description: Flessan (M. Thio Saputra) - self-taught web developer & automation engineer from Banjarmasin, Indonesia. Projects, writing, and communities.
+title: "Flessan - web developer & automation engineer in Banjarmasin"
+titleTemplate: false
+description: "Flessan (M. Thio Saputra) - self-taught web developer & automation engineer from Banjarmasin, Indonesia. Projects, writing, and communities."
+pageClass: home-page
+outline: false
 ---
 
-<BlogCover src="/images/flessan-banner.webp" />
+<HomeHero />
 
 ## Welcome!
 

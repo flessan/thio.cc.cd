@@ -1,6 +1,6 @@
 ---
 title: Timeline
-description: The timeline so far - every entry verified against public records.
+description: "The Flessan timeline: dated milestones from 2009 to today, each one verified against public records, archived posts, and shipping commits."
 ---
 
 # Timeline

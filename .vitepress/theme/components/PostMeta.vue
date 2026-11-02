@@ -34,8 +34,15 @@ onMounted(() => {
 
 <style scoped>
 .post-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 1.15rem;
   color: var(--vp-c-text-3);
-  font-size: 0.88rem;
-  margin: -1.6rem 0 2.4rem;
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
 }
 </style>

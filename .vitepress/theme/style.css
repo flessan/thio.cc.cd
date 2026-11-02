@@ -1,653 +1,1253 @@
 /**
- * Customize default theme styling by overriding CSS variables:
- * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
+ * thio.cc.cd — Material 3 Expressive theme
+ * ---------------------------------------------------------------------------
+ * Dynamic-colour roles, tonal surfaces, a shape scale and state layers, on top
+ * of a VitePress default theme. No gradients: every surface is a flat tone.
+ *
+ *   1. colour roles (light)   2. colour roles (dark)   3. surface tones
+ *   4. shape / motion / type  5. base                   6. typography
+ *   7. state layers & ripple  8. buttons                9. top app bar
+ *  10. navigation drawer     11. layout                12. content surfaces
+ *  13. search dialog         14. footer                15. floating actions
+ *  16. utilities             17. responsive / a11y
  */
 
-/**
- * Colors
- *
- * Each colors have exact same color scale system with 3 levels of solid
- * colors with different brightness, and 1 soft color.
- * 
- * - `XXX-1`: The most solid color used mainly for colored text. It must
- *   satisfy the contrast ratio against when used on top of `XXX-soft`.
- *
- * - `XXX-2`: The color used mainly for hover state of the button.
- *
- * - `XXX-3`: The color for solid background, such as bg color of the button.
- *   It must satisfy the contrast ratio with pure white (#ffffff) text on
- *   top of it.
- *
- * - `XXX-soft`: The color used for subtle background such as custom container
- *   or badges. It must satisfy the contrast ratio when putting `XXX-1` colors
- *   on top of it.
- *
- *   The soft color must be semi transparent alpha channel. This is crucial
- *   because it allows adding multiple "soft" colors on top of each other
- *   to create a accent, such as when having inline code block inside
- *   custom containers.
- *
- * - `default`: The color used purely for subtle indication without any
- *   special meanings attched to it such as bg color for menu hover state.
- *
- * - `brand`: Used for primary brand colors, such as link text, button with
- *   brand theme, etc.
- *
- * - `tip`: Used to indicate useful information. The default theme uses the
- *   brand color for this by default.
- *
- * - `warning`: Used to indicate warning to the users. Used in custom
- *   container, badges, etc.
- *
- * - `danger`: Used to show error, or dangerous message to the users. Used
- *   in custom container, badges, etc.
- * -------------------------------------------------------------------------- */
+/* ==========================================================================
+   1. Colour roles — light
+   ========================================================================== */
 
 :root {
-  --vp-c-default-1: var(--vp-c-gray-1);
-  --vp-c-default-2: var(--vp-c-gray-2);
-  --vp-c-default-3: var(--vp-c-gray-3);
-  --vp-c-default-soft: var(--vp-c-gray-soft);
+  color-scheme: light;
 
-  --vp-c-brand-1: #2f6845;
-  --vp-c-brand-2: #3f8056;
-  --vp-c-brand-3: #397b53;
-  --vp-c-brand-soft: rgba(126, 175, 144, 0.16);
+  --vp-font-family-base: 'Roboto', 'Inter', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', 'Noto Sans', Arial, sans-serif;
+  --vp-font-family-mono: 'Roboto Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace;
 
-  --vp-c-tip-1: var(--vp-c-brand-1);
-  --vp-c-tip-2: var(--vp-c-brand-2);
-  --vp-c-tip-3: var(--vp-c-brand-3);
-  --vp-c-tip-soft: var(--vp-c-brand-soft);
+  /* Seed — overridden by [data-accent] */
+  --md-seed: #6750a4;
+  --md-primary: #6750a4;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #eaddff;
+  --md-on-primary-container: #21005d;
+  --md-tertiary: #7d5260;
+  --md-tertiary-container: #ffd8e4;
+  --md-on-tertiary-container: #31111d;
 
-  --vp-c-warning-1: var(--vp-c-yellow-1);
-  --vp-c-warning-2: var(--vp-c-yellow-2);
-  --vp-c-warning-3: var(--vp-c-yellow-3);
-  --vp-c-warning-soft: var(--vp-c-yellow-soft);
+  /* Surfaces — tinted from the seed */
+  --md-surface: color-mix(in srgb, var(--md-seed) 4%, #fffbfe);
+  --md-surface-dim: color-mix(in srgb, var(--md-seed) 15%, #ded8e2);
+  --md-surface-bright: #fffbfe;
+  --md-surface-container-lowest: #ffffff;
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 6%, #fdf8ff);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 9%, #faf4ff);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 12%, #f5eefb);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 15%, #efe7f7);
 
-  --vp-c-danger-1: var(--vp-c-red-1);
-  --vp-c-danger-2: var(--vp-c-red-2);
-  --vp-c-danger-3: var(--vp-c-red-3);
-  --vp-c-danger-soft: var(--vp-c-red-soft);
+  --md-on-surface: #1c1b1f;
+  --md-on-surface-variant: #49454f;
+  --md-outline: #79747e;
+  --md-outline-variant: color-mix(in srgb, var(--md-on-surface) 16%, transparent);
+
+  /* Derived roles */
+  --md-secondary-container: color-mix(
+    in srgb,
+    var(--md-primary-container) 62%,
+    var(--md-surface-container-low)
+  );
+  --md-on-secondary-container: var(--md-on-primary-container);
+  --md-tertiary-container-soft: color-mix(
+    in srgb,
+    var(--md-tertiary-container) 55%,
+    var(--md-surface)
+  );
+
+  --md-error: #b3261e;
+  --md-on-error: #ffffff;
+  --md-error-container: #f9dedc;
+  --md-on-error-container: #410e0b;
+
+  --md-inverse-surface: #313033;
+  --md-inverse-on-surface: #f4eff4;
+  --md-scrim: rgba(0, 0, 0, 0.32);
+  --md-shadow: rgba(0, 0, 0, 0.15);
+
+  /* State layers */
+  --md-state-hover: 0.08;
+  --md-state-focus: 0.1;
+  --md-state-pressed: 0.1;
+
+  /* Elevation — tonal surfaces do most of the work */
+  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.12), 0 1px 3px 1px rgba(0, 0, 0, 0.06);
+  --md-elevation-2: 0 1px 2px rgba(0, 0, 0, 0.14), 0 2px 6px 2px rgba(0, 0, 0, 0.07);
+  --md-elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.14);
+  --md-elevation-4: 0 6px 10px 4px rgba(0, 0, 0, 0.08), 0 2px 3px rgba(0, 0, 0, 0.14);
+  --md-elevation-5: 0 8px 12px 6px rgba(0, 0, 0, 0.08), 0 4px 4px rgba(0, 0, 0, 0.14);
+
+  /* ------------------------------------------------------------------ shape */
+  --md-shape-xs: 4px;
+  --md-shape-sm: 8px;
+  --md-shape-md: 12px;
+  --md-shape-lg: 16px;
+  --md-shape-xl: 24px;
+  --md-shape-2xl: 28px;
+  --md-shape-full: 999px;
+
+  /* ----------------------------------------------------------------- motion */
+  --md-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-ease-emphasized-decel: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-ease-emphasized-accel: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --md-duration-short: 180ms;
+  --md-duration-medium: 320ms;
+  --md-duration-long: 520ms;
+
+  /* VitePress mapping */
+  --vp-c-bg: var(--md-surface);
+  --vp-c-bg-alt: var(--md-surface-container-low);
+  --vp-c-bg-soft: var(--md-surface-container);
+  --vp-c-bg-elv: var(--md-surface-container-lowest);
+  --vp-c-bg-mute: var(--md-surface-container-high);
+
+  --vp-c-text-1: var(--md-on-surface);
+  --vp-c-text-2: var(--md-on-surface-variant);
+  --vp-c-text-3: color-mix(in srgb, var(--md-on-surface-variant) 82%, var(--md-surface));
+
+  --vp-c-divider: var(--md-outline-variant);
+  --vp-c-border: var(--md-outline);
+  --vp-c-gutter: var(--md-surface-container-low);
+
+  --vp-c-brand-1: var(--md-primary);
+  --vp-c-brand-2: var(--md-primary);
+  --vp-c-brand-3: var(--md-primary);
+  --vp-c-brand-soft: var(--md-primary-container);
+
+  --vp-c-tip-1: var(--md-on-primary-container);
+  --vp-c-tip-2: var(--md-on-primary-container);
+  --vp-c-tip-3: var(--md-primary-container);
+  --vp-c-tip-soft: var(--md-primary-container);
+
+  --vp-c-warning-1: var(--md-on-tertiary-container);
+  --vp-c-warning-2: var(--md-tertiary);
+  --vp-c-warning-3: var(--md-tertiary-container);
+  --vp-c-warning-soft: var(--md-tertiary-container-soft);
+
+  --vp-c-danger-1: var(--md-on-error-container);
+  --vp-c-danger-2: var(--md-error);
+  --vp-c-danger-3: var(--md-error-container);
+  --vp-c-danger-soft: var(--md-error-container);
+
+  /* Legacy aliases so older components inherit the Material roles */
+  --fl-ink: var(--md-on-surface);
+  --fl-paper: var(--md-surface);
+  --fl-paper-tint: var(--md-surface-container-low);
+  --fl-line: var(--md-outline-variant);
+  --fl-line-strong: var(--md-outline);
+  --fl-accent: var(--md-primary);
+  --fl-accent-hover: color-mix(in srgb, var(--md-primary) 88%, var(--md-on-surface));
+  --fl-accent-ink: var(--md-primary);
+  --fl-accent-soft: var(--md-primary-container);
+  --fl-accent-line: color-mix(in srgb, var(--md-primary) 38%, transparent);
+  --fl-on-accent: var(--md-on-primary);
+  --fl-r-sm: var(--md-shape-md);
+  --fl-r-md: var(--md-shape-lg);
+  --fl-r-lg: var(--md-shape-xl);
+  --fl-r-xl: var(--md-shape-2xl);
+  --fl-border: 1px;
+
+  --flessan-accent-fill: var(--md-primary);
+  --flessan-accent-fill-hover: var(--fl-accent-hover);
+  --flessan-accent-fill-active: var(--fl-accent-hover);
+  --flessan-on-accent: var(--md-on-primary);
+  --flessan-accent-ink: var(--md-primary);
+  --flessan-accent-soft: var(--md-primary-container);
+  --flessan-accent-line: var(--fl-accent-line);
+  --flessan-card: var(--md-surface-container-low);
+  --flessan-card-border: var(--md-outline-variant);
+  --flessan-shadow-sm: var(--md-elevation-1);
+  --flessan-shadow-md: var(--md-elevation-2);
+  --flessan-shadow-lg: var(--md-elevation-3);
+  --flessan-radius-sm: var(--md-shape-md);
+  --flessan-radius-md: var(--md-shape-lg);
+  --flessan-radius-lg: var(--md-shape-xl);
+  --flessan-radius-xl: var(--md-shape-2xl);
+  --flessan-ease-out: var(--md-ease-emphasized-decel);
+  --flessan-ease-in-out: var(--md-ease-standard);
+  --flessan-ease-spring: var(--md-ease-spring);
+
+  /* Navigation */
+  --vp-nav-height: 64px;
+  --vp-nav-bg-color: var(--md-surface);
+  --flessan-nav-glass: color-mix(in srgb, var(--md-surface) 92%, transparent);
+  --flessan-nav-border: transparent;
+  --flessan-nav-shadow: none;
+
+  scroll-padding-top: calc(var(--vp-nav-height) + 28px);
 }
 
-/**
- * Component: Button
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-button-brand-border: transparent;
-  --vp-button-brand-text: var(--vp-c-white);
-  --vp-button-brand-bg: var(--vp-c-brand-3);
-  --vp-button-brand-hover-border: transparent;
-  --vp-button-brand-hover-text: var(--vp-c-white);
-  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
-  --vp-button-brand-active-border: transparent;
-  --vp-button-brand-active-text: var(--vp-c-white);
-  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+/* Motion levels scale every CSS transition in the system. Expressive is
+   deliberately unhurried; standard tightens it up. */
+html[data-motion='playful'] {
+  --md-duration-short: 240ms;
+  --md-duration-medium: 440ms;
+  --md-duration-long: 760ms;
+  --reveal-duration: 1250ms;
+  --reveal-y: 30px;
 }
+
+html[data-motion='calm'] {
+  --md-duration-short: 150ms;
+  --md-duration-medium: 260ms;
+  --md-duration-long: 420ms;
+}
+
+/* Dynamic colour seeds ----------------------------------------------------- */
+
+html[data-accent='cobalt'] {
+  --md-seed: #0b57d0;
+  --md-primary: #0b57d0;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #d3e3fd;
+  --md-on-primary-container: #041e49;
+  --md-tertiary: #00639b;
+  --md-tertiary-container: #c2e7ff;
+  --md-on-tertiary-container: #001d35;
+}
+
+html[data-accent='emerald'] {
+  --md-seed: #00696d;
+  --md-primary: #006a6a;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #a7eef1;
+  --md-on-primary-container: #002021;
+  --md-tertiary: #4a6266;
+  --md-tertiary-container: #cce8eb;
+  --md-on-tertiary-container: #051f22;
+}
+
+html[data-accent='amber'] {
+  --md-seed: #b07a00;
+  --md-primary: #7a5900;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #ffdf9e;
+  --md-on-primary-container: #261a00;
+  --md-tertiary: #6c5d2f;
+  --md-tertiary-container: #f5e1a6;
+  --md-on-tertiary-container: #241a00;
+}
+
+html[data-accent='rose'] {
+  --md-seed: #a93b57;
+  --md-primary: #a93b57;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #ffd9df;
+  --md-on-primary-container: #3f0018;
+  --md-tertiary: #7d5260;
+  --md-tertiary-container: #ffd8e4;
+  --md-on-tertiary-container: #31111d;
+}
+
+html[data-accent='graphite'] {
+  --md-seed: #4a4a52;
+  --md-primary: #4a4a52;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #e3e1e9;
+  --md-on-primary-container: #1b1b21;
+  --md-tertiary: #5b5d72;
+  --md-tertiary-container: #e0e1f9;
+  --md-on-tertiary-container: #181a2c;
+}
+
+/* ==========================================================================
+   2. Colour roles — dark
+   ========================================================================== */
 
 .dark {
-  --vp-c-bg: #121212;
-  --vp-c-brand-1: #a4d5b1;
-  --vp-c-brand-2: #8cc79c;
-  --vp-c-brand-3: #397b53;
-  --vp-c-brand-soft: rgba(126, 175, 144, 0.16);
+  color-scheme: dark;
+
+  --md-seed: #cfbcff;
+  --md-primary: #d0bcff;
+  --md-on-primary: #381e72;
+  --md-primary-container: #4f378b;
+  --md-on-primary-container: #eaddff;
+  --md-tertiary: #efb8c8;
+  --md-tertiary-container: #633b48;
+  --md-on-tertiary-container: #ffd8e4;
+
+  --md-surface: color-mix(in srgb, var(--md-seed) 5%, #121016);
+  --md-surface-dim: #0f0d13;
+  --md-surface-bright: color-mix(in srgb, var(--md-seed) 10%, #3b383e);
+  --md-surface-container-lowest: #0d0b11;
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 7%, #16141b);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 9%, #1b1921);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 12%, #221f28);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 15%, #2a2633);
+
+  --md-on-surface: #e7e0eb;
+  --md-on-surface-variant: #cac4d0;
+  --md-outline: #938f99;
+  --md-outline-variant: color-mix(in srgb, var(--md-on-surface) 16%, transparent);
+
+  --md-secondary-container: color-mix(
+    in srgb,
+    var(--md-primary-container) 52%,
+    var(--md-surface-container-high)
+  );
+  --md-on-secondary-container: var(--md-on-primary-container);
+
+  --md-error: #f2b8b5;
+  --md-on-error: #601410;
+  --md-error-container: #8c1d18;
+  --md-on-error-container: #f9dedc;
+
+  --md-inverse-surface: #e7e0eb;
+  --md-inverse-on-surface: #313033;
+  --md-scrim: rgba(0, 0, 0, 0.55);
+
+  --md-elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.6);
+  --md-elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.6);
+  --md-elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.6);
+  --md-elevation-4: 0 6px 10px 4px rgba(0, 0, 0, 0.45), 0 2px 3px rgba(0, 0, 0, 0.6);
+  --md-elevation-5: 0 8px 12px 6px rgba(0, 0, 0, 0.5), 0 4px 4px rgba(0, 0, 0, 0.6);
+
+  --vp-c-bg: var(--md-surface);
+  --vp-c-bg-alt: var(--md-surface-container-low);
+  --vp-c-bg-soft: var(--md-surface-container);
+  --vp-c-bg-elv: var(--md-surface-container-lowest);
+  --vp-c-bg-mute: var(--md-surface-container-high);
+
+  --vp-c-text-1: var(--md-on-surface);
+  --vp-c-text-2: var(--md-on-surface-variant);
+  --vp-c-text-3: color-mix(in srgb, var(--md-on-surface-variant) 78%, var(--md-surface));
+
+  --vp-c-divider: var(--md-outline-variant);
+  --vp-c-border: var(--md-outline);
+  --vp-c-gutter: var(--md-surface-container-low);
+
+  --vp-c-brand-1: var(--md-primary);
+  --vp-c-brand-2: var(--md-primary);
+  --vp-c-brand-3: var(--md-primary);
+  --vp-c-brand-soft: var(--md-primary-container);
+  --vp-c-tip-1: var(--md-on-primary-container);
+  --vp-c-tip-2: var(--md-on-primary-container);
+  --vp-c-tip-3: var(--md-primary-container);
+  --vp-c-tip-soft: var(--md-primary-container);
+
+  --vp-c-warning-1: var(--md-on-tertiary-container);
+  --vp-c-warning-2: var(--md-tertiary);
+  --vp-c-warning-3: var(--md-tertiary-container);
+  --vp-c-warning-soft: var(--md-tertiary-container-soft);
+
+  --vp-c-danger-1: var(--md-on-error-container);
+  --vp-c-danger-2: var(--md-error);
+  --vp-c-danger-3: var(--md-error-container);
+  --vp-c-danger-soft: var(--md-error-container);
+
+  --flessan-card: var(--md-surface-container-low);
+  --flessan-card-border: var(--md-outline-variant);
+  --flessan-shadow-sm: var(--md-elevation-1);
+  --flessan-shadow-md: var(--md-elevation-2);
+  --flessan-shadow-lg: var(--md-elevation-3);
 }
 
-/**
- * Component: Home
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-home-hero-name-color: #2f6845;
-  --vp-home-hero-name-background: none;
-  --vp-home-hero-image-background-image: none;
-  --vp-home-hero-image-filter: none;
+html.dark[data-accent='cobalt'] {
+  --md-seed: #a8c7fa;
+  --md-primary: #a8c7fa;
+  --md-on-primary: #062e6f;
+  --md-primary-container: #0842a0;
+  --md-on-primary-container: #d3e3fd;
+  --md-tertiary: #7fcfff;
+  --md-tertiary-container: #004a77;
+  --md-on-tertiary-container: #c2e7ff;
 }
 
-@media (min-width: 640px) {
-  :root {
-    --vp-home-hero-image-filter: none;
-  }
+html.dark[data-accent='emerald'] {
+  --md-seed: #4dd9e0;
+  --md-primary: #4dd9e0;
+  --md-on-primary: #00363a;
+  --md-primary-container: #004f53;
+  --md-on-primary-container: #a7eef1;
+  --md-tertiary: #b1cbd0;
+  --md-tertiary-container: #334b4f;
+  --md-on-tertiary-container: #cce8eb;
 }
 
-@media (min-width: 960px) {
-  :root {
-    --vp-home-hero-image-filter: none;
-  }
+html.dark[data-accent='amber'] {
+  --md-seed: #f2c048;
+  --md-primary: #f2c048;
+  --md-on-primary: #402d00;
+  --md-primary-container: #5c4300;
+  --md-on-primary-container: #ffdf9e;
+  --md-tertiary: #d8c68c;
+  --md-tertiary-container: #52461f;
+  --md-on-tertiary-container: #f5e1a6;
 }
 
-/**
- * Component: Custom Block
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-custom-block-tip-border: transparent;
-  --vp-custom-block-tip-text: var(--vp-c-text-1);
-  --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
-  --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
+html.dark[data-accent='rose'] {
+  --md-seed: #ffb1c1;
+  --md-primary: #ffb1c1;
+  --md-on-primary: #5f1129;
+  --md-primary-container: #86243e;
+  --md-on-primary-container: #ffd9df;
+  --md-tertiary: #efb8c8;
+  --md-tertiary-container: #633b48;
+  --md-on-tertiary-container: #ffd8e4;
 }
 
-/**
- * Component: Algolia
- * -------------------------------------------------------------------------- */
-
-.DocSearch {
-  --docsearch-primary-color: var(--vp-c-brand-1) !important;
+html.dark[data-accent='graphite'] {
+  --md-seed: #c7c5d0;
+  --md-primary: #c7c5d0;
+  --md-on-primary: #303038;
+  --md-primary-container: #46464e;
+  --md-on-primary-container: #e3e1e9;
+  --md-tertiary: #c4c5dd;
+  --md-tertiary-container: #42444f;
+  --md-on-tertiary-container: #e0e1f9;
 }
 
-.vp-doc h2 {
-  border-top: none;
+/* ==========================================================================
+   3. Surface tone presets
+   ========================================================================== */
+
+html[data-paper='white'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 2%, #fffbfe);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 4%, #fffbfe);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 6%, #fdf9ff);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 9%, #f8f3fe);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 12%, #f2ecf9);
 }
 
-.VPNavBar:not(.has-sidebar):not(.top) .divider {
-  display: none;
+html[data-paper='sand'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 3%, #fbf5ec);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 5%, #faf3e8);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 8%, #f6eee1);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 11%, #f1e7d8);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 14%, #eadecc);
 }
 
-.VPLocalNav {
-  border-bottom: none;
+html.dark[data-paper='white'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 3%, #121016);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 5%, #17151b);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 7%, #1c1a21);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 10%, #232028);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 13%, #2b2831);
 }
 
-/* TODO
-.outline-title {
-  visibility: hidden;
-}
-*/
-
-@media (max-width: 1280px) {
-  .VPLocalNav {
-    display: none;
-  }
+html.dark[data-paper='sand'] {
+  --md-surface: color-mix(in srgb, var(--md-seed) 3%, #151210);
+  --md-surface-container-low: color-mix(in srgb, var(--md-seed) 5%, #1a1613);
+  --md-surface-container: color-mix(in srgb, var(--md-seed) 7%, #1f1a16);
+  --md-surface-container-high: color-mix(in srgb, var(--md-seed) 10%, #26201b);
+  --md-surface-container-highest: color-mix(in srgb, var(--md-seed) 13%, #2e2721);
 }
 
-@media (min-width: 1260px) {
-  .VPNavBarTitle .title {
-    display: flex;
-    align-items: center;
-    min-width: 44px;
-    color: transparent;
-  }
+/* ==========================================================================
+   4. Shape / density variants
+   ========================================================================== */
 
-  .VPNavBarTitle .title:before {
-    transform: none;
-    background: url(/images/flessan-avatar.png) no-repeat center;
-    background-size: cover;
-    content: '';
-    display: block;
-    flex: 0 0 44px;
-    height: 44px;
-    width: 44px;
-    margin-right: 0.5rem;
-    border-radius: 50%;
-  }
+html[data-corners='round'] {
+  --md-shape-xs: 8px;
+  --md-shape-sm: 12px;
+  --md-shape-md: 16px;
+  --md-shape-lg: 22px;
+  --md-shape-xl: 28px;
+  --md-shape-2xl: 32px;
 }
 
-.VPNavBar.top {
-  .divider {
-    opacity: 0;
-  }
+html[data-corners='sharp'] {
+  --md-shape-xs: 2px;
+  --md-shape-sm: 4px;
+  --md-shape-md: 8px;
+  --md-shape-lg: 10px;
+  --md-shape-xl: 12px;
+  --md-shape-2xl: 16px;
 }
+
+html[data-density='compact'] {
+  --vp-nav-height: 56px;
+}
+
+/* ==========================================================================
+   5. Base
+   ========================================================================== */
 
 html {
   overflow-y: scroll;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
-/* Small, consistent interaction polish without changing the site's identity. */
+body {
+  overflow-x: clip;
+  background-color: var(--md-surface);
+  color: var(--md-on-surface);
+  font-family: var(--vp-font-family-base);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: 0.15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--md-outline) 70%, transparent) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: var(--md-shape-full);
+  background: color-mix(in srgb, var(--md-outline) 70%, transparent);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-outline);
+  background-clip: content-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* ==========================================================================
+   6. Typography
+   ========================================================================== */
+
+.vp-doc {
+  color: var(--md-on-surface);
+}
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4 {
+  color: var(--md-on-surface);
+  text-wrap: balance;
+  letter-spacing: -0.015em;
+}
+
+.vp-doc h1 {
+  margin-bottom: 0.75rem;
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.vp-doc h2 {
+  margin-top: 3rem;
+  padding-top: 0;
+  border-top: none;
+  font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.vp-doc h3 {
+  margin-top: 2rem;
+  font-size: 1.12rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.vp-doc h4 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.vp-doc p,
+.vp-doc li {
+  color: var(--md-on-surface-variant);
+  font-size: 1rem;
+  line-height: 1.75;
+  letter-spacing: 0.15px;
+}
+
+.vp-doc strong {
+  color: var(--md-on-surface);
+  font-weight: 500;
+}
+
+.vp-doc a {
+  color: var(--md-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--md-primary) 40%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color var(--md-duration-short) var(--md-ease-standard),
+    text-decoration-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.vp-doc a:not(.header-anchor):hover {
+  color: var(--md-primary);
+  text-decoration-color: currentColor;
+}
+
+.vp-doc .header-anchor {
+  color: var(--md-outline);
+}
+
+.vp-doc ul,
+.vp-doc ol {
+  padding-left: 1.4rem;
+}
+
+.vp-doc li::marker {
+  color: var(--md-primary);
+}
+
+.vp-doc li + li {
+  margin-top: 0.3rem;
+}
+
+.vp-doc hr {
+  margin: 2.6rem 0;
+  border: 0;
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.vp-doc blockquote {
+  margin: 1.6rem 0;
+  padding: 1.1rem 1.35rem;
+  border: 0;
+  border-radius: var(--md-shape-xl);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.vp-doc blockquote > p {
+  color: color-mix(in srgb, var(--md-on-secondary-container) 88%, transparent);
+  font-size: 0.95rem;
+}
+
+.vp-doc blockquote strong {
+  color: var(--md-on-secondary-container);
+}
+
+.vp-doc img {
+  border-radius: var(--md-shape-xl);
+  box-shadow: none;
+}
+
+.vp-doc kbd {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--md-outline-variant);
+  border-bottom-width: 2px;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.78em;
+}
+
+/* ==========================================================================
+   7. State layers & ripple
+   ========================================================================== */
+
+.VPButton,
+.VPNavBarMenuLink,
+.VPNavBarSearch button,
+.VPSidebarItem .item,
+.vp-doc .custom-block a,
+button {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.md-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0);
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   8. Buttons
+   ========================================================================== */
+
 :root {
-  --vp-button-brand-bg: var(--vp-c-brand-3);
-  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
-  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--md-on-primary);
+  --vp-button-brand-bg: var(--md-primary);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--md-on-primary);
+  --vp-button-brand-hover-bg: color-mix(in srgb, var(--md-primary) 90%, var(--md-on-primary));
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--md-on-primary);
+  --vp-button-brand-active-bg: var(--md-primary);
+
+  --vp-button-alt-border: transparent;
+  --vp-button-alt-text: var(--md-on-secondary-container);
+  --vp-button-alt-bg: var(--md-secondary-container);
+  --vp-button-alt-hover-border: transparent;
+  --vp-button-alt-hover-text: var(--md-on-secondary-container);
+  --vp-button-alt-hover-bg: color-mix(in srgb, var(--md-secondary-container) 92%, var(--md-on-secondary-container));
+  --vp-button-alt-active-border: transparent;
+  --vp-button-alt-active-text: var(--md-on-secondary-container);
+  --vp-button-alt-active-bg: var(--md-secondary-container);
 }
 
-.VPNavBar {
-  transition: background-color 180ms ease, border-color 180ms ease;
+.VPButton {
+  min-height: 40px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  box-shadow: none;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
+}
+
+.VPButton:hover {
+  transform: none;
+  box-shadow: var(--md-elevation-1);
+}
+
+.VPButton:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   9. Top app bar
+   ========================================================================== */
+
+.VPNavBar,
+.VPNavBar.top,
+.VPNavBar:not(.has-sidebar):not(.top) {
+  background-color: var(--md-surface) !important;
+  border-bottom: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: background-color var(--md-duration-medium) var(--md-ease-standard),
+    box-shadow var(--md-duration-medium) var(--md-ease-standard);
+}
+
+.VPNavBar:not(.top) {
+  /* Opaque tonal surface: a live backdrop blur over scrolling content forces a
+     full-width recomposite every frame and makes the whole page stutter. */
+  background-color: var(--md-surface) !important;
+  box-shadow: 0 1px 0 var(--md-outline-variant);
+}
+
+.VPNavBar .divider {
+  display: none;
+}
+
+.VPNavBarTitle .title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--md-on-surface) !important;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  text-decoration: none;
+}
+
+.VPNavBarTitle .title::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  border-radius: 50%;
+  background: url('/images/flessan-avatar.png') center / cover no-repeat;
+  box-shadow: 0 0 0 1px var(--md-outline-variant);
 }
 
 .VPNavBarMenuLink,
 .VPNavBarMenuGroup .button {
-  border-radius: 8px;
-  transition: color 160ms ease, background-color 160ms ease;
+  min-height: 36px;
+  padding-inline: 14px;
+  border-radius: var(--md-shape-full);
+  color: var(--md-on-surface-variant);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .VPNavBarMenuLink:hover,
 .VPNavBarMenuGroup .button:hover {
-  background: var(--vp-c-bg-soft);
+  color: var(--md-on-surface);
+  background: color-mix(in srgb, var(--md-on-surface) 8%, transparent);
+}
+
+.VPNavBarMenuLink.active {
+  color: var(--md-on-secondary-container);
+  background: var(--md-secondary-container);
+  font-weight: 500;
+}
+
+.VPNavBarMenuLink::after {
+  display: none;
 }
 
 .VPNavBarSearch .DocSearch-Button,
 .VPNavBarSearch button {
-  border-radius: 10px;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
-.vp-doc h1 {
-  line-height: 1.16;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
+.VPNavBarSearch .DocSearch-Button:hover,
+.VPNavBarSearch button:hover {
+  border-color: transparent;
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface);
+  box-shadow: var(--md-elevation-1);
 }
 
-.vp-doc h2 {
-  margin-top: 2.6rem;
-  padding-bottom: 0.55rem;
-  border-bottom: 1px solid var(--vp-c-divider);
-  letter-spacing: -0.02em;
+.VPNavBarSearch .DocSearch-Button-Keys {
+  gap: 3px;
 }
 
-.vp-doc a {
-  text-underline-offset: 0.18em;
-  text-decoration-thickness: 1px;
+.VPNavBarSearch .DocSearch-Button-Key,
+.VPNavBarSearch kbd {
+  min-width: 0;
+  height: 20px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-highest);
+  box-shadow: none;
+  color: var(--md-on-surface-variant);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.62rem;
+  line-height: 20px;
 }
 
-.vp-doc :where(button, a, input, select, textarea):focus-visible,
-.VPNavBar :where(button, a, input):focus-visible {
-  outline: 2px solid var(--vp-c-brand-1);
-  outline-offset: 3px;
+.VPNavBarSearch .DocSearch-Button:hover .DocSearch-Button-Key {
+  background: var(--md-surface-container-lowest);
 }
 
-.vp-doc img,
-.vp-doc video {
-  border-radius: 12px;
-}
-
-.vp-doc div[class*='language-'] {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-
-/* A deliberate floating header with reserved space for the page beneath it. */
-:root {
-  --flessan-nav-glass: rgba(249, 251, 249, 0.97);
-  --flessan-nav-border: rgba(45, 75, 55, 0.13);
-  --flessan-nav-shadow: 0 10px 34px rgba(20, 35, 25, 0.10);
-}
-
-.dark {
-  --flessan-nav-glass: rgba(24, 26, 25, 0.97);
-  --flessan-nav-border: rgba(255, 255, 255, 0.11);
-  --flessan-nav-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
-}
-
-/* Desktop: a centered glass bar, with the brand anchored left and navigation right. */
-@media (min-width: 960px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    position: fixed !important;
-    top: 14px !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%);
-    width: min(1380px, calc(100vw - 48px)) !important;
-    max-width: none !important;
-    height: 64px;
-    box-sizing: border-box;
-    overflow: visible;
-    border: 1px solid var(--flessan-nav-border);
-    border-radius: 18px;
-    background: var(--flessan-nav-glass) !important;
-    -webkit-backdrop-filter: blur(22px) saturate(150%);
-    backdrop-filter: blur(22px) saturate(150%);
-    box-shadow: var(--flessan-nav-shadow);
-    transition: background-color 180ms ease, box-shadow 180ms ease;
-  }
-
-  .VPNavBar .container {
-    width: 100%;
-    max-width: none !important;
-    height: 100%;
-    margin: 0;
-    padding-inline: clamp(18px, 2.2vw, 30px);
-    box-sizing: border-box;
-  }
-
-  .VPNavBarTitle {
-    flex: 0 0 auto;
-  }
-
-  .VPNavBarTitle .title {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-    color: var(--vp-c-text-1) !important;
-    font-size: 1rem;
-    font-weight: 750;
-    letter-spacing: -0.035em;
-    text-decoration: none;
-  }
-
-  .VPNavBarTitle .title::before {
-    content: '';
-    display: block;
-    flex: 0 0 36px;
-    width: 36px;
-    height: 36px;
-    margin: 0;
-    transform: none;
-    border: 2px solid var(--vp-c-bg);
-    border-radius: 50%;
-    background: url('/images/flessan-avatar.png') center / cover no-repeat;
-    box-shadow: 0 0 0 1px var(--flessan-nav-border);
-  }
-
-  .VPNavBar .content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .VPNavBar .content-body {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    min-width: 0;
-  }
-
-  .VPNavBarSearch {
-    flex: 0 0 auto;
-    margin-left: 1.2rem;
-  }
-
-  .VPNavBarSearch .DocSearch-Button,
-  .VPNavBarSearch button {
-    min-height: 38px;
-    border: 1px solid var(--flessan-nav-border);
-    border-radius: 11px;
-    background: var(--vp-c-bg-soft);
-  }
-
-  .VPNavBarMenu {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    margin-left: auto;
-  }
-
-  .VPNavBarMenuLink,
-  .VPNavBarMenuGroup .button {
-    min-height: 38px;
-    padding-inline: 12px;
-    border-radius: 11px;
-    transition: background-color 160ms ease, color 160ms ease;
-  }
-
-  .VPNavBarMenuLink:hover,
-  .VPNavBarMenuGroup .button:hover {
-    background: var(--vp-c-bg-soft);
-  }
-
-  .VPNavBar .social-links {
-    gap: 11px;
-    margin-left: 8px;
-  }
-
-  .VPNavBar .divider {
-    opacity: 0.45;
-  }
-}
-
-/* Phones and tablets keep the familiar full-width header, never an off-screen pill. */
-@media (max-width: 959px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
-    height: var(--vp-nav-height);
-    transform: none;
-    border: 0;
-    border-bottom: 1px solid var(--flessan-nav-border);
-    border-radius: 0;
-    background: var(--flessan-nav-glass) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(145%);
-    backdrop-filter: blur(18px) saturate(145%);
-    box-shadow: 0 5px 20px rgba(15, 25, 18, 0.09);
-  }
-
-  .VPNavBar .container {
-    width: 100%;
-    max-width: none !important;
-    padding-inline: 16px;
-    box-sizing: border-box;
-  }
-}
-
-.VPNavBarMenuLink,
-.VPNavBarMenuGroup .button {
-  border-radius: 10px;
-}
-
-.VPNavBar :where(button, a, input):focus-visible {
-  outline: 2px solid var(--vp-c-brand-1);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .VPNavBar,
-  .VPNavBarMenuLink,
-  .VPNavBarMenuGroup .button {
-    transition: none;
-  }
-}
-
-
-/* Motion system — smooth, purposeful, and based on real scroll position. */
-:root {
-  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --motion-ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
-}
-
-@keyframes flessan-nav-arrive {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -12px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-
-@keyframes flessan-mobile-nav-arrive {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes flessan-cover-arrive {
-  from {
-    opacity: 0;
-    clip-path: inset(0 0 12% 0 round 18px);
-    transform: translateY(18px) scale(1.012);
-  }
-  to {
-    opacity: 1;
-    clip-path: inset(0 0 0 0 round 18px);
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes flessan-focus-line {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-@media (min-width: 960px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    animation: flessan-nav-arrive 720ms var(--motion-ease-out) both;
-  }
-}
-
-@media (max-width: 959px) {
-  .VPNavBar,
-  .VPNavBar.top {
-    animation: flessan-mobile-nav-arrive 480ms var(--motion-ease-out) both;
-  }
-}
-
-html.motion-enabled .motion-reveal {
-  opacity: 0;
-  transform: translateY(22px) scale(0.99);
-  filter: blur(4px);
-  transition:
-    opacity 720ms var(--motion-ease-out),
-    transform 720ms var(--motion-ease-out),
-    filter 720ms var(--motion-ease-out);
-  transition-delay: min(calc(var(--motion-index, 0) * 48ms), 240ms);
-  will-change: opacity, transform, filter;
-}
-
-html.motion-enabled .motion-reveal.is-visible {
-  opacity: 1;
-  transform: none;
-  filter: none;
-  will-change: auto;
-}
-
-html.motion-enabled .vp-doc .blog-cover.motion-reveal {
-  transform: translateY(24px) scale(1.025);
-  clip-path: inset(0 0 10% 0 round 18px);
-  transition:
-    opacity 900ms var(--motion-ease-out),
-    transform 1100ms var(--motion-ease-out),
-    clip-path 1000ms var(--motion-ease-out);
-}
-
-html.motion-enabled .vp-doc .blog-cover.motion-reveal.is-visible {
-  transform: translateY(0) scale(1);
-  clip-path: inset(0 0 0 0 round 18px);
-}
-
-/* Text links get a directional underline rather than a generic colour flash. */
-.vp-doc a:not(.header-anchor) {
-  text-decoration-color: color-mix(in srgb, var(--vp-c-brand-1) 42%, transparent);
-  transition: color 180ms ease, text-decoration-color 180ms ease;
-}
-
-.vp-doc a:not(.header-anchor):hover {
-  text-decoration-color: var(--vp-c-brand-1);
-}
-
-/* Polished interactive surfaces. */
-.VPNavBarMenuLink,
-.VPNavBarMenuGroup .button,
-.VPNavBarSearch button,
-.VPSocialLink,
-.VPButton,
-.vp-doc .container,
-.vp-doc .link-preview {
-  transition:
-    color 220ms ease,
-    background-color 220ms ease,
-    border-color 260ms ease,
-    box-shadow 320ms var(--motion-ease-out),
-    transform 420ms var(--motion-ease-out);
-}
-
-.VPNavBarMenuLink:hover,
-.VPNavBarMenuGroup .button:hover {
-  transform: translateY(-1px);
+.VPSocialLink {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--md-on-surface-variant);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
 }
 
 .VPSocialLink:hover {
-  transform: translateY(-3px) scale(1.06);
+  color: var(--md-primary);
+  background: var(--md-primary-container);
 }
 
-.VPNavBarSearch button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 16px rgba(30, 55, 38, 0.10);
+.VPNavBarHamburger {
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
 }
 
-.vp-doc .container:hover,
-.vp-doc .link-preview:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(20, 35, 25, 0.10);
+/* Focus rings */
+.vp-doc :where(button, a, input, select, textarea, summary):focus-visible,
+.VPNavBar :where(button, a, input):focus-visible,
+.VPFooter :where(a, button):focus-visible {
+  outline: 3px solid var(--md-primary);
+  outline-offset: 2px;
+  border-radius: var(--md-shape-xs);
 }
 
-.vp-doc .container img,
-.vp-doc .blog-cover {
-  transition: transform 900ms var(--motion-ease-out), filter 700ms ease;
+/* ==========================================================================
+   10. Navigation drawer / sidebar
+   ========================================================================== */
+
+.VPSidebar {
+  background-color: var(--md-surface);
+  border-right: 1px solid transparent;
 }
 
-.vp-doc .container:hover img {
-  transform: scale(1.045);
+.VPSidebarItem .item {
+  border-radius: var(--md-shape-full);
+  padding-inline: 14px;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.VPSidebarItem .item:hover {
+  background: color-mix(in srgb, var(--md-on-surface) 7%, transparent);
+}
+
+.VPSidebarItem .text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: var(--md-on-surface-variant);
+}
+
+.VPSidebarItem.is-active > .item {
+  background: var(--md-secondary-container);
+}
+
+.VPSidebarItem.is-active > .item .text {
+  color: var(--md-on-secondary-container);
+  font-weight: 500;
+}
+
+.VPSidebarItem.level-0 > .item .text {
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+  color: var(--md-on-surface-variant);
+}
+
+.VPDocAsideOutline .outline-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: var(--md-on-surface-variant);
+}
+
+.VPDocAsideOutline .outline-link {
+  font-size: 0.81rem;
+  color: var(--md-on-surface-variant);
+  border-radius: var(--md-shape-full);
+  padding: 3px 10px;
+  margin-left: -10px;
+  transition: background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.VPDocAsideOutline .outline-link:hover {
+  background: color-mix(in srgb, var(--md-on-surface) 7%, transparent);
+  color: var(--md-on-surface);
+}
+
+.VPDocAsideOutline .outline-link.active {
+  color: var(--md-primary);
+  background: var(--md-primary-container);
+}
+
+.VPDocAsideOutline .outline-marker {
+  background-color: var(--md-primary);
+}
+
+/* ==========================================================================
+   11. Layout & widths
+   ========================================================================== */
+
+.Layout.home-page .VPDoc .content-container,
+.Layout.home-page .VPDoc .content {
+  max-width: 1120px;
+}
+
+.Layout.home-page .VPDoc .aside {
+  display: none;
+}
+
+.Layout.wide-page .VPDoc .content-container,
+.Layout.wide-page .VPDoc .content {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
+.Layout.wide-page .VPDoc:not(.has-sidebar) .container {
+  max-width: 1140px;
+}
+
+.Layout.wide-page .VPDoc .aside {
+  display: none;
+}
+
+.VPDoc .content-container {
+  max-width: 728px;
+}
+
+.Layout.home-page .vp-doc > div > h1,
+.Layout.home-page .vp-doc > div > h2,
+.Layout.home-page .vp-doc > div > h3,
+.Layout.home-page .vp-doc > div > p,
+.Layout.home-page .vp-doc > div > ul,
+.Layout.home-page .vp-doc > div > ol,
+.Layout.home-page .vp-doc > div > blockquote,
+.Layout.home-page .vp-doc > div > .container,
+.Layout.home-page .vp-doc > div > .custom-block,
+.Layout.home-page .vp-doc > div > .kerja-launch,
+.Layout.home-page .vp-doc > div > .blog-archive,
+.Layout.home-page .vp-doc > div > .gh-activity,
+.Layout.home-page .vp-doc > div > .tg,
+.Layout.home-page .vp-doc > div > .lu,
+.Layout.home-page .vp-doc > div > .my-activity,
+.Layout.home-page .vp-doc > div > .educator-invite,
+.Layout.home-page .vp-doc > div > .post-navigation {
+  max-width: 800px;
+}
+
+/* ==========================================================================
+   12. Content surfaces: code, tables, blocks, cards
+   ========================================================================== */
+
+.vp-doc :not(pre) > code {
+  padding: 0.16em 0.45em;
+  border: 0;
+  border-radius: var(--md-shape-xs);
+  background: var(--md-surface-container-high);
+  color: var(--md-primary);
+  font-size: 0.86em;
+  font-weight: 500;
 }
 
 .vp-doc div[class*='language-'] {
-  transition: border-color 240ms ease, box-shadow 320ms var(--motion-ease-out);
+  position: relative;
+  margin: 1.4rem 0;
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-lowest);
+  box-shadow: inset 0 0 0 1px var(--md-outline-variant);
+  transition: box-shadow var(--md-duration-short) var(--md-ease-standard);
 }
 
 .vp-doc div[class*='language-']:hover {
-  border-color: var(--vp-c-brand-1);
-  box-shadow: 0 8px 24px rgba(20, 35, 25, 0.06);
+  box-shadow: inset 0 0 0 1px var(--md-outline), var(--md-elevation-1);
 }
 
-/* Reveal active navigation with a small animated marker. */
-.VPNavBarMenuLink {
-  position: relative;
+.vp-doc div[class*='language-'] > span.lang {
+  top: 10px;
+  right: 16px;
+  color: var(--md-on-surface-variant);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
-.VPNavBarMenuLink::after {
-  content: '';
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 5px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--vp-c-brand-1);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 360ms var(--motion-ease-out);
+.vp-doc div[class*='language-'] > button.copy {
+  top: 8px;
+  right: 8px;
+  border-radius: var(--md-shape-full);
 }
 
-.VPNavBarMenuLink.active::after {
-  transform: scaleX(1);
+.vp-doc div[class*='language-'] code {
+  color: var(--md-on-surface);
 }
 
-.VPNavBarMenuLink:hover::after {
-  transform: scaleX(1);
+.vp-doc table {
+  width: 100%;
+  margin: 1.4rem 0;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-lg);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  html.motion-enabled .motion-reveal,
-  html.motion-enabled .motion-reveal.is-visible {
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-    clip-path: none !important;
-  }
-
-  .vp-doc .container:hover,
-  .vp-doc .link-preview:hover,
-  .VPSocialLink:hover,
-  .VPNavBarMenuLink:hover,
-  .VPNavBarMenuGroup .button:hover {
-    transform: none !important;
-  }
+.vp-doc th {
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface);
+  font-weight: 500;
+  font-size: 0.82rem;
 }
 
+.vp-doc th,
+.vp-doc td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+
+.vp-doc tr:last-child td {
+  border-bottom: 0;
+}
+
+.vp-doc .custom-block {
+  padding: 1rem 1.2rem;
+  border: 0;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-high);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.vp-doc .custom-block.tip {
+  background: var(--md-primary-container);
+}
+
+.vp-doc .custom-block.tip .custom-block-title {
+  color: var(--md-on-primary-container);
+}
+
+.vp-doc .custom-block.tip p,
+.vp-doc .custom-block.tip a {
+  color: var(--md-on-primary-container);
+}
+
+.vp-doc .custom-block.warning {
+  background: var(--md-tertiary-container-soft);
+}
+
+.vp-doc .custom-block.warning .custom-block-title {
+  color: var(--md-on-tertiary-container);
+}
+
+.vp-doc .custom-block.danger {
+  background: var(--md-error-container);
+}
+
+.vp-doc .custom-block.danger .custom-block-title,
+.vp-doc .custom-block.danger p {
+  color: var(--md-on-error-container);
+}
+
+.vp-doc .custom-block p {
+  color: var(--md-on-surface-variant);
+  font-size: 0.92rem;
+}
+
+/* Material cards used by custom components */
+.md-card {
+  border: 1px solid transparent;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-surface-container-low);
+  transition: background-color var(--md-duration-short) var(--md-ease-standard),
+    box-shadow var(--md-duration-short) var(--md-ease-standard);
+}
+
+.md-card.is-elevated {
+  background: var(--md-surface-container-low);
+  box-shadow: var(--md-elevation-1);
+}
+
+.md-card.is-filled {
+  background: var(--md-surface-container-high);
+}
+
+/* ==========================================================================
+   13. Search dialog
+   ========================================================================== */
+
+.VPLocalSearchBox .shell {
+  border: 0;
+  border-radius: var(--md-shape-2xl);
+  background: var(--md-surface-container-high);
+  box-shadow: var(--md-elevation-4);
+}
+
+.VPLocalSearchBox .search-bar {
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-highest);
+}
+
+.VPLocalSearchBox .result {
+  border-radius: var(--md-shape-md);
+}
+
+.VPLocalSearchBox .result.selected {
+  background: var(--md-secondary-container);
+}
+
+.DocSearch {
+  --docsearch-primary-color: var(--md-primary) !important;
+  --docsearch-container-background: var(--md-scrim) !important;
+}
+
+/* ==========================================================================
+   14. Footer
+   ========================================================================== */
+
+.VPFooter {
+  border-top: 1px solid var(--md-outline-variant);
+  background: transparent;
+}
+
+.VPFooter .message,
+.VPFooter .copyright {
+  color: var(--md-on-surface-variant);
+  font-size: 0.78rem;
+}
+
+.VPFooter .copyright a,
+.VPFooter a {
+  color: var(--md-on-surface-variant);
+}
+
+.VPFooter a:hover {
+  color: var(--md-primary);
+}
+
+/* ==========================================================================
+   15. Floating actions
+   ========================================================================== */
+
+.flessan-back-to-top {
+  position: fixed;
+  right: clamp(16px, 3vw, 28px);
+  bottom: calc(clamp(16px, 3vw, 28px) + 68px);
+  z-index: 45;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  box-shadow: var(--md-elevation-1);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.92);
+  transition:
+    opacity var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-medium) var(--md-ease-spring),
+    background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.flessan-back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.flessan-back-to-top:hover {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.flessan-back-to-top svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+/* ==========================================================================
+   16. Utilities & theme transition
+   ========================================================================== */
 
 /* Slow, cinematic dark/light transition: a soft reveal grows from the toggle. */
 :root {
@@ -707,12 +1307,19 @@ body,
 }
 
 @keyframes flessan-theme-old {
-  0% { opacity: 1; }
-  55% { opacity: 0.985; }
-  100% { opacity: 0.96; }
+  0% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.985;
+  }
+  100% {
+    opacity: 0.96;
+  }
 }
 
 .VPSwitchAppearance {
+  border-radius: var(--md-shape-full) !important;
   transform-origin: center;
   transition:
     transform 1000ms var(--theme-transition-ease),
@@ -744,30 +1351,267 @@ html.theme-switching .VPFooter {
   transition-duration: var(--theme-transition-duration);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(root),
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none !important;
+.motion-pending {
+  /* Only a compositor hint: never hide content from CSS, because a reverted or
+     interrupted animation must always leave the page readable. */
+  will-change: opacity, transform;
+  /* While a scripted entrance owns this element, its hover transitions must not
+     re-interpolate every frame the timeline writes. */
+  transition: none !important;
+}
+
+/* Same contract for component-level JS animations (sheets, grids, swatches). */
+.js-animating {
+  transition: none !important;
+}
+
+.motion-done {
+  will-change: auto;
+}
+
+/* Scroll reveals are CSS transitions: compositor-driven, cheap, and nothing
+   that can be left half-applied by a cancelled JS animation. */
+.reveal-pending {
+  opacity: 0;
+  translate: 0 var(--reveal-y, 20px);
+  transition:
+    opacity var(--reveal-duration, 780ms) var(--md-ease-emphasized-decel),
+    translate var(--reveal-duration, 780ms) var(--md-ease-emphasized-decel);
+  will-change: opacity, translate;
+}
+
+.reveal-pending.is-revealed {
+  opacity: 1;
+  translate: 0 0;
+}
+
+html[data-motion='off'] .reveal-pending {
+  opacity: 1;
+  translate: none;
+  transition: none;
+}
+
+html[data-motion='off'] *,
+html[data-motion='off'] *::before,
+html[data-motion='off'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-density='compact'] .vp-doc p,
+html[data-density='compact'] .vp-doc li {
+  line-height: 1.6;
+}
+
+html[data-density='compact'] .vp-doc > div > h2 {
+  margin-top: 2.2rem;
+}
+
+/* ==========================================================================
+   17. Responsive & accessibility
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .vp-doc h1 {
+    font-size: clamp(1.85rem, 7vw, 2.35rem);
+    font-weight: 400;
   }
 
-  html,
-  body,
-  #app,
-  .VPNavBar,
-  .VPContent,
-  .VPDoc,
-  .vp-doc,
-  .VPFooter,
-  .VPSidebar,
-  .VPSwitchAppearance,
-  .VPSwitchAppearance svg {
+  .vp-doc h2 {
+    margin-top: 2.4rem;
+  }
+
+  .vp-doc p,
+  .vp-doc li {
+    line-height: 1.7;
+  }
+
+  .VPButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .VPFooter {
+    padding-bottom: 72px;
+  }
+}
+
+/* ==========================================================================
+   11b. Local search dialog
+   ========================================================================== */
+
+.VPLocalSearchBox .shell {
+  width: min(100vw - 32px, 660px);
+  padding: 14px;
+  gap: 12px;
+  border: 0 !important;
+  border-radius: var(--md-shape-2xl) !important;
+  background: var(--md-surface-container-high) !important;
+  box-shadow: var(--md-elevation-5) !important;
+}
+
+.VPLocalSearchBox .search-bar {
+  padding: 0 14px;
+  border: 0 !important;
+  border-radius: var(--md-shape-full) !important;
+  background: var(--md-surface-container-highest) !important;
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: box-shadow var(--md-duration-short) var(--md-ease-standard);
+}
+
+.VPLocalSearchBox .search-bar:focus-within {
+  border: 0 !important;
+  box-shadow: inset 0 0 0 2px var(--md-primary) !important;
+}
+
+.VPLocalSearchBox .search-input {
+  color: var(--md-on-surface);
+}
+
+.VPLocalSearchBox .results {
+  gap: 4px;
+  padding: 2px;
+}
+
+.VPLocalSearchBox .result {
+  padding-inline: 12px;
+  border: 0 !important;
+  border-radius: var(--md-shape-full) !important;
+  background: transparent !important;
+  color: var(--md-on-surface) !important;
+}
+
+.VPLocalSearchBox .result.selected {
+  background: var(--md-secondary-container) !important;
+  color: var(--md-on-secondary-container);
+}
+
+.VPLocalSearchBox .result .title {
+  font-weight: 500;
+}
+
+.VPLocalSearchBox .result .breadcrumbs,
+.VPLocalSearchBox .result .excerpt {
+  color: var(--md-on-surface-variant) !important;
+  opacity: 1;
+}
+
+.VPLocalSearchBox .result.selected .breadcrumbs,
+.VPLocalSearchBox .result.selected .excerpt {
+  color: color-mix(in srgb, var(--md-on-secondary-container) 78%, transparent) !important;
+}
+
+.VPLocalSearchBox .result.selected .title-icon,
+.VPLocalSearchBox .result .title-icon {
+  color: var(--md-primary);
+}
+
+.VPLocalSearchBox .fade-top,
+.VPLocalSearchBox .fade-bottom {
+  display: none;
+}
+
+.VPLocalSearchBox mark {
+  border-radius: var(--md-shape-xs);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.VPLocalSearchBox .search-keyboard-shortcuts {
+  color: var(--md-on-surface-variant);
+}
+
+.VPLocalSearchBox .search-keyboard-shortcuts kbd {
+  padding: 2px 7px;
+  border: 0 !important;
+  border-radius: var(--md-shape-full) !important;
+  background: var(--md-surface-container-highest) !important;
+  box-shadow: none !important;
+  color: var(--md-on-surface-variant) !important;
+}
+
+.VPLocalSearchBox .no-results {
+  color: var(--md-on-surface-variant);
+}
+
+/* ==========================================================================
+   12. Mobile local nav (outline / back-to-top)
+   ========================================================================== */
+
+.VPLocalNav {
+  border-bottom: 0;
+  background: var(--md-surface);
+}
+
+.VPLocalNavOutlineDropdown {
+  padding: 9px 0;
+}
+
+.VPLocalNavOutlineDropdown button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.VPLocalNavOutlineDropdown button:hover,
+.VPLocalNavOutlineDropdown button.open {
+  background: var(--md-surface-container-highest);
+  color: var(--md-primary);
+}
+
+.VPLocalNavOutlineDropdown button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.VPLocalNav .outline {
+  border-radius: 0 0 var(--md-shape-xl) var(--md-shape-xl);
+  border-bottom: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container-low);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  .VPSwitchAppearance {
+    animation: none !important;
     transition: none !important;
   }
 
-  .VPSwitchAppearance:hover,
-  .VPSwitchAppearance:active,
-  .VPSwitchAppearance:hover svg {
+  .motion-pending,
+  .motion-done {
+    opacity: 1 !important;
     transform: none !important;
+    will-change: auto;
   }
 }

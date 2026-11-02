@@ -1,4 +1,48 @@
+# thio.cc.cd - everything here is meant to be read, quoted, and linked.
+
 User-agent: *
+Allow: /
+Disallow: /404
+
+# Search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /images/
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Answer engines and research crawlers are welcome too
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://thio.cc.cd/sitemap.xml

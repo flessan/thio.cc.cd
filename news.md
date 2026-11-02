@@ -1,6 +1,6 @@
 ---
 title: News
-description: Short updates from Flessan - live from the @chfless Telegram channel.
+description: "Short, unfiltered updates from Flessan, mirrored live from the @chfless Telegram channel: what broke, what shipped, and what comes next."
 ---
 
 # News

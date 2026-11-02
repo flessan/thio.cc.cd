@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const progress = ref(0)
 const copied = ref(false)
 const notice = ref('')
 const canShare = ref(false)
-
-function updateProgress() {
-  const scrollable = document.documentElement.scrollHeight - window.innerHeight
-  progress.value = scrollable > 0
-    ? Math.min(100, Math.max(0, (window.scrollY / scrollable) * 100))
-    : 0
-}
 
 async function copyLink() {
   try {
@@ -41,29 +33,12 @@ async function shareArticle() {
 
 onMounted(() => {
   canShare.value = typeof navigator.share === 'function'
-  updateProgress()
-  window.addEventListener('scroll', updateProgress, { passive: true })
-  window.addEventListener('resize', updateProgress, { passive: true })
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', updateProgress)
-  window.removeEventListener('resize', updateProgress)
 })
 </script>
 
 <template>
   <div class="post-tools">
-    <div
-      class="reading-progress"
-      role="progressbar"
-      aria-label="Article reading progress"
-      :aria-valuenow="Math.round(progress)"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <span :style="{ width: progress + '%' }"></span>
-    </div>
+    <!-- The reading line lives once, at the top of the layout (ReadingProgress). -->
     <div class="share-actions">
       <span class="share-label">Share this article</span>
       <button type="button" @click="copyLink">
@@ -88,23 +63,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.reading-progress {
-  position: fixed;
-  z-index: 60;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  overflow: hidden;
-  background: transparent;
-  pointer-events: none;
-}
-.reading-progress span {
-  display: block;
-  height: 100%;
-  background: var(--vp-c-brand-1);
-  transition: width 100ms linear;
-}
 .share-actions {
   display: flex;
   align-items: center;
@@ -114,7 +72,7 @@ onUnmounted(() => {
 }
 .share-label {
   margin-right: 0.2rem;
-  color: var(--vp-c-text-3);
+  color: var(--md-on-surface-variant);
   font-size: 0.78rem;
 }
 .share-actions button {
@@ -122,19 +80,29 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  min-height: 2rem;
-  padding: 0.4rem 0.65rem;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 0.55rem;
-  background: var(--vp-c-bg-alt);
-  color: var(--vp-c-text-1);
+  min-height: 38px;
+  padding: 0 0.95rem;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-full);
+  background: transparent;
+  color: var(--md-on-surface-variant);
   font: inherit;
   font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
+  transition:
+    background-color var(--md-duration-short) var(--md-ease-standard),
+    border-color var(--md-duration-short) var(--md-ease-standard),
+    color var(--md-duration-short) var(--md-ease-standard),
+    transform var(--md-duration-short) var(--md-ease-spring);
 }
 .share-actions button:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+  border-color: transparent;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+.share-actions button:active {
+  transform: scale(0.97);
 }
 .share-actions svg {
   fill: none;
@@ -145,15 +113,16 @@ onUnmounted(() => {
 }
 .share-notice {
   flex-basis: 100%;
-  color: var(--vp-c-text-2);
+  color: var(--md-on-surface-variant);
   font-size: 0.78rem;
 }
 .post-tools {
-  margin: -1.45rem 0 2.3rem;
+  margin: 0 0 2.4rem;
 }
 @media (prefers-reduced-motion: reduce) {
-  .reading-progress span {
-    transition: none;
+  .share-actions button:hover,
+  .share-actions button:active {
+    transform: none;
   }
 }
 </style>

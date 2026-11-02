@@ -59,7 +59,7 @@ function openSearch() {
 .nf-code {
   font-size: 4rem;
   font-weight: 700;
-  color: var(--vp-c-brand-1);
+  color: var(--flessan-accent-ink);
   margin: 0;
   line-height: 1;
 }
@@ -98,23 +98,37 @@ function openSearch() {
 .nf-btn {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--vp-c-brand-1);
-  border-radius: 8px;
-  padding: 0.5rem 1.1rem;
+  justify-content: center;
+  border: 1px solid var(--flessan-card-border);
+  border-radius: 10px;
+  padding: 0.58rem 1.1rem;
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
   font-family: inherit;
+  transition:
+    background-color 200ms ease,
+    border-color 220ms ease,
+    color 180ms ease,
+    transform 420ms var(--flessan-ease-out),
+    box-shadow 320ms var(--flessan-ease-out);
+}
+
+.nf-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--flessan-shadow-sm);
 }
 
 .nf-btn-primary {
-  background: var(--vp-c-brand-1);
-  color: var(--vp-c-white);
+  border-color: var(--flessan-accent-fill);
+  background: var(--flessan-accent-fill);
+  color: var(--flessan-on-accent);
 }
 
 .nf-btn-primary:hover {
-  background: var(--vp-c-brand-2);
+  border-color: var(--flessan-accent-fill-hover);
+  background: var(--flessan-accent-fill-hover);
 }
 
 .nf-btn:not(.nf-btn-primary) {
@@ -123,8 +137,14 @@ function openSearch() {
 }
 
 .nf-btn:not(.nf-btn-primary):hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
+  border-color: var(--flessan-accent-line);
+  color: var(--flessan-accent-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nf-btn:hover {
+    transform: none;
+  }
 }
 
 .nf-links {
