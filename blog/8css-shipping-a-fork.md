@@ -4,8 +4,8 @@ author:
   name: M. Thio Saputra
 date: "2026-11-03"
 description: "What building and publishing 8.css has taught me about visual details, maintaining a fork, documentation, package names, and the unglamorous work of shipping."
-image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&h=840&q=85"
-imageAlt: "A laptop displaying a code editor on a desk"
+image: "https://cdn12.picryl.com/photo/2016/12/31/windows-8-internet-online-computer-communication-04620e-1024.jpg"
+imageAlt: "A laptop displaying a windows 8 on a desk"
 inLanguage: "en"
 keywords:
   - "8.css"
@@ -15,7 +15,7 @@ keywords:
   - "open source maintenance"
 ---
 
-<BlogCover src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&h=840&q=85" alt="A laptop displaying a code editor on a desk" credit="Image via Unsplash" license-url="https://unsplash.com/license" />
+<BlogCover src="https://cdn12.picryl.com/photo/2016/12/31/windows-8-internet-online-computer-communication-04620e-1024.jpg" alt="A laptop displaying a code editor on a desk" credit="Image via Pixabay" license-url="https://pixabay.com/service/license-summary/" />
 
 # Making an old desktop style reusable on the web
 
