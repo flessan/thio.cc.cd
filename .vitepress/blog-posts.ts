@@ -14,7 +14,7 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'browser-authenticator',
     title: 'Could an authenticator live in the browser?',
-    date: '2026-11-03',
+    date: '2026-11-02',
     description: 'A small design exploration into browser-based OTP apps, extension portability, secret storage, and the difference between a working code generator and a trustworthy authenticator.',
     category: 'Web security & tooling',
     image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&h=840&q=85',
@@ -25,13 +25,13 @@ export const blogPosts: BlogPost[] = [
   {
     slug: '8css-shipping-a-fork',
     title: 'Making an old desktop style reusable on the web',
-    date: '2026-11-03',
+    date: '2026-10-31',
     description: 'What building and publishing 8.css has taught me about visual details, maintaining a fork, documentation, package names, and the unglamorous work of shipping.',
     category: 'Frontend & packaging',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&h=840&q=85',
-    imageAlt: 'A laptop displaying a code editor on a desk',
+    image: 'https://pixabay.com/service/license-summary/',
+    imageAlt: 'A laptop displaying a windows 8 on a desk',
     language: 'en',
-    topics: ['CSS', '8.css', 'npm', 'packaging', 'open source']
+    topics: ['CSS', '8.css', 'npm', 'packaging', 'windows 8', 'open source']
   },
   {
     slug: 'goampp-linux-cross-platform',
