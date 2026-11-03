@@ -30,41 +30,45 @@ Reach me at [tio@cc.cc](mailto:tio@cc.cc)<CopyButton text="tio@cc.cc" label="Cop
 
 ## Latest Posts
 
-<BlogPost image="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1600&h=840&q=85" category="Language design">
+<BlogPost image="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&h=840&q=85" category="Web security & tooling">
 
-**[Kontekstual: code in the language we speak](./blog/kontekstual-language.md)**
-<br>Designing a beginner-friendly programming language that reads naturally in Indonesian
-<br>October 18, 2026
-
-</BlogPost>
-
-<BlogPost image="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&h=840&q=85" category="Storage & APIs">
-
-**[Telegraph Cloud: files, APIs, and a Telegram-backed backend](./blog/telegraph-cloud.md)**
-<br>A reusable storage and document API for the rest of the project ecosystem
-<br>October 18, 2026
+**[Could an authenticator live in the browser?](./blog/browser-authenticator.md)**
+<br>A design exploration into browser-based OTP apps, portability, and secret storage
+<br>November 3, 2026
 
 </BlogPost>
 
-<BlogPost image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&h=840&q=85" category="Developer tools">
+<BlogPost image="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&h=840&q=85" category="Frontend & packaging">
 
-**[Admin Panel Everywhere: from endpoints to a workspace](./blog/admin-panel-everywhere.md)**
-<br>A self-hostable place to inspect APIs and edit structured data
-<br>October 18, 2026
-
-</BlogPost>
-
-<BlogPost image="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1600&h=840&q=85" category="Windows tooling">
-
-**[ANTO-LTG: a toolkit for the Windows repair bench](./blog/anto-ltg-toolkit.md)**
-<br>A clearer workflow for drivers, software setup, and Windows maintenance
-<br>October 18, 2026
+**[Making an old desktop style reusable on the web](./blog/8css-shipping-a-fork.md)**
+<br>What 8.css taught me about maintaining a fork and shipping a package
+<br>November 3, 2026
 
 </BlogPost>
 
-**[hello, internet](./blog/hello-internet.md)**
-<br>A new home at thio.cc.cd - who I am, and what this site will hold
-<br>September 8, 2026
+<BlogPost image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&h=840&q=85" category="Linux & desktop software">
+
+**[Porting GoAMPP to Linux without leaving Windows behind](./blog/goampp-linux-cross-platform.md)**
+<br>Cross-platform support means protecting existing workflows too
+<br>November 3, 2026
+
+</BlogPost>
+
+<BlogPost image="https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=1600&h=840&q=85" category="UI & desktop UX">
+
+**[Compact mode is not the whole interface](./blog/compact-mode-is-not-the-layout.md)**
+<br>A desktop UI lesson about resizing, scroll behavior, and real content
+<br>November 3, 2026
+
+</BlogPost>
+
+<BlogPost image="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1600&h=840&q=85" category="Programming & education">
+
+**[ERD tetap berguna meski aplikasinya tanpa database](./blog/erd-without-database.md)**
+<br>Catatan tentang pemodelan data untuk aplikasi Android dengan data konstan
+<br>November 3, 2026
+
+</BlogPost>
 
 Checkout all posts at the [Blog](./blog.md) - or subscribe with [RSS](./feed.xml).
 <GithubActivity :limit="3"></GithubActivity>
