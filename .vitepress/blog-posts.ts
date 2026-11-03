@@ -12,6 +12,61 @@ export type BlogPost = {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: 'browser-authenticator',
+    title: 'Could an authenticator live in the browser?',
+    date: '2026-11-02',
+    description: 'A small design exploration into browser-based OTP apps, extension portability, secret storage, and the difference between a working code generator and a trustworthy authenticator.',
+    category: 'Web security & tooling',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&h=840&q=85',
+    imageAlt: 'A person using a mobile device while working at a desk',
+    language: 'en',
+    topics: ['authenticator', 'OTP', 'browser extension', 'cross-platform', 'security']
+  },
+  {
+    slug: '8css-shipping-a-fork',
+    title: 'Making an old desktop style reusable on the web',
+    date: '2026-10-31',
+    description: 'What building and publishing 8.css has taught me about visual details, maintaining a fork, documentation, package names, and the unglamorous work of shipping.',
+    category: 'Frontend & packaging',
+    image: 'https://pixabay.com/service/license-summary/',
+    imageAlt: 'A laptop displaying a windows 8 on a desk',
+    language: 'en',
+    topics: ['CSS', '8.css', 'npm', 'packaging', 'windows 8', 'open source']
+  },
+  {
+    slug: 'goampp-linux-cross-platform',
+    title: 'Porting GoAMPP to Linux without leaving Windows behind',
+    date: '2026-11-03',
+    description: 'A practical reflection on cross-platform desktop development: preserving the existing Windows build while giving the Linux version its own sensible behavior and packaging.',
+    category: 'Linux & desktop software',
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&h=840&q=85',
+    imageAlt: 'A close-up of a circuit board and electronic components',
+    language: 'en',
+    topics: ['Linux', 'GoAMPP', 'cross-platform', 'desktop', 'release engineering']
+  },
+  {
+    slug: 'compact-mode-is-not-the-layout',
+    title: 'Compact mode is not the whole interface',
+    date: '2026-11-03',
+    description: 'A desktop UI lesson from AdbPureFlow: a layout that looks good in a compact window still needs to work at normal sizes, when resized, and when content grows.',
+    category: 'UI & desktop UX',
+    image: 'https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=1600&h=840&q=85',
+    imageAlt: 'A collection of interface layouts and design elements on a screen',
+    language: 'en',
+    topics: ['AdbPureFlow', 'Fyne', 'desktop UI', 'responsive layout', 'UX']
+  },
+  {
+    slug: 'erd-without-database',
+    title: 'ERD tetap berguna meski aplikasinya tanpa database',
+    date: '2026-11-03',
+    description: 'Catatan singkat dari tugas kejuruan: mengapa rancangan ERD tetap masuk akal ketika aplikasi Android memakai data konstan dan tidak menyimpan data ke database.',
+    category: 'Programming & education',
+    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1600&h=840&q=85',
+    imageAlt: 'Catatan dan dokumen perencanaan di atas meja kerja',
+    language: 'id',
+    topics: ['ERD', 'Android Studio', 'education', 'data modeling', 'Indonesian']
+  },
+  {
     slug: 'kontekstual-language',
     title: 'Kontekstual: Indonesian programming language experiment',
     date: '2026-10-18',
