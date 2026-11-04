@@ -373,8 +373,11 @@ BMKG parsing and outdoor advice, cloud envelope validation and conflict
 detection, storage fallbacks, GitHub auth/config helpers, session sealing, and a
 jsdom smoke test that mounts the real shell and walks every tab.
 
-GitHub Actions runs typecheck, tests, and the production build on pull requests
-and on `main` (`.github/workflows/ci.yml`).
+A ready-to-use GitHub Actions workflow (typecheck, tests, production build) is
+kept at [`docs/ci.yml`](ci.yml). Enable it by moving it to
+`.github/workflows/ci.yml`; this sandbox's GitHub connection is a GitHub App
+token without the `workflows` permission, so it could not push that path itself.
+The same three commands run locally with `pnpm run check`.
 
 ---
 
