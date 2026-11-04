@@ -28,6 +28,7 @@ import {
   formatArea,
   formatPopulation,
   highlightSegments,
+  islandName,
   largestCities,
   provincesForIsland,
   rankRegions,
@@ -474,7 +475,7 @@ function removeLocation() {
           <template v-else-if="province && provinceInfo">
             <div class="kw-region-province">
               <div>
-                <span class="kw-eyebrow">{{ provinceInfo.island.replace(/-/g, ' ') }}</span>
+                <span class="kw-eyebrow">{{ islandName(provinceInfo.island) }}</span>
                 <strong>{{ provinceInfo.name }}</strong>
                 <span class="kw-region-facts">
                   <template v-if="provinceInfo.capital">{{ provinceInfo.capital }} · </template>

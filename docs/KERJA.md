@@ -380,7 +380,7 @@ pnpm run build           # vitepress build
 pnpm run check           # all of the above in order
 ```
 
-The suite (127 tests) covers the task model and ranking, reminder
+The suite (128 tests) covers the task model and ranking, reminder
 timing/snooze/dismiss, BMKG parsing and outdoor advice, region search aliases
 and adm4 prefixes, the bundled 38-province / 514-point dataset, cloud envelope
 validation and conflict detection, storage fallbacks, GitHub auth/config

@@ -8,6 +8,7 @@ import {
   formatArea,
   formatPopulation,
   highlightSegments,
+  islandName,
   largestCities,
   normalizeRegion,
   provincesForIsland,
@@ -106,6 +107,11 @@ describe('region browsing', () => {
     expect(provincesForIsland(provinces, '')).toHaveLength(38)
   })
 
+  it('names island groups', () => {
+    expect(islandName('bali-nusa-tenggara')).toBe('Bali & Nusa Tenggara')
+    expect(islandName('sumatra')).toBe('Sumatra')
+  })
+
   it('lists the largest cities first', () => {
     expect(largestCities(entries, 3).map((item) => item.name)).toEqual([
       'Kota Bandung',
@@ -115,10 +121,11 @@ describe('region browsing', () => {
   })
 
   it('formats population and area for Indonesian readers', () => {
-    expect(formatPopulation(2_400_000)).toBe('2,4 jt')
-    expect(formatPopulation(681_000)).toBe('681 rb')
-    expect(formatArea(98.372)).toBe('98,4 km²')
-    expect(formatArea(56835.019)).toBe('56.835 km²')
+    expect(formatPopulation(2_400_000)).toBe('2.4M')
+    expect(formatPopulation(681_000)).toBe('681K')
+    expect(formatPopulation(8_400)).toBe('8,400')
+    expect(formatArea(98.372)).toBe('98.4 km²')
+    expect(formatArea(56835.019)).toBe('56,835 km²')
   })
 
   it('splits labels around the matched text', () => {

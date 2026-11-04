@@ -259,19 +259,27 @@ export function groupByProvince(
   return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name))
 }
 
-const numberFormat = new Intl.NumberFormat('id-ID')
+const numberFormat = new Intl.NumberFormat('en-US')
+const compactFormat = new Intl.NumberFormat('en-US', {
+  notation: 'compact',
+  maximumFractionDigits: 1
+})
 
 export function formatPopulation(value: number | null | undefined): string {
   if (!value) return ''
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace('.', ',')} jt`
-  if (value >= 1_000) return `${Math.round(value / 1_000)} rb`
+  if (value >= 10_000) return compactFormat.format(value)
   return numberFormat.format(value)
 }
 
 export function formatArea(value: number | null | undefined): string {
   if (!value) return ''
   if (value >= 1_000) return `${numberFormat.format(Math.round(value))} km²`
-  return `${value.toFixed(1).replace('.', ',')} km²`
+  return `${value.toFixed(1)} km²`
+}
+
+/** Display label for an island group id. */
+export function islandName(id: string): string {
+  return ISLANDS.find((group) => group.id === id)?.label ?? id
 }
 
 export interface LabelSegment {
