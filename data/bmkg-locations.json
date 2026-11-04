@@ -1,0 +1,3645 @@
+{
+ "generatedAt": "2026-11-04",
+ "source": "https://github.com/Mikhaells/Prakiraan-Cuaca-Indonesia----BMKG (src/data/kabupatenAdm4.json), cross-checked with BMKG administrative codes",
+ "note": "One representative desa/kelurahan (adm4) per kabupaten/kota, used as a starting point for the BMKG forecast API. Village-level codes can be entered manually in the workspace.",
+ "provinces": {
+  "11": "Aceh",
+  "12": "Sumatera Utara",
+  "13": "Sumatera Barat",
+  "14": "Riau",
+  "15": "Jambi",
+  "16": "Sumatera Selatan",
+  "17": "Bengkulu",
+  "18": "Lampung",
+  "19": "Kepulauan Bangka Belitung",
+  "21": "Kepulauan Riau",
+  "31": "DKI Jakarta",
+  "32": "Jawa Barat",
+  "33": "Jawa Tengah",
+  "34": "DI Yogyakarta",
+  "35": "Jawa Timur",
+  "36": "Banten",
+  "51": "Bali",
+  "52": "Nusa Tenggara Barat",
+  "53": "Nusa Tenggara Timur",
+  "61": "Kalimantan Barat",
+  "62": "Kalimantan Tengah",
+  "63": "Kalimantan Selatan",
+  "64": "Kalimantan Timur",
+  "65": "Kalimantan Utara",
+  "71": "Sulawesi Utara",
+  "72": "Sulawesi Tengah",
+  "73": "Sulawesi Selatan",
+  "74": "Sulawesi Tenggara",
+  "75": "Gorontalo",
+  "76": "Sulawesi Barat",
+  "81": "Maluku",
+  "82": "Maluku Utara",
+  "91": "Papua",
+  "92": "Papua Barat",
+  "93": "Papua Selatan",
+  "94": "Papua Tengah",
+  "95": "Papua Pegunungan",
+  "96": "Papua Barat Daya"
+ },
+ "locations": [
+  {
+   "adm4": "11.05.01.2001",
+   "name": "Kabupaten Aceh Barat",
+   "regency": "Aceh Barat",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.12.01.2006",
+   "name": "Kabupaten Aceh Barat Daya",
+   "regency": "Aceh Barat Daya",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.06.01.2001",
+   "name": "Kabupaten Aceh Besar",
+   "regency": "Aceh Besar",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.14.01.2001",
+   "name": "Kabupaten Aceh Jaya",
+   "regency": "Aceh Jaya",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.01.01.2001",
+   "name": "Kabupaten Aceh Selatan",
+   "regency": "Aceh Selatan",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.10.01.2001",
+   "name": "Kabupaten Aceh Singkil",
+   "regency": "Aceh Singkil",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.16.01.2001",
+   "name": "Kabupaten Aceh Tamiang",
+   "regency": "Aceh Tamiang",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.04.01.2003",
+   "name": "Kabupaten Aceh Tengah",
+   "regency": "Aceh Tengah",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.02.01.2001",
+   "name": "Kabupaten Aceh Tenggara",
+   "regency": "Aceh Tenggara",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.03.01.2001",
+   "name": "Kabupaten Aceh Timur",
+   "regency": "Aceh Timur",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.08.01.2001",
+   "name": "Kabupaten Aceh Utara",
+   "regency": "Aceh Utara",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.17.01.2001",
+   "name": "Kabupaten Bener Meriah",
+   "regency": "Bener Meriah",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.11.01.2001",
+   "name": "Kabupaten Bireuen",
+   "regency": "Bireuen",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.13.01.2001",
+   "name": "Kabupaten Gayo Lues",
+   "regency": "Gayo Lues",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.15.01.2003",
+   "name": "Kabupaten Nagan Raya",
+   "regency": "Nagan Raya",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.07.03.2001",
+   "name": "Kabupaten Pidie",
+   "regency": "Pidie",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.18.01.2001",
+   "name": "Kabupaten Pidie Jaya",
+   "regency": "Pidie Jaya",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.09.01.2007",
+   "name": "Kabupaten Simeulue",
+   "regency": "Simeulue",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.71.01.2001",
+   "name": "Kota Banda Aceh",
+   "regency": "Banda Aceh",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.74.01.2007",
+   "name": "Kota Langsa",
+   "regency": "Langsa",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.73.01.2002",
+   "name": "Kota Lhokseumawe",
+   "regency": "Lhokseumawe",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.72.01.2004",
+   "name": "Kota Sabang",
+   "regency": "Sabang",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "11.75.01.2001",
+   "name": "Kota Subulussalam",
+   "regency": "Subulussalam",
+   "provinceCode": "11",
+   "province": "Aceh"
+  },
+  {
+   "adm4": "12.09.08.2002",
+   "name": "Kabupaten Asahan",
+   "regency": "Asahan",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.19.01.1001",
+   "name": "Kabupaten Batu Bara",
+   "regency": "Batu Bara",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.11.01.1005",
+   "name": "Kabupaten Dairi",
+   "regency": "Dairi",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.07.01.2001",
+   "name": "Kabupaten Deli Serdang",
+   "regency": "Deli Serdang",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.16.01.2002",
+   "name": "Kabupaten Humbang Hasundutan",
+   "regency": "Humbang Hasundutan",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.06.01.1009",
+   "name": "Kabupaten Karo",
+   "regency": "Karo",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.10.01.1001",
+   "name": "Kabupaten Labuhanbatu",
+   "regency": "Labuhanbatu",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.22.01.1001",
+   "name": "Kabupaten Labuhanbatu Selatan",
+   "regency": "Labuhanbatu Selatan",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.23.01.1001",
+   "name": "Kabupaten Labuhanbatu Utara",
+   "regency": "Labuhanbatu Utara",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.05.01.1001",
+   "name": "Kabupaten Langkat",
+   "regency": "Langkat",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.13.01.1011",
+   "name": "Kabupaten Mandailing Natal",
+   "regency": "Mandailing Natal",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.04.05.2001",
+   "name": "Kabupaten Nias",
+   "regency": "Nias",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.25.01.2001",
+   "name": "Kabupaten Nias Barat",
+   "regency": "Nias Barat",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.14.01.2002",
+   "name": "Kabupaten Nias Selatan",
+   "regency": "Nias Selatan",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.24.01.2001",
+   "name": "Kabupaten Nias Utara",
+   "regency": "Nias Utara",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.21.01.2001",
+   "name": "Kabupaten Padang Lawas",
+   "regency": "Padang Lawas",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.20.01.2001",
+   "name": "Kabupaten Padang Lawas Utara",
+   "regency": "Padang Lawas Utara",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.15.01.2001",
+   "name": "Kabupaten Pakpak Bharat",
+   "regency": "Pakpak Bharat",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.17.01.1016",
+   "name": "Kabupaten Samosir",
+   "regency": "Samosir",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.18.01.2001",
+   "name": "Kabupaten Serdang Bedagai",
+   "regency": "Serdang Bedagai",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.08.01.2001",
+   "name": "Kabupaten Simalungun",
+   "regency": "Simalungun",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.03.01.1001",
+   "name": "Kabupaten Tapanuli Selatan",
+   "regency": "Tapanuli Selatan",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.01.01.1001",
+   "name": "Kabupaten Tapanuli Tengah",
+   "regency": "Tapanuli Tengah",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.02.01.1001",
+   "name": "Kabupaten Tapanuli Utara",
+   "regency": "Tapanuli Utara",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.12.01.1034",
+   "name": "Kabupaten Toba",
+   "regency": "Toba",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.75.01.1001",
+   "name": "Kota Binjai",
+   "regency": "Binjai",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.78.01.1030",
+   "name": "Kota Gunungsitoli",
+   "regency": "Gunungsitoli",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.71.01.1001",
+   "name": "Kota Medan",
+   "regency": "Medan",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.77.01.1001",
+   "name": "Kota Padangsidimpuan",
+   "regency": "Padangsidimpuan",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.72.01.1001",
+   "name": "Kota Pematangsiantar",
+   "regency": "Pematangsiantar",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.73.01.1001",
+   "name": "Kota Sibolga",
+   "regency": "Sibolga",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.74.01.1001",
+   "name": "Kota Tanjungbalai",
+   "regency": "Tanjungbalai",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "12.76.01.1001",
+   "name": "Kota Tebing Tinggi",
+   "regency": "Tebing Tinggi",
+   "provinceCode": "12",
+   "province": "Sumatera Utara"
+  },
+  {
+   "adm4": "13.06.01.2001",
+   "name": "Kabupaten Agam",
+   "regency": "Agam",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.10.01.2002",
+   "name": "Kabupaten Dharmasraya",
+   "regency": "Dharmasraya",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.09.01.2007",
+   "name": "Kabupaten Kepulauan Mentawai",
+   "regency": "Kepulauan Mentawai",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.07.01.2001",
+   "name": "Kabupaten Lima Puluh Kota",
+   "regency": "Lima Puluh Kota",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.05.01.2001",
+   "name": "Kabupaten Padang Pariaman",
+   "regency": "Padang Pariaman",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.08.04.2001",
+   "name": "Kabupaten Pasaman",
+   "regency": "Pasaman",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.12.01.2001",
+   "name": "Kabupaten Pasaman Barat",
+   "regency": "Pasaman Barat",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.01.01.2001",
+   "name": "Kabupaten Pesisir Selatan",
+   "regency": "Pesisir Selatan",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.03.03.2001",
+   "name": "Kabupaten Sijunjung",
+   "regency": "Sijunjung",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.02.03.2001",
+   "name": "Kabupaten Solok",
+   "regency": "Solok",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.11.01.2001",
+   "name": "Kabupaten Solok Selatan",
+   "regency": "Solok Selatan",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.04.01.2001",
+   "name": "Kabupaten Tanah Datar",
+   "regency": "Tanah Datar",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.75.01.1001",
+   "name": "Kota Bukittinggi",
+   "regency": "Bukittinggi",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.71.01.1001",
+   "name": "Kota Padang",
+   "regency": "Padang",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.74.01.1001",
+   "name": "Kota Padang Panjang",
+   "regency": "Padang Panjang",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.77.01.1001",
+   "name": "Kota Pariaman",
+   "regency": "Pariaman",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.76.01.1002",
+   "name": "Kota Payakumbuh",
+   "regency": "Payakumbuh",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.73.01.1001",
+   "name": "Kota Sawahlunto",
+   "regency": "Sawahlunto",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "13.72.01.1001",
+   "name": "Kota Solok",
+   "regency": "Solok",
+   "provinceCode": "13",
+   "province": "Sumatera Barat"
+  },
+  {
+   "adm4": "14.03.01.1001",
+   "name": "Kabupaten Bengkalis",
+   "regency": "Bengkalis",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.04.01.1001",
+   "name": "Kabupaten Indragiri Hilir",
+   "regency": "Indragiri Hilir",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.02.01.1004",
+   "name": "Kabupaten Indragiri Hulu",
+   "regency": "Indragiri Hulu",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.01.01.1011",
+   "name": "Kabupaten Kampar",
+   "regency": "Kampar",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.10.01.1001",
+   "name": "Kabupaten Kepulauan Meranti",
+   "regency": "Kepulauan Meranti",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.09.01.1012",
+   "name": "Kabupaten Kuantan Singingi",
+   "regency": "Kuantan Singingi",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.05.01.1010",
+   "name": "Kabupaten Pelalawan",
+   "regency": "Pelalawan",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.07.01.1010",
+   "name": "Kabupaten Rokan Hilir",
+   "regency": "Rokan Hilir",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.06.01.1001",
+   "name": "Kabupaten Rokan Hulu",
+   "regency": "Rokan Hulu",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.08.01.1001",
+   "name": "Kabupaten Siak",
+   "regency": "Siak",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.72.01.1003",
+   "name": "Kota Dumai",
+   "regency": "Dumai",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "14.71.01.1002",
+   "name": "Kota Pekanbaru",
+   "regency": "Pekanbaru",
+   "provinceCode": "14",
+   "province": "Riau"
+  },
+  {
+   "adm4": "15.04.01.1001",
+   "name": "Kabupaten Batanghari",
+   "regency": "Batanghari",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.08.01.2001",
+   "name": "Kabupaten Bungo",
+   "regency": "Bungo",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.01.01.1004",
+   "name": "Kabupaten Kerinci",
+   "regency": "Kerinci",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.02.01.2001",
+   "name": "Kabupaten Merangin",
+   "regency": "Merangin",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.05.01.1003",
+   "name": "Kabupaten Muaro Jambi",
+   "regency": "Muaro Jambi",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.03.01.2001",
+   "name": "Kabupaten Sarolangun",
+   "regency": "Sarolangun",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.06.01.1005",
+   "name": "Kabupaten Tanjung Jabung Barat",
+   "regency": "Tanjung Jabung Barat",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.07.01.1010",
+   "name": "Kabupaten Tanjung Jabung Timur",
+   "regency": "Tanjung Jabung Timur",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.09.01.1001",
+   "name": "Kabupaten Tebo",
+   "regency": "Tebo",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.71.01.1001",
+   "name": "Kota Jambi",
+   "regency": "Jambi",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "15.72.01.1001",
+   "name": "Kota Sungai Penuh",
+   "regency": "Sungai Penuh",
+   "provinceCode": "15",
+   "province": "Jambi"
+  },
+  {
+   "adm4": "16.07.01.1016",
+   "name": "Kabupaten Banyuasin",
+   "regency": "Banyuasin",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.11.01.2001",
+   "name": "Kabupaten Empat Lawang",
+   "regency": "Empat Lawang",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.04.01.2001",
+   "name": "Kabupaten Lahat",
+   "regency": "Lahat",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.03.01.2011",
+   "name": "Kabupaten Muara Enim",
+   "regency": "Muara Enim",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.06.01.1009",
+   "name": "Kabupaten Musi Banyuasin",
+   "regency": "Musi Banyuasin",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.05.01.1001",
+   "name": "Kabupaten Musi Rawas",
+   "regency": "Musi Rawas",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.13.01.1007",
+   "name": "Kabupaten Musi Rawas Utara",
+   "regency": "Musi Rawas Utara",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.10.01.1011",
+   "name": "Kabupaten Ogan Ilir",
+   "regency": "Ogan Ilir",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.02.02.1011",
+   "name": "Kabupaten Ogan Komering Ilir",
+   "regency": "Ogan Komering Ilir",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.01.07.2001",
+   "name": "Kabupaten Ogan Komering Ulu",
+   "regency": "Ogan Komering Ulu",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.09.01.1013",
+   "name": "Kabupaten Ogan Komering Ulu Selatan",
+   "regency": "Ogan Komering Ulu Selatan",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.08.01.1007",
+   "name": "Kabupaten Ogan Komering Ulu Timur",
+   "regency": "Ogan Komering Ulu Timur",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.12.01.1003",
+   "name": "Kabupaten Penukal Abab Lematang Ilir",
+   "regency": "Penukal Abab Lematang Ilir",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.73.01.1001",
+   "name": "Kota Lubuk Linggau",
+   "regency": "Lubuk Linggau",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.72.01.1001",
+   "name": "Kota Pagar Alam",
+   "regency": "Pagar Alam",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.71.01.1001",
+   "name": "Kota Palembang",
+   "regency": "Palembang",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "16.74.01.1001",
+   "name": "Kota Prabumulih",
+   "regency": "Prabumulih",
+   "provinceCode": "16",
+   "province": "Sumatera Selatan"
+  },
+  {
+   "adm4": "17.01.01.2001",
+   "name": "Kabupaten Bengkulu Selatan",
+   "regency": "Bengkulu Selatan",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.09.01.2001",
+   "name": "Kabupaten Bengkulu Tengah",
+   "regency": "Bengkulu Tengah",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.03.01.2001",
+   "name": "Kabupaten Bengkulu Utara",
+   "regency": "Bengkulu Utara",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.04.01.2001",
+   "name": "Kabupaten Kaur",
+   "regency": "Kaur",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.08.01.1007",
+   "name": "Kabupaten Kepahiang",
+   "regency": "Kepahiang",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.07.01.1004",
+   "name": "Kabupaten Lebong",
+   "regency": "Lebong",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.06.01.2005",
+   "name": "Kabupaten Mukomuko",
+   "regency": "Mukomuko",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.02.06.1004",
+   "name": "Kabupaten Rejang Lebong",
+   "regency": "Rejang Lebong",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.05.01.1001",
+   "name": "Kabupaten Seluma",
+   "regency": "Seluma",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "17.71.01.1001",
+   "name": "Kota Bengkulu",
+   "regency": "Bengkulu",
+   "provinceCode": "17",
+   "province": "Bengkulu"
+  },
+  {
+   "adm4": "18.04.04.1001",
+   "name": "Kabupaten Lampung Barat",
+   "regency": "Lampung Barat",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.01.04.2001",
+   "name": "Kabupaten Lampung Selatan",
+   "regency": "Lampung Selatan",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.02.01.2001",
+   "name": "Kabupaten Lampung Tengah",
+   "regency": "Lampung Tengah",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.07.01.2001",
+   "name": "Kabupaten Lampung Timur",
+   "regency": "Lampung Timur",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.03.01.1001",
+   "name": "Kabupaten Lampung Utara",
+   "regency": "Lampung Utara",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.11.01.2001",
+   "name": "Kabupaten Mesuji",
+   "regency": "Mesuji",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.09.01.2001",
+   "name": "Kabupaten Pesawaran",
+   "regency": "Pesawaran",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.13.01.1005",
+   "name": "Kabupaten Pesisir Barat",
+   "regency": "Pesisir Barat",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.10.01.1001",
+   "name": "Kabupaten Pringsewu",
+   "regency": "Pringsewu",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.06.01.1001",
+   "name": "Kabupaten Tanggamus",
+   "regency": "Tanggamus",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.05.02.1008",
+   "name": "Kabupaten Tulang Bawang",
+   "regency": "Tulang Bawang",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.12.01.1001",
+   "name": "Kabupaten Tulang Bawang Barat",
+   "regency": "Tulang Bawang Barat",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.08.01.1005",
+   "name": "Kabupaten Way Kanan",
+   "regency": "Way Kanan",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.71.01.1003",
+   "name": "Kota Bandar Lampung",
+   "regency": "Bandar Lampung",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "18.72.01.1001",
+   "name": "Kota Metro",
+   "regency": "Metro",
+   "provinceCode": "18",
+   "province": "Lampung"
+  },
+  {
+   "adm4": "19.01.01.1001",
+   "name": "Kabupaten Bangka",
+   "regency": "Bangka",
+   "provinceCode": "19",
+   "province": "Kepulauan Bangka Belitung"
+  },
+  {
+   "adm4": "19.05.01.1001",
+   "name": "Kabupaten Bangka Barat",
+   "regency": "Bangka Barat",
+   "provinceCode": "19",
+   "province": "Kepulauan Bangka Belitung"
+  },
+  {
+   "adm4": "19.03.01.1001",
+   "name": "Kabupaten Bangka Selatan",
+   "regency": "Bangka Selatan",
+   "provinceCode": "19",
+   "province": "Kepulauan Bangka Belitung"
+  },
+  {
+   "adm4": "19.04.01.1001",
+   "name": "Kabupaten Bangka Tengah",
+   "regency": "Bangka Tengah",
+   "provinceCode": "19",
+   "province": "Kepulauan Bangka Belitung"
+  },
+  {
+   "adm4": "19.02.01.1001",
+   "name": "Kabupaten Belitung",
+   "regency": "Belitung",
+   "provinceCode": "19",
+   "province": "Kepulauan Bangka Belitung"
+  },
+  {
+   "adm4": "19.06.01.2001",
+   "name": "Kabupaten Belitung Timur",
+   "regency": "Belitung Timur",
+   "provinceCode": "19",
+   "province": "Kepulauan Bangka Belitung"
+  },
+  {
+   "adm4": "19.71.01.1004",
+   "name": "Kota Pangkal Pinang",
+   "regency": "Pangkal Pinang",
+   "provinceCode": "19",
+   "province": "Kepulauan Bangka Belitung"
+  },
+  {
+   "adm4": "21.01.04.1005",
+   "name": "Kabupaten Bintan",
+   "regency": "Bintan",
+   "provinceCode": "21",
+   "province": "Kepulauan Riau"
+  },
+  {
+   "adm4": "21.02.01.1003",
+   "name": "Kabupaten Karimun",
+   "regency": "Karimun",
+   "provinceCode": "21",
+   "province": "Kepulauan Riau"
+  },
+  {
+   "adm4": "21.05.01.1001",
+   "name": "Kabupaten Kepulauan Anambas",
+   "regency": "Kepulauan Anambas",
+   "provinceCode": "21",
+   "province": "Kepulauan Riau"
+  },
+  {
+   "adm4": "21.04.01.1001",
+   "name": "Kabupaten Lingga",
+   "regency": "Lingga",
+   "provinceCode": "21",
+   "province": "Kepulauan Riau"
+  },
+  {
+   "adm4": "21.03.04.1003",
+   "name": "Kabupaten Natuna",
+   "regency": "Natuna",
+   "provinceCode": "21",
+   "province": "Kepulauan Riau"
+  },
+  {
+   "adm4": "21.71.01.1002",
+   "name": "Kota Batam",
+   "regency": "Batam",
+   "provinceCode": "21",
+   "province": "Kepulauan Riau"
+  },
+  {
+   "adm4": "21.72.01.1001",
+   "name": "Kota Tanjung Pinang",
+   "regency": "Tanjung Pinang",
+   "provinceCode": "21",
+   "province": "Kepulauan Riau"
+  },
+  {
+   "adm4": "31.01.01.1001",
+   "name": "Kabupaten Administrasi Kepulauan Seribu",
+   "regency": "Administrasi Kepulauan Seribu",
+   "provinceCode": "31",
+   "province": "DKI Jakarta"
+  },
+  {
+   "adm4": "31.73.01.1001",
+   "name": "Kota Administrasi Jakarta Barat",
+   "regency": "Administrasi Jakarta Barat",
+   "provinceCode": "31",
+   "province": "DKI Jakarta"
+  },
+  {
+   "adm4": "31.71.01.1001",
+   "name": "Kota Administrasi Jakarta Pusat",
+   "regency": "Administrasi Jakarta Pusat",
+   "provinceCode": "31",
+   "province": "DKI Jakarta"
+  },
+  {
+   "adm4": "31.74.01.1001",
+   "name": "Kota Administrasi Jakarta Selatan",
+   "regency": "Administrasi Jakarta Selatan",
+   "provinceCode": "31",
+   "province": "DKI Jakarta"
+  },
+  {
+   "adm4": "31.75.01.1001",
+   "name": "Kota Administrasi Jakarta Timur",
+   "regency": "Administrasi Jakarta Timur",
+   "provinceCode": "31",
+   "province": "DKI Jakarta"
+  },
+  {
+   "adm4": "31.72.01.1001",
+   "name": "Kota Administrasi Jakarta Utara",
+   "regency": "Administrasi Jakarta Utara",
+   "provinceCode": "31",
+   "province": "DKI Jakarta"
+  },
+  {
+   "adm4": "32.04.05.2001",
+   "name": "Kabupaten Bandung",
+   "regency": "Bandung",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.17.01.2001",
+   "name": "Kabupaten Bandung Barat",
+   "regency": "Bandung Barat",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.16.01.1007",
+   "name": "Kabupaten Bekasi",
+   "regency": "Bekasi",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.01.01.1001",
+   "name": "Kabupaten Bogor",
+   "regency": "Bogor",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.07.01.1001",
+   "name": "Kabupaten Ciamis",
+   "regency": "Ciamis",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.03.01.1006",
+   "name": "Kabupaten Cianjur",
+   "regency": "Cianjur",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.09.01.2008",
+   "name": "Kabupaten Cirebon",
+   "regency": "Cirebon",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.05.01.1001",
+   "name": "Kabupaten Garut",
+   "regency": "Garut",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.12.01.2007",
+   "name": "Kabupaten Indramayu",
+   "regency": "Indramayu",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.15.01.1001",
+   "name": "Kabupaten Karawang",
+   "regency": "Karawang",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.08.01.2001",
+   "name": "Kabupaten Kuningan",
+   "regency": "Kuningan",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.10.01.2001",
+   "name": "Kabupaten Majalengka",
+   "regency": "Majalengka",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.18.01.2001",
+   "name": "Kabupaten Pangandaran",
+   "regency": "Pangandaran",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.14.01.1001",
+   "name": "Kabupaten Purwakarta",
+   "regency": "Purwakarta",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.13.01.2003",
+   "name": "Kabupaten Subang",
+   "regency": "Subang",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.02.01.1001",
+   "name": "Kabupaten Sukabumi",
+   "regency": "Sukabumi",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.11.01.2001",
+   "name": "Kabupaten Sumedang",
+   "regency": "Sumedang",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.06.01.2001",
+   "name": "Kabupaten Tasikmalaya",
+   "regency": "Tasikmalaya",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.73.01.1001",
+   "name": "Kota Bandung",
+   "regency": "Bandung",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.79.01.1001",
+   "name": "Kota Banjar",
+   "regency": "Banjar",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.75.01.1001",
+   "name": "Kota Bekasi",
+   "regency": "Bekasi",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.71.01.1001",
+   "name": "Kota Bogor",
+   "regency": "Bogor",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.77.01.1001",
+   "name": "Kota Cimahi",
+   "regency": "Cimahi",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.74.01.1001",
+   "name": "Kota Cirebon",
+   "regency": "Cirebon",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.76.01.1006",
+   "name": "Kota Depok",
+   "regency": "Depok",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.72.01.1001",
+   "name": "Kota Sukabumi",
+   "regency": "Sukabumi",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "32.78.01.1001",
+   "name": "Kota Tasikmalaya",
+   "regency": "Tasikmalaya",
+   "provinceCode": "32",
+   "province": "Jawa Barat"
+  },
+  {
+   "adm4": "33.04.01.2001",
+   "name": "Kabupaten Banjarnegara",
+   "regency": "Banjarnegara",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.02.01.2001",
+   "name": "Kabupaten Banyumas",
+   "regency": "Banyumas",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.25.01.2001",
+   "name": "Kabupaten Batang",
+   "regency": "Batang",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.16.01.2001",
+   "name": "Kabupaten Blora",
+   "regency": "Blora",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.09.01.2001",
+   "name": "Kabupaten Boyolali",
+   "regency": "Boyolali",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.29.01.2001",
+   "name": "Kabupaten Brebes",
+   "regency": "Brebes",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.01.01.2001",
+   "name": "Kabupaten Cilacap",
+   "regency": "Cilacap",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.21.01.2001",
+   "name": "Kabupaten Demak",
+   "regency": "Demak",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.15.01.2001",
+   "name": "Kabupaten Grobogan",
+   "regency": "Grobogan",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.20.01.2001",
+   "name": "Kabupaten Jepara",
+   "regency": "Jepara",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.13.01.2001",
+   "name": "Kabupaten Karanganyar",
+   "regency": "Karanganyar",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.05.01.2001",
+   "name": "Kabupaten Kebumen",
+   "regency": "Kebumen",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.24.01.2001",
+   "name": "Kabupaten Kendal",
+   "regency": "Kendal",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.10.01.2001",
+   "name": "Kabupaten Klaten",
+   "regency": "Klaten",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.19.01.2001",
+   "name": "Kabupaten Kudus",
+   "regency": "Kudus",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.08.01.2001",
+   "name": "Kabupaten Magelang",
+   "regency": "Magelang",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.18.01.2001",
+   "name": "Kabupaten Pati",
+   "regency": "Pati",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.26.01.2001",
+   "name": "Kabupaten Pekalongan",
+   "regency": "Pekalongan",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.27.01.2001",
+   "name": "Kabupaten Pemalang",
+   "regency": "Pemalang",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.03.01.2001",
+   "name": "Kabupaten Purbalingga",
+   "regency": "Purbalingga",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.06.01.2001",
+   "name": "Kabupaten Purworejo",
+   "regency": "Purworejo",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.17.01.2001",
+   "name": "Kabupaten Rembang",
+   "regency": "Rembang",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.22.01.2001",
+   "name": "Kabupaten Semarang",
+   "regency": "Semarang",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.14.01.2001",
+   "name": "Kabupaten Sragen",
+   "regency": "Sragen",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.11.01.2001",
+   "name": "Kabupaten Sukoharjo",
+   "regency": "Sukoharjo",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.28.01.2001",
+   "name": "Kabupaten Tegal",
+   "regency": "Tegal",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.23.01.2001",
+   "name": "Kabupaten Temanggung",
+   "regency": "Temanggung",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.12.01.1009",
+   "name": "Kabupaten Wonogiri",
+   "regency": "Wonogiri",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.07.01.1007",
+   "name": "Kabupaten Wonosobo",
+   "regency": "Wonosobo",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.71.01.1003",
+   "name": "Kota Magelang",
+   "regency": "Magelang",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.75.01.1002",
+   "name": "Kota Pekalongan",
+   "regency": "Pekalongan",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.73.01.1001",
+   "name": "Kota Salatiga",
+   "regency": "Salatiga",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.74.01.1001",
+   "name": "Kota Semarang",
+   "regency": "Semarang",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.72.01.1001",
+   "name": "Kota Surakarta",
+   "regency": "Surakarta",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "33.76.01.1001",
+   "name": "Kota Tegal",
+   "regency": "Tegal",
+   "provinceCode": "33",
+   "province": "Jawa Tengah"
+  },
+  {
+   "adm4": "34.02.01.2001",
+   "name": "Kabupaten Bantul",
+   "regency": "Bantul",
+   "provinceCode": "34",
+   "province": "DI Yogyakarta"
+  },
+  {
+   "adm4": "34.03.01.2001",
+   "name": "Kabupaten Gunungkidul",
+   "regency": "Gunungkidul",
+   "provinceCode": "34",
+   "province": "DI Yogyakarta"
+  },
+  {
+   "adm4": "34.01.01.2001",
+   "name": "Kabupaten Kulon Progo",
+   "regency": "Kulon Progo",
+   "provinceCode": "34",
+   "province": "DI Yogyakarta"
+  },
+  {
+   "adm4": "34.04.01.2001",
+   "name": "Kabupaten Sleman",
+   "regency": "Sleman",
+   "provinceCode": "34",
+   "province": "DI Yogyakarta"
+  },
+  {
+   "adm4": "34.71.01.1001",
+   "name": "Kota Yogyakarta",
+   "regency": "Yogyakarta",
+   "provinceCode": "34",
+   "province": "DI Yogyakarta"
+  },
+  {
+   "adm4": "35.26.01.1001",
+   "name": "Kabupaten Bangkalan",
+   "regency": "Bangkalan",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.10.01.2001",
+   "name": "Kabupaten Banyuwangi",
+   "regency": "Banyuwangi",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.05.01.2001",
+   "name": "Kabupaten Blitar",
+   "regency": "Blitar",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.22.01.2001",
+   "name": "Kabupaten Bojonegoro",
+   "regency": "Bojonegoro",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.11.01.2001",
+   "name": "Kabupaten Bondowoso",
+   "regency": "Bondowoso",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.25.01.2001",
+   "name": "Kabupaten Gresik",
+   "regency": "Gresik",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.09.01.2001",
+   "name": "Kabupaten Jember",
+   "regency": "Jember",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.17.01.2001",
+   "name": "Kabupaten Jombang",
+   "regency": "Jombang",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.06.01.2001",
+   "name": "Kabupaten Kediri",
+   "regency": "Kediri",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.24.01.2001",
+   "name": "Kabupaten Lamongan",
+   "regency": "Lamongan",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.08.01.2001",
+   "name": "Kabupaten Lumajang",
+   "regency": "Lumajang",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.19.01.2001",
+   "name": "Kabupaten Madiun",
+   "regency": "Madiun",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.20.01.1005",
+   "name": "Kabupaten Magetan",
+   "regency": "Magetan",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.07.01.2001",
+   "name": "Kabupaten Malang",
+   "regency": "Malang",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.16.01.2001",
+   "name": "Kabupaten Mojokerto",
+   "regency": "Mojokerto",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.18.01.2001",
+   "name": "Kabupaten Nganjuk",
+   "regency": "Nganjuk",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.21.01.2001",
+   "name": "Kabupaten Ngawi",
+   "regency": "Ngawi",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.01.01.2001",
+   "name": "Kabupaten Pacitan",
+   "regency": "Pacitan",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.28.01.2001",
+   "name": "Kabupaten Pamekasan",
+   "regency": "Pamekasan",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.14.01.2001",
+   "name": "Kabupaten Pasuruan",
+   "regency": "Pasuruan",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.02.01.2001",
+   "name": "Kabupaten Ponorogo",
+   "regency": "Ponorogo",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.13.01.2001",
+   "name": "Kabupaten Probolinggo",
+   "regency": "Probolinggo",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.27.01.2001",
+   "name": "Kabupaten Sampang",
+   "regency": "Sampang",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.15.01.2001",
+   "name": "Kabupaten Sidoarjo",
+   "regency": "Sidoarjo",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.12.01.2001",
+   "name": "Kabupaten Situbondo",
+   "regency": "Situbondo",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.29.01.1015",
+   "name": "Kabupaten Sumenep",
+   "regency": "Sumenep",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.03.01.2001",
+   "name": "Kabupaten Trenggalek",
+   "regency": "Trenggalek",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.23.01.2001",
+   "name": "Kabupaten Tuban",
+   "regency": "Tuban",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.04.01.1001",
+   "name": "Kabupaten Tulungagung",
+   "regency": "Tulungagung",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.79.01.1001",
+   "name": "Kota Batu",
+   "regency": "Batu",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.72.01.1001",
+   "name": "Kota Blitar",
+   "regency": "Blitar",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.71.01.1001",
+   "name": "Kota Kediri",
+   "regency": "Kediri",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.77.01.1001",
+   "name": "Kota Madiun",
+   "regency": "Madiun",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.73.01.1001",
+   "name": "Kota Malang",
+   "regency": "Malang",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.76.01.1003",
+   "name": "Kota Mojokerto",
+   "regency": "Mojokerto",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.75.01.1001",
+   "name": "Kota Pasuruan",
+   "regency": "Pasuruan",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.74.01.1001",
+   "name": "Kota Probolinggo",
+   "regency": "Probolinggo",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "35.78.01.1001",
+   "name": "Kota Surabaya",
+   "regency": "Surabaya",
+   "provinceCode": "35",
+   "province": "Jawa Timur"
+  },
+  {
+   "adm4": "36.02.01.2002",
+   "name": "Kabupaten Lebak",
+   "regency": "Lebak",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "36.01.01.2001",
+   "name": "Kabupaten Pandeglang",
+   "regency": "Pandeglang",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "36.04.05.2001",
+   "name": "Kabupaten Serang",
+   "regency": "Serang",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "36.03.01.1001",
+   "name": "Kabupaten Tangerang",
+   "regency": "Tangerang",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "36.72.01.1001",
+   "name": "Kota Cilegon",
+   "regency": "Cilegon",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "36.73.01.1001",
+   "name": "Kota Serang",
+   "regency": "Serang",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "36.71.01.1001",
+   "name": "Kota Tangerang",
+   "regency": "Tangerang",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "36.74.01.1001",
+   "name": "Kota Tangerang Selatan",
+   "regency": "Tangerang Selatan",
+   "provinceCode": "36",
+   "province": "Banten"
+  },
+  {
+   "adm4": "51.03.01.1001",
+   "name": "Kabupaten Badung",
+   "regency": "Badung",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.06.01.2001",
+   "name": "Kabupaten Bangli",
+   "regency": "Bangli",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.08.01.2001",
+   "name": "Kabupaten Buleleng",
+   "regency": "Buleleng",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.04.01.2001",
+   "name": "Kabupaten Gianyar",
+   "regency": "Gianyar",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.01.01.1006",
+   "name": "Kabupaten Jembrana",
+   "regency": "Jembrana",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.07.01.2001",
+   "name": "Kabupaten Karangasem",
+   "regency": "Karangasem",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.05.01.2001",
+   "name": "Kabupaten Klungkung",
+   "regency": "Klungkung",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.02.01.2001",
+   "name": "Kabupaten Tabanan",
+   "regency": "Tabanan",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "51.71.01.1001",
+   "name": "Kota Denpasar",
+   "regency": "Denpasar",
+   "provinceCode": "51",
+   "province": "Bali"
+  },
+  {
+   "adm4": "52.06.01.2005",
+   "name": "Kabupaten Bima",
+   "regency": "Bima",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.05.01.1001",
+   "name": "Kabupaten Dompu",
+   "regency": "Dompu",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.01.01.1001",
+   "name": "Kabupaten Lombok Barat",
+   "regency": "Lombok Barat",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.02.01.1001",
+   "name": "Kabupaten Lombok Tengah",
+   "regency": "Lombok Tengah",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.03.01.2001",
+   "name": "Kabupaten Lombok Timur",
+   "regency": "Lombok Timur",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.08.01.2001",
+   "name": "Kabupaten Lombok Utara",
+   "regency": "Lombok Utara",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.04.02.2001",
+   "name": "Kabupaten Sumbawa",
+   "regency": "Sumbawa",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.07.01.2001",
+   "name": "Kabupaten Sumbawa Barat",
+   "regency": "Sumbawa Barat",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.72.01.1001",
+   "name": "Kota Bima",
+   "regency": "Bima",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "52.71.01.1004",
+   "name": "Kota Mataram",
+   "regency": "Mataram",
+   "provinceCode": "52",
+   "province": "Nusa Tenggara Barat"
+  },
+  {
+   "adm4": "53.05.01.1001",
+   "name": "Kabupaten Alor",
+   "regency": "Alor",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.04.01.2001",
+   "name": "Kabupaten Belu",
+   "regency": "Belu",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.08.01.1001",
+   "name": "Kabupaten Ende",
+   "regency": "Ende",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.06.01.2001",
+   "name": "Kabupaten Flores Timur",
+   "regency": "Flores Timur",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.01.04.2003",
+   "name": "Kabupaten Kupang",
+   "regency": "Kupang",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.13.01.2001",
+   "name": "Kabupaten Lembata",
+   "regency": "Lembata",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.21.01.2001",
+   "name": "Kabupaten Malaka",
+   "regency": "Malaka",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.10.01.2001",
+   "name": "Kabupaten Manggarai",
+   "regency": "Manggarai",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.15.01.2001",
+   "name": "Kabupaten Manggarai Barat",
+   "regency": "Manggarai Barat",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.19.01.1020",
+   "name": "Kabupaten Manggarai Timur",
+   "regency": "Manggarai Timur",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.16.01.1001",
+   "name": "Kabupaten Nagekeo",
+   "regency": "Nagekeo",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.09.01.1002",
+   "name": "Kabupaten Ngada",
+   "regency": "Ngada",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.14.01.2005",
+   "name": "Kabupaten Rote Ndao",
+   "regency": "Rote Ndao",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.20.01.1001",
+   "name": "Kabupaten Sabu Raijua",
+   "regency": "Sabu Raijua",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.07.01.2001",
+   "name": "Kabupaten Sikka",
+   "regency": "Sikka",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.12.04.2001",
+   "name": "Kabupaten Sumba Barat",
+   "regency": "Sumba Barat",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.18.01.2001",
+   "name": "Kabupaten Sumba Barat Daya",
+   "regency": "Sumba Barat Daya",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.17.01.2001",
+   "name": "Kabupaten Sumba Tengah",
+   "regency": "Sumba Tengah",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.11.01.1001",
+   "name": "Kabupaten Sumba Timur",
+   "regency": "Sumba Timur",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.02.01.1001",
+   "name": "Kabupaten Timor Tengah Selatan",
+   "regency": "Timor Tengah Selatan",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.03.01.2005",
+   "name": "Kabupaten Timor Tengah Utara",
+   "regency": "Timor Tengah Utara",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "53.71.01.1001",
+   "name": "Kota Kupang",
+   "regency": "Kupang",
+   "provinceCode": "53",
+   "province": "Nusa Tenggara Timur"
+  },
+  {
+   "adm4": "61.07.01.2001",
+   "name": "Kabupaten Bengkayang",
+   "regency": "Bengkayang",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.06.01.1001",
+   "name": "Kabupaten Kapuas Hulu",
+   "regency": "Kapuas Hulu",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.11.01.2001",
+   "name": "Kabupaten Kayong Utara",
+   "regency": "Kayong Utara",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.04.01.2011",
+   "name": "Kabupaten Ketapang",
+   "regency": "Ketapang",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.12.01.2001",
+   "name": "Kabupaten Kubu Raya",
+   "regency": "Kubu Raya",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.08.01.2001",
+   "name": "Kabupaten Landak",
+   "regency": "Landak",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.10.01.2001",
+   "name": "Kabupaten Melawi",
+   "regency": "Melawi",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.02.01.1006",
+   "name": "Kabupaten Mempawah",
+   "regency": "Mempawah",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.01.01.2001",
+   "name": "Kabupaten Sambas",
+   "regency": "Sambas",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.03.01.1001",
+   "name": "Kabupaten Sanggau",
+   "regency": "Sanggau",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.09.01.2001",
+   "name": "Kabupaten Sekadau",
+   "regency": "Sekadau",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.05.01.1001",
+   "name": "Kabupaten Sintang",
+   "regency": "Sintang",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.71.01.1002",
+   "name": "Kota Pontianak",
+   "regency": "Pontianak",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "61.72.01.1001",
+   "name": "Kota Singkawang",
+   "regency": "Singkawang",
+   "provinceCode": "61",
+   "province": "Kalimantan Barat"
+  },
+  {
+   "adm4": "62.04.01.1003",
+   "name": "Kabupaten Barito Selatan",
+   "regency": "Barito Selatan",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.13.01.1012",
+   "name": "Kabupaten Barito Timur",
+   "regency": "Barito Timur",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.05.01.1001",
+   "name": "Kabupaten Barito Utara",
+   "regency": "Barito Utara",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.10.01.1001",
+   "name": "Kabupaten Gunung Mas",
+   "regency": "Gunung Mas",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.03.01.1006",
+   "name": "Kabupaten Kapuas",
+   "regency": "Kapuas",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.06.01.2001",
+   "name": "Kabupaten Katingan",
+   "regency": "Katingan",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.01.01.1011",
+   "name": "Kabupaten Kotawaringin Barat",
+   "regency": "Kotawaringin Barat",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.02.01.1009",
+   "name": "Kabupaten Kotawaringin Timur",
+   "regency": "Kotawaringin Timur",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.09.01.1012",
+   "name": "Kabupaten Lamandau",
+   "regency": "Lamandau",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.12.01.1012",
+   "name": "Kabupaten Murung Raya",
+   "regency": "Murung Raya",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.11.01.2001",
+   "name": "Kabupaten Pulang Pisau",
+   "regency": "Pulang Pisau",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.07.01.1001",
+   "name": "Kabupaten Seruyan",
+   "regency": "Seruyan",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.08.01.1003",
+   "name": "Kabupaten Sukamara",
+   "regency": "Sukamara",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "62.71.01.1001",
+   "name": "Kota Palangkaraya",
+   "regency": "Palangkaraya",
+   "provinceCode": "62",
+   "province": "Kalimantan Tengah"
+  },
+  {
+   "adm4": "63.11.01.2001",
+   "name": "Kabupaten Balangan",
+   "regency": "Balangan",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.03.01.2001",
+   "name": "Kabupaten Banjar",
+   "regency": "Banjar",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.04.01.2001",
+   "name": "Kabupaten Barito Kuala",
+   "regency": "Barito Kuala",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.06.01.2001",
+   "name": "Kabupaten Hulu Sungai Selatan",
+   "regency": "Hulu Sungai Selatan",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.07.01.2001",
+   "name": "Kabupaten Hulu Sungai Tengah",
+   "regency": "Hulu Sungai Tengah",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.08.01.2003",
+   "name": "Kabupaten Hulu Sungai Utara",
+   "regency": "Hulu Sungai Utara",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.02.01.2001",
+   "name": "Kabupaten Kotabaru",
+   "regency": "Kotabaru",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.09.01.2001",
+   "name": "Kabupaten Tabalong",
+   "regency": "Tabalong",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.10.01.1007",
+   "name": "Kabupaten Tanah Bumbu",
+   "regency": "Tanah Bumbu",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.01.01.2001",
+   "name": "Kabupaten Tanah Laut",
+   "regency": "Tanah Laut",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.05.01.1001",
+   "name": "Kabupaten Tapin",
+   "regency": "Tapin",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.72.02.1003",
+   "name": "Kota Banjarbaru",
+   "regency": "Banjarbaru",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "63.71.01.1001",
+   "name": "Kota Banjarmasin",
+   "regency": "Banjarmasin",
+   "provinceCode": "63",
+   "province": "Kalimantan Selatan"
+  },
+  {
+   "adm4": "64.03.01.2001",
+   "name": "Kabupaten Berau",
+   "regency": "Berau",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.07.05.2008",
+   "name": "Kabupaten Kutai Barat",
+   "regency": "Kutai Barat",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.02.01.2001",
+   "name": "Kabupaten Kutai Kartanegara",
+   "regency": "Kutai Kartanegara",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.08.01.2001",
+   "name": "Kabupaten Kutai Timur",
+   "regency": "Kutai Timur",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.11.01.2001",
+   "name": "Kabupaten Mahakam Ulu",
+   "regency": "Mahakam Ulu",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.01.01.2009",
+   "name": "Kabupaten Paser",
+   "regency": "Paser",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.09.01.1001",
+   "name": "Kabupaten Penajam Paser Utara",
+   "regency": "Penajam Paser Utara",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.71.01.1001",
+   "name": "Kota Balikpapan",
+   "regency": "Balikpapan",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.74.01.1001",
+   "name": "Kota Bontang",
+   "regency": "Bontang",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "64.72.01.1001",
+   "name": "Kota Samarinda",
+   "regency": "Samarinda",
+   "provinceCode": "64",
+   "province": "Kalimantan Timur"
+  },
+  {
+   "adm4": "65.01.01.1001",
+   "name": "Kabupaten Bulungan",
+   "regency": "Bulungan",
+   "provinceCode": "65",
+   "province": "Kalimantan Utara"
+  },
+  {
+   "adm4": "65.02.01.2002",
+   "name": "Kabupaten Malinau",
+   "regency": "Malinau",
+   "provinceCode": "65",
+   "province": "Kalimantan Utara"
+  },
+  {
+   "adm4": "65.03.01.2001",
+   "name": "Kabupaten Nunukan",
+   "regency": "Nunukan",
+   "provinceCode": "65",
+   "province": "Kalimantan Utara"
+  },
+  {
+   "adm4": "65.04.01.2001",
+   "name": "Kabupaten Tana Tidung",
+   "regency": "Tana Tidung",
+   "provinceCode": "65",
+   "province": "Kalimantan Utara"
+  },
+  {
+   "adm4": "65.71.01.1001",
+   "name": "Kota Tarakan",
+   "regency": "Tarakan",
+   "provinceCode": "65",
+   "province": "Kalimantan Utara"
+  },
+  {
+   "adm4": "71.01.05.2001",
+   "name": "Kabupaten Bolaang Mongondow",
+   "regency": "Bolaang Mongondow",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.11.01.2004",
+   "name": "Kabupaten Bolaang Mongondow Selatan",
+   "regency": "Bolaang Mongondow Selatan",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.10.01.2001",
+   "name": "Kabupaten Bolaang Mongondow Timur",
+   "regency": "Bolaang Mongondow Timur",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.08.01.2001",
+   "name": "Kabupaten Bolaang Mongondow Utara",
+   "regency": "Bolaang Mongondow Utara",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.03.08.2001",
+   "name": "Kabupaten Kepulauan Sangihe",
+   "regency": "Kepulauan Sangihe",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.09.01.1009",
+   "name": "Kabupaten Kepulauan Siau Tagulandang Biaro",
+   "regency": "Kepulauan Siau Tagulandang Biaro",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.04.01.1005",
+   "name": "Kabupaten Kepulauan Talaud",
+   "regency": "Kepulauan Talaud",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.02.01.1007",
+   "name": "Kabupaten Minahasa",
+   "regency": "Minahasa",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.05.01.2001",
+   "name": "Kabupaten Minahasa Selatan",
+   "regency": "Minahasa Selatan",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.07.01.1004",
+   "name": "Kabupaten Minahasa Tenggara",
+   "regency": "Minahasa Tenggara",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.06.01.2001",
+   "name": "Kabupaten Minahasa Utara",
+   "regency": "Minahasa Utara",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.72.01.1001",
+   "name": "Kota Bitung",
+   "regency": "Bitung",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.74.01.1005",
+   "name": "Kota Kotamobagu",
+   "regency": "Kotamobagu",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.71.01.1001",
+   "name": "Kota Manado",
+   "regency": "Manado",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "71.73.01.1001",
+   "name": "Kota Tomohon",
+   "regency": "Tomohon",
+   "provinceCode": "71",
+   "province": "Sulawesi Utara"
+  },
+  {
+   "adm4": "72.01.01.1006",
+   "name": "Kabupaten Banggai",
+   "regency": "Banggai",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.07.03.2007",
+   "name": "Kabupaten Banggai Kepulauan",
+   "regency": "Banggai Kepulauan",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.11.01.1005",
+   "name": "Kabupaten Banggai Laut",
+   "regency": "Banggai Laut",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.05.01.2001",
+   "name": "Kabupaten Buol",
+   "regency": "Buol",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.03.04.2001",
+   "name": "Kabupaten Donggala",
+   "regency": "Donggala",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.06.05.1014",
+   "name": "Kabupaten Morowali",
+   "regency": "Morowali",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.12.01.1001",
+   "name": "Kabupaten Morowali Utara",
+   "regency": "Morowali Utara",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.08.01.1017",
+   "name": "Kabupaten Parigi Moutong",
+   "regency": "Parigi Moutong",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.02.01.1001",
+   "name": "Kabupaten Poso",
+   "regency": "Poso",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.10.01.2001",
+   "name": "Kabupaten Sigi",
+   "regency": "Sigi",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.09.01.2005",
+   "name": "Kabupaten Tojo Una Una",
+   "regency": "Tojo Una Una",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.04.01.2001",
+   "name": "Kabupaten Toli-Toli",
+   "regency": "Toli-Toli",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "72.71.01.1004",
+   "name": "Kota Palu",
+   "regency": "Palu",
+   "provinceCode": "72",
+   "province": "Sulawesi Tengah"
+  },
+  {
+   "adm4": "73.03.01.1001",
+   "name": "Kabupaten Bantaeng",
+   "regency": "Bantaeng",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.11.01.1001",
+   "name": "Kabupaten Barru",
+   "regency": "Barru",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.08.01.1001",
+   "name": "Kabupaten Bone",
+   "regency": "Bone",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.02.01.1001",
+   "name": "Kabupaten Bulukumba",
+   "regency": "Bulukumba",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.16.01.1001",
+   "name": "Kabupaten Enrekang",
+   "regency": "Enrekang",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.06.01.1001",
+   "name": "Kabupaten Gowa",
+   "regency": "Gowa",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.04.01.1001",
+   "name": "Kabupaten Jeneponto",
+   "regency": "Jeneponto",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.01.01.1001",
+   "name": "Kabupaten Kepulauan Selayar",
+   "regency": "Kepulauan Selayar",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.17.01.2005",
+   "name": "Kabupaten Luwu",
+   "regency": "Luwu",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.24.01.2001",
+   "name": "Kabupaten Luwu Timur",
+   "regency": "Luwu Timur",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.22.01.2001",
+   "name": "Kabupaten Luwu Utara",
+   "regency": "Luwu Utara",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.09.01.1001",
+   "name": "Kabupaten Maros",
+   "regency": "Maros",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.10.01.1001",
+   "name": "Kabupaten Pangkajene dan Kepulauan",
+   "regency": "Pangkajene dan Kepulauan",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.15.01.1001",
+   "name": "Kabupaten Pinrang",
+   "regency": "Pinrang",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.14.01.1001",
+   "name": "Kabupaten Sidenreng Rappang",
+   "regency": "Sidenreng Rappang",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.07.01.1001",
+   "name": "Kabupaten Sinjai",
+   "regency": "Sinjai",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.12.01.1001",
+   "name": "Kabupaten Soppeng",
+   "regency": "Soppeng",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.05.01.1001",
+   "name": "Kabupaten Takalar",
+   "regency": "Takalar",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.18.01.1009",
+   "name": "Kabupaten Tana Toraja",
+   "regency": "Tana Toraja",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.26.01.1001",
+   "name": "Kabupaten Toraja Utara",
+   "regency": "Toraja Utara",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.13.01.1001",
+   "name": "Kabupaten Wajo",
+   "regency": "Wajo",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.71.01.1001",
+   "name": "Kota Makassar",
+   "regency": "Makassar",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.73.01.1001",
+   "name": "Kota Palopo",
+   "regency": "Palopo",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "73.72.01.1004",
+   "name": "Kota Parepare",
+   "regency": "Parepare",
+   "provinceCode": "73",
+   "province": "Sulawesi Selatan"
+  },
+  {
+   "adm4": "74.06.01.1007",
+   "name": "Kabupaten Bombana",
+   "regency": "Bombana",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.04.11.1005",
+   "name": "Kabupaten Buton",
+   "regency": "Buton",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.15.01.1002",
+   "name": "Kabupaten Buton Selatan",
+   "regency": "Buton Selatan",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.14.01.1007",
+   "name": "Kabupaten Buton Tengah",
+   "regency": "Buton Tengah",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.10.01.1008",
+   "name": "Kabupaten Buton Utara",
+   "regency": "Buton Utara",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.01.01.1001",
+   "name": "Kabupaten Kolaka",
+   "regency": "Kolaka",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.11.01.1002",
+   "name": "Kabupaten Kolaka Timur",
+   "regency": "Kolaka Timur",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.08.01.1001",
+   "name": "Kabupaten Kolaka Utara",
+   "regency": "Kolaka Utara",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.02.01.1001",
+   "name": "Kabupaten Konawe",
+   "regency": "Konawe",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.12.01.1001",
+   "name": "Kabupaten Konawe Kepulauan",
+   "regency": "Konawe Kepulauan",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.05.01.1001",
+   "name": "Kabupaten Konawe Selatan",
+   "regency": "Konawe Selatan",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.09.01.1005",
+   "name": "Kabupaten Konawe Utara",
+   "regency": "Konawe Utara",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.03.06.1004",
+   "name": "Kabupaten Muna",
+   "regency": "Muna",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.13.01.2001",
+   "name": "Kabupaten Muna Barat",
+   "regency": "Muna Barat",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.07.01.1002",
+   "name": "Kabupaten Wakatobi",
+   "regency": "Wakatobi",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.72.01.1007",
+   "name": "Kota Bau Bau",
+   "regency": "Bau Bau",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "74.71.01.1005",
+   "name": "Kota Kendari",
+   "regency": "Kendari",
+   "provinceCode": "74",
+   "province": "Sulawesi Tenggara"
+  },
+  {
+   "adm4": "75.02.01.2004",
+   "name": "Kabupaten Boalemo",
+   "regency": "Boalemo",
+   "provinceCode": "75",
+   "province": "Gorontalo"
+  },
+  {
+   "adm4": "75.03.01.2004",
+   "name": "Kabupaten Bone Bolango",
+   "regency": "Bone Bolango",
+   "provinceCode": "75",
+   "province": "Gorontalo"
+  },
+  {
+   "adm4": "75.01.01.1001",
+   "name": "Kabupaten Gorontalo",
+   "regency": "Gorontalo",
+   "provinceCode": "75",
+   "province": "Gorontalo"
+  },
+  {
+   "adm4": "75.05.01.2003",
+   "name": "Kabupaten Gorontalo Utara",
+   "regency": "Gorontalo Utara",
+   "provinceCode": "75",
+   "province": "Gorontalo"
+  },
+  {
+   "adm4": "75.04.01.2003",
+   "name": "Kabupaten Pohuwato",
+   "regency": "Pohuwato",
+   "provinceCode": "75",
+   "province": "Gorontalo"
+  },
+  {
+   "adm4": "75.71.01.1001",
+   "name": "Kota Gorontalo",
+   "regency": "Gorontalo",
+   "provinceCode": "75",
+   "province": "Gorontalo"
+  },
+  {
+   "adm4": "76.05.01.1001",
+   "name": "Kabupaten Majene",
+   "regency": "Majene",
+   "provinceCode": "76",
+   "province": "Sulawesi Barat"
+  },
+  {
+   "adm4": "76.03.01.1001",
+   "name": "Kabupaten Mamasa",
+   "regency": "Mamasa",
+   "provinceCode": "76",
+   "province": "Sulawesi Barat"
+  },
+  {
+   "adm4": "76.02.01.1002",
+   "name": "Kabupaten Mamuju",
+   "regency": "Mamuju",
+   "provinceCode": "76",
+   "province": "Sulawesi Barat"
+  },
+  {
+   "adm4": "76.06.01.2001",
+   "name": "Kabupaten Mamuju Tengah",
+   "regency": "Mamuju Tengah",
+   "provinceCode": "76",
+   "province": "Sulawesi Barat"
+  },
+  {
+   "adm4": "76.01.01.1006",
+   "name": "Kabupaten Pasangkayu",
+   "regency": "Pasangkayu",
+   "provinceCode": "76",
+   "province": "Sulawesi Barat"
+  },
+  {
+   "adm4": "76.04.01.1001",
+   "name": "Kabupaten Polewali Mandar",
+   "regency": "Polewali Mandar",
+   "provinceCode": "76",
+   "province": "Sulawesi Barat"
+  },
+  {
+   "adm4": "81.04.01.2001",
+   "name": "Kabupaten Buru",
+   "regency": "Buru",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.09.01.2001",
+   "name": "Kabupaten Buru Selatan",
+   "regency": "Buru Selatan",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.07.01.1012",
+   "name": "Kabupaten Kepulauan Aru",
+   "regency": "Kepulauan Aru",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.03.01.1001",
+   "name": "Kabupaten Kepulauan Tanimbar",
+   "regency": "Kepulauan Tanimbar",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.08.01.1001",
+   "name": "Kabupaten Maluku Barat Daya",
+   "regency": "Maluku Barat Daya",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.01.01.1009",
+   "name": "Kabupaten Maluku Tengah",
+   "regency": "Maluku Tengah",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.02.01.1013",
+   "name": "Kabupaten Maluku Tenggara",
+   "regency": "Maluku Tenggara",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.06.01.2008",
+   "name": "Kabupaten Seram Bagian Barat",
+   "regency": "Seram Bagian Barat",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.05.01.2003",
+   "name": "Kabupaten Seram Bagian Timur",
+   "regency": "Seram Bagian Timur",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.71.01.1006",
+   "name": "Kota Ambon",
+   "regency": "Ambon",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "81.72.01.2001",
+   "name": "Kota Tual",
+   "regency": "Tual",
+   "provinceCode": "81",
+   "province": "Maluku"
+  },
+  {
+   "adm4": "82.01.01.2001",
+   "name": "Kabupaten Halmahera Barat",
+   "regency": "Halmahera Barat",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.04.01.2001",
+   "name": "Kabupaten Halmahera Selatan",
+   "regency": "Halmahera Selatan",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.02.01.2004",
+   "name": "Kabupaten Halmahera Tengah",
+   "regency": "Halmahera Tengah",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.06.01.2006",
+   "name": "Kabupaten Halmahera Timur",
+   "regency": "Halmahera Timur",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.03.04.2001",
+   "name": "Kabupaten Halmahera Utara",
+   "regency": "Halmahera Utara",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.05.01.2001",
+   "name": "Kabupaten Kepulauan Sula",
+   "regency": "Kepulauan Sula",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.07.01.2001",
+   "name": "Kabupaten Pulau Morotai",
+   "regency": "Pulau Morotai",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.08.01.2001",
+   "name": "Kabupaten Pulau Taliabu",
+   "regency": "Pulau Taliabu",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.71.01.1001",
+   "name": "Kota Ternate",
+   "regency": "Ternate",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "82.72.01.1001",
+   "name": "Kota Tidore Kepulauan",
+   "regency": "Tidore Kepulauan",
+   "provinceCode": "82",
+   "province": "Maluku Utara"
+  },
+  {
+   "adm4": "91.06.01.1001",
+   "name": "Kabupaten Biak Numfor",
+   "regency": "Biak Numfor",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.03.01.1001",
+   "name": "Kabupaten Jayapura",
+   "regency": "Jayapura",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.11.01.2001",
+   "name": "Kabupaten Keerom",
+   "regency": "Keerom",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.05.01.1004",
+   "name": "Kabupaten Kepulauan Yapen",
+   "regency": "Kepulauan Yapen",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.20.01.2001",
+   "name": "Kabupaten Mamberamo Raya",
+   "regency": "Mamberamo Raya",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.10.01.1001",
+   "name": "Kabupaten Sarmi",
+   "regency": "Sarmi",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.19.01.2003",
+   "name": "Kabupaten Supiori",
+   "regency": "Supiori",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.15.01.2003",
+   "name": "Kabupaten Waropen",
+   "regency": "Waropen",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "91.71.01.1001",
+   "name": "Kota Jayapura",
+   "regency": "Jayapura",
+   "provinceCode": "91",
+   "province": "Papua"
+  },
+  {
+   "adm4": "92.03.01.1001",
+   "name": "Kabupaten Fak Fak",
+   "regency": "Fak Fak",
+   "provinceCode": "92",
+   "province": "Papua Barat"
+  },
+  {
+   "adm4": "92.08.01.1001",
+   "name": "Kabupaten Kaimana",
+   "regency": "Kaimana",
+   "provinceCode": "92",
+   "province": "Papua Barat"
+  },
+  {
+   "adm4": "92.02.03.2001",
+   "name": "Kabupaten Manokwari",
+   "regency": "Manokwari",
+   "provinceCode": "92",
+   "province": "Papua Barat"
+  },
+  {
+   "adm4": "92.11.01.2001",
+   "name": "Kabupaten Manokwari Selatan",
+   "regency": "Manokwari Selatan",
+   "provinceCode": "92",
+   "province": "Papua Barat"
+  },
+  {
+   "adm4": "92.12.01.2001",
+   "name": "Kabupaten Pegunungan Arfak",
+   "regency": "Pegunungan Arfak",
+   "provinceCode": "92",
+   "province": "Papua Barat"
+  },
+  {
+   "adm4": "92.06.01.1001",
+   "name": "Kabupaten Teluk Bintuni",
+   "regency": "Teluk Bintuni",
+   "provinceCode": "92",
+   "province": "Papua Barat"
+  },
+  {
+   "adm4": "92.07.01.1001",
+   "name": "Kabupaten Teluk Wondama",
+   "regency": "Teluk Wondama",
+   "provinceCode": "92",
+   "province": "Papua Barat"
+  },
+  {
+   "adm4": "93.04.01.2001",
+   "name": "Kabupaten Asmat",
+   "regency": "Asmat",
+   "provinceCode": "93",
+   "province": "Papua Selatan"
+  },
+  {
+   "adm4": "93.02.01.2001",
+   "name": "Kabupaten Boven Digoel",
+   "regency": "Boven Digoel",
+   "provinceCode": "93",
+   "province": "Papua Selatan"
+  },
+  {
+   "adm4": "93.03.01.1013",
+   "name": "Kabupaten Mappi",
+   "regency": "Mappi",
+   "provinceCode": "93",
+   "province": "Papua Selatan"
+  },
+  {
+   "adm4": "93.01.01.1002",
+   "name": "Kabupaten Merauke",
+   "regency": "Merauke",
+   "provinceCode": "93",
+   "province": "Papua Selatan"
+  },
+  {
+   "adm4": "94.08.01.2001",
+   "name": "Kabupaten Deiyai",
+   "regency": "Deiyai",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "94.06.01.2001",
+   "name": "Kabupaten Dogiyai",
+   "regency": "Dogiyai",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "94.07.01.2001",
+   "name": "Kabupaten Intan Jaya",
+   "regency": "Intan Jaya",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "94.04.01.1001",
+   "name": "Kabupaten Mimika",
+   "regency": "Mimika",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "94.01.01.1001",
+   "name": "Kabupaten Nabire",
+   "regency": "Nabire",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "94.03.01.1001",
+   "name": "Kabupaten Paniai",
+   "regency": "Paniai",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "94.05.01.2001",
+   "name": "Kabupaten Puncak",
+   "regency": "Puncak",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "94.02.01.1010",
+   "name": "Kabupaten Puncak Jaya",
+   "regency": "Puncak Jaya",
+   "provinceCode": "94",
+   "province": "Papua Tengah"
+  },
+  {
+   "adm4": "95.01.01.1001",
+   "name": "Kabupaten Jayawijaya",
+   "regency": "Jayawijaya",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "95.07.01.1001",
+   "name": "Kabupaten Lanny Jaya",
+   "regency": "Lanny Jaya",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "95.05.01.2001",
+   "name": "Kabupaten Mamberamo Tengah",
+   "regency": "Mamberamo Tengah",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "95.08.01.2001",
+   "name": "Kabupaten Nduga",
+   "regency": "Nduga",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "95.02.01.2001",
+   "name": "Kabupaten Pegunungan Bintang",
+   "regency": "Pegunungan Bintang",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "95.04.01.1001",
+   "name": "Kabupaten Tolikara",
+   "regency": "Tolikara",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "95.03.01.1001",
+   "name": "Kabupaten Yahukimo",
+   "regency": "Yahukimo",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "95.06.01.2001",
+   "name": "Kabupaten Yalimo",
+   "regency": "Yalimo",
+   "provinceCode": "95",
+   "province": "Papua Pegunungan"
+  },
+  {
+   "adm4": "96.05.01.2001",
+   "name": "Kabupaten Maybrat",
+   "regency": "Maybrat",
+   "provinceCode": "96",
+   "province": "Papua Barat Daya"
+  },
+  {
+   "adm4": "92.05.01.2001",
+   "name": "Kabupaten Raja Ampat",
+   "regency": "Raja Ampat",
+   "provinceCode": "96",
+   "province": "Papua Barat Daya"
+  },
+  {
+   "adm4": "96.01.01.1001",
+   "name": "Kabupaten Sorong",
+   "regency": "Sorong",
+   "provinceCode": "96",
+   "province": "Papua Barat Daya"
+  },
+  {
+   "adm4": "92.04.01.2004",
+   "name": "Kabupaten Sorong Selatan",
+   "regency": "Sorong Selatan",
+   "provinceCode": "96",
+   "province": "Papua Barat Daya"
+  },
+  {
+   "adm4": "96.04.01.2004",
+   "name": "Kabupaten Tambrauw",
+   "regency": "Tambrauw",
+   "provinceCode": "96",
+   "province": "Papua Barat Daya"
+  },
+  {
+   "adm4": "96.71.01.1001",
+   "name": "Kota Sorong",
+   "regency": "Sorong",
+   "provinceCode": "96",
+   "province": "Papua Barat Daya"
+  }
+ ]
+}
