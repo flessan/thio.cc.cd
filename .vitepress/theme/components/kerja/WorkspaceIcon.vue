@@ -80,6 +80,10 @@ const ICONS: Record<string, IconDef> = {
   layers: {
     paths: ['M12 4l8 4.5-8 4.5-8-4.5L12 4z', 'M4 12.5 12 17l8-4.5', 'M4 16.5 12 21l8-4.5']
   },
+  map: {
+    paths: ['M4 6.5 9 4l6 2.5L20 4v13.5L15 20l-6-2.5L4 20V6.5z', 'M9 4v13.5M15 6.5V20']
+  },
+  code: { paths: ['M9 8l-4 4 4 4M15 8l4 4-4 4'] },
   'arrow-left': { paths: ['M19 12H5M11 6l-6 6 6 6'] },
   'arrow-right': { paths: ['M5 12h14M13 6l6 6-6 6'] },
   download: { paths: ['M12 4v11M7.5 11 12 15.5 16.5 11', 'M5 19h14'] },

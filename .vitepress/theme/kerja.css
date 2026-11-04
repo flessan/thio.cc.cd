@@ -2041,3 +2041,416 @@
     transition: none !important;
   }
 }
+
+/* ==========================================================================
+   Region picker + atlas
+   ========================================================================== */
+
+.kw-region-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.85rem 0 0.7rem;
+}
+
+.kw-region-field {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+}
+
+.kw-region-search .kw-input {
+  flex: 1;
+  min-height: 44px;
+  padding-left: 2.5rem;
+  padding-right: 2.4rem;
+  font-size: 0.86rem;
+}
+
+.kw-region-clear {
+  position: absolute;
+  right: 0.45rem;
+  width: 30px;
+  height: 30px;
+}
+
+.kw-region-field input[type='search']::-webkit-search-cancel-button,
+.kw-region-field input[type='search']::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.kw-region-search-icon {
+  position: absolute;
+  left: 0.8rem;
+  color: var(--md-on-surface-variant);
+  pointer-events: none;
+}
+
+.kw-region-map-toggle {
+  margin-left: 0.2rem;
+  white-space: nowrap;
+}
+
+.kw-region-islands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+  margin-bottom: 0.85rem;
+}
+
+.kw-region-layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.kw-region-layout.has-map {
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  align-items: start;
+}
+
+.kw-region-panel {
+  min-width: 0;
+}
+
+.kw-region-map {
+  position: sticky;
+  top: 84px;
+}
+
+.kw-region-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin: 0.15rem 0 0.45rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.72rem;
+}
+
+.kw-region-head strong {
+  color: var(--md-on-surface);
+  font-weight: 600;
+}
+
+.kw-province-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.3rem;
+  max-height: 320px;
+  padding-right: 0.15rem;
+  overflow-y: auto;
+}
+
+.kw-province-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  min-height: 36px;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-sm);
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface);
+  font-family: inherit;
+  font-size: 0.72rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--md-duration-short) var(--md-ease-standard),
+    background-color var(--md-duration-short) var(--md-ease-standard);
+}
+
+.kw-province-chip:hover,
+.kw-province-chip:focus-visible {
+  border-color: var(--md-primary);
+  background: var(--md-surface-container);
+}
+
+.kw-province-chip .kw-count {
+  flex: none;
+  padding: 0.05rem 0.34rem;
+  border-radius: var(--md-shape-full);
+  background: color-mix(in srgb, var(--md-primary) 14%, transparent);
+  color: var(--md-primary);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6rem;
+}
+
+.kw-quick-cities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+}
+
+.kw-quick-city {
+  display: grid;
+  gap: 0.08rem;
+  padding: 0.42rem 0.55rem;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-shape-sm);
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.kw-quick-city:hover {
+  border-color: var(--md-primary);
+  background: var(--md-surface-container);
+}
+
+.kw-quick-city strong {
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.kw-quick-city span {
+  color: var(--md-on-surface-variant);
+  font-size: 0.62rem;
+}
+
+.kw-location-list {
+  max-height: 356px;
+}
+
+.kw-location-option {
+  gap: 0.55rem;
+  padding: 0.5rem 0.6rem;
+  border-color: var(--md-outline-variant);
+}
+
+.kw-location-option.is-active,
+.kw-location-option:focus-visible {
+  border-color: var(--md-primary);
+  background: var(--md-surface-container);
+  outline: none;
+}
+
+.kw-location-kind {
+  flex: none;
+  min-width: 34px;
+  padding: 0.1rem 0.3rem;
+  border-radius: var(--md-shape-xs);
+  background: color-mix(in srgb, var(--md-primary) 13%, transparent);
+  color: var(--md-primary);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.kw-location-body {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 0.05rem;
+}
+
+.kw-location-body strong {
+  overflow: hidden;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kw-location-body > span {
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  font-size: 0.66rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kw-location-body mark {
+  padding: 0 0.06em;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--md-primary) 24%, transparent);
+  color: inherit;
+}
+
+.kw-location-meta {
+  display: grid;
+  flex: none;
+  justify-items: end;
+  gap: 0.1rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.6rem;
+}
+
+.kw-location-meta code {
+  font-size: 0.58rem;
+  opacity: 0.8;
+}
+
+.kw-region-province {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.7rem;
+  padding: 0.65rem 0.7rem;
+  margin-bottom: 0.55rem;
+  border-radius: var(--md-shape-md);
+  background: var(--md-surface-container);
+}
+
+.kw-region-province > div {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.kw-region-province strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.kw-region-facts {
+  color: var(--md-on-surface-variant);
+  font-size: 0.66rem;
+  line-height: 1.45;
+}
+
+.kw-region-recent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.8rem;
+}
+
+.kw-region-advanced {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.kw-region-advanced summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.7rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.kw-region-advanced summary::-webkit-details-marker {
+  display: none;
+}
+
+.kw-region-advanced summary:hover {
+  color: var(--md-primary);
+}
+
+.kw-region-source {
+  margin: 0.9rem 0 0;
+  color: var(--md-on-surface-variant);
+  font-size: 0.62rem;
+  line-height: 1.5;
+}
+
+.kw-region-source a {
+  color: var(--md-primary);
+}
+
+/* Leaflet is loaded lazily; these overrides keep it inside the M3 system. */
+.kw-map-canvas.leaflet-container {
+  background: transparent;
+  font-family: var(--vp-font-family-base);
+  font-size: 0.7rem;
+  cursor: grab;
+}
+
+.kw-map-canvas.leaflet-container:active {
+  cursor: grabbing;
+}
+
+.kw-map-canvas .leaflet-control-scale-line {
+  border-color: color-mix(in srgb, var(--md-on-surface) 30%, transparent);
+  background: color-mix(in srgb, var(--md-surface) 78%, transparent);
+  color: var(--md-on-surface-variant);
+  font-size: 0.55rem;
+}
+
+.kw-map-canvas .leaflet-bar {
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--md-shape-sm);
+  box-shadow: var(--md-elevation-2);
+}
+
+.kw-map-canvas .leaflet-bar a {
+  width: 30px;
+  height: 30px;
+  border-bottom-color: var(--md-outline-variant);
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font-size: 1rem;
+  line-height: 30px;
+}
+
+.kw-map-canvas .leaflet-bar a:hover {
+  background: var(--md-surface-container);
+}
+
+.leaflet-tooltip.kw-map-tip {
+  padding: 0.22rem 0.45rem;
+  border: 0;
+  border-radius: var(--md-shape-sm);
+  background: var(--md-surface);
+  box-shadow: var(--md-elevation-2);
+  color: var(--md-on-surface);
+  font-family: var(--vp-font-family-base);
+  font-size: 0.64rem;
+  white-space: nowrap;
+}
+
+.leaflet-tooltip.kw-map-tip::before {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .kw-region-layout.has-map {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kw-region-map {
+    position: relative;
+    top: 0;
+    order: -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .kw-region-search {
+    flex-wrap: wrap;
+  }
+
+  .kw-region-search .kw-input {
+    flex: 1 1 100%;
+  }
+
+    .kw-region-search .kw-region-map-toggle {
+    margin-left: 0;
+  }
+
+  .kw-province-chips {
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    max-height: 260px;
+  }
+
+  .kw-location-list {
+    max-height: 300px;
+  }
+}

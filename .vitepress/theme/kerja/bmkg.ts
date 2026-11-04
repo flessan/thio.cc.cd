@@ -12,6 +12,7 @@
  */
 import { MINUTE, localDayKey, parseDate } from './dates'
 import type { SavedLocation, Task } from './model'
+import { rankRegions } from './region'
 
 export const BMKG_API = 'https://api.bmkg.go.id/publik/prakiraan-cuaca'
 export const BMKG_PORTAL = 'https://data.bmkg.go.id/prakiraan-cuaca/'
@@ -26,6 +27,20 @@ export interface BmkgLocationEntry {
   regency: string
   provinceCode: string
   province: string
+  /** Official Kepmendagri code of the regency (may differ from the adm4 prefix). */
+  regencyCode?: string
+  /** Regency capital, from cahyadsn/wilayah. */
+  capital?: string | null
+  /** Regency centroid, not the forecast village. */
+  lat?: number | null
+  lon?: number | null
+  elevationM?: number | null
+  /** UTC offset in hours (7, 8 or 9). */
+  timezone?: number | null
+  areaKm2?: number | null
+  population?: number | null
+  kind?: 'kabupaten' | 'kota'
+  officialName?: string
 }
 
 export interface BmkgLocation {
@@ -408,42 +423,13 @@ export function todayForecastDay(forecast: Forecast, now = new Date()): Forecast
   return forecast.days.find((day) => day.date === key) ?? forecast.days[0] ?? null
 }
 
-function normalizeQuery(value: string): string {
-  return value
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-/** Rank location suggestions: prefix matches on regency first, then province. */
+/** Rank location suggestions by name, capital, province or adm4 prefix. */
 export function searchLocations(
   entries: BmkgLocationEntry[],
   query: string,
   limit = 8
 ): BmkgLocationEntry[] {
-  const term = normalizeQuery(query)
-  if (!term) return []
-  const scored: Array<{ entry: BmkgLocationEntry; score: number }> = []
-  entries.forEach((entry) => {
-    const name = normalizeQuery(entry.name)
-    const regency = normalizeQuery(entry.regency)
-    const province = normalizeQuery(entry.province)
-    let score = 0
-    if (regency === term || name === term) score = 100
-    else if (regency.startsWith(term)) score = 90
-    else if (name.startsWith(term)) score = 80
-    else if (regency.includes(term)) score = 60
-    else if (name.includes(term)) score = 50
-    else if (province.includes(term)) score = 20
-    if (score > 0) scored.push({ entry, score })
-  })
-  return scored
-    .sort((a, b) => b.score - a.score || a.entry.name.localeCompare(b.entry.name))
-    .slice(0, limit)
-    .map((item) => item.entry)
+  return rankRegions(entries, query, limit).map((match) => match.entry)
 }
 
 export function toSavedLocation(entry: BmkgLocationEntry): SavedLocation {

@@ -1,22 +1,41 @@
 <script setup lang="ts">
 /**
- * BMKG weather: location picker, current conditions, a three-day timeline and
+ * BMKG weather: region picker, current conditions, a three-day timeline and
  * context for outdoor tasks. Forecasts are clearly attributed to BMKG and are
  * never presented as official weather warnings.
+ *
+ * The picker is deliberately more than a dropdown: search ranks cities by
+ * name, capital, province, nickname and adm4 prefix; islands and provinces can
+ * be browsed; and an optional Leaflet atlas lets you click the actual forecast
+ * point. The place is still chosen by the visitor, never guessed.
  */
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import WorkspaceIcon from './WorkspaceIcon.vue'
 import WeatherIcon from './WeatherIcon.vue'
+import RegionMap from './RegionMap.vue'
 import { workspace, rememberLocation } from '../../kerja/state'
 import {
   ADM4_PATTERN,
   BMKG_PORTAL,
   locationLabel,
   outdoorRainAdvice,
-  searchLocations,
   toSavedLocation,
   type BmkgLocationEntry
 } from '../../kerja/bmkg'
+import {
+  ISLANDS,
+  entriesInIsland,
+  formatArea,
+  formatPopulation,
+  highlightSegments,
+  largestCities,
+  provincesForIsland,
+  rankRegions,
+  shortRegionName,
+  type IslandId,
+  type ProvinceFile,
+  type ProvinceMeta
+} from '../../kerja/region'
 import {
   chooseWeatherLocation,
   clearWeatherLocation,
@@ -39,11 +58,16 @@ interface LocationFile {
 const pickerOpen = ref(false)
 const query = ref('')
 const province = ref('')
+const island = ref<IslandId | ''>('')
 const manualAdm4 = ref('')
 const manualError = ref('')
 const locationEntries = ref<BmkgLocationEntry[]>([])
-const provinceNames = ref<Record<string, string>>({})
+const provinceMeta = ref<ProvinceMeta[]>([])
 const loadingLocations = ref(false)
+const loadError = ref('')
+const mapVisible = ref(false)
+const mapAvailable = ref(false)
+const activeIndex = ref(0)
 const now = ref(new Date())
 
 const selected = computed(() => weatherLocation.value)
@@ -62,13 +86,34 @@ const updatedLabel = computed(() => {
   return relativeTimeLabel(weather.fetchedAt, now.value)
 })
 
-const results = computed(() => {
-  if (query.value.trim().length >= 2) return searchLocations(locationEntries.value, query.value, 8)
-  if (province.value) {
-    return locationEntries.value.filter((entry) => entry.provinceCode === province.value).slice(0, 60)
-  }
+const provinceInfo = computed(() =>
+  province.value ? provinceMeta.value.find((item) => item.code === province.value) ?? null : null
+)
+const visibleProvinces = computed(() => provincesForIsland(provinceMeta.value, island.value))
+const quickCities = computed(() => largestCities(locationEntries.value, 6))
+const searching = computed(() => query.value.trim().length >= 2)
+const matches = computed(() =>
+  searching.value ? rankRegions(locationEntries.value, query.value, 16) : []
+)
+const provinceEntries = computed(() => {
+  if (!province.value) return []
+  return locationEntries.value
+    .filter((entry) => entry.provinceCode === province.value)
+    .sort((a, b) => (b.population ?? 0) - (a.population ?? 0))
+})
+const islandEntries = computed(() =>
+  island.value ? entriesInIsland(locationEntries.value, island.value) : []
+)
+const resultEntries = computed(() => {
+  if (searching.value) return matches.value.map((match) => match.entry)
+  if (province.value) return provinceEntries.value
   return []
 })
+const resultAdm4s = computed(() => resultEntries.value.map((entry) => entry.adm4))
+const resultsOpen = computed(() => pickerOpen.value && (searching.value || Boolean(province.value)))
+const islandLabel = computed(
+  () => ISLANDS.find((group) => group.id === island.value)?.label ?? 'All islands'
+)
 
 const outlook = computed(() => {
   if (!forecast.value) return []
@@ -90,22 +135,91 @@ const outlook = computed(() => {
 async function ensureLocations() {
   if (locationEntries.value.length || loadingLocations.value) return
   loadingLocations.value = true
+  loadError.value = ''
   try {
-    const mod = (await import('../../../../data/bmkg-locations.json')) as unknown as {
-      default: LocationFile
-    }
-    locationEntries.value = mod.default.locations
-    provinceNames.value = mod.default.provinces
+    const [locations, provinces] = await Promise.all([
+      import('../../../../data/bmkg-locations.json'),
+      import('../../../../data/wilayah-provinces.json')
+    ])
+    locationEntries.value = (locations.default as unknown as LocationFile).locations
+    provinceMeta.value = (provinces.default as unknown as ProvinceFile).provinces
   } catch {
-    manualError.value = 'The location list could not be loaded. Enter an administrative code instead.'
+    loadError.value =
+      'The region list could not be loaded. You can still enter an administrative code below.'
   } finally {
     loadingLocations.value = false
   }
 }
 
+function detectMap() {
+  if (typeof window === 'undefined') return
+  mapAvailable.value = window.matchMedia('(min-width: 1025px)').matches
+  try {
+    mapAvailable.value = mapAvailable.value && Boolean(document.createElement('canvas').getContext('2d'))
+  } catch {
+    mapAvailable.value = false
+  }
+  if (mapAvailable.value) mapVisible.value = true
+}
+
 function openPicker() {
   pickerOpen.value = true
   void ensureLocations()
+}
+
+function onSearchKeydown(event: KeyboardEvent) {
+  if (event.key === 'ArrowDown') {
+    event.preventDefault()
+    if (resultEntries.value.length) {
+      activeIndex.value = Math.min(activeIndex.value + 1, resultEntries.value.length - 1)
+    }
+    return
+  }
+  if (event.key === 'ArrowUp') {
+    event.preventDefault()
+    activeIndex.value = Math.max(activeIndex.value - 1, 0)
+    return
+  }
+  if (event.key === 'Enter') {
+    const entry = resultEntries.value[activeIndex.value]
+    if (entry) {
+      event.preventDefault()
+      void pick(entry)
+    }
+    return
+  }
+  if (event.key === 'Escape' && query.value) {
+    event.preventDefault()
+    query.value = ''
+  }
+}
+
+function setIsland(id: IslandId | '') {
+  island.value = id
+  province.value = ''
+  query.value = ''
+}
+
+function selectProvince(code: string) {
+  query.value = ''
+  if (province.value === code) {
+    province.value = ''
+    return
+  }
+  province.value = code
+  const meta = provinceMeta.value.find((item) => item.code === code)
+  if (meta && island.value && meta.island !== island.value) island.value = meta.island
+}
+
+function onMapProvince(code: string | null) {
+  if (!code) {
+    province.value = ''
+    return
+  }
+  query.value = ''
+  province.value = code
+  const meta = provinceMeta.value.find((item) => item.code === code)
+  if (meta) island.value = meta.island
 }
 
 async function applyResolvedLabel(fallback: string) {
@@ -151,7 +265,13 @@ async function applyManual() {
   manualAdm4.value = ''
 }
 
+watch([query, province, island], () => {
+  activeIndex.value = 0
+})
+
 onMounted(async () => {
+  detectMap()
+  if (!selected.value) await ensureLocations()
   if (selected.value && !weather.forecast && !weather.loading) {
     await loadWeather(selected.value.adm4)
   }
@@ -202,13 +322,13 @@ function removeLocation() {
       </div>
     </header>
 
-    <section v-if="pickerOpen || !selected" class="kw-card kw-reveal">
+    <section v-if="pickerOpen || !selected" class="kw-card kw-reveal kw-region-picker">
       <header class="kw-card-head">
         <div>
-          <h2>{{ selected ? 'Choose a location' : 'Where should the forecast come from?' }}</h2>
+          <h2>{{ selected ? 'Choose a forecast point' : 'Where should the forecast come from?' }}</h2>
           <p class="kw-hint">
-            Kerja never guesses your location. Search for a city or regency, or
-            enter the village-level administrative code (adm4) yourself.
+            Kerja never guesses your location. Search a city, browse by island,
+            pick a dot on the map, or enter a village code.
           </p>
         </div>
         <button
@@ -222,32 +342,245 @@ function removeLocation() {
         </button>
       </header>
 
-      <div class="kw-row-2">
-        <div class="kw-field">
-          <label class="kw-label" for="weather-search">Search city or regency</label>
+      <div class="kw-region-search">
+        <div class="kw-region-field">
+          <WorkspaceIcon name="search" :size="18" class="kw-region-search-icon" />
           <input
             id="weather-search"
             v-model="query"
             class="kw-input"
             type="search"
-            placeholder="e.g. Banjarmasin, Bandung, Jayapura"
+            role="combobox"
             autocomplete="off"
+            aria-autocomplete="list"
+            aria-controls="kw-region-results"
+            :aria-expanded="resultsOpen"
+            aria-label="Search city, regency, province, capital or adm4 code"
+            placeholder="Banjarmasin, Jogja, Meulaboh, 63.71…"
+            @keydown="onSearchKeydown"
           />
+          <button
+            v-if="query"
+            type="button"
+            class="kw-icon-btn kw-region-clear"
+            aria-label="Clear search"
+            @click="query = ''"
+          >
+            <WorkspaceIcon name="close" :size="16" />
+          </button>
         </div>
-        <div class="kw-field">
-          <label class="kw-label" for="weather-province">Or browse a province</label>
-          <select id="weather-province" v-model="province" class="kw-select">
-            <option value="">All provinces</option>
-            <option v-for="(name, code) in provinceNames" :key="code" :value="code">
-              {{ name }}
-            </option>
-          </select>
-        </div>
+        <button
+          type="button"
+          class="kw-btn kw-btn--tonal kw-btn--small kw-region-map-toggle"
+          :aria-pressed="mapVisible"
+          @click="mapVisible = !mapVisible"
+        >
+          <WorkspaceIcon :name="mapVisible ? 'layers' : 'map'" :size="15" />
+          {{ mapVisible ? 'Hide map' : 'Map' }}
+        </button>
       </div>
 
-      <p v-if="loadingLocations" class="kw-hint kw-mt-sm">Loading the location list…</p>
+      <div v-if="!query" class="kw-region-islands" role="group" aria-label="Island group">
+        <button
+          type="button"
+          class="kw-chip"
+          :class="{ 'is-active': island === '' }"
+          :aria-pressed="island === ''"
+          @click="setIsland('')"
+        >
+          All Indonesia
+        </button>
+        <button
+          v-for="group in ISLANDS"
+          :key="group.id"
+          type="button"
+          class="kw-chip"
+          :class="{ 'is-active': island === group.id }"
+          :aria-pressed="island === group.id"
+          @click="setIsland(group.id)"
+        >
+          {{ group.short }}
+        </button>
+      </div>
 
-      <div v-if="selected" class="kw-inline kw-mt-sm">
+      <div class="kw-region-layout" :class="{ 'has-map': mapVisible && locationEntries.length }">
+        <div class="kw-region-panel">
+          <p v-if="loadingLocations" class="kw-hint" style="margin: 0.2rem 0">
+            Loading 514 kabupaten/kota and 38 provinces…
+          </p>
+          <p v-else-if="loadError" class="kw-error" style="margin: 0.2rem 0">{{ loadError }}</p>
+
+          <template v-else-if="searching">
+            <div class="kw-region-head">
+              <span>
+                <strong>{{ resultEntries.length }}</strong>
+                {{ resultEntries.length === 1 ? 'match' : 'matches' }}
+                <template v-if="island !== '' && !province"> · {{ islandLabel }}</template>
+              </span>
+              <span class="kw-hint">↑↓ move · Enter choose</span>
+            </div>
+            <div
+              v-if="resultEntries.length"
+              id="kw-region-results"
+              class="kw-location-list"
+              role="listbox"
+              aria-label="Matching locations"
+            >
+              <button
+                v-for="(entry, index) in resultEntries"
+                :key="entry.adm4"
+                type="button"
+                class="kw-location-option"
+                :class="{ 'is-active': index === activeIndex }"
+                role="option"
+                :aria-selected="index === activeIndex"
+                @mouseenter="activeIndex = index"
+                @click="pick(entry)"
+              >
+                <span class="kw-location-kind">{{ entry.kind === 'kota' ? 'Kota' : 'Kab' }}</span>
+                <span class="kw-location-body">
+                  <strong>
+                    <template
+                      v-for="(segment, part) in highlightSegments(shortRegionName(entry.name), query)"
+                      :key="part"
+                    >
+                      <mark v-if="segment.match">{{ segment.text }}</mark>
+                      <template v-else>{{ segment.text }}</template>
+                    </template>
+                  </strong>
+                  <span>
+                    {{ entry.province }}
+                    <template v-if="entry.capital && entry.capital !== shortRegionName(entry.name)">
+                      · {{ entry.capital }}
+                    </template>
+                  </span>
+                </span>
+                <span class="kw-location-meta">
+                  <span v-if="entry.population">{{ formatPopulation(entry.population) }}</span>
+                  <code>{{ entry.adm4 }}</code>
+                </span>
+              </button>
+            </div>
+            <div v-else class="kw-empty" style="padding: 1.1rem">
+              <WorkspaceIcon name="search" :size="26" />
+              <strong>No location matched “{{ query }}”</strong>
+              <p>
+                Try a regency, a capital city, a province, a nickname such as
+                “Jogja”, or the first digits of the adm4 code.
+              </p>
+            </div>
+          </template>
+
+          <template v-else-if="province && provinceInfo">
+            <div class="kw-region-province">
+              <div>
+                <span class="kw-eyebrow">{{ provinceInfo.island.replace(/-/g, ' ') }}</span>
+                <strong>{{ provinceInfo.name }}</strong>
+                <span class="kw-region-facts">
+                  <template v-if="provinceInfo.capital">{{ provinceInfo.capital }} · </template>
+                  {{ provinceInfo.regencyCount }} kabupaten/kota
+                  <template v-if="provinceInfo.population">
+                    · {{ formatPopulation(provinceInfo.population) }} jiwa
+                  </template>
+                  <template v-if="provinceInfo.areaKm2">
+                    · {{ formatArea(provinceInfo.areaKm2) }}
+                  </template>
+                </span>
+              </div>
+              <button type="button" class="kw-btn kw-btn--small" @click="province = ''">
+                Change province
+              </button>
+            </div>
+            <div
+              v-if="provinceEntries.length"
+              id="kw-region-results"
+              class="kw-location-list"
+              role="listbox"
+              aria-label="Locations in the selected province"
+            >
+              <button
+                v-for="(entry, index) in provinceEntries"
+                :key="entry.adm4"
+                type="button"
+                class="kw-location-option"
+                :class="{ 'is-active': index === activeIndex }"
+                role="option"
+                :aria-selected="index === activeIndex"
+                @mouseenter="activeIndex = index"
+                @click="pick(entry)"
+              >
+                <span class="kw-location-kind">{{ entry.kind === 'kota' ? 'Kota' : 'Kab' }}</span>
+                <span class="kw-location-body">
+                  <strong>{{ shortRegionName(entry.name) }}</strong>
+                  <span>
+                    {{ entry.capital || entry.province }}
+                    <template v-if="entry.population"> · {{ formatPopulation(entry.population) }}</template>
+                  </span>
+                </span>
+                <span class="kw-location-meta">
+                  <code>{{ entry.adm4 }}</code>
+                </span>
+              </button>
+            </div>
+          </template>
+
+          <template v-else>
+            <div class="kw-region-head">
+              <span>
+                <strong>{{ visibleProvinces.length }}</strong>
+                {{ visibleProvinces.length === 1 ? 'province' : 'provinces' }}
+              </span>
+              <span class="kw-hint">Pick a province, or search above</span>
+            </div>
+            <div class="kw-province-chips">
+              <button
+                v-for="item in visibleProvinces"
+                :key="item.code"
+                type="button"
+                class="kw-province-chip"
+                @click="selectProvince(item.code)"
+              >
+                <span>{{ item.name }}</span>
+                <span class="kw-count">{{ item.regencyCount }}</span>
+              </button>
+            </div>
+
+            <template v-if="!island && quickCities.length">
+              <p class="kw-label" style="margin: 0.9rem 0 0">Largest cities</p>
+              <div class="kw-quick-cities">
+                <button
+                  v-for="entry in quickCities"
+                  :key="entry.adm4"
+                  type="button"
+                  class="kw-quick-city"
+                  @click="pick(entry)"
+                >
+                  <strong>{{ shortRegionName(entry.name) }}</strong>
+                  <span>{{ entry.province }}</span>
+                </button>
+              </div>
+            </template>
+            <p v-else-if="island" class="kw-hint" style="margin: 0.7rem 0 0">
+              {{ islandEntries.length }} forecast points in {{ islandLabel }}. Pick a
+              province above, or search for a city.
+            </p>
+          </template>
+        </div>
+
+        <RegionMap
+          v-if="mapVisible && locationEntries.length"
+          class="kw-region-map"
+          :entries="locationEntries"
+          :selected-adm4="selected?.adm4 ?? null"
+          :matched-adm4s="resultAdm4s"
+          :focus-province="province || null"
+          :height="340"
+          @pick="pick"
+          @province="onMapProvince"
+        />
+      </div>
+
+      <div v-if="workspace.settings.recentLocations.length" class="kw-region-recent">
         <span class="kw-hint">Recent</span>
         <button
           v-for="location in workspace.settings.recentLocations"
@@ -258,53 +591,46 @@ function removeLocation() {
         >
           {{ location.label }}
         </button>
-        <button type="button" class="kw-chip" @click="removeLocation">Clear location</button>
-      </div>
-
-      <div v-if="results.length" class="kw-location-list">
-        <button
-          v-for="entry in results"
-          :key="entry.adm4"
-          type="button"
-          class="kw-location-option"
-          @click="pick(entry)"
-        >
-          <span>
-            <strong>{{ entry.name }}</strong>
-            <span>{{ entry.province }} · representative forecast point</span>
-          </span>
-          <code>{{ entry.adm4 }}</code>
+        <button v-if="selected" type="button" class="kw-chip" @click="removeLocation">
+          Clear location
         </button>
       </div>
-      <p v-else-if="!loadingLocations && (query || province)" class="kw-hint kw-mt-sm">
-        No location matched. Try a different spelling, or enter the code below.
+
+      <details class="kw-region-advanced">
+        <summary>
+          <WorkspaceIcon name="code" :size="15" />
+          I know the exact village code (adm4)
+        </summary>
+        <form class="kw-field" style="margin-top: 0.7rem" @submit.prevent="applyManual">
+          <label class="kw-label" for="weather-manual">Village / kelurahan code</label>
+          <div class="kw-inline">
+            <input
+              id="weather-manual"
+              v-model="manualAdm4"
+              class="kw-input"
+              type="text"
+              inputmode="numeric"
+              placeholder="31.71.01.1001"
+              style="max-width: 240px"
+              autocomplete="off"
+            />
+            <button type="submit" class="kw-btn kw-btn--tonal" :disabled="!manualAdm4.trim()">
+              Use this code
+            </button>
+          </div>
+          <p class="kw-hint">
+            Codes follow province.regency.district.village. Regency picks above use
+            one representative village, so a village code is more precise.
+          </p>
+          <p v-if="manualError" class="kw-error">{{ manualError }}</p>
+        </form>
+      </details>
+
+      <p class="kw-region-source">
+        Region names, coordinates, capitals and population from
+        <a href="https://github.com/cahyadsn/wilayah" target="_blank" rel="noopener">cahyadsn/wilayah</a>
+        (MIT, Kepmendagri 2025). Forecast points and weather from BMKG.
       </p>
-
-      <div class="kw-divider" />
-
-      <form class="kw-field" @submit.prevent="applyManual">
-        <label class="kw-label" for="weather-manual">Village / kelurahan code (adm4)</label>
-        <div class="kw-inline">
-          <input
-            id="weather-manual"
-            v-model="manualAdm4"
-            class="kw-input"
-            type="text"
-            inputmode="numeric"
-            placeholder="31.71.01.1001"
-            style="max-width: 240px"
-            autocomplete="off"
-          />
-          <button type="submit" class="kw-btn kw-btn--tonal" :disabled="!manualAdm4.trim()">
-            Use this code
-          </button>
-        </div>
-        <p class="kw-hint">
-          Codes follow province.regency.district.village. Regency picks above use
-          one representative village, so a village code is more precise.
-        </p>
-        <p v-if="manualError" class="kw-error">{{ manualError }}</p>
-      </form>
     </section>
 
     <template v-if="selected && !pickerOpen">
