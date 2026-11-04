@@ -15,3 +15,11 @@ node_modules
 /shots11
 /shots12
 /shots13
+
+# Cloudflare local env vars (never commit real secrets)
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# test coverage
+/coverage
