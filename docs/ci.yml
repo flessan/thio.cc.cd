@@ -35,6 +35,9 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
+      - name: Typecheck Vue templates
+        run: pnpm run typecheck:vue
+
       - name: Tests
         run: pnpm run test
 

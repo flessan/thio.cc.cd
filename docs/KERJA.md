@@ -373,17 +373,20 @@ editable element, and while a dialog is open.
 
 ```sh
 pnpm install
-pnpm run typecheck   # tsc --noEmit
-pnpm run test        # vitest run
-pnpm run build       # vitepress build
+pnpm run typecheck       # tsc --noEmit (server, data modules, tests)
+pnpm run typecheck:vue   # vue-tsc over the workspace components
+pnpm run test            # vitest run
+pnpm run build           # vitepress build
+pnpm run check           # all of the above in order
 ```
 
 The suite (127 tests) covers the task model and ranking, reminder
 timing/snooze/dismiss, BMKG parsing and outdoor advice, region search aliases
 and adm4 prefixes, the bundled 38-province / 514-point dataset, cloud envelope
 validation and conflict detection, storage fallbacks, GitHub auth/config
-helpers, session sealing, and a jsdom smoke test that mounts the real shell and
-walks every tab.
+helpers, session sealing, and a jsdom smoke test that mounts the real shell,
+walks every tab and renders the region picker. `vue-tsc` also type checks the
+templates, so prop and event drift fails the build instead of runtime.
 
 A ready-to-use GitHub Actions workflow (typecheck, tests, production build) is
 kept at [`docs/ci.yml`](ci.yml). Enable it by moving it to

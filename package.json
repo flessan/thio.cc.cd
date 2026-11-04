@@ -16,7 +16,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm run typecheck && pnpm run test && pnpm run build"
+    "check": "pnpm run typecheck && pnpm run typecheck:vue && pnpm run test && pnpm run build",
+    "typecheck:vue": "vue-tsc -p tsconfig.vue.json --noEmit"
   },
   "author": "M. Thio Saputra",
   "license": "MIT",
@@ -35,6 +36,7 @@
     "fake-indexeddb": "^6.2.7",
     "jsdom": "^25.0.1",
     "typescript": "^5.9.3",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "vue-tsc": "^2.2.12"
   }
 }
