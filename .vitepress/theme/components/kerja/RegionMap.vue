@@ -99,6 +99,7 @@ const markers = new Map<string, CircleMarker>()
 const entryByAdm4 = new Map<string, BmkgLocationEntry>()
 let sizeObserver: ResizeObserver | null = null
 let destroyed = false
+let initializing = false
 
 const BOUNDS: LatLngBoundsExpression = [
   [94.5, -11.6],
@@ -283,8 +284,7 @@ function applyStreetMap() {
     if (!tileLayer.value) {
       tileLayer.value = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors',
-        crossOrigin: true
+        attribution: '&copy; OpenStreetMap contributors'
       })
     }
     tileLayer.value.addTo(instance)
@@ -405,8 +405,7 @@ function drawGrid() {
 
 async function loadProvinces(): Promise<ProvinceCollection | null> {
   try {
-    const base = import.meta.env.BASE_URL || '/'
-    const response = await fetch(`${base}geo/indonesia-provinces.geojson`, { cache: 'force-cache' })
+    const response = await fetch('/geo/indonesia-provinces.geojson', { cache: 'force-cache' })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return (await response.json()) as ProvinceCollection
   } catch {
@@ -416,10 +415,11 @@ async function loadProvinces(): Promise<ProvinceCollection | null> {
 }
 
 async function init() {
-  if (destroyed || !host.value) return
+  if (destroyed || !host.value || initializing || map.value) return
   if (typeof window === 'undefined') return
   if (host.value.clientWidth < 40) return
 
+  initializing = true
   status.value = 'loading'
   errorMessage.value = ''
   try {
@@ -470,6 +470,8 @@ async function init() {
     status.value = 'error'
     errorMessage.value =
       error instanceof Error ? error.message : 'The map library could not be loaded.'
+  } finally {
+    initializing = false
   }
 }
 

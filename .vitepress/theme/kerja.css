@@ -2454,3 +2454,8 @@
     max-height: 300px;
   }
 }
+
+/* Keep Leaflet's bottom controls clear of the attribution strip. */
+.kw-map-canvas .leaflet-bottom {
+  bottom: 1.15rem;
+}
