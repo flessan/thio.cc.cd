@@ -79,6 +79,18 @@ describe('workspace shell', () => {
     expect(document.querySelector('#task-title')).toBeNull()
   })
 
+  it('renders the region picker on the weather tab', async () => {
+    const app = await mountShell()
+    goToTab('weather')
+    await settle()
+    await settle()
+    const text = app.text()
+    expect(text).toContain('Where should the forecast come from?')
+    expect(text).toContain('All Indonesia')
+    expect(text).toMatch(/provinces?/)
+    expect(text).toContain('I know the exact village code')
+  })
+
   it('opens the reminder panel with honest copy', async () => {
     await mountShell()
     openReminderSheet()
