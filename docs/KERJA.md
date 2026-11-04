@@ -62,10 +62,18 @@ today, and remaining planned minutes.
   `https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4={adm4}`, proxied through
   `GET /api/cuaca?adm4=…` so the upstream host never has to be called from the
   browser.
-- The location is always chosen by the visitor: search the 514-entry
-  kabupaten/kota list in `data/bmkg-locations.json`,
-  browse by province, or type an `adm4` code manually. There is no inferred or
-  hard-coded home city.
+- The location is always chosen by the visitor. The picker searches the 514
+  kabupaten/kota in `data/bmkg-locations.json` by name, regency capital,
+  province, nickname (`Jogja`, `Ujung Pandang`, `Bjm`) or `adm4` prefix, can be
+  filtered by island group and province, and still accepts a manual village code.
+  There is no inferred or hard-coded home city.
+- An optional **Leaflet atlas** drawn from the bundled province polygons lets you
+  click a forecast dot or a province directly. It needs no tiles and no API key:
+  the base map is the cahyadsn/wilayah geometry, with dots sized by population.
+  A **Street map** button is the only thing that loads OpenStreetMap tiles, and
+  only after that explicit click (with OSM attribution shown). Map hover/focus
+  details, keyboard list navigation and reduced-motion handling are all built in;
+  the list remains the accessible primary control when the map is closed.
 - Shows current conditions (temperature, humidity, wind, visibility, cloud
   cover, rain), a three-day three-hourly timeline, and an outdoor-task outlook.
 - Caching: the client keeps a per-`adm4` copy for 20 minutes; the Pages Function
@@ -105,8 +113,8 @@ Browser (Vue 3, /kerja)
 ├── .vitepress/theme/components/KerjaHome.vue  original start page
 ├── .vitepress/theme/components/kerja/*.vue    Today, Tasks, Weather, Cloud, dialogs
 ├── .vitepress/theme/kerja/*.ts                model, dates, tasks, reminders,
-│                                              bmkg, cloud, storage, state,
-│                                              cloud-client, notifications, UI
+│                                              bmkg, region, cloud, storage,
+│                                              state, cloud-client, UI
 ├── IndexedDB `kerja-workspace`                local-first source of truth
 └── same-origin fetch only → /api/*
         │
@@ -128,6 +136,8 @@ Cloudflare Pages Functions (functions/)
 | `kerja/tasks.ts` | Filtering, sorting, grouping, focus ranking, progress, categories |
 | `kerja/reminders.ts` | Due/upcoming selection, snooze, dismiss, notification state |
 | `kerja/bmkg.ts` | BMKG payload parsing, weather kinds, slot selection, outdoor advice |
+| `kerja/region.ts` | Region search ranking, aliases, island groups, formatting |
+| `components/kerja/RegionMap.vue` | Lazy Leaflet atlas: province polygons, forecast dots, hover/pick |
 | `kerja/cloud.ts` | Envelope validation, canonical JSON, fingerprints, diffing, sync decisions |
 | `kerja/storage.ts` | IndexedDB with localStorage/memory fallback, device id, sync meta |
 | `kerja/state.ts` | Reactive store, debounced saves, task mutations, doc snapshots |
@@ -368,16 +378,53 @@ pnpm run test        # vitest run
 pnpm run build       # vitepress build
 ```
 
-The suite covers the task model and ranking, reminder timing/snooze/dismiss,
-BMKG parsing and outdoor advice, cloud envelope validation and conflict
-detection, storage fallbacks, GitHub auth/config helpers, session sealing, and a
-jsdom smoke test that mounts the real shell and walks every tab.
+The suite (127 tests) covers the task model and ranking, reminder
+timing/snooze/dismiss, BMKG parsing and outdoor advice, region search aliases
+and adm4 prefixes, the bundled 38-province / 514-point dataset, cloud envelope
+validation and conflict detection, storage fallbacks, GitHub auth/config
+helpers, session sealing, and a jsdom smoke test that mounts the real shell and
+walks every tab.
 
 A ready-to-use GitHub Actions workflow (typecheck, tests, production build) is
 kept at [`docs/ci.yml`](ci.yml). Enable it by moving it to
 `.github/workflows/ci.yml`; this sandbox's GitHub connection is a GitHub App
 token without the `workflows` permission, so it could not push that path itself.
 The same three commands run locally with `pnpm run check`.
+
+---
+
+## 8a. Region data and the atlas
+
+- `data/bmkg-locations.json` — one representative BMKG `adm4` per
+  kabupaten/kota, joined with coordinates, capital, area and population.
+- `data/wilayah-provinces.json` — the 38 provinces with capital, area,
+  population, regency count and island group, used for browsing and search.
+- `public/geo/indonesia-provinces.geojson` — simplified province polygons for
+  the atlas (fetched only when the map is opened).
+
+Sources and provenance:
+
+| Data | Source | Licence |
+| --- | --- | --- |
+| Province/regency names, codes, capitals, coordinates, area, population, polygons | [`cahyadsn/wilayah`](https://github.com/cahyadsn/wilayah), Kepmendagri No 300.2.2-2430 Tahun 2025 | MIT |
+| Forecast points (`adm4`) and weather | BMKG | BMKG data terms, attribution in the UI |
+| Optional street tiles | OpenStreetMap contributors | ODbL, attribution shown when enabled |
+
+Regenerate the derived files when the upstream data changes:
+
+```sh
+git clone --depth 1 --filter=blob:none --sparse \
+    https://github.com/cahyadsn/wilayah.git /tmp/wilayah
+git -C /tmp/wilayah sparse-checkout set --no-cone 'db/wilayah_level_1_2.sql'
+python3 scripts/build-region-data.py /tmp/wilayah/db/wilayah_level_1_2.sql
+```
+
+The script validates every coordinate against Indonesia's bounding box, repairs
+the one bad regency centroid in the source by deriving it from the polygon, and
+fails loudly if a BMKG location cannot be matched to a regency.
+
+The map uses Leaflet (`leaflet` + `@types/leaflet`), loaded lazily the first
+time the map is shown. No tile requests are made until **Street map** is pressed.
 
 ---
 
@@ -403,4 +450,8 @@ The same three commands run locally with `pnpm run check`.
   panel and every forecast surface.
 - Administrative location codes: BMKG `adm4` codes, bundled in
   `data/bmkg-locations.json`.
+- Region names, coordinates, populations and province polygons:
+  [`cahyadsn/wilayah`](https://github.com/cahyadsn/wilayah), MIT, based on
+  Kepmendagri No 300.2.2-2430 Tahun 2025.
+- Optional street map tiles: © OpenStreetMap contributors (ODbL).
 - Everything else follows the repository licence.

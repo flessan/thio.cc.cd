@@ -45,7 +45,9 @@ pnpm run build       # static production build
   engines, command palette, pins, recent searches, categorized shortcuts) plus a
   local-first productivity layer: a priority to-do list with subtasks, deadlines,
   estimates and reminders; a ranked Today dashboard; the official BMKG forecast
-  for a location you choose; rain hints for outdoor tasks; and an explicitly
+  for a location you choose (searchable by city, capital, province or `adm4`,
+  with an offline Leaflet atlas and optional OpenStreetMap tiles); rain hints for
+  outdoor tasks; and an explicitly
   manual encrypted-session GitHub backup. Edit `data/kerja.md` to add, remove, or
   reorganize shortcuts; the build renders them into the page and emits
   `.vitepress/dist/kerja-shortcuts.json`, so the start page needs no runtime API.
@@ -182,7 +184,10 @@ ecosystem.md         the other places I keep online
 support.md           sponsor & support
 public/images/       artwork (avatar & character art by Flessan)
 data/kerja.md        Markdown source for the /kerja shortcut directory
-data/bmkg-locations.json  kabupaten/kota adm4 codes for the weather panel
+data/bmkg-locations.json  kabupaten/kota adm4 codes + cahyadsn/wilayah metadata
+data/wilayah-provinces.json  province metadata for region browsing
+public/geo/indonesia-provinces.geojson  simplified province polygons for the atlas
+scripts/build-region-data.py  regenerates the three region files from cahyadsn/wilayah
 kerja.md             personal workspace at /kerja
 docs/KERJA.md        /kerja architecture, setup, and security documentation
 server/lib/          shared server code for the Pages Functions
