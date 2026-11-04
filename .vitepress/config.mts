@@ -372,7 +372,12 @@ export default defineConfig({
     plugins: [kerjaShortcutsPlugin()],
     server: {
       // allow preview proxies (e.g. *.e2b.app) in dev
-      allowedHosts: true
+      allowedHosts: true,
+      watch: {
+        // `vitepress build` writes here; without this the dev server reloads
+        // the whole site on every production build.
+        ignored: ['**/.vitepress/dist/**', '**/.vitepress/cache/**']
+      }
     }
   },
 
