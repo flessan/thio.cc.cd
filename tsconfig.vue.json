@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "types/**/*.d.ts",
+    ".vitepress/theme/kerja/**/*.ts",
+    ".vitepress/theme/components/kerja/**/*.vue",
+    ".vitepress/theme/components/Kerja.vue",
+    ".vitepress/theme/components/KerjaHome.vue",
+    ".vitepress/theme/components/KerjaLaunch.vue",
+    ".vitepress/theme/virtual-kerja-shortcuts.d.ts",
+    ".vitepress/theme/customize.ts",
+    ".vitepress/theme/effects.ts",
+    ".vitepress/theme/motion.ts"
+  ]
+}

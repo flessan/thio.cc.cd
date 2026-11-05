@@ -1,0 +1,30 @@
+# Local Cloudflare Pages environment variables for `wrangler pages dev`.
+# Copy to `.dev.vars` (git-ignored) and fill in your own values.
+# These are placeholders, not real credentials. Never commit `.dev.vars`.
+
+# Required: GitHub App (or OAuth App) used for /kerja cloud sign-in.
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+# Required: at least 32 random characters. Generate with:
+#   openssl rand -base64 48
+SESSION_SECRET=
+
+# Optional: private repository that stores the workspace file.
+# GITHUB_REPO_OWNER=flessan
+# GITHUB_REPO_NAME=kerja-cloud
+# GITHUB_REPO_BRANCH=main
+# GITHUB_WORKSPACE_PATH=workspace/kerja-workspace.json
+
+# Optional: comma-separated GitHub logins allowed to sign in.
+# Defaults to GITHUB_REPO_OWNER.
+# KERJA_ALLOWED_LOGINS=
+
+# Optional: override the callback URL. Defaults to
+# <request origin>/api/auth/github/callback.
+# For local Wrangler testing use:
+# GITHUB_REDIRECT_URI=http://localhost:8788/api/auth/github/callback
+# GITHUB_REDIRECT_URI=
+
+# Optional: set to false only for plain-HTTP local testing.
+# KERJA_COOKIE_SECURE=false

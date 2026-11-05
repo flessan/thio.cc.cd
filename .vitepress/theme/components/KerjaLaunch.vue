@@ -9,15 +9,15 @@
 
     <span class="launch-copy">
       <span class="launch-eyebrow">Personal workspace</span>
-      <strong>Everything I use, one keystroke away</strong>
+      <strong>My day, my links, one workspace</strong>
       <span class="launch-desc">
-        Search across ten engines, jump to pinned tools, and find any of the
-        33 shortcuts with a command palette.
+        Search across ten engines, jump to pinned tools, plan priorities, and
+        check the BMKG forecast — local-first, with manual cloud backup.
       </span>
     </span>
 
     <span class="launch-meta">
-      <span class="launch-pill">⌘K palette</span>
+      <span class="launch-pill">Tasks · Weather</span>
       <span class="launch-arrow" aria-hidden="true">
         <svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 6.5L19 12l-6.5 5.5" /></svg>
       </span>

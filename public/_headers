@@ -8,6 +8,10 @@
 /images/*
   Cache-Control: public, max-age=604800
 
+# Province polygons for the /kerja atlas change only with the region dataset
+/geo/*
+  Cache-Control: public, max-age=604800
+
 # Baseline security headers for everything (HTML stays default-cached)
 /*
   X-Content-Type-Options: nosniff

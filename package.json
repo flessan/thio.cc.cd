@@ -12,13 +12,31 @@
     "build": "vitepress build",
     "preview": "vitepress preview",
     "preview:pages": "npx wrangler pages dev .vitepress/dist",
-    "deploy": "pnpm run build && npx wrangler pages deploy .vitepress/dist --project-name=thio-cc-cd"
+    "deploy": "pnpm run build && npx wrangler pages deploy .vitepress/dist --project-name=thio-cc-cd",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm run typecheck && pnpm run typecheck:vue && pnpm run test && pnpm run build",
+    "typecheck:vue": "vue-tsc -p tsconfig.vue.json --noEmit"
   },
   "author": "M. Thio Saputra",
   "license": "MIT",
   "dependencies": {
     "animejs": "^4.5.0",
+    "leaflet": "^1.9.4",
     "vitepress": "1.5.0",
     "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261104.1",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^22.20.5",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/test-utils": "^2.5.1",
+    "fake-indexeddb": "^6.2.7",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9",
+    "vue-tsc": "^2.2.12"
   }
 }

@@ -777,7 +777,7 @@ export function installMotion(router?: Router) {
   const start = () =>
     whenHydrated(() =>
       window.requestAnimationFrame(() =>
-        window.requestAnimationFrame(runPageMotion)
+        window.requestAnimationFrame(() => runPageMotion())
       )
     )
   if (document.readyState === 'loading') {
@@ -833,7 +833,7 @@ export function installMotion(router?: Router) {
     routeGuard = window.setTimeout(() => {
       if (window.location.pathname === from) {
         routeAnimation?.revert()
-        window
+        document
           .querySelectorAll<HTMLElement>('.vp-doc, .vp-doc [data-motion-target]')
           .forEach(restoreElement)
       }
@@ -842,7 +842,7 @@ export function installMotion(router?: Router) {
 
   router.onAfterRouteChanged = () => {
     window.requestAnimationFrame(() =>
-      window.requestAnimationFrame(runPageMotion)
+      window.requestAnimationFrame(() => runPageMotion())
     )
   }
 }
