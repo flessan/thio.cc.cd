@@ -380,19 +380,19 @@ pnpm run build           # vitepress build
 pnpm run check           # all of the above in order
 ```
 
-The suite (128 tests) covers the task model and ranking, reminder
-timing/snooze/dismiss, BMKG parsing and outdoor advice, region search aliases
-and adm4 prefixes, the bundled 38-province / 514-point dataset, cloud envelope
-validation and conflict detection, storage fallbacks, GitHub auth/config
-helpers, session sealing, and a jsdom smoke test that mounts the real shell,
-walks every tab and renders the region picker. `vue-tsc` also type checks the
-templates, so prop and event drift fails the build instead of runtime.
+The suite covers the task model and ranking, reminder timing/snooze/dismiss,
+BMKG parsing and outdoor advice, region search aliases and adm4 prefixes, the
+bundled 38-province / 514-point dataset, cloud envelope validation and conflict
+detection, storage fallbacks, GitHub auth/config helpers, session sealing, and
+a jsdom smoke test that mounts the real shell, walks every tab and renders the
+region picker. `vue-tsc` also type checks the templates, so prop and event drift
+fails the build instead of runtime.
 
-A ready-to-use GitHub Actions workflow (typecheck, tests, production build) is
-kept at [`docs/ci.yml`](ci.yml). Enable it by moving it to
-`.github/workflows/ci.yml`; this sandbox's GitHub connection is a GitHub App
-token without the `workflows` permission, so it could not push that path itself.
-The same three commands run locally with `pnpm run check`.
+GitHub Actions is enabled at `.github/workflows/ci.yml`. It runs on pull
+requests, pushes to `main`, and manual dispatch. The workflow installs the
+frozen pnpm lockfile, runs TypeScript and Vue template checks, executes the
+tests, and builds the production site. Locally, `pnpm run check` runs the same
+stages in order.
 
 ---
 
